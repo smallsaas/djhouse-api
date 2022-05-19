@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -22,7 +23,6 @@ import com.jfeat.am.module.house.services.domain.dao.QuerySupplierDao;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.request.Ids;
 import com.jfeat.crud.base.tips.Tip;
-import com.jfeat.am.module.log.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.plus.CRUDObject;
