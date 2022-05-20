@@ -1,79 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QuerySupplierDao">
-                                                                                                                                                                                                                                                                                <sql id="Base_Column_List">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        t_supplier.id, t_supplier.name, t_supplier.note, t_supplier.type, t_supplier.url, t_supplier.address, t_supplier.org_id AS orgId
+    <sql id="Base_Column_List">
+        t_supplier
+        .
+        id
+        , t_supplier.name, t_supplier.note, t_supplier.type, t_supplier.url, t_supplier.address, t_supplier.org_id AS orgId
+        , t_supplier.phone as phone
+        , t_supplier.user_id as userId
+        , t_supplier.end_user_id as endUserId
     </sql>
 
-        <sql id="QueryOwnedOrgIds">
-         SELECT children.id FROM t_sys_org, t_sys_org as children WHERE t_sys_org.left_num &lt;= children.left_num AND
-         t_sys_org.right_num >= children.left_num and t_sys_org.id=#{record.orgId} order by t_sys_org.node_level ASC
+    <sql id="QueryOwnedOrgIds">
+        SELECT children.id
+        FROM t_sys_org,
+             t_sys_org as children
+        WHERE t_sys_org.left_num &lt;= children.left_num
+          AND t_sys_org.right_num >= children.left_num
+          and t_sys_org.id = #{record.orgId}
+        order by t_sys_org.node_level ASC
     </sql>
-    
-    
+
 
     <select id="queryMasterModel" resultType="SupplierModel">
-       SELECT t_supplier.*
-       FROM t_supplier
-       WHERE t_supplier.id=#{id}
-       GROUP BY t_supplier.id
+        SELECT t_supplier.*
+        FROM t_supplier
+        WHERE t_supplier.id = #{id}
+        GROUP BY t_supplier.id
     </select>
 
 
-                                
     <select id="findSupplierPage" resultType="SupplierRecord" parameterType="SupplierRecord">
-            SELECT <include refid="Base_Column_List"/>
+        SELECT
+        <include refid="Base_Column_List"/>
 
-        
 
         FROM t_supplier
 
-        
-                    <if test="record.orgId > 0">
-                ,(<include refid="QueryOwnedOrgIds"></include>) AS ownedOrgIds
-            </if>
-        
+
+        <if test="record.orgId > 0">
+            ,(<include refid="QueryOwnedOrgIds"></include>) AS ownedOrgIds
+        </if>
+
         WHERE 1=1
-                <if test="record.orgId > 0">
+        <if test="record.orgId > 0">
             AND t_supplier.org_id = ownedOrgIds.id
         </if>
-        
 
-        
-                                                                            <if test="record.id != null and record.id>0 ">
-                                    AND t_supplier.id LIKE CONCAT('%',#{record.id},'%')
-                            </if>
-                                                                    <if test="record.name != null and record.name!= ''">
-                                    AND t_supplier.name LIKE CONCAT('%',#{record.name},'%')
-                            </if>
-                                                                    <if test="record.note != null and record.note!= ''">
-                                    AND t_supplier.note LIKE CONCAT('%',#{record.note},'%')
-                            </if>
-                                                                    <if test="record.type != null and record.type>0 ">
-                                    AND t_supplier.type LIKE CONCAT('%',#{record.type},'%')
-                            </if>
-                                                                    <if test="record.url != null and record.url!= ''">
-                                    AND t_supplier.url LIKE CONCAT('%',#{record.url},'%')
-                            </if>
-                                                                    <if test="record.address != null and record.address!= ''">
-                                    AND t_supplier.address LIKE CONCAT('%',#{record.address},'%')
-                            </if>
-                                                                    
+        <if test="record.phone != null and record.phone != ''">
+            AND t_supplier.phone LIKE CONCAT('%',#{record.phone},'%')
+        </if>
 
-                                                                                        <if test="record.orgId != null and record.orgId>0 ">
-                                    AND t_supplier.org_id IN (<include refid="QueryOwnedOrgIds"/>)
-                            </if>
-        
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_supplier.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+        <if test="record.name != null and record.name!= ''">
+            AND t_supplier.name LIKE CONCAT('%',#{record.name},'%')
+        </if>
+        <if test="record.note != null and record.note!= ''">
+            AND t_supplier.note LIKE CONCAT('%',#{record.note},'%')
+        </if>
+        <if test="record.type != null and record.type>0 ">
+            AND t_supplier.type LIKE CONCAT('%',#{record.type},'%')
+        </if>
+        <if test="record.url != null and record.url!= ''">
+            AND t_supplier.url LIKE CONCAT('%',#{record.url},'%')
+        </if>
+        <if test="record.address != null and record.address!= ''">
+            AND t_supplier.address LIKE CONCAT('%',#{record.address},'%')
+        </if>
+
+
+        <if test="record.orgId != null and record.orgId>0 ">
+            AND t_supplier.org_id IN (<include refid="QueryOwnedOrgIds"/>)
+        </if>
+
         <if test="startTime != null">
             <![CDATA[AND t_supplier.start_time >= DATE(#{startTime})]]>
         </if>
         <if test="endTime != null">
             <![CDATA[AND t_supplier.end_time <= DATE(#{endTime}]]>
         </if>
-            <!--
-        <if test="search != null and search != ''">
-            OR t_supplier.name LIKE CONCAT('%',#{search},'%')
-        </if>
-        -->
-                                    </select>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_supplier.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
 </mapper>

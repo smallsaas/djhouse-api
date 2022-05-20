@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.jfeat.am.module.house.services.gen.crud.model.SupplierModel;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
@@ -68,17 +69,16 @@ public class SupplierEndpoint {
     @Permission(SupplierPermission.SUPPLIER_NEW)
     @PostMapping
     @ApiOperation(value = "新建 Supplier", response = Supplier.class)
-    public Tip createSupplier(@RequestBody Supplier entity) {
-
-        Integer affected = 0;
+    public Tip createSupplier(@RequestBody SupplierModel entity) {
+        Supplier one = null;
         try {
-            affected = supplierService.createMaster(entity);
+            one = supplierService.createOne(entity);
 
         } catch (DuplicateKeyException e) {
             throw new BusinessException(BusinessCode.DuplicateKey);
         }
 
-        return SuccessTip.create(affected);
+        return SuccessTip.create(one);
     }
 
     @Permission(SupplierPermission.SUPPLIER_VIEW)
@@ -87,6 +87,14 @@ public class SupplierEndpoint {
     public Tip getSupplier(@PathVariable Long id) {
         return SuccessTip.create(supplierService.queryMasterModel(querySupplierDao, id));
     }
+
+
+    @GetMapping("/genAccountTest")
+    @ApiOperation(value = "", response = Supplier.class)
+    public Tip getSupplier(@RequestParam(value = "account") String account) {
+        return SuccessTip.create(supplierService.genAccountName(account));
+    }
+
 
     @BusinessLog(name = "Supplier", value = "update Supplier")
     @Permission(SupplierPermission.SUPPLIER_EDIT)
@@ -102,7 +110,7 @@ public class SupplierEndpoint {
     @DeleteMapping("/{id}")
     @ApiOperation("删除 Supplier")
     public Tip deleteSupplier(@PathVariable Long id) {
-        return SuccessTip.create(supplierService.deleteMaster(id));
+        return SuccessTip.create(supplierService.deleteOne(id));
     }
 
     @Permission(SupplierPermission.SUPPLIER_VIEW)

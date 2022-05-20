@@ -18,7 +18,14 @@ spring:
       preferred-json-mapper: fastjson
 #  jackson:
 #    date-format: yyyy-MM-dd HH:mm:ss
+###################  jwt配置  ###################
+jwt:
+  encoded-key: L7A/6zARSkK1j7Vd5SDD9pSSqZlqF7mAhiOgRbgv9Smce6tf4cJnvKOjtKPxNNnWQj+2lQEScm3XIUjhW+YVZg==
+  #tll-mills:
+  #token-type: Bearer
+  #enable-attempt-login: false
 
+########################################################################
 mybatis-plus:
   mapper-locations: classpath*:com/jfeat/**/mapping/*.xml
   typeAliasesPackage: com.jfeat.**.model
@@ -41,9 +48,11 @@ mybatis-plus:
 spring:
   profiles: dev
   datasource:
-    url: jdbc:mysql://localhost:3307/uaas-saas?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC
+    url: jdbc:mysql://sh-cdb-q5vnc0iy.sql.tencentcdb.com:59449/smallsaas?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
+    #url: jdbc:mysql://localhost:3307/uaas-saas?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC
     username: root
-    password: root
+    #password: root
+    password: zb2014@888
     driver-class-name: com.mysql.jdbc.Driver
     filters: log4j,wall,mergeStat
     sql-script-encoding: UTF-8

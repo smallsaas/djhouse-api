@@ -12,4 +12,14 @@ import com.jfeat.am.module.house.services.gen.persistence.model.Supplier;
  *  * modelpack : $modelpack
  */
 public class SupplierModel extends Supplier{
+
+    String account;
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
 }

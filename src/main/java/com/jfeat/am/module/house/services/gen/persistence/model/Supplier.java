@@ -47,9 +47,42 @@ public class Supplier extends Model<Supplier> {
      */
       private String address;
 
+
+      private String phone;
+
+
+      private Long userId;
+
+      private Long endUserId;
+
+
+
     private Long orgId;
 
-    
+    public Long getEndUserId() {
+        return endUserId;
+    }
+
+    public void setEndUserId(Long endUserId) {
+        this.endUserId = endUserId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public Long getId() {
         return id;
     }
