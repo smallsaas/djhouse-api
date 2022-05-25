@@ -12,6 +12,8 @@ public interface SupplierService extends CRUDSupplierService{
     @Transactional
     Supplier createOne(SupplierModel entity);
 
+    SupplierModel getOne(Long id);
+
     @Transactional
     Integer deleteOne(Long id);
 
