@@ -52,6 +52,11 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>notice-service</artifactId>
+            <version>1.1.0</version>
+        </dependency>
 
         <!--  中文获取拼音   -->
         <dependency>
