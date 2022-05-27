@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding">
+        <id column="id" property="id" />
+        <result column="org_id" property="orgId" />
+        <result column="community" property="community" />
+        <result column="community_code" property="communityCode" />
+        <result column="area" property="area" />
+        <result column="code" property="code" />
+        <result column="floors" property="floors" />
+        <result column="units" property="units" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, org_id, community, community_code, area, code, floors, units
+    </sql>
+
+</mapper>

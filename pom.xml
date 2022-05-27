@@ -35,6 +35,30 @@
         </dependency>-->
 
         <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>lc_low_main_page</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>lc_modal_item_basic_o</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>lc_modal_item_basic</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>lc_low_auto_main</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.4</version>
@@ -45,6 +69,7 @@
             <artifactId>user-account</artifactId>
             <version>1.0.1</version>
         </dependency>
+
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>uaas</artifactId>
@@ -52,6 +77,11 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>notice-service</artifactId>
+            <version>1.1.0</version>
+        </dependency>
 
         <!--  中文获取拼音   -->
         <dependency>

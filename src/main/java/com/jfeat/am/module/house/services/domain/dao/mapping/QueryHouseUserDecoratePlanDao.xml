@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseUserDecoratePlanDao">
+    <sql id="Base_Column_List">
+        t_house_user_decorate_plan
+        .
+        id
+        , t_house_user_decorate_plan.user_id AS userId, t_house_user_decorate_plan.decorate_plan_id AS decoratePlanId, t_house_user_decorate_plan.change_option AS changeOption, t_house_user_decorate_plan.funiture_id AS funitureId, t_house_user_decorate_plan.changed_funiture_id AS changedFunitureId, t_house_user_decorate_plan.note
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseUserDecoratePlanModel">
+        SELECT t_house_user_decorate_plan.*
+        FROM t_house_user_decorate_plan
+        WHERE t_house_user_decorate_plan.id = #{id}
+        GROUP BY t_house_user_decorate_plan.id
+    </select>
+
+
+    <select id="findHouseUserDecoratePlanPage" resultType="HouseUserDecoratePlanRecord"
+            parameterType="HouseUserDecoratePlanRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_user_decorate_plan
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_user_decorate_plan.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_user_decorate_plan.user_id LIKE CONCAT('%',#{record.userId},'%')
+        </if>
+
+
+        <if test="record.decoratePlanId != null and record.decoratePlanId>0 ">
+            AND t_house_user_decorate_plan.decorate_plan_id LIKE CONCAT('%',#{record.decoratePlanId},'%')
+        </if>
+
+
+        <if test="record.changeOption != null and record.changeOption!= ''">
+            AND t_house_user_decorate_plan.change_option LIKE CONCAT('%',#{record.changeOption},'%')
+        </if>
+
+
+        <if test="record.funitureId != null and record.funitureId>0 ">
+            AND t_house_user_decorate_plan.funiture_id LIKE CONCAT('%',#{record.funitureId},'%')
+        </if>
+
+
+        <if test="record.changedFunitureId != null and record.changedFunitureId>0 ">
+            AND t_house_user_decorate_plan.changed_funiture_id LIKE CONCAT('%',#{record.changedFunitureId},'%')
+        </if>
+        <if test="record.note != null and record.note!= ''">
+            AND t_house_user_decorate_plan.note LIKE CONCAT('%',#{record.note},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_user_decorate_plan.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_user_decorate_plan.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_user_decorate_plan.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
+
+    <select id="queryHouseUserDecoratePlanByUserId" resultType="HouseDecoratePlanModel">
+        SELECT dp.* FROM t_house_decorate_plan AS dp,t_house_user_decorate_plan AS udp WHERE udp.user_id=#{userId} AND udp.decorate_plan_id=dp.id
+        GROUP BY udp.decorate_plan_id
+    </select>
+
+    <select id="queryHouseUserDecoratePlanFuniture" resultType="HouseUserDecoratePlanModel">
+        SELECT t_house_user_decorate_plan.*
+        FROM t_house_user_decorate_plan
+        WHERE t_house_user_decorate_plan.decorate_plan_id = #{decoratePlanId}
+        AND t_house_user_decorate_plan.user_id = #{userId}
+    </select>
+
+    <select id="queryHouseUserDecoratePlanAddress" resultType="string">
+        SELECT t_house_user_decorate_plan.decorate_address
+        FROM t_house_user_decorate_plan
+        WHERE t_house_user_decorate_plan.decorate_plan_id = #{decoratePlanId}
+          AND t_house_user_decorate_plan.user_id = #{userId}
+        GROUP BY t_house_user_decorate_plan.decorate_address
+    </select>
+
+</mapper>
