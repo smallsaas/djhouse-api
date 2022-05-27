@@ -141,8 +141,6 @@ public class HousePropertyUnitEndpoint {
         record.setUserId(userId);
         record.setBuildingId(buildingId);
         record.setNumber(number);
-
-
         List<HousePropertyUnitRecord> housePropertyUnitPage = queryHousePropertyUnitDao.findHousePropertyUnitPage(page, record, tag, search, orderBy, null, null);
 
 

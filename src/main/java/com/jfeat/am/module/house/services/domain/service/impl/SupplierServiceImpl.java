@@ -1,6 +1,5 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
 
-import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.core.model.UserType;

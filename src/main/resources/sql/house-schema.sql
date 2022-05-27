@@ -17,7 +17,7 @@ UNIQUE(`community`,`code`)
 DROP TABLE IF EXISTS `t_house_property_unit`;
 CREATE TABLE `t_house_property_unit`  (
 `id` bigint(20) NOT NULL AUTO_INCREMENT,
-`user_id` bigint(20) NOT NULL UNIQUE COMMENT '用户id',
+`user_id` bigint(20) NOT NULL COMMENT '用户id',
 `building_id` bigint(20) NOT NULL COMMENT '楼栋id',
 `number` varchar(50) NOT NULL COMMENT '房产编号',
 PRIMARY KEY (`id`),

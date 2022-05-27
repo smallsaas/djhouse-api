@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.gen.persistence.dao.ProductMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jfeat.am.module.house.services.gen.persistence.model.Product">
+        <id column="id" property="id" />
+        <result column="category_id" property="categoryId" />
+        <result column="brand_id" property="brandId" />
+        <result column="name" property="name" />
+        <result column="short_name" property="shortName" />
+        <result column="cover" property="cover" />
+        <result column="stock_balance" property="stockBalance" />
+        <result column="sales" property="sales" />
+        <result column="status" property="status" />
+        <result column="created_date" property="createdDate" />
+        <result column="last_modified_date" property="lastModifiedDate" />
+        <result column="unit" property="unit" />
+        <result column="price" property="price" />
+        <result column="cost_price" property="costPrice" />
+        <result column="suggested_price" property="suggestedPrice" />
+        <result column="promoted" property="promoted" />
+        <result column="freight" property="freight" />
+        <result column="free_shipping" property="freeShipping" />
+        <result column="sort_order" property="sortOrder" />
+        <result column="partner_level_zone" property="partnerLevelZone" />
+        <result column="view_count" property="viewCount" />
+        <result column="fare_id" property="fareId" />
+        <result column="barcode" property="barcode" />
+        <result column="store_location" property="storeLocation" />
+        <result column="weight" property="weight" />
+        <result column="bulk" property="bulk" />
+        <result column="sku_id" property="skuId" />
+        <result column="sku_name" property="skuName" />
+        <result column="sku_code" property="skuCode" />
+        <result column="bar_code" property="barCode" />
+        <result column="mid" property="mid" />
+        <result column="allow_coupon" property="allowCoupon" />
+        <result column="credit" property="credit" />
+        <result column="is_virtual" property="isVirtual" />
+        <result column="required_participate_exam" property="requiredParticipateExam" />
+        <result column="distribution_price" property="distributionPrice" />
+        <result column="presale" property="presale" />
+        <result column="org_id" property="orgId" />
+        <result column="banner" property="banner" />
+        <result column="region" property="region" />
+        <result column="description" property="description" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, category_id, brand_id, name, short_name, cover, stock_balance, sales, status, created_date, last_modified_date, unit, price, cost_price, suggested_price, promoted, freight, free_shipping, sort_order, partner_level_zone, view_count, fare_id, barcode, store_location, weight, bulk, sku_id, sku_name, sku_code, bar_code, mid, allow_coupon, credit, is_virtual, required_participate_exam, distribution_price, presale, org_id, banner, region, description
+    </sql>
+
+</mapper>

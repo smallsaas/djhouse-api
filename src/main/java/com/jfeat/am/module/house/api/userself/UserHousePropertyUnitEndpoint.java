@@ -1,85 +1,44 @@
+package com.jfeat.am.module.house.api.userself;
 
-package com.jfeat.am.module.house.api;
-
-
-import com.jfeat.crud.plus.META;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.common.annotation.Permission;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.module.house.api.permission.HousePropertyBuildingPermission;
+import com.jfeat.am.module.house.api.permission.HousePropertyUnitPermission;
+import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingDao;
+import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyUnitDao;
+import com.jfeat.am.module.house.services.domain.model.HousePropertyBuildingRecord;
+import com.jfeat.am.module.house.services.domain.model.HousePropertyUnitRecord;
+import com.jfeat.am.module.house.services.domain.service.HousePropertyBuildingOverModelService;
+import com.jfeat.am.module.house.services.domain.service.HousePropertyUnitService;
+import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingModel;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyUnit;
+import com.jfeat.crud.base.annotation.BusinessLog;
+import com.jfeat.crud.base.exception.BusinessCode;
+import com.jfeat.crud.base.exception.BusinessException;
+import com.jfeat.crud.base.tips.SuccessTip;
+import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.crud.plus.CRUDObject;
+import com.jfeat.crud.plus.META;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.dao.DuplicateKeyException;
-import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingDao;
-import com.jfeat.crud.base.tips.SuccessTip;
-import com.jfeat.crud.base.tips.Tip;
-import com.jfeat.crud.base.annotation.BusinessLog;
-import com.jfeat.crud.base.exception.BusinessCode;
-import com.jfeat.crud.base.exception.BusinessException;
-import com.jfeat.crud.plus.CRUDObject;
-import com.jfeat.crud.plus.DefaultFilterResult;
-import com.jfeat.am.module.house.api.permission.*;
-import com.jfeat.am.common.annotation.Permission;
-
-import com.jfeat.am.module.house.services.domain.service.*;
-import com.jfeat.am.module.house.services.domain.model.HousePropertyBuildingRecord;
-import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingModel;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
 
-/**
- * <p>
- * api
- * </p>
- *
- * @author Code generator
- * @since 2022-05-23
- */
 @RestController
-@Api("HousePropertyBuilding")
-@RequestMapping("/api/crud/house/housePropertyBuilding/housePropertyBuildings")
-public class HousePropertyBuildingOverModelEndpoint {
-
-    @Resource
-    HousePropertyBuildingOverModelService housePropertyBuildingOverModelService;
+@Api("用户房屋api")
+@RequestMapping("/api/u/house/house/housePropertyUnit")
+public class UserHousePropertyUnitEndpoint {
 
     @Resource
     QueryHousePropertyBuildingDao queryHousePropertyBuildingDao;
 
-
-    // 要查询[从表]关联数据，取消下行注释
-    // @Resource
-    // QueryHousePropertyUnitDao queryHousePropertyUnitDao;
-
-    @BusinessLog(name = "HousePropertyBuilding", value = "create HousePropertyBuilding")
-    @Permission(HousePropertyBuildingPermission.HOUSEPROPERTYBUILDING_NEW)
-    @PostMapping
-    @ApiOperation(value = "新建 HousePropertyBuilding", response = HousePropertyBuildingModel.class)
-    public Tip createHousePropertyBuilding(@RequestBody HousePropertyBuildingModel entity) {
-        Integer affected = 0;
-        try {
-            DefaultFilterResult filterResult = new DefaultFilterResult();
-            affected = housePropertyBuildingOverModelService.createMaster(entity, filterResult, null, null);
-            if (affected > 0) {
-                return SuccessTip.create(filterResult.result());
-            }
-        } catch (DuplicateKeyException e) {
-            throw new BusinessException(BusinessCode.DuplicateKey);
-        }
-
-        return SuccessTip.create(affected);
-    }
+    @Resource
+    HousePropertyBuildingOverModelService housePropertyBuildingOverModelService;
 
     @BusinessLog(name = "HousePropertyBuilding", value = "查看 HousePropertyBuildingModel")
     @Permission(HousePropertyBuildingPermission.HOUSEPROPERTYBUILDING_VIEW)
@@ -88,46 +47,12 @@ public class HousePropertyBuildingOverModelEndpoint {
     public Tip getHousePropertyBuilding(@PathVariable Long id) {
         CRUDObject<HousePropertyBuildingModel> entity = housePropertyBuildingOverModelService
                 .registerQueryMasterDao(queryHousePropertyBuildingDao)
-                // 要查询[从表]关联数据，取消下行注释
-                //.registerQuerySlaveModelListDao(HousePropertyUnit.class, queryHousePropertyUnitDao)
                 .retrieveMaster(id, null, null, null);
-
-        // sample query for registerQueryMasterDao
-        // e.g. <select id="queryMasterModel" resultType="PlanModel">
-        //       SELECT t_plan_model.*, t_org.name as orgName
-        //       FROM t_plan_model
-        //       LEFT JOIN t_org ON t_org.id==t_plan_model.org_id
-        //       WHERE t_plan_model.id=#{id}
-        //       GROUP BY t_plan_model.id
-        //    </select>
-
         if (entity != null) {
             return SuccessTip.create(entity.toJSONObject());
         } else {
             return SuccessTip.create();
         }
-
-    }
-
-    @BusinessLog(name = "HousePropertyBuilding", value = "update HousePropertyBuilding")
-    @Permission(HousePropertyBuildingPermission.HOUSEPROPERTYBUILDING_EDIT)
-    @PutMapping("/{id}")
-    @ApiOperation(value = "修改 HousePropertyBuilding", response = HousePropertyBuildingModel.class)
-    public Tip updateHousePropertyBuilding(@PathVariable Long id, @RequestBody HousePropertyBuildingModel entity) {
-        entity.setId(id);
-        // use update flags
-        int newOptions = META.UPDATE_CASCADING_DELETION_FLAG;  //default to delete not exist items
-        // newOptions = FlagUtil.setFlag(newOptions, META.UPDATE_ALL_COLUMNS_FLAG);
-
-        return SuccessTip.create(housePropertyBuildingOverModelService.updateMaster(entity, null, null, null, newOptions));
-    }
-
-    @BusinessLog(name = "HousePropertyBuilding", value = "delete HousePropertyBuilding")
-    @Permission(HousePropertyBuildingPermission.HOUSEPROPERTYBUILDING_DELETE)
-    @DeleteMapping("/{id}")
-    @ApiOperation("删除 HousePropertyBuilding")
-    public Tip deleteHousePropertyBuilding(@PathVariable Long id) {
-        return SuccessTip.create(housePropertyBuildingOverModelService.deleteMaster(id));
     }
 
     @Permission(HousePropertyBuildingPermission.HOUSEPROPERTYBUILDING_VIEW)
@@ -196,13 +121,9 @@ public class HousePropertyBuildingOverModelEndpoint {
         record.setCode(code);
         record.setFloors(floors);
         record.setUnits(units);
-
         List<HousePropertyBuildingRecord> housePropertyBuildingPage = queryHousePropertyBuildingDao.findHousePropertyBuildingPage(page, record, tag, search, orderBy, null, null);
-
-
         page.setRecords(housePropertyBuildingPage);
-
         return SuccessTip.create(page);
     }
-}
 
+}

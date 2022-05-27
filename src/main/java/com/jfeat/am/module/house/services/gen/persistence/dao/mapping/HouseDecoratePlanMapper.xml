@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.gen.persistence.dao.HouseDecoratePlanMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jfeat.am.module.house.services.gen.persistence.model.HouseDecoratePlan">
+        <id column="id" property="id" />
+        <result column="decorate_style_name" property="decorateStyleName" />
+        <result column="allow_changed" property="allowChanged" />
+        <result column="color_style" property="colorStyle" />
+        <result column="total_budget" property="totalBudget" />
+        <result column="star" property="star" />
+        <result column="cover" property="cover"/>
+        <result column="merchant" property="merchant"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, decorate_style_name, allow_changed, color_style, total_budget, star,cover,merchant
+    </sql>
+
+</mapper>

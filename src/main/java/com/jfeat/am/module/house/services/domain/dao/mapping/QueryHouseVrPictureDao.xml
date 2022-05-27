@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseVrPictureDao">
+                                                                                                                                                            <sql id="Base_Column_List">
+                                                                                                                                                                                                                                                                                                                                                                                                                        t_house_vr_picture.id, t_house_vr_picture.decorate_plan_id AS decoratePlanId, t_house_vr_picture.name, t_house_vr_picture.vr_address AS vrAddress
+    </sql>
+
+    
+    
+    <select id="queryMasterModel" resultType="HouseVrPictureModel">
+       SELECT t_house_vr_picture.*
+       FROM t_house_vr_picture
+       WHERE t_house_vr_picture.id=#{id}
+       GROUP BY t_house_vr_picture.id
+    </select>
+
+
+
+                
+    <select id="findHouseVrPicturePage" resultType="HouseVrPictureRecord" parameterType="HouseVrPictureRecord">
+            SELECT <include refid="Base_Column_List"/>
+
+        
+
+        FROM t_house_vr_picture
+
+        
+        
+        WHERE 1=1
+        
+
+        
+                                                                            <if test="record.id != null and record.id>0 ">
+                                    AND t_house_vr_picture.id LIKE CONCAT('%',#{record.id},'%')
+                            </if>
+                                                                    
+
+                                                                                                        <if test="record.decoratePlanId != null and record.decoratePlanId>0 ">
+                                    AND t_house_vr_picture.decorate_plan_id LIKE CONCAT('%',#{record.decoratePlanId},'%')
+                            </if>
+                                                                    <if test="record.name != null and record.name!= ''">
+                                    AND t_house_vr_picture.name LIKE CONCAT('%',#{record.name},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.vrAddress != null and record.vrAddress!= ''">
+                                    AND t_house_vr_picture.vr_address LIKE CONCAT('%',#{record.vrAddress},'%')
+                            </if>
+        
+        <if test="startTime != null">
+            <![CDATA[AND t_house_vr_picture.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_vr_picture.end_time <= DATE(#{endTime}]]>
+        </if>
+            <!--
+        <if test="search != null and search != ''">
+            OR t_house_vr_picture.name LIKE CONCAT('%',#{search},'%')
+        </if>
+        -->
+                                    </select>
+</mapper>

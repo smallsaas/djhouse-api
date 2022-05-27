@@ -1,5 +1,14 @@
 @endpoint=http://localhost:8080
 
+@adminToken =Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjUzMzc5NjY3LCJqdGkiOiIxIiwic3ViIjoiYWRtaW4iLCJleHAiOjE2NTM2Mzg4Njd9.3Wm7Rokrf3ZEVTqWLrYK8V8M5E8zkJRG2YLcEhsJwP68eObzjcJhXaPz2pN_TMS6NQIEdgBFzi7wqfzpxTzYRw
+
+@A_1token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjE4IiwidXNlcklkIjoiNiIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0xIiwidXNlclR5cGUiOjAsImRldlVzZXJUeXBlIjowLCJiVXNlclR5cGUiOiJTWVNURU0iLCJiVXNlcklkIjowLCJpYXQiOjE2NTMzNzI2NzksImp0aSI6IjYiLCJzdWIiOiJBLTEiLCJleHAiOjE2NTM2MzE4Nzl9.blwmLJjVHlEmufX5M7D3K3fHRAEugJfhkJ11EM_OVhIX68rLX2zIEmR8Hg31iWfOmgNURPPdc80focieCyX-Dw
+
+@A_2token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjE5IiwidXNlcklkIjoiNyIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0yIiwidXNlclR5cGUiOjAsImRldlVzZXJUeXBlIjowLCJiVXNlclR5cGUiOiJTWVNURU0iLCJiVXNlcklkIjowLCJpYXQiOjE2NTMzNzQxNDUsImp0aSI6IjciLCJzdWIiOiJBLTIiLCJleHAiOjE2NTM2MzMzNDV9.Evz6efj-F82LBnRAmGLBUtbvBfTodBiVTE8zDhJv5vs0HrqSPQQtN6CJfoEM7zpRF0Ip-Mc6tkz1zXb37Zs5jg
+
+@A_1_1token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjIyIiwidXNlcklkIjoiOCIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0xLTEiLCJ1c2VyVHlwZSI6MCwiZGV2VXNlclR5cGUiOjAsImJVc2VyVHlwZSI6IlNZU1RFTSIsImJVc2VySWQiOjAsImlhdCI6MTY1MzM3MjcyOSwianRpIjoiOCIsInN1YiI6IkEtMS0xIiwiZXhwIjoxNjUzNjMxOTI5fQ.fk1WxkH7cs19ne8UusZa1QY8T73xASXWTlC84ktbAQ8nQmK_VYnXUO6Y5DAfZF-wiQgB3jWoNjPWx878nivfxQ
+
+
 ### 主表t_house_property_building测试用例
 
 
@@ -19,14 +28,17 @@ Content-Type: application/json
     "units":4,
 }
 
+### 楼栋列表
+GET {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings
+Authorization: {{adminToken}}
 
 ### 查询楼栋详情
 GET {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/1
-
+Authorization: {{adminToken}}
 
 ###分页查询楼栋信息
 GET {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings?pageNum=1&pageSize=10
-
+Authorization: {{adminToken}}
 
 ### 更新楼栋信息
 PUT {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/2
@@ -92,11 +104,11 @@ Content-Type: application/json
 
 ### 查询用户房产详情
 GET {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits/1
-
+Authorization: {{adminToken}}
 
 ###分页查询用户房产详情
-GET {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits?pageNum=1&pageSize=10
-
+GET {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits?pageNum=1&pageSize=10&userId=6&building=1
+Authorization: {{adminToken}}
 
 ### 更新用户房产信息
 PUT {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits/2
@@ -112,6 +124,18 @@ Content-Type: application/json
 
 ### 删除用户房产信息
 DELETE {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits/19
+
+
+
+###获取building
+GET {{endpoint}}/api/u/house/house/housePropertyUnit
+
+
+###获取building
+GET {{endpoint}}/api/u/house/house/housePropertyUnit
+
+### 查询楼栋详情
+GET {{endpoint}}/api/u/house/house/housePropertyUnit/1
 
 
 
