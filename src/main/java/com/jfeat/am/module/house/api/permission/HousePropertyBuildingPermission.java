@@ -1,6 +1,6 @@
 package com.jfeat.am.module.house.api.permission;
 /**
- * Created by Code generator on 2022-05-23
+ * Created by Code generator on 2022-05-27
  */
 public class HousePropertyBuildingPermission {
     public static final String HOUSEPROPERTYBUILDING_VIEW = "housepropertybuilding.view";

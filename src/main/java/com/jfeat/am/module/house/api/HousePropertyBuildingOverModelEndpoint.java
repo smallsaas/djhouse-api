@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.dao.DuplicateKeyException;
 import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingDao;
 import com.jfeat.crud.base.tips.SuccessTip;
+import com.jfeat.crud.base.request.Ids;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
@@ -29,14 +31,20 @@ import com.jfeat.crud.plus.DefaultFilterResult;
 import com.jfeat.am.module.house.api.permission.*;
 import com.jfeat.am.common.annotation.Permission;
 
+import java.math.BigDecimal;
+
 import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.domain.model.HousePropertyBuildingRecord;
 import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingModel;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
 
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
+
+import com.alibaba.fastjson.JSONArray;
 
 /**
  * <p>
@@ -44,7 +52,7 @@ import java.util.List;
  * </p>
  *
  * @author Code generator
- * @since 2022-05-23
+ * @since 2022-05-27
  */
 @RestController
 @Api("HousePropertyBuilding")
@@ -60,7 +68,7 @@ public class HousePropertyBuildingOverModelEndpoint {
 
     // 要查询[从表]关联数据，取消下行注释
     // @Resource
-    // QueryHousePropertyUnitDao queryHousePropertyUnitDao;
+    // QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
 
     @BusinessLog(name = "HousePropertyBuilding", value = "create HousePropertyBuilding")
     @Permission(HousePropertyBuildingPermission.HOUSEPROPERTYBUILDING_NEW)
@@ -89,7 +97,7 @@ public class HousePropertyBuildingOverModelEndpoint {
         CRUDObject<HousePropertyBuildingModel> entity = housePropertyBuildingOverModelService
                 .registerQueryMasterDao(queryHousePropertyBuildingDao)
                 // 要查询[从表]关联数据，取消下行注释
-                //.registerQuerySlaveModelListDao(HousePropertyUnit.class, queryHousePropertyUnitDao)
+                //.registerQuerySlaveModelListDao(HousePropertyBuildingUnit.class, queryHousePropertyBuildingUnitDao)
                 .retrieveMaster(id, null, null, null);
 
         // sample query for registerQueryMasterDao
@@ -196,6 +204,7 @@ public class HousePropertyBuildingOverModelEndpoint {
         record.setCode(code);
         record.setFloors(floors);
         record.setUnits(units);
+
 
         List<HousePropertyBuildingRecord> housePropertyBuildingPage = queryHousePropertyBuildingDao.findHousePropertyBuildingPage(page, record, tag, search, orderBy, null, null);
 

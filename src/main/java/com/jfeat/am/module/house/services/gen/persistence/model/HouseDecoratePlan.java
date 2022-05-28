@@ -49,6 +49,18 @@ public class HouseDecoratePlan extends Model<HouseDecoratePlan> {
       @ApiModelProperty(value = "商家")
       private String merchant;
 
+    @ApiModelProperty(value = "装修地址")
+    @TableField(exist = false)
+    private String decorateAddress;
+
+    public String getDecorateAddress() {
+        return decorateAddress;
+    }
+
+    public HouseDecoratePlan setDecorateAddress(String decorateAddress) {
+        this.decorateAddress = decorateAddress;
+        return this;
+    }
 
 
     public String getCover() {

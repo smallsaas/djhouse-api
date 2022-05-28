@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jfeat.crud.plus.FIELD;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingMapper;
-import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyUnitMapper;
-import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyUnit;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingUnitMapper;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
     
     import com.jfeat.am.module.house.services.gen.crud.service.CRUDHousePropertyBuildingOverModelService;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingMo
  * </p>
  *CRUDHousePropertyBuildingOverModelService
  * @author Code generator
- * @since 2022-05-23
+ * @since 2022-05-27
  */
 
 @Service
@@ -60,11 +60,11 @@ public class CRUDHousePropertyBuildingOverModelServiceImpl  extends CRUDServiceO
 
     
     @Resource
-    private HousePropertyUnitMapper housePropertyUnitMapper;
+    private HousePropertyBuildingUnitMapper housePropertyBuildingUnitMapper;
 
-                        private final static String housePropertyUnitFieldName = "building_id";
+                        private final static String housePropertyBuildingUnitFieldName = "building_id";
     
-        private final static String housePropertyUnitKeyName = "items";
+        private final static String housePropertyBuildingUnitKeyName = "items";
     
                         
     
@@ -73,7 +73,7 @@ public class CRUDHousePropertyBuildingOverModelServiceImpl  extends CRUDServiceO
     @Override
     protected String[] slaveFieldNames() {
         return new String[]{
-                                             housePropertyUnitKeyName
+                                             housePropertyBuildingUnitKeyName
                                              };
     }
 
@@ -82,12 +82,12 @@ public class CRUDHousePropertyBuildingOverModelServiceImpl  extends CRUDServiceO
 
         
                                                 
-            if (field.compareTo(housePropertyUnitKeyName) == 0) {
+            if (field.compareTo(housePropertyBuildingUnitKeyName) == 0) {
                 FIELD _field = new FIELD();
             _field.setItemKeyName(field);
-            _field.setItemFieldName(housePropertyUnitFieldName);
-            _field.setItemClassName(HousePropertyUnit.class);
-            _field.setItemMapper(housePropertyUnitMapper);
+            _field.setItemFieldName(housePropertyBuildingUnitFieldName);
+            _field.setItemClassName(HousePropertyBuildingUnit.class);
+            _field.setItemMapper(housePropertyBuildingUnitMapper);
             
             return _field;
         }

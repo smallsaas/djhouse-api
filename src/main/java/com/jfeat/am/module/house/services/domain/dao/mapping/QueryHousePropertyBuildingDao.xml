@@ -1,90 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingDao">
-    <sql id="Base_Column_List">
-        t_house_property_building
-        .
-        id
-        , t_house_property_building.org_id AS orgId, t_house_property_building.community, t_house_property_building.community_code AS communityCode, t_house_property_building.area, t_house_property_building.code, t_house_property_building.floors, t_house_property_building.units
+                                                                                                                                                                                                                                                                                                                    <sql id="Base_Column_List">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        t_house_property_building.id, t_house_property_building.org_id AS orgId, t_house_property_building.community, t_house_property_building.community_code AS communityCode, t_house_property_building.area, t_house_property_building.code, t_house_property_building.floors, t_house_property_building.units
     </sql>
 
-    <sql id="QueryOwnedOrgIds">
-        SELECT children.id
-        FROM t_sys_org,
-             t_sys_org as children
-        WHERE t_sys_org.left_num &lt;= children.left_num
-          AND t_sys_org.right_num >= children.left_num
-          and t_sys_org.id = #{record.orgId}
-        order by t_sys_org.node_level ASC
+        <sql id="QueryOwnedOrgIds">
+         SELECT children.id FROM t_sys_org, t_sys_org as children WHERE t_sys_org.left_num &lt;= children.left_num AND
+         t_sys_org.right_num >= children.left_num and t_sys_org.id=#{record.orgId} order by t_sys_org.node_level ASC
     </sql>
-
-
+    
+    
     <select id="queryMasterModel" resultType="HousePropertyBuildingModel">
-        SELECT t_house_property_building.*
-        FROM t_house_property_building
-        WHERE t_house_property_building.id = #{id}
-        GROUP BY t_house_property_building.id
+       SELECT t_house_property_building.*
+       FROM t_house_property_building
+       WHERE t_house_property_building.id=#{id}
+       GROUP BY t_house_property_building.id
     </select>
 
 
-    <select id="findHousePropertyBuildingPage" resultType="HousePropertyBuildingRecord"
-            parameterType="HousePropertyBuildingRecord">
-        SELECT
-        <include refid="Base_Column_List"/>
 
+                                    
+    <select id="findHousePropertyBuildingPage" resultType="HousePropertyBuildingRecord" parameterType="HousePropertyBuildingRecord">
+            SELECT <include refid="Base_Column_List"/>
+
+        
 
         FROM t_house_property_building
 
-
-        <if test="record.orgId > 0">
-            ,(<include refid="QueryOwnedOrgIds"></include>) AS ownedOrgIds
-        </if>
-
+        
+                    <if test="record.orgId > 0">
+                ,(<include refid="QueryOwnedOrgIds"></include>) AS ownedOrgIds
+            </if>
+        
         WHERE 1=1
-        <if test="record.orgId > 0">
+                <if test="record.orgId > 0">
             AND t_house_property_building.org_id = ownedOrgIds.id
         </if>
+        
 
+        
+                                                                            <if test="record.id != null and record.id>0 ">
+                                    AND t_house_property_building.id LIKE CONCAT('%',#{record.id},'%')
+                            </if>
+                                                                    
 
-        <if test="record.id != null and record.id>0 ">
-            AND t_house_property_building.id LIKE CONCAT('%',#{record.id},'%')
-        </if>
+                                                                                        <if test="record.orgId != null and record.orgId>0 ">
+                                    AND t_house_property_building.org_id IN (<include refid="QueryOwnedOrgIds"/>)
+                            </if>
+                                                                    <if test="record.community != null and record.community!= ''">
+                                    AND t_house_property_building.community LIKE CONCAT('%',#{record.community},'%')
+                            </if>
+                                                                    
 
-
-        <if test="record.orgId != null and record.orgId>0 ">
-            AND t_house_property_building.org_id IN (<include refid="QueryOwnedOrgIds"/>)
-        </if>
-        <if test="record.community != null and record.community!= ''">
-            AND t_house_property_building.community LIKE CONCAT('%',#{record.community},'%')
-        </if>
-
-
-        <if test="record.communityCode != null and record.communityCode!= ''">
-            AND t_house_property_building.community_code LIKE CONCAT('%',#{record.communityCode},'%')
-        </if>
-        <if test="record.area != null and record.area!= ''">
-            AND t_house_property_building.area LIKE CONCAT('%',#{record.area},'%')
-        </if>
-        <if test="record.code != null and record.code!= ''">
-            AND t_house_property_building.code LIKE CONCAT('%',#{record.code},'%')
-        </if>
-        <if test="record.floors != null and record.floors>0 ">
-            AND t_house_property_building.floors LIKE CONCAT('%',#{record.floors},'%')
-        </if>
-        <if test="record.units != null and record.units>0 ">
-            AND t_house_property_building.units LIKE CONCAT('%',#{record.units},'%')
-        </if>
-
+                                                                                        <if test="record.communityCode != null and record.communityCode!= ''">
+                                    AND t_house_property_building.community_code LIKE CONCAT('%',#{record.communityCode},'%')
+                            </if>
+                                                                    <if test="record.area != null and record.area!= ''">
+                                    AND t_house_property_building.area LIKE CONCAT('%',#{record.area},'%')
+                            </if>
+                                                                    <if test="record.code != null and record.code!= ''">
+                                    AND t_house_property_building.code LIKE CONCAT('%',#{record.code},'%')
+                            </if>
+                                                                    <if test="record.floors != null and record.floors>0 ">
+                                    AND t_house_property_building.floors LIKE CONCAT('%',#{record.floors},'%')
+                            </if>
+                                                                    <if test="record.units != null and record.units>0 ">
+                                    AND t_house_property_building.units LIKE CONCAT('%',#{record.units},'%')
+                            </if>
+        
         <if test="startTime != null">
             <![CDATA[AND t_house_property_building.start_time >= DATE(#{startTime})]]>
         </if>
         <if test="endTime != null">
             <![CDATA[AND t_house_property_building.end_time <= DATE(#{endTime}]]>
         </if>
-        <!--
-    <if test="search != null and search != ''">
-        OR t_house_property_building.name LIKE CONCAT('%',#{search},'%')
-    </if>
-    -->
-    </select>
+            <!--
+        <if test="search != null and search != ''">
+            OR t_house_property_building.name LIKE CONCAT('%',#{search},'%')
+        </if>
+        -->
+                                    </select>
 </mapper>

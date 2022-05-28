@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/u//house/houseUserDecoratePlan/houseUserDecoratePlans")
+@RequestMapping("/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans")
 public class UserHouseDecoratePlanEndpoint {
 
     @Resource
@@ -52,7 +52,14 @@ public class UserHouseDecoratePlanEndpoint {
 //            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
 //        }
 //        userId = JWTKit.getUserId();
-        return SuccessTip.create(queryHouseUserDecoratePlanDao.queryHouseUserDecoratePlanByUserId(userId));
+        List<HouseUserDecoratePlanModel> houseUserDecoratePlan =  queryHouseUserDecoratePlanDao.queryHouseUserDecoratePlanByUserId(userId);
+        JSONArray json= (JSONArray) JSONArray.toJSON(houseUserDecoratePlan);
+        String items = JSONArray.toJSONString(json);
+        List<HouseDecoratePlan> houseDecoratePlanList= JSON.parseArray(items, HouseDecoratePlan.class);
+        for (HouseDecoratePlan houseDecoratePlan:houseDecoratePlanList){
+            houseDecoratePlan.setDecorateAddress(queryHouseUserDecoratePlanDao.queryHouseUserDecoratePlanAddress(userId,houseDecoratePlan.getId()));
+        }
+        return SuccessTip.create(houseDecoratePlanList);
     }
 
     @BusinessLog(name = "HouseDecoratePlan", value = "查看 HouseDecoratePlanModel")
@@ -98,11 +105,13 @@ public class UserHouseDecoratePlanEndpoint {
         }
         System.out.println(products);
         jsonObject.put("items",products);
+        jsonObject.put("decorateAddress",queryHouseUserDecoratePlanDao.queryHouseUserDecoratePlanAddress(userId,decoratePlanId));
         if (entity != null) {
             return SuccessTip.create(jsonObject);
         } else {
             return SuccessTip.create();
         }
     }
+
 
 }

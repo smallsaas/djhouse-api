@@ -1,13 +1,12 @@
 @endpoint=http://localhost:8080
 
-@adminToken =Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjUzMzc5NjY3LCJqdGkiOiIxIiwic3ViIjoiYWRtaW4iLCJleHAiOjE2NTM2Mzg4Njd9.3Wm7Rokrf3ZEVTqWLrYK8V8M5E8zkJRG2YLcEhsJwP68eObzjcJhXaPz2pN_TMS6NQIEdgBFzi7wqfzpxTzYRw
+@adminToken =Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjUzNzA2MDA1LCJqdGkiOiIxIiwic3ViIjoiYWRtaW4iLCJleHAiOjE2NTYyOTgwMDV9.nH3W8nkLMzrBp_VybRJ-ZnNjCG96RqD5a6-HikifXV9hQ618btKd8MGxoPf2XIroEzDc4Gj4JoVKk7dSBoB0zA
 
-@A_1token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjE4IiwidXNlcklkIjoiNiIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0xIiwidXNlclR5cGUiOjAsImRldlVzZXJUeXBlIjowLCJiVXNlclR5cGUiOiJTWVNURU0iLCJiVXNlcklkIjowLCJpYXQiOjE2NTMzNzI2NzksImp0aSI6IjYiLCJzdWIiOiJBLTEiLCJleHAiOjE2NTM2MzE4Nzl9.blwmLJjVHlEmufX5M7D3K3fHRAEugJfhkJ11EM_OVhIX68rLX2zIEmR8Hg31iWfOmgNURPPdc80focieCyX-Dw
+@A_1token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjE4IiwidXNlcklkIjoiNiIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0xIiwidXNlclR5cGUiOjAsImRldlVzZXJUeXBlIjowLCJiVXNlclR5cGUiOiJTWVNURU0iLCJiVXNlcklkIjowLCJpYXQiOjE2NTM3MDYxMTAsImp0aSI6IjYiLCJzdWIiOiJBLTEiLCJleHAiOjE2NTYyOTgxMTB9.YN-_CKUKkWeLVnqNgfA3QHbKlI6kfr0-SK17X7akfhx25QMx-auwO8BnIDrFIqvAkOD3rZ251nWos3HrudZtow
 
-@A_2token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjE5IiwidXNlcklkIjoiNyIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0yIiwidXNlclR5cGUiOjAsImRldlVzZXJUeXBlIjowLCJiVXNlclR5cGUiOiJTWVNURU0iLCJiVXNlcklkIjowLCJpYXQiOjE2NTMzNzQxNDUsImp0aSI6IjciLCJzdWIiOiJBLTIiLCJleHAiOjE2NTM2MzMzNDV9.Evz6efj-F82LBnRAmGLBUtbvBfTodBiVTE8zDhJv5vs0HrqSPQQtN6CJfoEM7zpRF0Ip-Mc6tkz1zXb37Zs5jg
+@A_2token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjE5IiwidXNlcklkIjoiNyIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0yIiwidXNlclR5cGUiOjAsImRldlVzZXJUeXBlIjowLCJiVXNlclR5cGUiOiJTWVNURU0iLCJiVXNlcklkIjowLCJpYXQiOjE2NTM3MDYxNTEsImp0aSI6IjciLCJzdWIiOiJBLTIiLCJleHAiOjE2NTYyOTgxNTF9.N_yWlEwVcqkdC6HRPskPrBYiiSW8TyL9a3uyWECmDUTVZxkUYcIXxuMUQwwgdjSdWUiIEd_Hj1Eup7LfjWs8yg
 
-@A_1_1token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjIyIiwidXNlcklkIjoiOCIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0xLTEiLCJ1c2VyVHlwZSI6MCwiZGV2VXNlclR5cGUiOjAsImJVc2VyVHlwZSI6IlNZU1RFTSIsImJVc2VySWQiOjAsImlhdCI6MTY1MzM3MjcyOSwianRpIjoiOCIsInN1YiI6IkEtMS0xIiwiZXhwIjoxNjUzNjMxOTI5fQ.fk1WxkH7cs19ne8UusZa1QY8T73xASXWTlC84ktbAQ8nQmK_VYnXUO6Y5DAfZF-wiQgB3jWoNjPWx878nivfxQ
-
+@A_1_1token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjIyIiwidXNlcklkIjoiOCIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0xLTEiLCJ1c2VyVHlwZSI6MCwiZGV2VXNlclR5cGUiOjAsImJVc2VyVHlwZSI6IlNZU1RFTSIsImJVc2VySWQiOjAsImlhdCI6MTY1MzcwNjE3MywianRpIjoiOCIsInN1YiI6IkEtMS0xIiwiZXhwIjoxNjU2Mjk4MTczfQ.jQo-SxSEimkRJ2YqSIhsHaX7w8NQZ46J5ub8P6mYcQOFm3loYqi-dxxhtbO_-irHHvuc9sd2Zn9CrlnzXOJvmw
 
 ### 主表t_house_property_building测试用例
 
@@ -17,7 +16,7 @@
 
 POST {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings
 Content-Type: application/json
-
+Authorization: {{adminToken}}
 {
    "org_id":2,
     "community":"测试3社区",
@@ -43,7 +42,7 @@ Authorization: {{adminToken}}
 ### 更新楼栋信息
 PUT {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/2
 Content-Type: application/json
-
+Authorization:{{adminToken}}
 {
     "org_id":2,
     "community":"测试4社区",
@@ -58,7 +57,7 @@ Content-Type: application/json
 ### 增加用户房产编号,同时更新楼栋信息
 PUT {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/5
 Content-Type: application/json
-
+Authorization:{{adminToken}}
 {
     "org_id":2,
     "community":"测试6社区",
@@ -82,7 +81,7 @@ Content-Type: application/json
 
 ### 删除楼栋信息
 DELETE {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/3
-
+Authorization:{{adminToken}}
 
 
 
@@ -94,7 +93,7 @@ DELETE {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/
 ### 增加用户房产信息
 POST {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits
 Content-Type: application/json
-
+Authorization:{{adminToken}}
 {
     "user_id":11,
     "building_id":5,
@@ -107,13 +106,14 @@ GET {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits/1
 Authorization: {{adminToken}}
 
 ###分页查询用户房产详情
-GET {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits?pageNum=1&pageSize=10&userId=6&building=1
-Authorization: {{adminToken}}
+GET {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits?pageNum=1&pageSize=10
+Authorization:{{adminToken}}
+
 
 ### 更新用户房产信息
 PUT {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits/2
 Content-Type: application/json
-
+Authorization:{{adminToken}}
 {
     "user_id":20,
     "building_id":5,
@@ -127,9 +127,6 @@ DELETE {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits/19
 
 
 
-###获取building
-GET {{endpoint}}/api/u/house/house/housePropertyUnit
-
 
 ###获取building
 GET {{endpoint}}/api/u/house/house/housePropertyUnit
@@ -139,3 +136,8 @@ GET {{endpoint}}/api/u/house/house/housePropertyUnit/1
 
 
 
+###获得用户的装修方案
+GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/2
+
+### 获得用户某一装修方案的家居
+GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?decoratePlanId=1&userId=1
