@@ -33,9 +33,9 @@
     <select id="findSupplierPage" resultType="SupplierRecord" parameterType="SupplierRecord">
         SELECT
         <include refid="Base_Column_List"/>
+        ,t_sys_user.account as 'account'
 
-
-        FROM t_supplier
+        FROM t_supplier left join t_sys_user on t_sys_user.id = t_supplier.user_id
 
 
         <if test="record.orgId > 0">

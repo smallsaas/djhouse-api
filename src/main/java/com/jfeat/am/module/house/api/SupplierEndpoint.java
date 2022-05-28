@@ -85,7 +85,7 @@ public class SupplierEndpoint {
     @GetMapping("/{id}")
     @ApiOperation(value = "查看 Supplier", response = Supplier.class)
     public Tip getSupplier(@PathVariable Long id) {
-        return SuccessTip.create(supplierService.queryMasterModel(querySupplierDao, id));
+        return SuccessTip.create(supplierService.getOne(id));
     }
 
 

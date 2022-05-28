@@ -1,5 +1,7 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
 
+import cn.hutool.core.lang.UUID;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.core.model.UserType;
@@ -58,18 +60,18 @@ public class SupplierServiceImpl extends CRUDSupplierServiceImpl implements Supp
 
     @Override
     @Transactional
-    public Supplier createOne(SupplierModel entity){
+    public Supplier createOne(SupplierModel entity) {
         Long tenantId = sysUserService.getOrgIdByDomain();
         String domain = sysUserService.getDomain();
         String account = entity.getAccount();
         //如果有输入账号
-        if(account!=null && !account.equals("")){
+        if (account != null && !account.equals("")) {
             SysUser sysUser = sysUserService.checkUserExist(entity.getAccount(), tenantId);
-            if(sysUser!=null){
-                throw new BusinessException(BusinessCode.BadRequest,"用户账号已存在："+entity.getAccount());
+            if (sysUser != null) {
+                throw new BusinessException(BusinessCode.BadRequest, "用户账号已存在：" + entity.getAccount());
             }
 
-        }else{
+        } else {
             account = genAccountName(entity.getName());
         }
 
@@ -78,7 +80,7 @@ public class SupplierServiceImpl extends CRUDSupplierServiceImpl implements Supp
         SysOrg sysOrg = new SysOrg();
         sysOrg.setName(entity.getName());
         sysOrg.setPid(tenantId);
-        sysOrgService.createNewNode(tenantId,sysOrg,false);
+        sysOrgService.createNewNode(tenantId, sysOrg, false);
         //维护租户id字段
         sysOrg.setTenantId(tenantId);
         sysOrgMapper.updateById(sysOrg);
@@ -88,8 +90,8 @@ public class SupplierServiceImpl extends CRUDSupplierServiceImpl implements Supp
         //初始化使用的角色id
         //查询一个管理员角色赋予给新建的用户
         QueryWrapper<SysRole> roleQueryWrapper = new QueryWrapper<>();
-        SysRole sysRole = sysRoleMapper.selectOne(roleQueryWrapper.like("name","供应商").last(" limit 1 "));
-        List<Long> ids=new ArrayList<>();
+        SysRole sysRole = sysRoleMapper.selectOne(roleQueryWrapper.like("name", "供应商").last(" limit 1 "));
+        List<Long> ids = new ArrayList<>();
         ids.add(sysRole.getId());
         //为租户 生成admin名字的用户
         SysUser register = new SysUser();
@@ -110,13 +112,29 @@ public class SupplierServiceImpl extends CRUDSupplierServiceImpl implements Supp
     }
 
     @Override
+    public SupplierModel getOne(Long id) {
+        Supplier supplier = supplierMapper.selectById(id);
+        SupplierModel supplierModel = JSON.parseObject(JSON.toJSONString(supplier), SupplierModel.class);
+
+        if (supplier.getUserId() != null) {
+            SysUser user = sysUserService.getById(supplier.getUserId());
+            if (user != null) {
+                supplierModel.setAccount(user.getAccount());
+            }
+        }
+
+
+        return supplierModel;
+    }
+
+    @Override
     @Transactional
-    public Integer deleteOne(Long id){
+    public Integer deleteOne(Long id) {
         Supplier supplier = supplierMapper.selectById(id);
         //删除用户
         boolean b = sysUserService.deleteUser(supplier.getUserId());
-        if(!b){
-            throw new BusinessException(BusinessCode.BadRequest,"用户删除失败");
+        if (!b) {
+            throw new BusinessException(BusinessCode.BadRequest, "用户删除失败");
         }
         //删除组织
         sysOrgService.deleteNode(JWTKit.getOrgId(), supplier.getOrgId());
@@ -128,16 +146,15 @@ public class SupplierServiceImpl extends CRUDSupplierServiceImpl implements Supp
 
 
     @Override
-    public String genAccountName(String name){
+    public String genAccountName(String name) {
         name = cleanString(name);
         String pinYinHeadChar = getPinYinHeadChar(name);
         return pinYinHeadChar;
     }
 
 
-
-    public String cleanString(String str){
-        String regEx="[\n`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*()——+|{}_——\\-【】‘；：”“’。， 、？-]";
+    public String cleanString(String str) {
+        String regEx = "[\n`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*()——+|{}_——\\-【】‘；：”“’。， 、？-]";
         //可以在中括号内加上任何想要替换的字符，实际上是一个正则表达式
         String replaceTo = "";//这里是将特殊字符换为replaceTo字符串," "代表直接去掉
         Pattern p = Pattern.compile(regEx);
@@ -149,6 +166,7 @@ public class SupplierServiceImpl extends CRUDSupplierServiceImpl implements Supp
 
     /**
      * 得到中文首字母（中国 -> ZG）
+     *
      * @param str 需要转化的中文字符串
      * @return 大写首字母缩写的字符串
      */
