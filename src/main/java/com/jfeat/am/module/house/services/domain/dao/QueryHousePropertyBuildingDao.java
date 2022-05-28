@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.services.domain.dao;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.jfeat.am.module.house.services.domain.model.HousePropertyBuildingRecord;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -33,4 +34,6 @@ public interface QueryHousePropertyBuildingDao extends QueryMasterDao<HousePrope
      * Query entity model list for slave items
      */
     List<HousePropertyBuildingModel> queryMasterModelList(@Param("masterId") Object masterId);
+
+    List<HousePropertyBuildingModel> queryAllHousePropertyBuilding();
 }

@@ -1,6 +1,6 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
 
-import cn.hutool.core.lang.UUID;
+//import cn.hutool.core.lang.UUID;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;

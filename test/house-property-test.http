@@ -90,28 +90,27 @@ Authorization:{{adminToken}}
 
 
 
-### 增加用户房产信息
-POST {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits
+### 增加房产信息
+POST {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits
 Content-Type: application/json
 Authorization:{{adminToken}}
 {
-    "user_id":11,
     "building_id":5,
     "number":"D221"
 }
 
 
 ### 查询用户房产详情
-GET {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits/1
+GET {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits/1
 Authorization: {{adminToken}}
 
-###分页查询用户房产详情
-GET {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits?pageNum=1&pageSize=10
+###分页查询房产详情
+GET {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits/?pageNum=1&pageSize=10
 Authorization:{{adminToken}}
 
 
-### 更新用户房产信息
-PUT {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits/2
+### 更新房产信息
+PUT {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits/2
 Content-Type: application/json
 Authorization:{{adminToken}}
 {
@@ -120,6 +119,9 @@ Authorization:{{adminToken}}
     "number":"D225"
 }
 
+### 初始化房屋unit
+POST {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits/init
+Authorization:{{adminToken}}
 
 
 ### 删除用户房产信息

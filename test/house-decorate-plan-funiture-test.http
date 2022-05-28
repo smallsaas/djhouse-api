@@ -107,26 +107,33 @@ GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/1
 GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?decoratePlanId=1&userId=2
 
 
-GET {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/2
+###获得某一栋的所有unit
+GET {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/1
 Authorization:{{adminToken}}
 
 
 
+# ###用户操作
+
+
+
+# 获得某一栋的所有unit
 GET {{endpoint}}/api/u/house/house/housePropertyUnit/1
 
 
-# 获取用户拥有的unit地址列表
+### 获取用户拥有的unit地址列表
 GET {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit?userId=1
 
 
 
+### 修改用户装修地址
 PUT {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit/1
 Content-Type:application/json
 {
   "userId":1,
   "unitId":3
 }
-
+### 增加用户装修地址
 POST {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit
 Content-Type:application/json
 {
@@ -134,5 +141,7 @@ Content-Type:application/json
   "unitId":1
 }
 
-
+#### 删除用户装修地址位置
 DELETE {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit/3
+
+
