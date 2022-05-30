@@ -139,7 +139,60 @@ GET {{endpoint}}/api/u/house/house/housePropertyUnit/1
 
 
 ###获得用户的装修方案
-GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/2
+GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/1
 
 ### 获得用户某一装修方案的家居
 GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?decoratePlanId=1&userId=1
+
+
+### 创建装修地址
+POST {{endpoint}}/api/crud/house/houseUserDecorateAddress/houseUserDecorateAddresses
+Authorization:{{adminToken}}
+{
+    "unitId": "2",
+    "userId": "1",
+    "decoratePlanId": "2",
+}
+
+
+###查看用户装修地址
+GET {{endpoint}}/api/crud/house/houseUserDecorateAddress/houseUserDecorateAddresses
+Authorization:{{adminToken}}
+
+
+PUT {{endpoint}}/api/crud/house/houseUserDecorateAddress/houseUserDecorateAddresses
+Authorization:{{adminToken}}
+{
+    "userId": "1",
+    "decoratePlanId": "2",
+}
+
+
+#### 修改用户地址
+PUT {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/userDecoratePlanAddress?userId=1&decoratePlanId=2
+{
+    "unitId": "37"
+}
+
+### 增加用户装修计划地址
+POST {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/userDecoratePlanAddress
+{
+    "userId": "1",
+    "decoratePlanId": "2",
+    "unitId": "37"
+}
+
+
+GET {{endpoint}}/api/crud/house/houseUserDecoratePlan/houseUserDecoratePlans
+Authorization:{{adminToken}}
+
+
+PUT {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?userId=1&decoratePlanId=1&funitureId=13
+{
+    "changedFunitureId":18
+}
+
+DELETE {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?userId=1&decoratePlanId=1&funitureId=18
+{
+    
+}

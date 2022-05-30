@@ -33,4 +33,6 @@ public interface QueryHouseDecoratePlanDao extends QueryMasterDao<HouseDecorateP
      * Query entity model list for slave items
      */
     List<HouseDecoratePlanModel> queryMasterModelList(@Param("masterId") Object masterId);
+
+
 }

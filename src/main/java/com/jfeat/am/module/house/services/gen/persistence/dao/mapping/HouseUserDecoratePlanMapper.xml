@@ -11,12 +11,12 @@
         <result column="funiture_id" property="funitureId" />
         <result column="changed_funiture_id" property="changedFunitureId" />
         <result column="note" property="note" />
-        <result column="decorate_address" property="decorateAddress"/>
+        <result column="funiture_number" property="funitureNumber"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, decorate_plan_id, change_option, funiture_id, changed_funiture_id, note,decorate_address
+        id, user_id, decorate_plan_id, change_option, funiture_id, changed_funiture_id, note,funiture_number
     </sql>
 
 </mapper>

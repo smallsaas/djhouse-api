@@ -104,7 +104,7 @@ GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/1
 
 
 ### 获得用户某一装修方案的家居
-GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?decoratePlanId=1&userId=2
+GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?decoratePlanId=1&userId=1
 
 
 ###获得某一栋的所有unit
@@ -127,7 +127,7 @@ GET {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit?userId=1
 
 
 ### 修改用户装修地址
-PUT {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit/1
+PUT {{endpoint}}api/u/house/house/housePropertyUnit/userUnit/1
 Content-Type:application/json
 {
   "userId":1,

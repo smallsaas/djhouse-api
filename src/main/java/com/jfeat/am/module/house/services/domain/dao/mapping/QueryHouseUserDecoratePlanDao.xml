@@ -2,10 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseUserDecoratePlanDao">
     <sql id="Base_Column_List">
-        t_house_user_decorate_plan
-        .
-        id
-        , t_house_user_decorate_plan.user_id AS userId, t_house_user_decorate_plan.decorate_plan_id AS decoratePlanId, t_house_user_decorate_plan.change_option AS changeOption, t_house_user_decorate_plan.funiture_id AS funitureId, t_house_user_decorate_plan.changed_funiture_id AS changedFunitureId, t_house_user_decorate_plan.note
+        t_house_user_decorate_plan.id, t_house_user_decorate_plan.funiture_number AS funitureNumber,t_house_user_decorate_plan.user_id AS userId, t_house_user_decorate_plan.decorate_plan_id AS decoratePlanId, t_house_user_decorate_plan.change_option AS changeOption, t_house_user_decorate_plan.funiture_id AS funitureId, t_house_user_decorate_plan.changed_funiture_id AS changedFunitureId, t_house_user_decorate_plan.note
     </sql>
 
 
@@ -86,12 +83,49 @@
         AND t_house_user_decorate_plan.user_id = #{userId}
     </select>
 
-    <select id="queryHouseUserDecoratePlanAddress" resultType="string">
-        SELECT t_house_user_decorate_plan.decorate_address
+    <update id="updateUserDecoratePlanFuniture">
+        UPDATE t_house_user_decorate_plan
+        <set>
+            <if test="entity.funitureNumber !=null and entity.funitureNumber!=''">
+                funiture_number = #{entity.funitureNumber},
+            </if>
+            <if test="entity.changeOption !=null and entity.changeOption!=''">
+                change_option = #{entity.changeOption},
+            </if>
+            <if test="entity.changedFunitureId !=null and entity.changedFunitureId!=''">
+                changed_funiture_id = #{entity.changedFunitureId},
+            </if>
+            <if test="entity.note !=null and entity.note!=''">
+                note = #{entity.note},
+            </if>
+        </set>
+        where user_id=#{userId} And decorate_plan_id=#{decoratePlanId} AND (funiture_id=#{funitureId} OR changed_funiture_id=#{funitureId})
+
+    </update>
+
+    <update id="removeExistsUserDecoratePlanFuniture">
+        UPDATE t_house_user_decorate_plan
+        <set>
+            <if test="entity.funitureNumber !=null and entity.funitureNumber!=''">
+                funiture_number = #{entity.funitureNumber},
+            </if>
+            <if test="entity.changeOption !=null and entity.changeOption!=''">
+                change_option = #{entity.changeOption},
+            </if>
+            <if test="1==1">
+                changed_funiture_id = null,
+            </if>
+            <if test="entity.note !=null and entity.note!=''">
+                note = #{entity.note},
+            </if>
+        </set>
+        where user_id=#{userId} And decorate_plan_id=#{decoratePlanId} AND (funiture_id=#{funitureId} OR changed_funiture_id=#{funitureId})
+    </update>
+
+    <select id="queryUserDecoratePlanFunitureExists" resultType="HouseUserDecoratePlan">
+        SELECT t_house_user_decorate_plan.*
         FROM t_house_user_decorate_plan
-        WHERE t_house_user_decorate_plan.decorate_plan_id = #{decoratePlanId}
-          AND t_house_user_decorate_plan.user_id = #{userId}
-        GROUP BY t_house_user_decorate_plan.decorate_address
+        where user_id=#{userId} And decorate_plan_id=#{decoratePlanId} AND funiture_id=#{funitureId}
     </select>
 
 </mapper>
