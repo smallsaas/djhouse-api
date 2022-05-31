@@ -1,0 +1,44 @@
+@endpoint=http://localhost:8080
+
+
+
+# 获取用户id为1的装修计划列表
+GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/1?pageNum=1&pageSize=10
+
+
+### 获取用户装修计划里面的id
+GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?decoratePlanId=1&userId=1
+
+
+### 用户替换装修计划里面的家居
+PUT {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?userId=1&decoratePlanId=1&funitureId=13
+{
+    "changeOption": "change",
+    "changedFunitureId": 18,
+    "funitureNumber": 1,
+    "note": "替换原因"
+}
+
+
+### 用户移除装修计划里面的家居
+DELETE {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?userId=1&decoratePlanId=1&funitureId=18
+Content-Type:application/json
+{
+    "changeOption": "remove",
+    "note": "移除原因"
+}
+
+### 添加用户装修计划地址
+POST {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/userDecoratePlanAddress
+Content-Type:application/json
+{
+    "decoratePlanId": "2",
+    "unitId": "38",
+    "userId": "1"
+}
+
+### 修改用户装修计划安装地址
+PUT {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/userDecoratePlanAddress?userId=1&decoratePlanId=2
+{
+    "unitId": "38"
+}

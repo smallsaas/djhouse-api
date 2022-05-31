@@ -47,6 +47,7 @@ public class UserHousePropertyUnitEndpoint {
     @Resource
     HousePropertyUserUnitService housePropertyUserUnitService;
 
+//    通过楼栋id获取整栋楼的 unit
     @BusinessLog(name = "HousePropertyBuilding", value = "查看 HousePropertyBuildingModel")
     @Permission(HousePropertyBuildingPermission.HOUSEPROPERTYBUILDING_VIEW)
     @GetMapping("/{id}")
@@ -62,6 +63,8 @@ public class UserHousePropertyUnitEndpoint {
         }
     }
 
+
+//    获取全部楼栋信息
     @Permission(HousePropertyBuildingPermission.HOUSEPROPERTYBUILDING_VIEW)
     @ApiOperation(value = "HousePropertyBuilding 列表信息", response = HousePropertyBuildingRecord.class)
     @GetMapping
@@ -145,7 +148,7 @@ public class UserHousePropertyUnitEndpoint {
     }
 
 
-
+//    新增安装unit位置
     @BusinessLog(name = "HousePropertyUserUnit", value = "create HousePropertyUserUnit")
     @Permission(HousePropertyUserUnitPermission.HOUSEPROPERTYUSERUNIT_NEW)
     @PostMapping("/userUnit")
@@ -165,6 +168,7 @@ public class UserHousePropertyUnitEndpoint {
         return SuccessTip.create(affected);
     }
 
+//    修改用户的unit位置
     @BusinessLog(name = "HousePropertyUserUnit", value = "update HousePropertyUserUnit")
     @Permission(HousePropertyUserUnitPermission.HOUSEPROPERTYUSERUNIT_EDIT)
     @PutMapping("/userUnit/{id}")
@@ -178,6 +182,7 @@ public class UserHousePropertyUnitEndpoint {
         return SuccessTip.create(housePropertyUserUnitService.updateMaster(entity));
     }
 
+//    删除用户unit
     @BusinessLog(name = "HousePropertyUserUnit", value = "delete HousePropertyUserUnit")
     @Permission(HousePropertyUserUnitPermission.HOUSEPROPERTYUSERUNIT_DELETE)
     @DeleteMapping("/userUnit/{id}")

@@ -1,0 +1,32 @@
+@endpoint=http://localhost:8080
+
+
+### 获取全部楼栋信息
+GET {{endpoint}}/api/u/house/house/housePropertyUnit
+
+
+### 通过楼栋id获取整栋楼的 unit
+GET {{endpoint}}/api/u/house/house/housePropertyUnit/1
+
+
+### 获取用户的安装地址信息
+GET {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit?userId=1
+
+
+### 增加用户安装地址
+POST {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit
+{
+      "unitId": 45,
+      "userId": "1"
+}
+
+### 修改用户安装地址
+# 7为主键id
+PUT {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit/7
+{
+      "unitId": 46,
+      "userId": "1"
+}
+### 删除用户安装地址
+# 7为主键id
+DELETE {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit/7

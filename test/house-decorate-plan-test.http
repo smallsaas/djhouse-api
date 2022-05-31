@@ -1,5 +1,5 @@
 @endpoint=http://localhost:8080
-@adminToken =Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjUzNzA2MDA1LCJqdGkiOiIxIiwic3ViIjoiYWRtaW4iLCJleHAiOjE2NTYyOTgwMDV9.nH3W8nkLMzrBp_VybRJ-ZnNjCG96RqD5a6-HikifXV9hQ618btKd8MGxoPf2XIroEzDc4Gj4JoVKk7dSBoB0zA
+@adminToken=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjUzNzA2MDA1LCJqdGkiOiIxIiwic3ViIjoiYWRtaW4iLCJleHAiOjE2NTYyOTgwMDV9.nH3W8nkLMzrBp_VybRJ-ZnNjCG96RqD5a6-HikifXV9hQ618btKd8MGxoPf2XIroEzDc4Gj4JoVKk7dSBoB0zA
 
 @A_1token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjE4IiwidXNlcklkIjoiNiIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0xIiwidXNlclR5cGUiOjAsImRldlVzZXJUeXBlIjowLCJiVXNlclR5cGUiOiJTWVNURU0iLCJiVXNlcklkIjowLCJpYXQiOjE2NTM3MDYxMTAsImp0aSI6IjYiLCJzdWIiOiJBLTEiLCJleHAiOjE2NTYyOTgxMTB9.YN-_CKUKkWeLVnqNgfA3QHbKlI6kfr0-SK17X7akfhx25QMx-auwO8BnIDrFIqvAkOD3rZ251nWos3HrudZtow
 
@@ -8,22 +8,30 @@
 @A_1_1token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjIyIiwidXNlcklkIjoiOCIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0xLTEiLCJ1c2VyVHlwZSI6MCwiZGV2VXNlclR5cGUiOjAsImJVc2VyVHlwZSI6IlNZU1RFTSIsImJVc2VySWQiOjAsImlhdCI6MTY1MzcwNjE3MywianRpIjoiOCIsInN1YiI6IkEtMS0xIiwiZXhwIjoxNjU2Mjk4MTczfQ.jQo-SxSEimkRJ2YqSIhsHaX7w8NQZ46J5ub8P6mYcQOFm3loYqi-dxxhtbO_-irHHvuc9sd2Zn9CrlnzXOJvmw
 
 
-###
-GET {{endpoint}}/api/crud/house/houseDecoratePlanFuniture/houseDecoratePlanFunitures?furnitureId=14
+###装修计划api测试用例
 
-###团购户型列表
+
+# 获取装修计划列表
 GET {{endpoint}}/api/crud/house/houseDecoratePlan/houseDecoratePlans
+Authorization:{{adminToken}}
 
-###分页查询团购户型列表
+### 分页查询装修计划列表
 GET {{endpoint}}/api/crud/house/houseDecoratePlan/houseDecoratePlans?pageNum=1&pageSize=10
+Authorization:{{adminToken}}
 
 
-### 以团购户型id 查询家居列表
+
+### 获取装修计划id为1 的列表，包括子项家居数据
 GET {{endpoint}}/api/crud/house/houseDecoratePlan/houseDecoratePlans/1
+Authorization:{{adminToken}}
+
+
+
 
 ###创建装修计划户型
 POST {{endpoint}}/api/crud/house/houseDecoratePlan/houseDecoratePlans
 Content-Type: application/json
+Authorization:{{adminToken}}
 
 {
    "allowChanged": 1,
@@ -33,8 +41,10 @@ Content-Type: application/json
     "totalBudget": 5000
 }
 
+
 ### 更新装修计划
 PUT {{endpoint}}/api/crud/house/houseDecoratePlan/houseDecoratePlans/2
+Authorization:{{adminToken}}
 Content-Type: application/json
 
 {
@@ -49,6 +59,7 @@ Content-Type: application/json
 ### 以id修改装修计划，子项添加家居
 PUT {{endpoint}}/api/crud/house/houseDecoratePlan/houseDecoratePlans/3
 Content-Type: application/json
+Authorization:{{adminToken}}
 
 {
     "star": 1200,
@@ -96,52 +107,5 @@ Content-Type: application/json
 
 ### 删除装修计划
 DELETE {{endpoint}}/api/crud/house/houseDecoratePlan/houseDecoratePlans/2
-
-
-
-###获得用户的装修方案
-GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/1
-
-
-### 获得用户某一装修方案的家居
-GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?decoratePlanId=1&userId=1
-
-
-###获得某一栋的所有unit
-GET {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/1
 Authorization:{{adminToken}}
-
-
-
-# ###用户操作
-
-
-
-# 获得某一栋的所有unit
-GET {{endpoint}}/api/u/house/house/housePropertyUnit/1
-
-
-### 获取用户拥有的unit地址列表
-GET {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit?userId=1
-
-
-
-### 修改用户装修地址
-PUT {{endpoint}}api/u/house/house/housePropertyUnit/userUnit/1
-Content-Type:application/json
-{
-  "userId":1,
-  "unitId":3
-}
-### 增加用户装修地址
-POST {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit
-Content-Type:application/json
-{
-  "userId":1,
-  "unitId":1
-}
-
-#### 删除用户装修地址位置
-DELETE {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit/3
-
 
