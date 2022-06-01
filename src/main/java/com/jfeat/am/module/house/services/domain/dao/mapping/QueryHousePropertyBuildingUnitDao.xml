@@ -1,57 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingUnitDao">
-                                                                                                                        <sql id="Base_Column_List">
-                                                                                                                                                                                                                                                                        t_house_property_building_unit.id, t_house_property_building_unit.building_id AS buildingId, t_house_property_building_unit.number
+    <sql id="Base_Column_List">
+        t_house_property_building_unit.id
+        , t_house_property_building_unit.building_id AS buildingId, t_house_property_building_unit.number
+        ,house_type AS houseType,house_type_picture AS houseTypePicture,area
     </sql>
 
-    
-    
+
     <select id="queryMasterModel" resultType="HousePropertyBuildingUnitModel">
-       SELECT t_house_property_building_unit.*
-       FROM t_house_property_building_unit
-       WHERE t_house_property_building_unit.id=#{id}
-       GROUP BY t_house_property_building_unit.id
+        SELECT t_house_property_building_unit.*
+        FROM t_house_property_building_unit
+        WHERE t_house_property_building_unit.id = #{id}
+        GROUP BY t_house_property_building_unit.id
     </select>
+    <select id="findHousePropertyBuildingUnitPage" resultType="HousePropertyBuildingUnitRecord"
+            parameterType="HousePropertyBuildingUnitRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
 
-
-
-            
-    <select id="findHousePropertyBuildingUnitPage" resultType="HousePropertyBuildingUnitRecord" parameterType="HousePropertyBuildingUnitRecord">
-            SELECT <include refid="Base_Column_List"/>
-
-        
 
         FROM t_house_property_building_unit
 
-        
-        
+
         WHERE 1=1
-        
 
-        
-                                                                            <if test="record.id != null and record.id>0 ">
-                                    AND t_house_property_building_unit.id LIKE CONCAT('%',#{record.id},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.buildingId != null and record.buildingId>0 ">
-                                    AND t_house_property_building_unit.building_id LIKE CONCAT('%',#{record.buildingId},'%')
-                            </if>
-                                                                    <if test="record.number != null and record.number!= ''">
-                                    AND t_house_property_building_unit.number LIKE CONCAT('%',#{record.number},'%')
-                            </if>
-        
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_property_building_unit.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.buildingId != null and record.buildingId>0 ">
+            AND t_house_property_building_unit.building_id LIKE CONCAT('%',#{record.buildingId},'%')
+        </if>
+        <if test="record.number != null and record.number!= ''">
+            AND t_house_property_building_unit.number LIKE CONCAT('%',#{record.number},'%')
+        </if>
+
         <if test="startTime != null">
             <![CDATA[AND t_house_property_building_unit.start_time >= DATE(#{startTime})]]>
         </if>
         <if test="endTime != null">
             <![CDATA[AND t_house_property_building_unit.end_time <= DATE(#{endTime}]]>
         </if>
-            <!--
-        <if test="search != null and search != ''">
-            OR t_house_property_building_unit.name LIKE CONCAT('%',#{search},'%')
-        </if>
-        -->
-                                    </select>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_property_building_unit.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
+
+
+<!--    查询小区-->
+    <select id="queryHouseCommunity" resultType="HousePropertyBuilding">
+        SELECT *
+        FROM t_house_property_building
+        GROUP BY t_house_property_building.community
+    </select>
+
+    <!--    查询户型列表-->
+    <select id="queryHouseType" resultType="HousePropertyBuildingUnitModel">
+        SELECT *
+        FROM t_house_property_building_unit
+        JOIN t_house_property_building
+        ON t_house_property_building_unit.building_id = t_house_property_building.id
+        And t_house_property_building.community = #{community}
+        GROUP BY t_house_property_building_unit.house_type
+    </select>
+
+
+    <sql id="house_building_Column_List">
+        id, org_id AS orgId, community, community_code AS communityCode, area, code, floors, units
+    </sql>
+    <!--    以户型查询楼栋-->
+    <select id="queryHouseBuildingByHouseType" resultType="HousePropertyBuilding">
+        SELECT
+            t_house_property_building.*
+        FROM t_house_property_building_unit JOIN t_house_property_building
+        ON t_house_property_building.id=t_house_property_building_unit.building_id
+        AND t_house_property_building_unit.house_type=#{houseType}
+        AND t_house_property_building.community = #{community}
+        GROUP BY t_house_property_building.id
+    </select>
+
+    <!--    户型和楼栋联合查询房屋信息-->
+    <select id="queryHouseBuildingUnit" resultType="HousePropertyBuildingUnit">
+        SELECT  t_house_property_building_unit.*
+        FROM t_house_property_building_unit
+                 JOIN t_house_property_building
+                      ON t_house_property_building.id = t_house_property_building_unit.building_id
+                          AND t_house_property_building_unit.house_type = #{houseType}
+                          AND t_house_property_building_unit.building_id = #{buildingId}
+                            AND t_house_property_building.community = #{community}
+    </select>
 </mapper>

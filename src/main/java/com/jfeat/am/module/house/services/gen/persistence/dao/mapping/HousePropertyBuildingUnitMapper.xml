@@ -7,11 +7,15 @@
         <id column="id" property="id" />
         <result column="building_id" property="buildingId" />
         <result column="number" property="number" />
+        <result column="house_type" property="houseType"/>
+        <result column="house_type_picture" property="houseTypePicture"/>
+        <result column="area" property="area"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, building_id, number
+        id, building_id, number,house_type,house_type_picture,area
     </sql>
+
 
 </mapper>

@@ -65,16 +65,15 @@ public class UserHouseDecoratePlanEndpoint {
     HouseUserDecoratePlanService houseUserDecoratePlanService;
 
 
-    @GetMapping("/{userId}")
+    @GetMapping()
     public Tip getUserHouseDecoratePlan(
             Page<HouseDecoratePlan> page,
             @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-            @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-            @PathVariable Long userId) {
-//        if (JWTKit.getDomainUserId() == null) {
-//            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
-//        }
-//        userId = JWTKit.getUserId();
+            @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        Long userId = JWTKit.getUserId();
         page.setCurrent(pageNum);
         page.setSize(pageSize);
         List<HouseUserDecoratePlanModel> houseUserDecoratePlan = queryHouseUserDecoratePlanDao.queryHouseUserDecoratePlanByUserId(page, userId);
@@ -102,8 +101,6 @@ public class UserHouseDecoratePlanEndpoint {
     }
 
     @BusinessLog(name = "HouseDecoratePlan", value = "查看 HouseDecoratePlanModel")
-    @Permission(HouseDecoratePlanPermission.HOUSEDECORATEPLAN_VIEW)
-//    @GetMapping("/funiture/{id}")
     @GetMapping("/funiture")
     @ApiOperation(value = "查看 HouseDecoratePlan", response = HouseDecoratePlanModel.class)
     public Tip getHouseDecoratePlan(@RequestParam("decoratePlanId") Long decoratePlanId, @RequestParam("userId") Long userId) {
@@ -222,7 +219,6 @@ public class UserHouseDecoratePlanEndpoint {
 
 
     @BusinessLog(name = "HouseUserDecorateAddress", value = "create HouseUserDecorateAddress")
-    @Permission(HouseUserDecorateAddressPermission.HOUSEUSERDECORATEADDRESS_NEW)
     @PostMapping("/userDecoratePlanAddress")
     @ApiOperation(value = "新建 HouseUserDecorateAddress", response = HouseUserDecorateAddress.class)
     public Tip createHouseUserDecorateAddress(@RequestBody HouseUserDecorateAddress entity) {
@@ -237,7 +233,6 @@ public class UserHouseDecoratePlanEndpoint {
     }
 
     @BusinessLog(name = "HouseUserDecorateAddress", value = "update HouseUserDecorateAddress")
-    @Permission(HouseUserDecorateAddressPermission.HOUSEUSERDECORATEADDRESS_EDIT)
     @PutMapping("/userDecoratePlanAddress")
     @ApiOperation(value = "修改 HouseUserDecorateAddress", response = HouseUserDecorateAddress.class)
     public Tip updateHouseUserDecorateAddress(@RequestParam("userId") Long userId,

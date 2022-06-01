@@ -7,6 +7,7 @@
 
     <sql id="User_Unit_Record_Column_List">
         t_house_property_user_unit.id, t_house_property_user_unit.user_id,t_house_property_building_unit.id AS unitId,t_house_property_building_unit.number AS number,
+t_house_property_building_unit.house_type,t_house_property_building_unit.house_type_picture,t_house_property_building_unit.area AS unitArea,
 t_house_property_building.id AS buildingId, t_house_property_building.org_id AS org_id, t_house_property_building.community as community,
 t_house_property_building.community_code AS community_code, t_house_property_building.area AS area, t_house_property_building.code AS code,
 t_house_property_building.floors AS floors, t_house_property_building.units AS units
@@ -28,6 +29,9 @@ t_house_property_building.floors AS floors, t_house_property_building.units AS u
         <association property="housePropertyBuildingUnit" javaType="com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit">
             <id column="unitId" property="id" />
             <result column="number" property="number" />
+            <result column="house_type" property="houseType"/>
+            <result column="house_type_picture" property="houseTypePicture"/>
+            <result column="unitArea" property="area"/>
         </association>
     </resultMap>
 

@@ -5,6 +5,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBui
 /**
  * Created by Code generator on 2022-05-27
  */
-public class HousePropertyBuildingUnitRecord extends HousePropertyBuildingUnit{
-    
-    }
+public class HousePropertyBuildingUnitRecord extends HousePropertyBuildingUnit {
+
+
+}

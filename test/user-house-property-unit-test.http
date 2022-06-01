@@ -1,4 +1,6 @@
 @endpoint=http://localhost:8080
+@token =Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjI2IiwidXNlcklkIjoiMjgyIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJCRENTWkgxMCIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjU0MDY3MDM0LCJqdGkiOiIyODIiLCJzdWIiOiJCRENTWkgxMCIsImV4cCI6MTY1NjY1OTAzNH0.LWYxMjZTJ0aMq_3_FVRDd244c2eCsD4R18x53oaMf77DKPpqXTUguWqdIrh4WiLhn7HgKDhR0eJ2j55qiw275g
+
 
 
 ### 获取全部楼栋信息
@@ -30,3 +32,16 @@ PUT {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit/7
 ### 删除用户安装地址
 # 7为主键id
 DELETE {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit/7
+
+
+### 获取社区
+GET {{endpoint}}/api/u/house/house/housePropertyUnit/community
+
+### 获取社区有什么房型
+GET {{endpoint}}/api/u/house/house/housePropertyUnit/houseType?community=A社区
+
+### 获取社区房型有什么楼栋编号
+GET {{endpoint}}/api/u/house/house/housePropertyUnit/houseBuilding?houseType=四室两厅&community=A社区
+
+####获取某社区某房型某楼栋的全部房间
+GET {{endpoint}}/api/u/house/house/housePropertyUnit/houseBuildingUnit?houseType=四室两厅&buildingId=1&community=A社区

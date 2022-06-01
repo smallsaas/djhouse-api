@@ -1,10 +1,13 @@
 @endpoint=http://localhost:8080
+@service=http://app1.console.smallsaas.cn:8001
+
+@token =Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6IiIsInVzZXJJZCI6Mjg0LCJhY2NvdW50IjoiODhiOGMwOGIwNTQ2NGFkMTgzM2UyY2RmYzA1YTk2ODMiLCJkb21haW5Vc2VySWQiOiIiLCJpYXQiOjE2NTQwNTg0ODgsImp0aSI6IjI4NCIsInN1YiI6Ijg4YjhjMDhiMDU0NjRhZDE4MzNlMmNkZmMwNWE5NjgzIiwiZXhwIjoxNjU0MzE3Njg4fQ.5FLTi7TwztrQ_WsW4OGQPOcZIkqm8ysUWDjlIJtZQVioUI6U6RWysMWNXMHOPCpd4bXeXX2gz-A1IQnB5ZulhQ
 
 
 
-# 获取用户id为1的装修计划列表
-GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/1?pageNum=1&pageSize=10
-
+# 获取用户的装修计划列表
+GET {{service}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans?pageNum=1&pageSize=10
+Authorization:{{token}}
 
 ### 获取用户装修计划里面的id
 GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?decoratePlanId=1&userId=1

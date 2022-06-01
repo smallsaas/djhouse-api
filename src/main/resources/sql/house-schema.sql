@@ -16,13 +16,15 @@ CREATE TABLE `t_house_property_building`
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `t_house_property_building_unit`;
-CREATE TABLE `t_house_property_building_unit`
-(
-    `id`          bigint(20) NOT NULL AUTO_INCREMENT,
-    `building_id` bigint(20) NOT NULL COMMENT '楼栋id',
-    `number`      varchar(50) NOT NULL COMMENT '房产编号',
-    PRIMARY KEY (`id`),
-    unique (`building_id`, `number`)
+CREATE TABLE `t_house_property_building_unit`(
+                                                 `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                                                 `building_id` bigint(20) NOT NULL COMMENT '楼栋id',
+                                                 `number` varchar(50) NOT NULL COMMENT '房产编号',
+                                                 `house_type` VARCHAR(50) DEFAULT NULL COMMENT '户型',
+                                                 `house_type_picture` VARCHAR(255) DEFAULT NULL COMMENT '户型图',
+                                                 `area` DECIMAL(10,2) DEFAULT 0 COMMENT '面积',
+                                                 PRIMARY KEY (`id`),
+                                                 unique(`building_id`, `number`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `t_house_property_user_unit`;

@@ -23,19 +23,34 @@ GET {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingU
 Authorization:{{adminToken}}
 
 
+### 增添unit信息
+POST {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits
+Content-Type: application/json
+Authorization: {{adminToken}}
+{
+    "area": 72,
+    "buildingId": "1",
+    "houseType": "一室两厅",
+    "houseTypePicture": null,
+    "number": "45"
+}
+
 ### 更新房产信息
-PUT {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits/2
+PUT {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits/8
 Content-Type: application/json
 Authorization:{{adminToken}}
 {
-    "user_id":20,
-    "building_id":5,
-    "number":"D225"
+    "area": 72,
+    "buildingId": "1",
+    "houseType": "一室两厅",
+    "houseTypePicture": null,
+    "number": "46"
 }
 
 
+
 ### 删除用户房产信息
-DELETE {{endpoint}}/api/crud/house/housePropertyUnit/housePropertyUnits/19
+DELETE {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits/8
 
 ### 初始化房屋unit
 ### 根据building表生成整个小区的unit编号
