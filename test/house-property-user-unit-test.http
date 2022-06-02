@@ -45,3 +45,4 @@ Authorization:{{adminToken}}
 ### 删除用户的unit
 ### id不是用户id
 DELETE {{endpoint}}/api/crud/house/housePropertyUserUnit/housePropertyUserUnits/1
+Authorization:{{adminToken}}

@@ -2,6 +2,7 @@ package com.jfeat.am.module.house.services.domain.model;
 
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyCommunity;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserDecorateAddress;
 
 /**
@@ -11,6 +12,7 @@ public class HouseUserDecorateAddressRecord extends HouseUserDecorateAddress {
 
     HousePropertyBuilding housePropertyBuilding;
     HousePropertyBuildingUnit housePropertyBuildingUnit;
+    HousePropertyCommunity housePropertyCommunity;
 
     public HousePropertyBuilding getHousePropertyBuilding() {
         return housePropertyBuilding;
@@ -30,4 +32,12 @@ public class HouseUserDecorateAddressRecord extends HouseUserDecorateAddress {
         return this;
     }
 
+    public HousePropertyCommunity getHousePropertyCommunity() {
+        return housePropertyCommunity;
+    }
+
+    public HouseUserDecorateAddressRecord setHousePropertyCommunity(HousePropertyCommunity housePropertyCommunity) {
+        this.housePropertyCommunity = housePropertyCommunity;
+        return this;
+    }
 }

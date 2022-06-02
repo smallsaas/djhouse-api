@@ -2,10 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingDao">
     <sql id="Base_Column_List">
-        t_house_property_building.id, t_house_property_building.org_id AS orgId, t_house_property_building.community, t_house_property_building.community_code AS communityCode, t_house_property_building.area, t_house_property_building.code, t_house_property_building.floors, t_house_property_building.units
+        t_house_property_building.id
+        , t_house_property_building.org_id AS orgId, t_house_property_building.community_id AS communityId, t_house_property_building.area, t_house_property_building.code, t_house_property_building.floors, t_house_property_building.units
     </sql>
-
-
 
     <sql id="QueryOwnedOrgIds">
         SELECT children.id
@@ -16,11 +15,6 @@
           and t_sys_org.id = #{record.orgId}
         order by t_sys_org.node_level ASC
     </sql>
-
-    <select id="queryAllHousePropertyBuilding" resultType="HousePropertyBuildingModel">
-        SELECT t_house_property_building.*
-        FROM t_house_property_building
-    </select>
 
 
     <select id="queryMasterModel" resultType="HousePropertyBuildingModel">
@@ -58,13 +52,10 @@
         <if test="record.orgId != null and record.orgId>0 ">
             AND t_house_property_building.org_id IN (<include refid="QueryOwnedOrgIds"/>)
         </if>
-        <if test="record.community != null and record.community!= ''">
-            AND t_house_property_building.community LIKE CONCAT('%',#{record.community},'%')
-        </if>
 
 
-        <if test="record.communityCode != null and record.communityCode!= ''">
-            AND t_house_property_building.community_code LIKE CONCAT('%',#{record.communityCode},'%')
+        <if test="record.communityId != null and record.communityId>0 ">
+            AND t_house_property_building.community_id LIKE CONCAT('%',#{record.communityId},'%')
         </if>
         <if test="record.area != null and record.area!= ''">
             AND t_house_property_building.area LIKE CONCAT('%',#{record.area},'%')
@@ -91,6 +82,4 @@
     </if>
     -->
     </select>
-
-
 </mapper>

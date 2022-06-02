@@ -1,12 +1,11 @@
 package com.jfeat.am.module.house.services.gen.persistence.model;
 
+import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
-import java.math.BigDecimal;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -16,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  * </p>
  *
  * @author Code generator
- * @since 2022-05-27
+ * @since 2022-06-01
  */
 @TableName("t_house_property_building_unit")
 @ApiModel(value="HousePropertyBuildingUnit对象", description="")
@@ -36,39 +35,13 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
       @ApiModelProperty(value = "户型")
       private String houseType;
 
-      @ApiModelProperty(value = "户型图片")
+      @ApiModelProperty(value = "户型图")
       private String houseTypePicture;
 
       @ApiModelProperty(value = "面积")
       private BigDecimal area;
 
-    public String getHouseType() {
-        return houseType;
-    }
-
-    public HousePropertyBuildingUnit setHouseType(String houseType) {
-        this.houseType = houseType;
-        return this;
-    }
-
-    public String getHouseTypePicture() {
-        return houseTypePicture;
-    }
-
-    public HousePropertyBuildingUnit setHouseTypePicture(String houseTypePicture) {
-        this.houseTypePicture = houseTypePicture;
-        return this;
-    }
-
-    public BigDecimal getArea() {
-        return area;
-    }
-
-    public HousePropertyBuildingUnit setArea(BigDecimal area) {
-        this.area = area;
-        return this;
-    }
-
+    
     public Long getId() {
         return id;
     }
@@ -95,6 +68,33 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
           this.number = number;
           return this;
       }
+    
+    public String getHouseType() {
+        return houseType;
+    }
+
+      public HousePropertyBuildingUnit setHouseType(String houseType) {
+          this.houseType = houseType;
+          return this;
+      }
+    
+    public String getHouseTypePicture() {
+        return houseTypePicture;
+    }
+
+      public HousePropertyBuildingUnit setHouseTypePicture(String houseTypePicture) {
+          this.houseTypePicture = houseTypePicture;
+          return this;
+      }
+    
+    public BigDecimal getArea() {
+        return area;
+    }
+
+      public HousePropertyBuildingUnit setArea(BigDecimal area) {
+          this.area = area;
+          return this;
+      }
 
       public static final String ID = "id";
 
@@ -102,13 +102,11 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
 
       public static final String NUMBER = "number";
 
-      public  static final String HOUSE_TYPE = "house_tpye";
+      public static final String HOUSE_TYPE = "house_type";
 
       public static final String HOUSE_TYPE_PICTURE = "house_type_picture";
 
       public static final String AREA = "area";
-
-
 
       @Override
     protected Serializable pkVal() {
@@ -121,6 +119,9 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
               "id=" + id +
                   ", buildingId=" + buildingId +
                   ", number=" + number +
+                  ", houseType=" + houseType +
+                  ", houseTypePicture=" + houseTypePicture +
+                  ", area=" + area +
               "}";
     }
 }

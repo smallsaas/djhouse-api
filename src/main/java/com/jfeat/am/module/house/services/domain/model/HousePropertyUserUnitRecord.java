@@ -2,6 +2,7 @@ package com.jfeat.am.module.house.services.domain.model;
 
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyCommunity;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyUserUnit;
 
 /**
@@ -10,6 +11,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyUse
 public class HousePropertyUserUnitRecord extends HousePropertyUserUnit {
     HousePropertyBuilding housePropertyBuilding;
     HousePropertyBuildingUnit housePropertyBuildingUnit;
+    HousePropertyCommunity housePropertyCommunity;
 
     public HousePropertyBuilding getHousePropertyBuilding() {
         return housePropertyBuilding;
@@ -26,6 +28,15 @@ public class HousePropertyUserUnitRecord extends HousePropertyUserUnit {
 
     public HousePropertyUserUnitRecord setHousePropertyBuildingUnit(HousePropertyBuildingUnit housePropertyBuildingUnit) {
         this.housePropertyBuildingUnit = housePropertyBuildingUnit;
+        return this;
+    }
+
+    public HousePropertyCommunity getHousePropertyCommunity() {
+        return housePropertyCommunity;
+    }
+
+    public HousePropertyUserUnitRecord setHousePropertyCommunity(HousePropertyCommunity housePropertyCommunity) {
+        this.housePropertyCommunity = housePropertyCommunity;
         return this;
     }
 }

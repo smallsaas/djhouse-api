@@ -6,8 +6,7 @@
     <resultMap id="BaseResultMap" type="com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding">
         <id column="id" property="id" />
         <result column="org_id" property="orgId" />
-        <result column="community" property="community" />
-        <result column="community_code" property="communityCode" />
+        <result column="community_id" property="communityId" />
         <result column="area" property="area" />
         <result column="code" property="code" />
         <result column="floors" property="floors" />
@@ -16,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, org_id, community, community_code, area, code, floors, units
+        id, org_id, community_id, area, code, floors, units
     </sql>
 
 </mapper>

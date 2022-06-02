@@ -6,15 +6,16 @@
 
 
 # 获取用户的装修计划列表
-GET {{service}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans?pageNum=1&pageSize=10
+GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans?pageNum=1&pageSize=10
 Authorization:{{token}}
 
 ### 获取用户装修计划里面的id
 GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?decoratePlanId=1&userId=1
-
+Authorization:{{token}}
 
 ### 用户替换装修计划里面的家居
 PUT {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?userId=1&decoratePlanId=1&funitureId=13
+Authorization:{{token}}
 {
     "changeOption": "change",
     "changedFunitureId": 18,
@@ -24,7 +25,8 @@ PUT {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funitu
 
 
 ### 用户移除装修计划里面的家居
-DELETE {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?userId=1&decoratePlanId=1&funitureId=18
+DELETE {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?&decoratePlanId=1&funitureId=18
+Authorization:{{token}}
 Content-Type:application/json
 {
     "changeOption": "remove",
@@ -33,15 +35,16 @@ Content-Type:application/json
 
 ### 添加用户装修计划地址
 POST {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/userDecoratePlanAddress
+Authorization:{{token}}
 Content-Type:application/json
 {
     "decoratePlanId": "2",
     "unitId": "38",
-    "userId": "1"
 }
 
 ### 修改用户装修计划安装地址
-PUT {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/userDecoratePlanAddress?userId=1&decoratePlanId=2
+PUT {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/userDecoratePlanAddress?decoratePlanId=2
+Authorization:{{token}}
 {
     "unitId": "38"
 }

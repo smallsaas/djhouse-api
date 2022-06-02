@@ -88,7 +88,7 @@ public class UserHouseDecoratePlanEndpoint {
             HouseUserDecorateAddressRecord houseUserDecorateAddressRecord = queryHouseUserDecorateAddressDao.queryUserDecoratePlanAddress(userId, houseDecoratePlan.getId());
 
             if (houseUserDecorateAddressRecord != null) {
-                String community = houseUserDecorateAddressRecord.getHousePropertyBuilding().getCommunity();
+                String community = houseUserDecorateAddressRecord.getHousePropertyCommunity().getCommunity();
                 String building = houseUserDecorateAddressRecord.getHousePropertyBuilding().getCode();
                 String unit = houseUserDecorateAddressRecord.getHousePropertyBuildingUnit().getNumber();
                 String address = "".concat(community).concat(building).concat("栋").concat(unit);
@@ -103,12 +103,12 @@ public class UserHouseDecoratePlanEndpoint {
     @BusinessLog(name = "HouseDecoratePlan", value = "查看 HouseDecoratePlanModel")
     @GetMapping("/funiture")
     @ApiOperation(value = "查看 HouseDecoratePlan", response = HouseDecoratePlanModel.class)
-    public Tip getHouseDecoratePlan(@RequestParam("decoratePlanId") Long decoratePlanId, @RequestParam("userId") Long userId) {
+    public Tip getHouseDecoratePlan(@RequestParam("decoratePlanId") Long decoratePlanId) {
 
-//        if (JWTKit.getDomainUserId() == null) {
-//            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
-//        }
-//        Long userId = JWTKit.getUserId();
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        Long userId = JWTKit.getUserId();
 
         CRUDObject<HouseDecoratePlanModel> entity = houseDecoratePlanOverModelService
                 .registerQueryMasterDao(queryHouseDecoratePlanDao)
@@ -126,10 +126,6 @@ public class UserHouseDecoratePlanEndpoint {
 //        用户修改后装修计划的家居列表
         List<HouseUserDecoratePlanModel> productList = queryHouseUserDecoratePlanDao.queryHouseUserDecoratePlanFuniture(userId, decoratePlanId);
 
-        System.out.println("productlist");
-        System.out.println(productList);
-        System.out.println("products");
-        System.out.println(products);
 
         for (int i = 0; i < productList.size(); i++) {
             for (int j = 0; j < products.size(); j++) {
@@ -146,13 +142,12 @@ public class UserHouseDecoratePlanEndpoint {
 
             }
         }
-        System.out.println(products);
         jsonObject.put("items", products);
 
 //        增加显示装修地址
         HouseUserDecorateAddressRecord houseUserDecorateAddressRecord = queryHouseUserDecorateAddressDao.queryUserDecoratePlanAddress(userId, decoratePlanId);
         if (houseUserDecorateAddressRecord != null) {
-            String community = houseUserDecorateAddressRecord.getHousePropertyBuilding().getCommunity();
+            String community = houseUserDecorateAddressRecord.getHousePropertyCommunity().getCommunity();
             String building = houseUserDecorateAddressRecord.getHousePropertyBuilding().getCode();
             String unit = houseUserDecorateAddressRecord.getHousePropertyBuildingUnit().getNumber();
             String address = "".concat(community).concat(building).concat("栋").concat(unit);
@@ -167,10 +162,14 @@ public class UserHouseDecoratePlanEndpoint {
 
 //    用户替换装修计划里面的家居
     @PutMapping("/funiture")
-    public Tip changeFuniture(@RequestParam("userId") Long userId,
+    public Tip changeFuniture(
                               @RequestParam("decoratePlanId") Long decoratePlanId,
                               @RequestParam("funitureId") Long funitureId,
                               @RequestBody HouseUserDecoratePlan houseUserDecoratePlan){
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        Long userId = JWTKit.getUserId();
 
         Integer affected = 0;
 
@@ -194,10 +193,15 @@ public class UserHouseDecoratePlanEndpoint {
 
 //    用户移除装修计划里面的家居
     @DeleteMapping("/funiture")
-    public Tip removeFuniture(@RequestParam("userId") Long userId,
+    public Tip removeFuniture(
                               @RequestParam("decoratePlanId") Long decoratePlanId,
                               @RequestParam("funitureId") Long funitureId,
     @RequestBody HouseUserDecoratePlan entity){
+
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        Long userId = JWTKit.getUserId();
 
         Integer affected = 0;
         if (queryHouseUserDecoratePlanDao.queryUserDecoratePlanFunitureExists(userId,decoratePlanId,funitureId)!=null){
@@ -222,6 +226,10 @@ public class UserHouseDecoratePlanEndpoint {
     @PostMapping("/userDecoratePlanAddress")
     @ApiOperation(value = "新建 HouseUserDecorateAddress", response = HouseUserDecorateAddress.class)
     public Tip createHouseUserDecorateAddress(@RequestBody HouseUserDecorateAddress entity) {
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        entity.setUserId(JWTKit.getUserId());
         Integer affected = 0;
         try {
             affected = houseUserDecorateAddressService.createMaster(entity);
@@ -235,13 +243,13 @@ public class UserHouseDecoratePlanEndpoint {
     @BusinessLog(name = "HouseUserDecorateAddress", value = "update HouseUserDecorateAddress")
     @PutMapping("/userDecoratePlanAddress")
     @ApiOperation(value = "修改 HouseUserDecorateAddress", response = HouseUserDecorateAddress.class)
-    public Tip updateHouseUserDecorateAddress(@RequestParam("userId") Long userId,
+    public Tip updateHouseUserDecorateAddress(
                                               @RequestParam("decoratePlanId") Long decoratePlanId,
                                               @RequestBody HouseUserDecorateAddress entity) {
-//        if (JWTKit.getUserId() == null) {
-//            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
-//        }
-//        userId = JWTKit.getUserId();
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        Long userId = JWTKit.getUserId();
         return SuccessTip.create(queryHouseUserDecorateAddressDao.updateUserDecorateAddress(userId,decoratePlanId,entity));
     }
 

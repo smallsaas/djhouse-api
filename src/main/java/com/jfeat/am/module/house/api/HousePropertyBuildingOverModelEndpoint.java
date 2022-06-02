@@ -52,7 +52,7 @@ import com.alibaba.fastjson.JSONArray;
  * </p>
  *
  * @author Code generator
- * @since 2022-05-27
+ * @since 2022-06-01
  */
 @RestController
 @Api("HousePropertyBuilding")
@@ -147,8 +147,7 @@ public class HousePropertyBuildingOverModelEndpoint {
             @ApiImplicitParam(name = "search", dataType = "String"),
             @ApiImplicitParam(name = "id", dataType = "Long"),
             @ApiImplicitParam(name = "orgId", dataType = "Long"),
-            @ApiImplicitParam(name = "community", dataType = "String"),
-            @ApiImplicitParam(name = "communityCode", dataType = "String"),
+            @ApiImplicitParam(name = "communityId", dataType = "Long"),
             @ApiImplicitParam(name = "area", dataType = "String"),
             @ApiImplicitParam(name = "code", dataType = "String"),
             @ApiImplicitParam(name = "floors", dataType = "Integer"),
@@ -166,9 +165,7 @@ public class HousePropertyBuildingOverModelEndpoint {
 
                                               @RequestParam(name = "orgId", required = false) Long orgId,
 
-                                              @RequestParam(name = "community", required = false) String community,
-
-                                              @RequestParam(name = "communityCode", required = false) String communityCode,
+                                              @RequestParam(name = "communityId", required = false) Long communityId,
 
                                               @RequestParam(name = "area", required = false) String area,
 
@@ -198,8 +195,7 @@ public class HousePropertyBuildingOverModelEndpoint {
         if (META.enabledSaas()) {
             record.setOrgId(JWTKit.getOrgId());
         }
-        record.setCommunity(community);
-        record.setCommunityCode(communityCode);
+        record.setCommunityId(communityId);
         record.setArea(area);
         record.setCode(code);
         record.setFloors(floors);

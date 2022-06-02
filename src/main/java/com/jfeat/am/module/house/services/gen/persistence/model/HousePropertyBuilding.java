@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
  * </p>
  *
  * @author Code generator
- * @since 2022-05-27
+ * @since 2022-06-01
  */
 @TableName("t_house_property_building")
 @ApiModel(value="HousePropertyBuilding对象", description="")
@@ -28,11 +28,8 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
       @ApiModelProperty(value = "租户数据隔离")
       private Long orgId;
 
-      @ApiModelProperty(value = "社区")
-      private String community;
-
-      @ApiModelProperty(value = "社区编号")
-      private String communityCode;
+      @ApiModelProperty(value = "社区id")
+      private Long communityId;
 
       @ApiModelProperty(value = "区域")
       private String area;
@@ -65,21 +62,12 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
           return this;
       }
     
-    public String getCommunity() {
-        return community;
+    public Long getCommunityId() {
+        return communityId;
     }
 
-      public HousePropertyBuilding setCommunity(String community) {
-          this.community = community;
-          return this;
-      }
-    
-    public String getCommunityCode() {
-        return communityCode;
-    }
-
-      public HousePropertyBuilding setCommunityCode(String communityCode) {
-          this.communityCode = communityCode;
+      public HousePropertyBuilding setCommunityId(Long communityId) {
+          this.communityId = communityId;
           return this;
       }
     
@@ -123,9 +111,7 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
 
       public static final String ORG_ID = "org_id";
 
-      public static final String COMMUNITY = "community";
-
-      public static final String COMMUNITY_CODE = "community_code";
+      public static final String COMMUNITY_ID = "community_id";
 
       public static final String AREA = "area";
 
@@ -145,8 +131,7 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
         return "HousePropertyBuilding{" +
               "id=" + id +
                   ", orgId=" + orgId +
-                  ", community=" + community +
-                  ", communityCode=" + communityCode +
+                  ", communityId=" + communityId +
                   ", area=" + area +
                   ", code=" + code +
                   ", floors=" + floors +

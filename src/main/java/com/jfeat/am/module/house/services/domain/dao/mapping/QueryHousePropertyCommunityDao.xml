@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyCommunityDao">
+                                                                                                                        <sql id="Base_Column_List">
+                                                                                                                                                                                                                                                                        t_house_property_community.id, t_house_property_community.community, t_house_property_community.community_code AS communityCode
+    </sql>
+
+    
+    
+    <select id="queryMasterModel" resultType="HousePropertyCommunityModel">
+       SELECT t_house_property_community.*
+       FROM t_house_property_community
+       WHERE t_house_property_community.id=#{id}
+       GROUP BY t_house_property_community.id
+    </select>
+
+
+
+            
+    <select id="findHousePropertyCommunityPage" resultType="HousePropertyCommunityRecord" parameterType="HousePropertyCommunityRecord">
+            SELECT <include refid="Base_Column_List"/>
+
+        
+
+        FROM t_house_property_community
+
+        
+        
+        WHERE 1=1
+        
+
+        
+                                                                            <if test="record.id != null and record.id>0 ">
+                                    AND t_house_property_community.id LIKE CONCAT('%',#{record.id},'%')
+                            </if>
+                                                                    <if test="record.community != null and record.community!= ''">
+                                    AND t_house_property_community.community LIKE CONCAT('%',#{record.community},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.communityCode != null and record.communityCode!= ''">
+                                    AND t_house_property_community.community_code LIKE CONCAT('%',#{record.communityCode},'%')
+                            </if>
+        
+        <if test="startTime != null">
+            <![CDATA[AND t_house_property_community.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_property_community.end_time <= DATE(#{endTime}]]>
+        </if>
+            <!--
+        <if test="search != null and search != ''">
+            OR t_house_property_community.name LIKE CONCAT('%',#{search},'%')
+        </if>
+        -->
+                                    </select>
+</mapper>

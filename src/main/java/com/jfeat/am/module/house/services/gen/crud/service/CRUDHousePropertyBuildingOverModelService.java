@@ -9,7 +9,7 @@ import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingMo
  * </p>
  *
  * @author Code generator
- * @since 2022-05-27
+ * @since 2022-06-01
  * Master: t_house_property_building
    */
 public interface CRUDHousePropertyBuildingOverModelService  extends CRUDServiceOverModel<HousePropertyBuilding,HousePropertyBuildingModel> {

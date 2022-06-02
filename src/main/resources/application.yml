@@ -21,6 +21,9 @@ spring:
 ###################  jwt配置  ###################
 jwt:
   encoded-key: L7A/6zARSkK1j7Vd5SDD9pSSqZlqF7mAhiOgRbgv9Smce6tf4cJnvKOjtKPxNNnWQj+2lQEScm3XIUjhW+YVZg==
+  normal-encoded-key: bm9ybWFsLWVuY29kZWQta2V5
+  tll-mills: 2592000000  # 30 Days = 3600*1000*24*30
+  #token-type: Bearer
   #tll-mills:
   #token-type: Bearer
   #enable-attempt-login: false

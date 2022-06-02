@@ -1,72 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseDecoratePlanDao">
-                                                                                                                                                                                                                                    <sql id="Base_Column_List">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        t_house_decorate_plan.id, t_house_decorate_plan.decorate_style_name AS decorateStyleName, t_house_decorate_plan.allow_changed AS allowChanged, t_house_decorate_plan.color_style AS colorStyle, t_house_decorate_plan.total_budget AS totalBudget, t_house_decorate_plan.star
+    <sql id="Base_Column_List">
+        t_house_decorate_plan.id
+        , t_house_decorate_plan.decorate_style_name AS decorateStyleName, t_house_decorate_plan.allow_changed AS allowChanged, t_house_decorate_plan.color_style AS colorStyle, t_house_decorate_plan.total_budget AS totalBudget, t_house_decorate_plan.star,
+        t_house_decorate_plan.cover,t_house_decorate_plan.merchant
     </sql>
 
-    
-    
+
     <select id="queryMasterModel" resultType="HouseDecoratePlanModel">
-       SELECT t_house_decorate_plan.*
-       FROM t_house_decorate_plan
-       WHERE t_house_decorate_plan.id=#{id}
-       GROUP BY t_house_decorate_plan.id
+        SELECT t_house_decorate_plan.*
+        FROM t_house_decorate_plan
+        WHERE t_house_decorate_plan.id = #{id}
+        GROUP BY t_house_decorate_plan.id
     </select>
 
 
-
-                        
     <select id="findHouseDecoratePlanPage" resultType="HouseDecoratePlanRecord" parameterType="HouseDecoratePlanRecord">
-            SELECT <include refid="Base_Column_List"/>
+        SELECT
+        <include refid="Base_Column_List"/>
 
-        
 
         FROM t_house_decorate_plan
 
-        
-        
+
         WHERE 1=1
-        
 
-        
-                                                                            <if test="record.id != null and record.id>0 ">
-                                    AND t_house_decorate_plan.id LIKE CONCAT('%',#{record.id},'%')
-                            </if>
-                                                                    
 
-                                                                                                        <if test="record.decorateStyleName != null and record.decorateStyleName!= ''">
-                                    AND t_house_decorate_plan.decorate_style_name LIKE CONCAT('%',#{record.decorateStyleName},'%')
-                            </if>
-                                                                    
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_decorate_plan.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
 
-                                                                                        <if test="record.allowChanged != null and record.allowChanged>0 ">
-                                    AND t_house_decorate_plan.allow_changed LIKE CONCAT('%',#{record.allowChanged},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.colorStyle != null and record.colorStyle!= ''">
-                                    AND t_house_decorate_plan.color_style LIKE CONCAT('%',#{record.colorStyle},'%')
-                            </if>
-                                                                    
+        <if test="record.decorateStyleName != null and record.decorateStyleName!= ''">
+            AND t_house_decorate_plan.decorate_style_name LIKE CONCAT('%',#{record.decorateStyleName},'%')
+        </if>
 
-                                                                                        <if test="record.totalBudget != null and record.totalBudget>0 ">
-                                    AND t_house_decorate_plan.total_budget LIKE CONCAT('%',#{record.totalBudget},'%')
-                            </if>
-                                                                    <if test="record.star != null and record.star>0 ">
-                                    AND t_house_decorate_plan.star LIKE CONCAT('%',#{record.star},'%')
-                            </if>
-        
+
+        <if test="record.allowChanged != null and record.allowChanged>0 ">
+            AND t_house_decorate_plan.allow_changed LIKE CONCAT('%',#{record.allowChanged},'%')
+        </if>
+
+
+        <if test="record.colorStyle != null and record.colorStyle!= ''">
+            AND t_house_decorate_plan.color_style LIKE CONCAT('%',#{record.colorStyle},'%')
+        </if>
+
+
+        <if test="record.totalBudget != null and record.totalBudget>0 ">
+            AND t_house_decorate_plan.total_budget LIKE CONCAT('%',#{record.totalBudget},'%')
+        </if>
+        <if test="record.star != null and record.star>0 ">
+            AND t_house_decorate_plan.star LIKE CONCAT('%',#{record.star},'%')
+        </if>
+
         <if test="startTime != null">
             <![CDATA[AND t_house_decorate_plan.start_time >= DATE(#{startTime})]]>
         </if>
         <if test="endTime != null">
             <![CDATA[AND t_house_decorate_plan.end_time <= DATE(#{endTime}]]>
         </if>
-            <!--
-        <if test="search != null and search != ''">
-            OR t_house_decorate_plan.name LIKE CONCAT('%',#{search},'%')
-        </if>
-        -->
-                                    </select>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_decorate_plan.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
 </mapper>

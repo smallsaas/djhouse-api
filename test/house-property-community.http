@@ -9,46 +9,80 @@
 
 
 
-### 获取unit列表
-GET {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits
+### 获取社区列表
+GET {{endpoint}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies
 Authorization: {{adminToken}}
 
 
-### 查询id为66 的unit信息
-GET {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits/66
+### 查询id为1 的社区信息
+GET {{endpoint}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies/9
 Authorization: {{adminToken}}
 
 ###分页查询unit信息
-GET {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits/?pageNum=1&pageSize=10
+GET {{endpoint}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies/?pageNum=1&pageSize=10
 Authorization:{{adminToken}}
 
 
-### 增添unit信息
-POST {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits
+
+### 增添社区信息
+POST {{endpoint}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies
 Content-Type: application/json
 Authorization: {{adminToken}}
 {
-    "area": 72,
-    "buildingId": "1",
-    "houseType": "一室两厅",
-    "houseTypePicture": null,
-    "number": "45"
+    "community": "g社区",
+    "communityCode": "6"
+}
+
+### 增添社区信息 item为子项楼栋信息
+POST {{endpoint}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies
+Content-Type: application/json
+Authorization: {{adminToken}}
+{
+    "community": "g社区",
+    "communityCode": "6",
+    "items": [
+      {
+        "code": "e1",
+        "floors": 10,
+        "id": 1,
+        "units": 4,
+        "orgId": 18
+      },
+      {
+        "code": "E2",
+        "floors": 10,
+        "id": 2,
+        "units": 4,
+        "orgId": 1
+      },
+      {
+        "code": "E3",
+        "floors": 11,
+        "id": 3,
+        "units": 5,
+        "orgId": 1
+      },
+      {
+        "code": "E4",
+        "floors": 10,
+        "id": 4,
+        "units": 5,
+        "orgId": 1
+      }
+    ]
 }
 
 ### 更新房产信息
-PUT {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits/8
+PUT {{endpoint}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies/6
 Content-Type: application/json
 Authorization:{{adminToken}}
 {
-    "area": 72,
-    "buildingId": "1",
-    "houseType": "一室两厅",
-    "houseTypePicture": null,
-    "number": "46"
+    "community": "E社区",
+    "communityCode": "2"
 }
 
 
 
 ### 删除用户房产信息
-DELETE {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits/8
+DELETE {{endpoint}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies/6
 Authorization:{{adminToken}}
