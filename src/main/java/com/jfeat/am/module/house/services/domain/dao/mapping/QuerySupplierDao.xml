@@ -82,10 +82,8 @@
         <if test="endTime != null">
             <![CDATA[AND t_supplier.end_time <= DATE(#{endTime}]]>
         </if>
-        <!--
     <if test="search != null and search != ''">
-        OR t_supplier.name LIKE CONCAT('%',#{search},'%')
+        AND t_supplier.name LIKE CONCAT('%',#{search},'%')
     </if>
-    -->
     </select>
 </mapper>
