@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseUserCommunityStatusDao">
+    <sql id="Base_Column_List">
+        t_house_user_community_status
+        .
+        id
+        , t_house_user_community_status.community_id AS communityId, t_house_user_community_status.user_id AS userId
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseUserCommunityStatusModel">
+        SELECT t_house_user_community_status.*
+        FROM t_house_user_community_status
+        WHERE t_house_user_community_status.id = #{id}
+        GROUP BY t_house_user_community_status.id
+    </select>
+
+
+    <select id="findHouseUserCommunityStatusPage" resultType="HouseUserCommunityStatusRecord"
+            parameterType="HouseUserCommunityStatusRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_user_community_status
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_user_community_status.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.communityId != null and record.communityId>0 ">
+            AND t_house_user_community_status.community_id LIKE CONCAT('%',#{record.communityId},'%')
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_user_community_status.user_id LIKE CONCAT('%',#{record.userId},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_user_community_status.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_user_community_status.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_user_community_status.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
+
+    <select id="queryUserCommunityStatusByUserId" resultType="HouseUserCommunityStatus">
+        SELECT * FROM t_house_user_community_status WHERE t_house_user_community_status.user_id=#{userId}
+    </select>
+
+    <update id="updateUserCommunityStatusByUserId">
+        UPDATE t_house_user_community_status SET community_id=#{entity.communityId}  WHERE user_id=#{entity.userId}
+    </update>
+</mapper>

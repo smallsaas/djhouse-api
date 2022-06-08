@@ -5,26 +5,26 @@ package com.jfeat.am.module.house.services.gen.crud.model;
 
 
 import java.util.List;
-import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyRoom;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
 
 /**
- * Created by Code generator on 2022-06-01
+ * Created by Code generator on 2022-06-06
  *  * slaves.size() : 1
  *  * modelpack : import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingModel;
  */
 public class HousePropertyBuildingModel extends HousePropertyBuilding{
 
-    // housePropertyBuildingUnit
-    // HousePropertyBuildingUnit
-    // housePropertyBuildingUnit
-    private List<HousePropertyBuildingUnit> items;
+    // housePropertyRoom
+    // HousePropertyRoom
+    // housePropertyRoom
+    private List<HousePropertyRoom> items;
 
-    public List<HousePropertyBuildingUnit> getItems() {
+    public List<HousePropertyRoom> getItems() {
         return this.items;
     }
 
-    public void setItems(List<HousePropertyBuildingUnit> items) {
+    public void setItems(List<HousePropertyRoom> items) {
         this.items = items;
     }
 }

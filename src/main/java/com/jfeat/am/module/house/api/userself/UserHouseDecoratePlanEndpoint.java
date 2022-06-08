@@ -90,7 +90,7 @@ public class UserHouseDecoratePlanEndpoint {
             if (houseUserDecorateAddressRecord != null) {
                 String community = houseUserDecorateAddressRecord.getHousePropertyCommunity().getCommunity();
                 String building = houseUserDecorateAddressRecord.getHousePropertyBuilding().getCode();
-                String unit = houseUserDecorateAddressRecord.getHousePropertyBuildingUnit().getNumber();
+                String unit = houseUserDecorateAddressRecord.getHousePropertyBuildingUnit().getUnitCode();
                 String address = "".concat(community).concat(building).concat("栋").concat(unit);
                 houseDecoratePlan.setDecorateAddress(address);
             }
@@ -109,6 +109,7 @@ public class UserHouseDecoratePlanEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
         Long userId = JWTKit.getUserId();
+
 
         CRUDObject<HouseDecoratePlanModel> entity = houseDecoratePlanOverModelService
                 .registerQueryMasterDao(queryHouseDecoratePlanDao)
@@ -149,7 +150,7 @@ public class UserHouseDecoratePlanEndpoint {
         if (houseUserDecorateAddressRecord != null) {
             String community = houseUserDecorateAddressRecord.getHousePropertyCommunity().getCommunity();
             String building = houseUserDecorateAddressRecord.getHousePropertyBuilding().getCode();
-            String unit = houseUserDecorateAddressRecord.getHousePropertyBuildingUnit().getNumber();
+            String unit = houseUserDecorateAddressRecord.getHousePropertyBuildingUnit().getUnitCode();
             String address = "".concat(community).concat(building).concat("栋").concat(unit);
             jsonObject.put("decorateAddress", address);
         }

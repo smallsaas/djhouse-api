@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseDesignModelDao">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <sql id="Base_Column_List">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                t_house_design_model.id, t_house_design_model.house_type AS houseType, t_house_design_model.house_type_picture AS houseTypePicture, t_house_design_model.hall_width AS hallWidth, t_house_design_model.hall_sub_width AS hallSubWidth, t_house_design_model.hall_length AS hallLength, t_house_design_model.hall_french_window_width AS hallFrenchWindowWidth, t_house_design_model.hall_french_window_hight AS hallFrenchWindowHight, t_house_design_model.dining_room_width AS diningRoomWidth, t_house_design_model.dining_room_length AS diningRoomLength, t_house_design_model.first_room_width AS firstRoomWidth, t_house_design_model.first_room_length AS firstRoomLength, t_house_design_model.first_room_doorwall_width AS firstRoomDoorwallWidth, t_house_design_model.first_room_window_width AS firstRoomWindowWidth, t_house_design_model.first_room_window_sub_width AS firstRoomWindowSubWidth, t_house_design_model.first_room_window_hight AS firstRoomWindowHight, t_house_design_model.second_room_width AS secondRoomWidth, t_house_design_model.second_room_length AS secondRoomLength, t_house_design_model.second_room_doorwall_width AS secondRoomDoorwallWidth, t_house_design_model.second_room_window_width AS secondRoomWindowWidth, t_house_design_model.second_room_window_sub_width AS secondRoomWindowSubWidth, t_house_design_model.second_room_window_hight AS secondRoomWindowHight, t_house_design_model.third_room_width AS thirdRoomWidth, t_house_design_model.third_room_length AS thirdRoomLength, t_house_design_model.third_room_doorwall_width AS thirdRoomDoorwallWidth, t_house_design_model.third_room_window_width AS thirdRoomWindowWidth, t_house_design_model.third_room_window_sub_width AS thirdRoomWindowSubWidth, t_house_design_model.third_room_window_hight AS thirdRoomWindowHight, t_house_design_model.fourth_room_width AS fourthRoomWidth, t_house_design_model.fourth_room_length AS fourthRoomLength, t_house_design_model.fourth_room_doorwall_width AS fourthRoomDoorwallWidth, t_house_design_model.fourth_room_window_width AS fourthRoomWindowWidth, t_house_design_model.fourth_room_window_sub_width AS fourthRoomWindowSubWidth, t_house_design_model.fourth_room_window_hight AS fourthRoomWindowHight
+    </sql>
+
+    
+    
+    <select id="queryMasterModel" resultType="HouseDesignModelModel">
+       SELECT t_house_design_model.*
+       FROM t_house_design_model
+       WHERE t_house_design_model.id=#{id}
+       GROUP BY t_house_design_model.id
+    </select>
+
+
+
+                                                                                                                                        
+    <select id="findHouseDesignModelPage" resultType="HouseDesignModelRecord" parameterType="HouseDesignModelRecord">
+            SELECT <include refid="Base_Column_List"/>
+
+        
+
+        FROM t_house_design_model
+
+        
+        
+        WHERE 1=1
+        
+
+        
+                                                                            <if test="record.id != null and record.id>0 ">
+                                    AND t_house_design_model.id LIKE CONCAT('%',#{record.id},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.houseType != null and record.houseType!= ''">
+                                    AND t_house_design_model.house_type LIKE CONCAT('%',#{record.houseType},'%')
+                            </if>
+                                                                    
+
+                                                                                                        <if test="record.houseTypePicture != null and record.houseTypePicture!= ''">
+                                    AND t_house_design_model.house_type_picture LIKE CONCAT('%',#{record.houseTypePicture},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.hallWidth != null and record.hallWidth>0 ">
+                                    AND t_house_design_model.hall_width LIKE CONCAT('%',#{record.hallWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                        <if test="record.hallSubWidth != null and record.hallSubWidth>0 ">
+                                    AND t_house_design_model.hall_sub_width LIKE CONCAT('%',#{record.hallSubWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.hallLength != null and record.hallLength>0 ">
+                                    AND t_house_design_model.hall_length LIKE CONCAT('%',#{record.hallLength},'%')
+                            </if>
+                                                                    
+
+                                                                                                                        <if test="record.hallFrenchWindowWidth != null and record.hallFrenchWindowWidth>0 ">
+                                    AND t_house_design_model.hall_french_window_width LIKE CONCAT('%',#{record.hallFrenchWindowWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                                        <if test="record.hallFrenchWindowHight != null and record.hallFrenchWindowHight>0 ">
+                                    AND t_house_design_model.hall_french_window_hight LIKE CONCAT('%',#{record.hallFrenchWindowHight},'%')
+                            </if>
+                                                                    
+
+                                                                                                        <if test="record.diningRoomWidth != null and record.diningRoomWidth>0 ">
+                                    AND t_house_design_model.dining_room_width LIKE CONCAT('%',#{record.diningRoomWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                        <if test="record.diningRoomLength != null and record.diningRoomLength>0 ">
+                                    AND t_house_design_model.dining_room_length LIKE CONCAT('%',#{record.diningRoomLength},'%')
+                            </if>
+                                                                    
+
+                                                                                                        <if test="record.firstRoomWidth != null and record.firstRoomWidth>0 ">
+                                    AND t_house_design_model.first_room_width LIKE CONCAT('%',#{record.firstRoomWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                        <if test="record.firstRoomLength != null and record.firstRoomLength>0 ">
+                                    AND t_house_design_model.first_room_length LIKE CONCAT('%',#{record.firstRoomLength},'%')
+                            </if>
+                                                                    
+
+                                                                                                                        <if test="record.firstRoomDoorwallWidth != null and record.firstRoomDoorwallWidth>0 ">
+                                    AND t_house_design_model.first_room_doorwall_width LIKE CONCAT('%',#{record.firstRoomDoorwallWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                                        <if test="record.firstRoomWindowWidth != null and record.firstRoomWindowWidth>0 ">
+                                    AND t_house_design_model.first_room_window_width LIKE CONCAT('%',#{record.firstRoomWindowWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                                                        <if test="record.firstRoomWindowSubWidth != null and record.firstRoomWindowSubWidth>0 ">
+                                    AND t_house_design_model.first_room_window_sub_width LIKE CONCAT('%',#{record.firstRoomWindowSubWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                                        <if test="record.firstRoomWindowHight != null and record.firstRoomWindowHight>0 ">
+                                    AND t_house_design_model.first_room_window_hight LIKE CONCAT('%',#{record.firstRoomWindowHight},'%')
+                            </if>
+                                                                    
+
+                                                                                                        <if test="record.secondRoomWidth != null and record.secondRoomWidth>0 ">
+                                    AND t_house_design_model.second_room_width LIKE CONCAT('%',#{record.secondRoomWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                        <if test="record.secondRoomLength != null and record.secondRoomLength>0 ">
+                                    AND t_house_design_model.second_room_length LIKE CONCAT('%',#{record.secondRoomLength},'%')
+                            </if>
+                                                                    
+
+                                                                                                                        <if test="record.secondRoomDoorwallWidth != null and record.secondRoomDoorwallWidth>0 ">
+                                    AND t_house_design_model.second_room_doorwall_width LIKE CONCAT('%',#{record.secondRoomDoorwallWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                                        <if test="record.secondRoomWindowWidth != null and record.secondRoomWindowWidth>0 ">
+                                    AND t_house_design_model.second_room_window_width LIKE CONCAT('%',#{record.secondRoomWindowWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                                                        <if test="record.secondRoomWindowSubWidth != null and record.secondRoomWindowSubWidth>0 ">
+                                    AND t_house_design_model.second_room_window_sub_width LIKE CONCAT('%',#{record.secondRoomWindowSubWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                                        <if test="record.secondRoomWindowHight != null and record.secondRoomWindowHight>0 ">
+                                    AND t_house_design_model.second_room_window_hight LIKE CONCAT('%',#{record.secondRoomWindowHight},'%')
+                            </if>
+                                                                    
+
+                                                                                                        <if test="record.thirdRoomWidth != null and record.thirdRoomWidth>0 ">
+                                    AND t_house_design_model.third_room_width LIKE CONCAT('%',#{record.thirdRoomWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                        <if test="record.thirdRoomLength != null and record.thirdRoomLength>0 ">
+                                    AND t_house_design_model.third_room_length LIKE CONCAT('%',#{record.thirdRoomLength},'%')
+                            </if>
+                                                                    
+
+                                                                                                                        <if test="record.thirdRoomDoorwallWidth != null and record.thirdRoomDoorwallWidth>0 ">
+                                    AND t_house_design_model.third_room_doorwall_width LIKE CONCAT('%',#{record.thirdRoomDoorwallWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                                        <if test="record.thirdRoomWindowWidth != null and record.thirdRoomWindowWidth>0 ">
+                                    AND t_house_design_model.third_room_window_width LIKE CONCAT('%',#{record.thirdRoomWindowWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                                                        <if test="record.thirdRoomWindowSubWidth != null and record.thirdRoomWindowSubWidth>0 ">
+                                    AND t_house_design_model.third_room_window_sub_width LIKE CONCAT('%',#{record.thirdRoomWindowSubWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                                        <if test="record.thirdRoomWindowHight != null and record.thirdRoomWindowHight>0 ">
+                                    AND t_house_design_model.third_room_window_hight LIKE CONCAT('%',#{record.thirdRoomWindowHight},'%')
+                            </if>
+                                                                    
+
+                                                                                                        <if test="record.fourthRoomWidth != null and record.fourthRoomWidth>0 ">
+                                    AND t_house_design_model.fourth_room_width LIKE CONCAT('%',#{record.fourthRoomWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                        <if test="record.fourthRoomLength != null and record.fourthRoomLength>0 ">
+                                    AND t_house_design_model.fourth_room_length LIKE CONCAT('%',#{record.fourthRoomLength},'%')
+                            </if>
+                                                                    
+
+                                                                                                                        <if test="record.fourthRoomDoorwallWidth != null and record.fourthRoomDoorwallWidth>0 ">
+                                    AND t_house_design_model.fourth_room_doorwall_width LIKE CONCAT('%',#{record.fourthRoomDoorwallWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                                        <if test="record.fourthRoomWindowWidth != null and record.fourthRoomWindowWidth>0 ">
+                                    AND t_house_design_model.fourth_room_window_width LIKE CONCAT('%',#{record.fourthRoomWindowWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                                                        <if test="record.fourthRoomWindowSubWidth != null and record.fourthRoomWindowSubWidth>0 ">
+                                    AND t_house_design_model.fourth_room_window_sub_width LIKE CONCAT('%',#{record.fourthRoomWindowSubWidth},'%')
+                            </if>
+                                                                    
+
+                                                                                                                        <if test="record.fourthRoomWindowHight != null and record.fourthRoomWindowHight>0 ">
+                                    AND t_house_design_model.fourth_room_window_hight LIKE CONCAT('%',#{record.fourthRoomWindowHight},'%')
+                            </if>
+        
+        <if test="startTime != null">
+            <![CDATA[AND t_house_design_model.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_design_model.end_time <= DATE(#{endTime}]]>
+        </if>
+            <!--
+        <if test="search != null and search != ''">
+            OR t_house_design_model.name LIKE CONCAT('%',#{search},'%')
+        </if>
+        -->
+                                    </select>
+</mapper>

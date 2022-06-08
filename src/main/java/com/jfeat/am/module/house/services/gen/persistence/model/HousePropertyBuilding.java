@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
  * </p>
  *
  * @author Code generator
- * @since 2022-06-01
+ * @since 2022-06-06
  */
 @TableName("t_house_property_building")
 @ApiModel(value="HousePropertyBuilding对象", description="")

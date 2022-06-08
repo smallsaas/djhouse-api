@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.gen.persistence.dao.HouseDesignModelMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jfeat.am.module.house.services.gen.persistence.model.HouseDesignModel">
+        <id column="id" property="id" />
+        <result column="house_type" property="houseType" />
+        <result column="house_type_picture" property="houseTypePicture" />
+        <result column="hall_width" property="hallWidth" />
+        <result column="hall_sub_width" property="hallSubWidth" />
+        <result column="hall_length" property="hallLength" />
+        <result column="hall_french_window_width" property="hallFrenchWindowWidth" />
+        <result column="hall_french_window_hight" property="hallFrenchWindowHight" />
+        <result column="dining_room_width" property="diningRoomWidth" />
+        <result column="dining_room_length" property="diningRoomLength" />
+        <result column="first_room_width" property="firstRoomWidth" />
+        <result column="first_room_length" property="firstRoomLength" />
+        <result column="first_room_doorwall_width" property="firstRoomDoorwallWidth" />
+        <result column="first_room_window_width" property="firstRoomWindowWidth" />
+        <result column="first_room_window_sub_width" property="firstRoomWindowSubWidth" />
+        <result column="first_room_window_hight" property="firstRoomWindowHight" />
+        <result column="second_room_width" property="secondRoomWidth" />
+        <result column="second_room_length" property="secondRoomLength" />
+        <result column="second_room_doorwall_width" property="secondRoomDoorwallWidth" />
+        <result column="second_room_window_width" property="secondRoomWindowWidth" />
+        <result column="second_room_window_sub_width" property="secondRoomWindowSubWidth" />
+        <result column="second_room_window_hight" property="secondRoomWindowHight" />
+        <result column="third_room_width" property="thirdRoomWidth" />
+        <result column="third_room_length" property="thirdRoomLength" />
+        <result column="third_room_doorwall_width" property="thirdRoomDoorwallWidth" />
+        <result column="third_room_window_width" property="thirdRoomWindowWidth" />
+        <result column="third_room_window_sub_width" property="thirdRoomWindowSubWidth" />
+        <result column="third_room_window_hight" property="thirdRoomWindowHight" />
+        <result column="fourth_room_width" property="fourthRoomWidth" />
+        <result column="fourth_room_length" property="fourthRoomLength" />
+        <result column="fourth_room_doorwall_width" property="fourthRoomDoorwallWidth" />
+        <result column="fourth_room_window_width" property="fourthRoomWindowWidth" />
+        <result column="fourth_room_window_sub_width" property="fourthRoomWindowSubWidth" />
+        <result column="fourth_room_window_hight" property="fourthRoomWindowHight" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, house_type, house_type_picture, hall_width, hall_sub_width, hall_length, hall_french_window_width, hall_french_window_hight, dining_room_width, dining_room_length, first_room_width, first_room_length, first_room_doorwall_width, first_room_window_width, first_room_window_sub_width, first_room_window_hight, second_room_width, second_room_length, second_room_doorwall_width, second_room_window_width, second_room_window_sub_width, second_room_window_hight, third_room_width, third_room_length, third_room_doorwall_width, third_room_window_width, third_room_window_sub_width, third_room_window_hight, fourth_room_width, fourth_room_length, fourth_room_doorwall_width, fourth_room_window_width, fourth_room_window_sub_width, fourth_room_window_hight
+    </sql>
+
+</mapper>

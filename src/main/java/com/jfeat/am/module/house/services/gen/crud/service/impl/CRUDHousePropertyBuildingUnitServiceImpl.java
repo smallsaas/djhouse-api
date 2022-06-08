@@ -19,7 +19,7 @@ import com.jfeat.crud.plus.impl.CRUDServiceOnlyImpl;
  * </p>
  *CRUDHousePropertyBuildingUnitService
  * @author Code generator
- * @since 2022-06-01
+ * @since 2022-06-06
  */
 
 @Service

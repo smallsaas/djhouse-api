@@ -14,39 +14,42 @@ import io.swagger.annotations.ApiModelProperty;
  * </p>
  *
  * @author Code generator
- * @since 2022-05-28
+ * @since 2022-06-06
  */
-@TableName("t_house_property_user_unit")
-@ApiModel(value="HousePropertyUserUnit对象", description="")
-public class HousePropertyUserUnit extends Model<HousePropertyUserUnit> {
+@TableName("t_house_property_room")
+@ApiModel(value="HousePropertyRoom对象", description="")
+public class HousePropertyRoom extends Model<HousePropertyRoom> {
 
     private static final long serialVersionUID=1L;
 
       @TableId(value = "id", type = IdType.AUTO)
       private Long id;
 
-      @ApiModelProperty(value = "用户id")
-      private Long userId;
+      @ApiModelProperty(value = "楼栋id")
+      private Long buildingId;
 
       @ApiModelProperty(value = "单元id")
       private Long unitId;
+
+      @ApiModelProperty(value = "房产编号")
+      private String number;
 
     
     public Long getId() {
         return id;
     }
 
-      public HousePropertyUserUnit setId(Long id) {
+      public HousePropertyRoom setId(Long id) {
           this.id = id;
           return this;
       }
     
-    public Long getUserId() {
-        return userId;
+    public Long getBuildingId() {
+        return buildingId;
     }
 
-      public HousePropertyUserUnit setUserId(Long userId) {
-          this.userId = userId;
+      public HousePropertyRoom setBuildingId(Long buildingId) {
+          this.buildingId = buildingId;
           return this;
       }
     
@@ -54,16 +57,27 @@ public class HousePropertyUserUnit extends Model<HousePropertyUserUnit> {
         return unitId;
     }
 
-      public HousePropertyUserUnit setUnitId(Long unitId) {
+      public HousePropertyRoom setUnitId(Long unitId) {
           this.unitId = unitId;
+          return this;
+      }
+    
+    public String getNumber() {
+        return number;
+    }
+
+      public HousePropertyRoom setNumber(String number) {
+          this.number = number;
           return this;
       }
 
       public static final String ID = "id";
 
-      public static final String USER_ID = "user_id";
+      public static final String BUILDING_ID = "building_id";
 
       public static final String UNIT_ID = "unit_id";
+
+      public static final String NUMBER = "number";
 
       @Override
     protected Serializable pkVal() {
@@ -72,10 +86,11 @@ public class HousePropertyUserUnit extends Model<HousePropertyUserUnit> {
 
     @Override
     public String toString() {
-        return "HousePropertyUserUnit{" +
+        return "HousePropertyRoom{" +
               "id=" + id +
-                  ", userId=" + userId +
+                  ", buildingId=" + buildingId +
                   ", unitId=" + unitId +
+                  ", number=" + number +
               "}";
     }
 }

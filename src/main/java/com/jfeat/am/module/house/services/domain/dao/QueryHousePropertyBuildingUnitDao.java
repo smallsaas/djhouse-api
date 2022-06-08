@@ -4,6 +4,7 @@ import com.jfeat.am.module.house.services.domain.model.HousePropertyBuildingUnit
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyRoom;
 import com.jfeat.crud.plus.QueryMasterDao;
 import org.apache.ibatis.annotations.Param;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
@@ -13,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by Code generator on 2022-06-01
+ * Created by Code generator on 2022-06-06
  */
 public interface QueryHousePropertyBuildingUnitDao extends QueryMasterDao<HousePropertyBuildingUnit> {
    /*
@@ -35,17 +36,19 @@ public interface QueryHousePropertyBuildingUnitDao extends QueryMasterDao<HouseP
      */
     List<HousePropertyBuildingUnitModel> queryMasterModelList(@Param("masterId") Object masterId);
 
+ //    <!--    查询户型列表-->
+ List<HousePropertyBuildingUnitModel> queryHouseType(@Param("communityId")Long communityId);
+ //
+ //
+ //<!--    以户型查询楼栋-->
+ List<HousePropertyBuilding> queryHouseBuildingByHouseType(@Param("houseTypeId") Long houseTypeId,
+                                                           @Param("communityId")Long communityId);
+ //
+ //<!--    户型和楼栋联合查询房屋信息-->
+ List<HousePropertyRoom> queryHouseBuildingUnit(@Param("buildingId") Long buildingId, @Param("houseTypeId") Long houseTypeId,
+                                                @Param("communityId")Long communityId);
 
+ int deleteHouseBuildingUnitByBuildingId(@Param("buildingId")Long buildingId);
 
-     //    <!--    查询户型列表-->
-     List<HousePropertyBuildingUnitModel> queryHouseType(@Param("communityId")Long communityId);
-     //
-    //
-    //<!--    以户型查询楼栋-->
-     List<HousePropertyBuilding> queryHouseBuildingByHouseType(@Param("houseType") String houseType,
-                                                               @Param("communityId")Long communityId);
-     //
-    //<!--    户型和楼栋联合查询房屋信息-->
-     List<HousePropertyBuildingUnit> queryHouseBuildingUnit(@Param("buildingId") Long buildingId,@Param("houseType") String houseType,
-                                                            @Param("communityId")Long communityId);
+  List<HousePropertyBuildingUnit> queryHouseBuildingUnitByBuildingId(@Param("buildingId")Long buildingId);
 }

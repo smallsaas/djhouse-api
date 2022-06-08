@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author Code generator
- * @since 2022-06-01
+ * @since 2022-06-06
  */
 public interface HousePropertyCommunityMapper extends BaseMapper<HousePropertyCommunity> {
 

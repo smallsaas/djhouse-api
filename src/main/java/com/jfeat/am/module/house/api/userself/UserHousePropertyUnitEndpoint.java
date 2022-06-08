@@ -3,25 +3,17 @@ package com.jfeat.am.module.house.api.userself;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.common.annotation.Permission;
 import com.jfeat.am.core.jwt.JWTKit;
-import com.jfeat.am.module.house.api.permission.HousePropertyBuildingPermission;
-import com.jfeat.am.module.house.api.permission.HousePropertyCommunityPermission;
-import com.jfeat.am.module.house.api.permission.HousePropertyUserUnitPermission;
-import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingUnitDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyCommunityDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyUserUnitDao;
+import com.jfeat.am.module.house.api.permission.HousePropertyUserRoomPermission;
+import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.HousePropertyBuildingRecord;
 import com.jfeat.am.module.house.services.domain.model.HousePropertyCommunityRecord;
-import com.jfeat.am.module.house.services.domain.model.HousePropertyUserUnitRecord;
 import com.jfeat.am.module.house.services.domain.service.HousePropertyBuildingOverModelService;
 import com.jfeat.am.module.house.services.domain.service.HousePropertyCommunityOverModelService;
-import com.jfeat.am.module.house.services.domain.service.HousePropertyUserUnitService;
+import com.jfeat.am.module.house.services.domain.service.HousePropertyUserRoomService;
+import com.jfeat.am.module.house.services.domain.service.HouseUserCommunityStatusService;
 import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingModel;
-import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingUnitModel;
-import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyCommunityModel;
-import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
-import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
-import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyUserUnit;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyUserRoom;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserCommunityStatus;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -52,19 +44,24 @@ public class UserHousePropertyUnitEndpoint {
     HousePropertyBuildingOverModelService housePropertyBuildingOverModelService;
 
     @Resource
-    QueryHousePropertyUserUnitDao queryHousePropertyUserUnitDao;
+    HousePropertyUserRoomService housePropertyUserRoomService;
 
-    @Resource
-    HousePropertyUserUnitService housePropertyUserUnitService;
-
-    @Resource
-    HousePropertyCommunityOverModelService housePropertyCommunityOverModelService;
 
     @Resource
     QueryHousePropertyCommunityDao queryHousePropertyCommunityDao;
 
     @Resource
+    QueryHousePropertyUserRoomDao queryHousePropertyUserRoomDao;
+
+    @Resource
     QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
+
+    @Resource
+    HouseUserCommunityStatusService houseUserCommunityStatusService;
+
+    @Resource
+    QueryHouseUserCommunityStatusDao queryHouseUserCommunityStatusDao;
+
 
     //    通过楼栋id获取整栋楼的 unit
     @BusinessLog(name = "HousePropertyBuilding", value = "查看 HousePropertyBuildingModel")
@@ -155,29 +152,29 @@ public class UserHousePropertyUnitEndpoint {
     }
 
 
-    @ApiOperation(value = "获取用户的unit", response = HousePropertyUserUnitRecord.class)
+    @ApiOperation(value = "获取用户的unit", response = QueryHousePropertyUserRoomDao.class)
     @GetMapping("/userUnit")
     public Tip getUserUnite() {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
         Long userId = JWTKit.getUserId();
-        return SuccessTip.create(queryHousePropertyUserUnitDao.queryUserUnitList(userId));
+        return SuccessTip.create(queryHousePropertyUserRoomDao.queryUserRoomByUserId(userId));
     }
 
 
     //    新增安装unit位置
     @BusinessLog(name = "HousePropertyUserUnit", value = "create HousePropertyUserUnit")
     @PostMapping("/userUnit")
-    @ApiOperation(value = "新建 HousePropertyUserUnit", response = HousePropertyUserUnit.class)
-    public Tip createHousePropertyUserUnit(@RequestBody HousePropertyUserUnit entity) {
+    @ApiOperation(value = "新建 HousePropertyUserUnit", response = HousePropertyUserRoom.class)
+    public Tip createHousePropertyUserUnit(@RequestBody HousePropertyUserRoom entity) {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
         entity.setUserId(JWTKit.getUserId());
         Integer affected = 0;
         try {
-            affected = housePropertyUserUnitService.createMaster(entity);
+            affected = housePropertyUserRoomService.createMaster(entity);
         } catch (DuplicateKeyException e) {
             throw new BusinessException(BusinessCode.DuplicateKey);
         }
@@ -188,14 +185,14 @@ public class UserHousePropertyUnitEndpoint {
     //    修改用户的unit位置
     @BusinessLog(name = "HousePropertyUserUnit", value = "update HousePropertyUserUnit")
     @PutMapping("/userUnit/{id}")
-    @ApiOperation(value = "修改 HousePropertyUserUnit", response = HousePropertyUserUnit.class)
-    public Tip updateHousePropertyUserUnit(@PathVariable Long id, @RequestBody HousePropertyUserUnit entity) {
+    @ApiOperation(value = "修改 HousePropertyUserUnit", response = HousePropertyUserRoom.class)
+    public Tip updateHousePropertyUserUnit(@PathVariable Long id, @RequestBody HousePropertyUserRoom entity) {
         entity.setId(id);
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
         entity.setUserId(JWTKit.getUserId());
-        return SuccessTip.create(housePropertyUserUnitService.updateMaster(entity));
+        return SuccessTip.create(housePropertyUserRoomService.updateMaster(entity));
     }
 
     //    删除用户unit
@@ -206,8 +203,9 @@ public class UserHousePropertyUnitEndpoint {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
-        return SuccessTip.create(housePropertyUserUnitService.deleteMaster(id));
+        return SuccessTip.create(housePropertyUserRoomService.deleteMaster(id));
     }
+
 
     @ApiOperation(value = "HousePropertyCommunity 列表信息", response = HousePropertyCommunityRecord.class)
     @GetMapping("/community")
@@ -263,24 +261,40 @@ public class UserHousePropertyUnitEndpoint {
     }
 
 
-    //    获取户型列表
-    @GetMapping("/houseType")
-    public Tip queryHouseType(@RequestParam("communityId") Long communityId) {
-        return SuccessTip.create(queryHousePropertyBuildingUnitDao.queryHouseType(communityId));
+//   获取用户社区状态
+    @GetMapping("/userCommunityStatus")
+    public Tip queryUserCommunityStatusByUserId(){
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        Long userId = JWTKit.getUserId();
+        return SuccessTip.create(queryHouseUserCommunityStatusDao.queryUserCommunityStatusByUserId(userId));
+
     }
 
-    //    以户型获取楼栋信息
-    @GetMapping("/houseBuilding")
-    public Tip queryHouseBuildingByHouseType(@RequestParam("houseType") String houseType,
-                                             @RequestParam("communityId") Long communityId) {
-        return SuccessTip.create(queryHousePropertyBuildingUnitDao.queryHouseBuildingByHouseType(houseType, communityId));
+//    修改用户社区状态
+    @PostMapping("/userCommunityStatus")
+    public Tip updateUserCommunityStatusByUserId(@RequestBody HouseUserCommunityStatus entity){
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        entity.setUserId( JWTKit.getUserId());
+       HouseUserCommunityStatus houseUserCommunityStatus =  queryHouseUserCommunityStatusDao.queryUserCommunityStatusByUserId(JWTKit.getUserId());
+       if (houseUserCommunityStatus!=null){
+           return SuccessTip.create(queryHouseUserCommunityStatusDao.updateUserCommunityStatusByUserId(entity));
+       }else {
+           Integer affected = 0;
+           try {
+               affected = houseUserCommunityStatusService.createMaster(entity);
+           } catch (DuplicateKeyException e) {
+               throw new BusinessException(BusinessCode.DuplicateKey);
+           }
+
+           return SuccessTip.create(affected);
+       }
+
+
     }
 
-    //    获取房屋信息
-    @GetMapping("/houseBuildingUnit")
-    public Tip queryHouseBuildingUnit(@RequestParam("buildingId") Long buildingId,
-                                      @RequestParam("houseType") String houseType,
-                                      @RequestParam("communityId") Long communityId) {
-        return SuccessTip.create(queryHousePropertyBuildingUnitDao.queryHouseBuildingUnit(buildingId, houseType, communityId));
-    }
+
 }

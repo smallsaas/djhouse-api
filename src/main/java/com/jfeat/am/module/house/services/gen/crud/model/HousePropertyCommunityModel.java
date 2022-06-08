@@ -9,7 +9,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBui
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyCommunity;
 
 /**
- * Created by Code generator on 2022-06-01
+ * Created by Code generator on 2022-06-06
  *  * slaves.size() : 1
  *  * modelpack : import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyCommunityModel;
  */

@@ -1,16 +1,14 @@
 @endpoint=http://localhost:8080
 @service=http://app1.console.smallsaas.cn:8001
 
-@token =Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6IiIsInVzZXJJZCI6Mjg0LCJhY2NvdW50IjoiODhiOGMwOGIwNTQ2NGFkMTgzM2UyY2RmYzA1YTk2ODMiLCJkb21haW5Vc2VySWQiOiIiLCJpYXQiOjE2NTQwNTg0ODgsImp0aSI6IjI4NCIsInN1YiI6Ijg4YjhjMDhiMDU0NjRhZDE4MzNlMmNkZmMwNWE5NjgzIiwiZXhwIjoxNjU0MzE3Njg4fQ.5FLTi7TwztrQ_WsW4OGQPOcZIkqm8ysUWDjlIJtZQVioUI6U6RWysMWNXMHOPCpd4bXeXX2gz-A1IQnB5ZulhQ
-
-
+@token = Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6IiIsInVzZXJJZCI6Mjg1LCJhY2NvdW50IjoiMDAwYTY3NTcxNTM5NGJjYTk1ZmQ4OTcwOGViOTVhZDgiLCJkb21haW5Vc2VySWQiOiIiLCJpYXQiOjE2NTQ2NTg1NzcsImp0aSI6IjI4NSIsInN1YiI6IjAwMGE2NzU3MTUzOTRiY2E5NWZkODk3MDhlYjk1YWQ4IiwiZXhwIjoxNjU0OTE3Nzc3fQ.i1b1W5XaYlW3YLOLl1pfE4G2w69-qA-XZ4iUH7WF3jOf8iN6UrRTRNK3ad71Ltx7J1PbZQHtWH5XxaxfzRx8pA
 
 ### 获取全部楼栋信息
-GET {{endpoint}}/api/u/house/house/housePropertyUnit
+GET {{service}}/api/u/house/house/housePropertyUnit?communityId=1
 
 
-### 通过楼栋id获取整栋楼的 unit
-GET {{endpoint}}/api/u/house/house/housePropertyUnit/1
+### 通过楼栋id获取整栋楼的 房屋
+GET {{service}}/api/u/house/house/housePropertyUnit/3
 
 
 ### 获取用户的安装地址信息
@@ -20,31 +18,41 @@ Authorization:{{token}}
 
 ### 增加用户安装地址
 POST {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit
+Authorization:{{token}}
+
 {
-      "unitId": 45,
-      "userId": "1"
+      "room_id": 569
 }
 
 ### 修改用户安装地址
 # 7为主键id
 PUT {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit/7
+Authorization:{{token}}
+
 {
-      "unitId": 46,
-      "userId": "1"
+      "room_id": 23
 }
+
 ### 删除用户安装地址
 # 7为主键id
 DELETE {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit/7
-
+Authorization:{{token}}
 
 ### 获取社区
 GET {{service}}/api/u/house/house/housePropertyUnit/community
+{
+      "communityId":1
+}
 
-### 获取社区有什么房型
-GET {{service}}/api/u/house/house/housePropertyUnit/houseType?communityId=2
 
-### 获取社区房型有什么楼栋编号
-GET {{service}}/api/u/house/house/housePropertyUnit/houseBuilding?houseType=三室两厅&communityId=1
 
-####获取某社区某房型某楼栋的全部房间
-GET {{service}}/api/u/house/house/housePropertyUnit/houseBuildingUnit?houseType=四室两厅&buildingId=1&communityId=1
+###查询用户是否有社区状态
+GET {{endpoint}}/api/u/house/house/housePropertyUnit/userCommunityStatus
+Authorization:{{token}}
+
+### 改变或者增加用户社区状态
+POST {{service}}/api/u/house/house/housePropertyUnit/userCommunityStatus
+Authorization:{{token}}
+{
+      "communityId":3
+}

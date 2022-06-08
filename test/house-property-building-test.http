@@ -24,7 +24,7 @@ Authorization: {{adminToken}}
 
 
 ### 查询楼栋id为1 的详情信息
-GET {{service}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/1
+GET {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/41
 Authorization: {{adminToken}}
 
 
@@ -34,30 +34,31 @@ Authorization: {{adminToken}}
 POST {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings
 Content-Type: application/json
 Authorization: {{adminToken}}
+
 {
-    "communityId":3,
+    "communityId":2,
     "area":"",
-    "code":"D2",
-    "floors":10,
-    "units":4,
+    "code":"B3",
+    "floors":30,
+    "units":5
 }
 
 
-### 更新楼栋id为2 的信息
-PUT {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/2
+### 更新楼栋id为40 的信息
+PUT {{service}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/14
 Content-Type: application/json
 Authorization:{{adminToken}}
 {
     "communityId":2,
     "area":"",
-    "code":"D2",
-    "floors":10,
-    "units":4,
+    "code":"B5",
+    "floors":12,
+    "units":3
 }
 
 
 ### 更新楼栋信息，删除原来全部子项信息，添加item子项
-PUT {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/1
+PUT {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/41
 Content-Type: application/json
 Authorization:{{adminToken}}
 {
@@ -67,15 +68,15 @@ Authorization:{{adminToken}}
     "floors":10,
     "units":4,
     "items":[
-        {
-            "area": 0,
-            "number": "D236",
-            "houseType": "一室两厅"
-        }
+       {
+        "number": "1003",
+        "unitId": 65,
+        "buildingId": 41
+      }
     ]
 }
 
 
 ### 删除楼栋信息
-DELETE {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/2
+DELETE {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/39
 Authorization:{{adminToken}}

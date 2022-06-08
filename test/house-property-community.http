@@ -1,4 +1,5 @@
 @endpoint=http://app1.console.smallsaas.cn:8001
+@service=http://app1.console.smallsaas.cn:8001
 @adminToken=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjUzNzA2MDA1LCJqdGkiOiIxIiwic3ViIjoiYWRtaW4iLCJleHAiOjE2NTYyOTgwMDV9.nH3W8nkLMzrBp_VybRJ-ZnNjCG96RqD5a6-HikifXV9hQ618btKd8MGxoPf2XIroEzDc4Gj4JoVKk7dSBoB0zA
 
 @A_1token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjE4IiwidXNlcklkIjoiNiIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0xIiwidXNlclR5cGUiOjAsImRldlVzZXJUeXBlIjowLCJiVXNlclR5cGUiOiJTWVNURU0iLCJiVXNlcklkIjowLCJpYXQiOjE2NTM3MDYxMTAsImp0aSI6IjYiLCJzdWIiOiJBLTEiLCJleHAiOjE2NTYyOTgxMTB9.YN-_CKUKkWeLVnqNgfA3QHbKlI6kfr0-SK17X7akfhx25QMx-auwO8BnIDrFIqvAkOD3rZ251nWos3HrudZtow
@@ -25,12 +26,12 @@ Authorization:{{adminToken}}
 
 
 ### 增添社区信息
-POST {{endpoint}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies
+POST {{service}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies
 Content-Type: application/json
 Authorization: {{adminToken}}
 {
-    "community": "g社区",
-    "communityCode": "6"
+    "community": "黄辉小区",
+    "communityCode": "2"
 }
 
 ### 增添社区信息 item为子项楼栋信息

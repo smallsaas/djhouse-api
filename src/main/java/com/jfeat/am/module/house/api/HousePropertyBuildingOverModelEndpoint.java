@@ -2,6 +2,8 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingUnitDao;
+import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyRoomDao;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -52,7 +54,7 @@ import com.alibaba.fastjson.JSONArray;
  * </p>
  *
  * @author Code generator
- * @since 2022-06-01
+ * @since 2022-06-06
  */
 @RestController
 @Api("HousePropertyBuilding")
@@ -65,10 +67,16 @@ public class HousePropertyBuildingOverModelEndpoint {
     @Resource
     QueryHousePropertyBuildingDao queryHousePropertyBuildingDao;
 
+    @Resource
+    QueryHousePropertyRoomDao queryHousePropertyRoomDao;
+
+    @Resource
+    QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
+
 
     // 要查询[从表]关联数据，取消下行注释
     // @Resource
-    // QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
+    // QueryHousePropertyRoomDao queryHousePropertyRoomDao;
 
     @BusinessLog(name = "HousePropertyBuilding", value = "create HousePropertyBuilding")
     @Permission(HousePropertyBuildingPermission.HOUSEPROPERTYBUILDING_NEW)
@@ -77,9 +85,13 @@ public class HousePropertyBuildingOverModelEndpoint {
     public Tip createHousePropertyBuilding(@RequestBody HousePropertyBuildingModel entity) {
         Integer affected = 0;
         try {
+
             DefaultFilterResult filterResult = new DefaultFilterResult();
+//            entity.setOrgId(JWTKit.getTenantOrgId());
+            // int insert = housePropertyBuildingMapper.insert(entity);
             affected = housePropertyBuildingOverModelService.createMaster(entity, filterResult, null, null);
             if (affected > 0) {
+                housePropertyBuildingOverModelService.initHouseProperty(entity);
                 return SuccessTip.create(filterResult.result());
             }
         } catch (DuplicateKeyException e) {
@@ -97,7 +109,7 @@ public class HousePropertyBuildingOverModelEndpoint {
         CRUDObject<HousePropertyBuildingModel> entity = housePropertyBuildingOverModelService
                 .registerQueryMasterDao(queryHousePropertyBuildingDao)
                 // 要查询[从表]关联数据，取消下行注释
-                //.registerQuerySlaveModelListDao(HousePropertyBuildingUnit.class, queryHousePropertyBuildingUnitDao)
+                //.registerQuerySlaveModelListDao(HousePropertyRoom.class, queryHousePropertyRoomDao)
                 .retrieveMaster(id, null, null, null);
 
         // sample query for registerQueryMasterDao
@@ -123,11 +135,27 @@ public class HousePropertyBuildingOverModelEndpoint {
     @ApiOperation(value = "修改 HousePropertyBuilding", response = HousePropertyBuildingModel.class)
     public Tip updateHousePropertyBuilding(@PathVariable Long id, @RequestBody HousePropertyBuildingModel entity) {
         entity.setId(id);
+        HousePropertyBuildingModel housePropertyBuildingModel =  queryHousePropertyBuildingDao.queryMasterModel(id);
         // use update flags
         int newOptions = META.UPDATE_CASCADING_DELETION_FLAG;  //default to delete not exist items
         // newOptions = FlagUtil.setFlag(newOptions, META.UPDATE_ALL_COLUMNS_FLAG);
+        Integer effect = housePropertyBuildingOverModelService.updateMaster(entity, null, null, null, newOptions);
+        if (effect>0 && housePropertyBuildingModel!=null){
 
-        return SuccessTip.create(housePropertyBuildingOverModelService.updateMaster(entity, null, null, null, newOptions));
+            if (entity.getFloors()!=null&&entity.getFloors()!=housePropertyBuildingModel.getFloors()){
+                queryHousePropertyRoomDao.deleteHouseRoomByBuildingId(id);
+                queryHousePropertyBuildingUnitDao.deleteHouseBuildingUnitByBuildingId(id);
+                housePropertyBuildingModel.setFloors(entity.getFloors());
+                housePropertyBuildingOverModelService.initHouseProperty(housePropertyBuildingModel);
+            }
+            if (entity.getUnits()!=null&&entity.getUnits()!=housePropertyBuildingModel.getUnits()){
+                queryHousePropertyRoomDao.deleteHouseRoomByBuildingId(id);
+                queryHousePropertyBuildingUnitDao.deleteHouseBuildingUnitByBuildingId(id);
+                housePropertyBuildingModel.setUnits(entity.getUnits());
+                housePropertyBuildingOverModelService.initHouseProperty(housePropertyBuildingModel);
+            }
+        }
+        return SuccessTip.create();
     }
 
     @BusinessLog(name = "HousePropertyBuilding", value = "delete HousePropertyBuilding")
@@ -135,7 +163,12 @@ public class HousePropertyBuildingOverModelEndpoint {
     @DeleteMapping("/{id}")
     @ApiOperation("删除 HousePropertyBuilding")
     public Tip deleteHousePropertyBuilding(@PathVariable Long id) {
-        return SuccessTip.create(housePropertyBuildingOverModelService.deleteMaster(id));
+        Integer affect = housePropertyBuildingOverModelService.deleteMaster(id);
+        if (affect>0){
+            queryHousePropertyRoomDao.deleteHouseRoomByBuildingId(id);
+            queryHousePropertyBuildingUnitDao.deleteHouseBuildingUnitByBuildingId(id);
+        }
+        return SuccessTip.create(affect);
     }
 
     @Permission(HousePropertyBuildingPermission.HOUSEPROPERTYBUILDING_VIEW)

@@ -23,7 +23,7 @@ import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyCommunityM
  * </p>
  *CRUDHousePropertyCommunityOverModelService
  * @author Code generator
- * @since 2022-06-01
+ * @since 2022-06-06
  */
 
 @Service

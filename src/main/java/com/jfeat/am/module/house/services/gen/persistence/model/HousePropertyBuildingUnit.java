@@ -15,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  * </p>
  *
  * @author Code generator
- * @since 2022-06-01
+ * @since 2022-06-06
  */
 @TableName("t_house_property_building_unit")
 @ApiModel(value="HousePropertyBuildingUnit对象", description="")
@@ -29,8 +29,8 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
       @ApiModelProperty(value = "楼栋id")
       private Long buildingId;
 
-      @ApiModelProperty(value = "房产编号")
-      private String number;
+      @ApiModelProperty(value = "单元编号")
+      private String unitCode;
 
       @ApiModelProperty(value = "户型")
       private String houseType;
@@ -60,12 +60,12 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
           return this;
       }
     
-    public String getNumber() {
-        return number;
+    public String getUnitCode() {
+        return unitCode;
     }
 
-      public HousePropertyBuildingUnit setNumber(String number) {
-          this.number = number;
+      public HousePropertyBuildingUnit setUnitCode(String unitCode) {
+          this.unitCode = unitCode;
           return this;
       }
     
@@ -100,7 +100,7 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
 
       public static final String BUILDING_ID = "building_id";
 
-      public static final String NUMBER = "number";
+      public static final String UNIT_CODE = "unit_code";
 
       public static final String HOUSE_TYPE = "house_type";
 
@@ -118,7 +118,7 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
         return "HousePropertyBuildingUnit{" +
               "id=" + id +
                   ", buildingId=" + buildingId +
-                  ", number=" + number +
+                  ", unitCode=" + unitCode +
                   ", houseType=" + houseType +
                   ", houseTypePicture=" + houseTypePicture +
                   ", area=" + area +

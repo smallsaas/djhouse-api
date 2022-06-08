@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyRoomDao">
+    <sql id="Base_Column_List">
+        t_house_property_room
+        .
+        id
+        , t_house_property_room.building_id AS buildingId, t_house_property_room.unit_id AS unitId, t_house_property_room.number
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HousePropertyRoomModel">
+        SELECT t_house_property_room.*
+        FROM t_house_property_room
+        WHERE t_house_property_room.id = #{id}
+        GROUP BY t_house_property_room.id
+    </select>
+
+
+    <select id="findHousePropertyRoomPage" resultType="HousePropertyRoomRecord" parameterType="HousePropertyRoomRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_property_room
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_property_room.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.buildingId != null and record.buildingId>0 ">
+            AND t_house_property_room.building_id LIKE CONCAT('%',#{record.buildingId},'%')
+        </if>
+
+
+        <if test="record.unitId != null and record.unitId>0 ">
+            AND t_house_property_room.unit_id LIKE CONCAT('%',#{record.unitId},'%')
+        </if>
+        <if test="record.number != null and record.number!= ''">
+            AND t_house_property_room.number LIKE CONCAT('%',#{record.number},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_property_room.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_property_room.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_property_room.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
+
+    <delete id="deleteHouseRoomByBuildingId">
+        DELETE from t_house_property_room WHERE t_house_property_room.building_id=#{buildingId}
+    </delete>
+</mapper>

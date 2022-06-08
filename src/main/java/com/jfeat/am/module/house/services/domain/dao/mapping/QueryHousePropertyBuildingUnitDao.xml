@@ -2,8 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingUnitDao">
     <sql id="Base_Column_List">
-        t_house_property_building_unit.id
-        , t_house_property_building_unit.building_id AS buildingId, t_house_property_building_unit.number, t_house_property_building_unit.house_type AS houseType, t_house_property_building_unit.house_type_picture AS houseTypePicture, t_house_property_building_unit.area
+        t_house_property_building_unit
+        .
+        id
+        , t_house_property_building_unit.building_id AS buildingId, t_house_property_building_unit.unit_code AS unitCode, t_house_property_building_unit.house_type AS houseType, t_house_property_building_unit.house_type_picture AS houseTypePicture, t_house_property_building_unit.area
     </sql>
 
 
@@ -35,8 +37,10 @@
         <if test="record.buildingId != null and record.buildingId>0 ">
             AND t_house_property_building_unit.building_id LIKE CONCAT('%',#{record.buildingId},'%')
         </if>
-        <if test="record.number != null and record.number!= ''">
-            AND t_house_property_building_unit.number LIKE CONCAT('%',#{record.number},'%')
+
+
+        <if test="record.unitCode != null and record.unitCode!= ''">
+            AND t_house_property_building_unit.unit_code LIKE CONCAT('%',#{record.unitCode},'%')
         </if>
 
 
@@ -66,34 +70,38 @@
     </select>
 
     <select id="queryHouseType" resultType="HousePropertyBuildingUnitModel">
-        SELECT *
-        FROM t_house_property_building_unit
-                 JOIN t_house_property_building
-                      ON t_house_property_building_unit.building_id = t_house_property_building.id
-                          And t_house_property_building.community_id = #{communityId}
-        GROUP BY t_house_property_building_unit.house_type
+        SELECT t_house_property_building_unit.*
+        FROM t_house_property_building
+                 JOIN t_house_property_building_unit
+                      ON t_house_property_building_unit.building_id = t_house_property_building.id AND
+                         t_house_property_building.community_id = #{communityId};
     </select>
 
     <select id="queryHouseBuildingByHouseType" resultType="HousePropertyBuilding">
-        SELECT
-            t_house_property_building.*
-        FROM t_house_property_building_unit JOIN t_house_property_building
-                                                 ON t_house_property_building.id=t_house_property_building_unit.building_id
-                                                     AND t_house_property_building_unit.house_type=#{houseType}
-                                                     AND t_house_property_building.community_id = #{communityId}
-        GROUP BY t_house_property_building.id
+        SELECT t_house_property_building.*
+        FROM t_house_property_building
+                 JOIN t_house_property_building_unit
+                      ON t_house_property_building_unit.building_id = t_house_property_building.id AND
+                         t_house_property_building.community_id = #{communityId};
     </select>
 
     <!--    户型和楼栋联合查询房屋信息-->
-    <select id="queryHouseBuildingUnit" resultType="HousePropertyBuildingUnit">
-        SELECT  t_house_property_building_unit.*
-        FROM t_house_property_building_unit
-                 JOIN t_house_property_building
-                      ON t_house_property_building.id = t_house_property_building_unit.building_id
-                          AND t_house_property_building_unit.house_type = #{houseType}
-                          AND t_house_property_building_unit.building_id = #{buildingId}
+    <select id="queryHouseBuildingUnit" resultType="HousePropertyRoom">
+        SELECT t_house_property_room.*
+        FROM t_house_property_building
+                 JOIN t_house_property_room ON t_house_property_room.building_id = t_house_property_building.id
+                 JOIN t_house_property_building_unit
+                      ON t_house_property_building_unit.building_id = t_house_property_room.building_id
                           AND t_house_property_building.community_id = #{communityId}
+                          and t_house_property_building_unit.id = #{houseTypeId}
+                          AND t_house_property_building.id = #{buildingId};
     </select>
 
+    <delete id="deleteHouseBuildingUnitByBuildingId">
+        DELETE from t_house_property_building_unit WHERE t_house_property_building_unit.building_id=#{buildingId}
+    </delete>
 
+    <select id="queryHouseBuildingUnitByBuildingId" resultType="HousePropertyBuildingUnit">
+        SELECT * FROM t_house_property_building_unit WHERE t_house_property_building_unit.building_id=#{buildingId}
+    </select>
 </mapper>
