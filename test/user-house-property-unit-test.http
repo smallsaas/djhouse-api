@@ -8,7 +8,7 @@ GET {{service}}/api/u/house/house/housePropertyUnit?communityId=1
 
 
 ### 通过楼栋id获取整栋楼的 房屋
-GET {{service}}/api/u/house/house/housePropertyUnit/3
+GET {{service}}/api/u/house/house/housePropertyUnit
 
 
 ### 获取用户的安装地址信息
@@ -19,9 +19,8 @@ Authorization:{{token}}
 ### 增加用户安装地址
 POST {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit
 Authorization:{{token}}
-
 {
-      "room_id": 569
+      "room_id": 303
 }
 
 ### 修改用户安装地址
@@ -40,9 +39,6 @@ Authorization:{{token}}
 
 ### 获取社区
 GET {{service}}/api/u/house/house/housePropertyUnit/community
-{
-      "communityId":1
-}
 
 
 

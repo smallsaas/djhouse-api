@@ -17,13 +17,14 @@
     <select id="queryUserRoomByUserId" resultType="HousePropertyUserRoom">
         SELECT t_house_property_user_room.*,t_house_property_community.id AS communityId,t_house_property_community.community As communityName,
                t_house_property_building.id As buildingId,t_house_property_building.area AS buildingArea,t_house_property_building.code AS buildingCode,
-               t_house_property_building_unit.id AS unitId,t_house_property_building_unit.area AS unitArea,t_house_property_building_unit.house_type AS houseType,
+               t_house_property_building_unit.id AS unitId,t_house_property_building_unit.area AS unitArea,t_house_design_model.house_type AS houseType,
                t_house_property_room.number AS roomNumber
         FROM t_house_property_user_room
                           JOIN t_house_property_room ON t_house_property_room.id = t_house_property_user_room.room_id
                           JOIN t_house_property_building ON t_house_property_building.id = t_house_property_room.building_id
                           JOIN t_house_property_community ON  t_house_property_community.id=t_house_property_building.community_id
                           JOIN t_house_property_building_unit ON t_house_property_building_unit.id = t_house_property_room.unit_id
+                          JOIN t_house_design_model ON t_house_property_building_unit.design_model_id=t_house_design_model.id
         WHERE t_house_property_user_room.user_id=#{userId};
     </select>
     <select id="findHousePropertyUserRoomPage" resultType="HousePropertyUserRoomRecord"

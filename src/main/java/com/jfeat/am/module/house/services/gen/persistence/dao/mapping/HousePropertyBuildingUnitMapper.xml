@@ -6,15 +6,13 @@
     <resultMap id="BaseResultMap" type="com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit">
         <id column="id" property="id" />
         <result column="building_id" property="buildingId" />
+        <result column="design_model_id" property="designModelId" />
         <result column="unit_code" property="unitCode" />
-        <result column="house_type" property="houseType" />
-        <result column="house_type_picture" property="houseTypePicture" />
-        <result column="area" property="area" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, building_id, unit_code, house_type, house_type_picture, area
+        id, building_id, design_model_id, unit_code
     </sql>
 
 </mapper>

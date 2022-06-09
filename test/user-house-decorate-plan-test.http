@@ -1,7 +1,7 @@
 @endpoint=http://localhost:8080
 @service=http://app1.console.smallsaas.cn:8001
 
-@token =Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6IiIsInVzZXJJZCI6Mjg0LCJhY2NvdW50IjoiODhiOGMwOGIwNTQ2NGFkMTgzM2UyY2RmYzA1YTk2ODMiLCJkb21haW5Vc2VySWQiOiIiLCJpYXQiOjE2NTQwNTg0ODgsImp0aSI6IjI4NCIsInN1YiI6Ijg4YjhjMDhiMDU0NjRhZDE4MzNlMmNkZmMwNWE5NjgzIiwiZXhwIjoxNjU0MzE3Njg4fQ.5FLTi7TwztrQ_WsW4OGQPOcZIkqm8ysUWDjlIJtZQVioUI6U6RWysMWNXMHOPCpd4bXeXX2gz-A1IQnB5ZulhQ
+@token =Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6IiIsInVzZXJJZCI6Mjg1LCJhY2NvdW50IjoiMDAwYTY3NTcxNTM5NGJjYTk1ZmQ4OTcwOGViOTVhZDgiLCJkb21haW5Vc2VySWQiOiIiLCJpYXQiOjE2NTQ2NTg1NzcsImp0aSI6IjI4NSIsInN1YiI6IjAwMGE2NzU3MTUzOTRiY2E5NWZkODk3MDhlYjk1YWQ4IiwiZXhwIjoxNjU0OTE3Nzc3fQ.i1b1W5XaYlW3YLOLl1pfE4G2w69-qA-XZ4iUH7WF3jOf8iN6UrRTRNK3ad71Ltx7J1PbZQHtWH5XxaxfzRx8pA
 
 
 
@@ -10,11 +10,11 @@ GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans?pageNu
 Authorization:{{token}}
 
 ### 获取用户装修计划里面的id
-GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?decoratePlanId=1&userId=1
+GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?decoratePlanId=1
 Authorization:{{token}}
 
 ### 用户替换装修计划里面的家居
-PUT {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?userId=1&decoratePlanId=1&funitureId=13
+PUT {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?userId=1&decoratePlanId=1&funitureId=16
 Authorization:{{token}}
 {
     "changeOption": "change",
@@ -25,13 +25,15 @@ Authorization:{{token}}
 
 
 ### 用户移除装修计划里面的家居
-DELETE {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?&decoratePlanId=1&funitureId=18
+DELETE {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?&decoratePlanId=1&funitureId=14
 Authorization:{{token}}
 Content-Type:application/json
 {
     "changeOption": "remove",
     "note": "移除原因"
 }
+
+
 
 ### 添加用户装修计划地址
 POST {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/userDecoratePlanAddress

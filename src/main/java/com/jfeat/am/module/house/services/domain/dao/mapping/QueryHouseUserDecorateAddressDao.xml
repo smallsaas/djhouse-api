@@ -70,44 +70,10 @@ t_house_property_community.community_code AS community_code, t_house_property_co
     -->
     </select>
 
-    <resultMap id="UserDecorateAddressRecordResultMap" type="HouseUserDecorateAddressRecord">
-        <id column="id" property="id"/>
-        <result column="user_id" property="userId"/>
-        <association property="housePropertyCommunity" javaType="com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyCommunity">
-            <id column="communityId" property="id"/>
-            <result column="community" property="community" />
-            <result column="community_code" property="communityCode" />
-        </association>
-        <association property="housePropertyBuilding" javaType="com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding">
-            <id column="buildingId" property="id" />
-            <result column="org_id" property="orgId" />
-            <result column="area" property="area" />
-            <result column="code" property="code" />
-            <result column="floors" property="floors" />
-            <result column="units" property="units" />
-        </association>
-        <association property="housePropertyBuildingUnit" javaType="com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit">
-            <id column="unitId" property="id" />
-            <result column="number" property="number" />
-            <result column="house_type" property="houseType" />
-            <result column="house_type_picture" property="houseTypePicture" />
-            <result column="unitArea" property="area" />
-        </association>
-    </resultMap>
 
     <!--    查询用户的房产地址-->
-    <select id="queryUserDecoratePlanAddress" resultMap="UserDecorateAddressRecordResultMap">
-        SELECT
-        <include refid="User_decorate_Address_Column_List"></include>
-        FROM t_house_property_building_unit
-            JOIN t_house_property_building
-        ON t_house_property_building_unit.building_id = t_house_property_building.id
-            JOIN t_house_property_community
-            ON t_house_property_community.id=t_house_property_building.community_id
-        JOIN  t_house_user_decorate_address
-        ON t_house_user_decorate_address.unit_id = t_house_property_building_unit.id
-        AND t_house_user_decorate_address.user_id=#{userId}
-        AND t_house_user_decorate_address.decorate_plan_id=#{decoratePlan};
+    <select id="queryUserDecoratePlanAddress" resultType="HouseUserDecorateAddress">
+        SELECT * FROM t_house_user_decorate_address WHERE t_house_user_decorate_address.decorate_plan_id=#{decoratePlan} And t_house_user_decorate_address.user_id=#{userId}
     </select>
 
     <update id="updateUserDecorateAddress">

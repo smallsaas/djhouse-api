@@ -83,18 +83,22 @@ public class UserHouseDecoratePlanEndpoint {
         List<HouseDecoratePlan> houseDecoratePlanList = JSON.parseArray(items, HouseDecoratePlan.class);
 
 
-        for (HouseDecoratePlan houseDecoratePlan : houseDecoratePlanList) {
 
-            HouseUserDecorateAddressRecord houseUserDecorateAddressRecord = queryHouseUserDecorateAddressDao.queryUserDecoratePlanAddress(userId, houseDecoratePlan.getId());
-
-            if (houseUserDecorateAddressRecord != null) {
-                String community = houseUserDecorateAddressRecord.getHousePropertyCommunity().getCommunity();
-                String building = houseUserDecorateAddressRecord.getHousePropertyBuilding().getCode();
-                String unit = houseUserDecorateAddressRecord.getHousePropertyBuildingUnit().getUnitCode();
-                String address = "".concat(community).concat(building).concat("栋").concat(unit);
-                houseDecoratePlan.setDecorateAddress(address);
-            }
-        }
+//        for (HouseDecoratePlan houseDecoratePlan : houseDecoratePlanList) {
+//
+//
+//
+//            HouseUserDecorateAddressRecord houseUserDecorateAddressRecord = queryHouseUserDecorateAddressDao.queryUserDecoratePlanAddress(userId, houseDecoratePlan.getId());
+//
+//
+//            if (houseUserDecorateAddressRecord != null) {
+//                String community = houseUserDecorateAddressRecord.getHousePropertyCommunity().getCommunity();
+//                String building = houseUserDecorateAddressRecord.getHousePropertyBuilding().getCode();
+//                String unit = houseUserDecorateAddressRecord.getHousePropertyBuildingUnit().getUnitCode();
+//                String address = "".concat(community).concat(building).concat("栋").concat(unit);
+//                houseDecoratePlan.setDecorateAddress(address);
+//            }
+//        }
 
         page.setRecords(houseDecoratePlanList);
         return SuccessTip.create(page);
@@ -146,14 +150,14 @@ public class UserHouseDecoratePlanEndpoint {
         jsonObject.put("items", products);
 
 //        增加显示装修地址
-        HouseUserDecorateAddressRecord houseUserDecorateAddressRecord = queryHouseUserDecorateAddressDao.queryUserDecoratePlanAddress(userId, decoratePlanId);
-        if (houseUserDecorateAddressRecord != null) {
-            String community = houseUserDecorateAddressRecord.getHousePropertyCommunity().getCommunity();
-            String building = houseUserDecorateAddressRecord.getHousePropertyBuilding().getCode();
-            String unit = houseUserDecorateAddressRecord.getHousePropertyBuildingUnit().getUnitCode();
-            String address = "".concat(community).concat(building).concat("栋").concat(unit);
-            jsonObject.put("decorateAddress", address);
-        }
+//        HouseUserDecorateAddressRecord houseUserDecorateAddressRecord = queryHouseUserDecorateAddressDao.queryUserDecoratePlanAddress(userId, decoratePlanId);
+//        if (houseUserDecorateAddressRecord != null) {
+//            String community = houseUserDecorateAddressRecord.getHousePropertyCommunity().getCommunity();
+//            String building = houseUserDecorateAddressRecord.getHousePropertyBuilding().getCode();
+//            String unit = houseUserDecorateAddressRecord.getHousePropertyBuildingUnit().getUnitCode();
+//            String address = "".concat(community).concat(building).concat("栋").concat(unit);
+//            jsonObject.put("decorateAddress", address);
+//        }
         if (entity != null) {
             return SuccessTip.create(jsonObject);
         } else {

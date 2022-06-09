@@ -51,7 +51,7 @@ import com.alibaba.fastjson.JSONArray;
  * </p>
  *
  * @author Code generator
- * @since 2022-06-06
+ * @since 2022-06-09
  */
 @RestController
 @Api("HousePropertyBuildingUnit")
@@ -113,10 +113,8 @@ public class HousePropertyBuildingUnitEndpoint {
             @ApiImplicitParam(name = "search", dataType = "String"),
             @ApiImplicitParam(name = "id", dataType = "Long"),
             @ApiImplicitParam(name = "buildingId", dataType = "Long"),
+            @ApiImplicitParam(name = "designModelId", dataType = "Long"),
             @ApiImplicitParam(name = "unitCode", dataType = "String"),
-            @ApiImplicitParam(name = "houseType", dataType = "String"),
-            @ApiImplicitParam(name = "houseTypePicture", dataType = "String"),
-            @ApiImplicitParam(name = "area", dataType = "BigDecimal"),
             @ApiImplicitParam(name = "orderBy", dataType = "String"),
             @ApiImplicitParam(name = "sort", dataType = "String")
     })
@@ -130,13 +128,9 @@ public class HousePropertyBuildingUnitEndpoint {
 
                                                   @RequestParam(name = "buildingId", required = false) Long buildingId,
 
+                                                  @RequestParam(name = "designModelId", required = false) Long designModelId,
+
                                                   @RequestParam(name = "unitCode", required = false) String unitCode,
-
-                                                  @RequestParam(name = "houseType", required = false) String houseType,
-
-                                                  @RequestParam(name = "houseTypePicture", required = false) String houseTypePicture,
-
-                                                  @RequestParam(name = "area", required = false) BigDecimal area,
                                                   @RequestParam(name = "orderBy", required = false) String orderBy,
                                                   @RequestParam(name = "sort", required = false) String sort) {
 
@@ -156,10 +150,8 @@ public class HousePropertyBuildingUnitEndpoint {
 
         HousePropertyBuildingUnitRecord record = new HousePropertyBuildingUnitRecord();
         record.setBuildingId(buildingId);
+        record.setDesignModelId(designModelId);
         record.setUnitCode(unitCode);
-        record.setHouseType(houseType);
-        record.setHouseTypePicture(houseTypePicture);
-        record.setArea(area);
 
 
         List<HousePropertyBuildingUnitRecord> housePropertyBuildingUnitPage = queryHousePropertyBuildingUnitDao.findHousePropertyBuildingUnitPage(page, record, tag, search, orderBy, null, null);

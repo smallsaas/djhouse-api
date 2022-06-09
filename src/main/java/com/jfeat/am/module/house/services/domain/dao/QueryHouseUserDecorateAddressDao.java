@@ -34,7 +34,7 @@ public interface QueryHouseUserDecorateAddressDao extends QueryMasterDao<HouseUs
      */
     List<HouseUserDecorateAddressModel> queryMasterModelList(@Param("masterId") Object masterId);
 
-    HouseUserDecorateAddressRecord queryUserDecoratePlanAddress(@Param("userId") Long userId,@Param("decoratePlan") Long decoratePlan);
+    HouseUserDecorateAddress queryUserDecoratePlanAddress(@Param("userId") Long userId,@Param("decoratePlan") Long decoratePlan);
 
     int updateUserDecorateAddress(@Param("userId") Long userId,@Param("decoratePlanId") Long decoratePlanId,@Param("userDecorateAddress") HouseUserDecorateAddress userDecorateAddress);
 }

@@ -5,7 +5,7 @@
         t_house_property_building_unit
         .
         id
-        , t_house_property_building_unit.building_id AS buildingId, t_house_property_building_unit.unit_code AS unitCode, t_house_property_building_unit.house_type AS houseType, t_house_property_building_unit.house_type_picture AS houseTypePicture, t_house_property_building_unit.area
+        , t_house_property_building_unit.building_id AS buildingId, t_house_property_building_unit.design_model_id AS designModelId, t_house_property_building_unit.unit_code AS unitCode
     </sql>
 
 
@@ -39,21 +39,13 @@
         </if>
 
 
+        <if test="record.designModelId != null and record.designModelId>0 ">
+            AND t_house_property_building_unit.design_model_id LIKE CONCAT('%',#{record.designModelId},'%')
+        </if>
+
+
         <if test="record.unitCode != null and record.unitCode!= ''">
             AND t_house_property_building_unit.unit_code LIKE CONCAT('%',#{record.unitCode},'%')
-        </if>
-
-
-        <if test="record.houseType != null and record.houseType!= ''">
-            AND t_house_property_building_unit.house_type LIKE CONCAT('%',#{record.houseType},'%')
-        </if>
-
-
-        <if test="record.houseTypePicture != null and record.houseTypePicture!= ''">
-            AND t_house_property_building_unit.house_type_picture LIKE CONCAT('%',#{record.houseTypePicture},'%')
-        </if>
-        <if test="record.area != null and record.area>0 ">
-            AND t_house_property_building_unit.area LIKE CONCAT('%',#{record.area},'%')
         </if>
 
         <if test="startTime != null">
@@ -68,35 +60,6 @@
     </if>
     -->
     </select>
-
-    <select id="queryHouseType" resultType="HousePropertyBuildingUnitModel">
-        SELECT t_house_property_building_unit.*
-        FROM t_house_property_building
-                 JOIN t_house_property_building_unit
-                      ON t_house_property_building_unit.building_id = t_house_property_building.id AND
-                         t_house_property_building.community_id = #{communityId};
-    </select>
-
-    <select id="queryHouseBuildingByHouseType" resultType="HousePropertyBuilding">
-        SELECT t_house_property_building.*
-        FROM t_house_property_building
-                 JOIN t_house_property_building_unit
-                      ON t_house_property_building_unit.building_id = t_house_property_building.id AND
-                         t_house_property_building.community_id = #{communityId};
-    </select>
-
-    <!--    户型和楼栋联合查询房屋信息-->
-    <select id="queryHouseBuildingUnit" resultType="HousePropertyRoom">
-        SELECT t_house_property_room.*
-        FROM t_house_property_building
-                 JOIN t_house_property_room ON t_house_property_room.building_id = t_house_property_building.id
-                 JOIN t_house_property_building_unit
-                      ON t_house_property_building_unit.building_id = t_house_property_room.building_id
-                          AND t_house_property_building.community_id = #{communityId}
-                          and t_house_property_building_unit.id = #{houseTypeId}
-                          AND t_house_property_building.id = #{buildingId};
-    </select>
-
     <delete id="deleteHouseBuildingUnitByBuildingId">
         DELETE from t_house_property_building_unit WHERE t_house_property_building_unit.building_id=#{buildingId}
     </delete>
