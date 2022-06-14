@@ -1,10 +1,13 @@
 package com.jfeat.am.module.house.services.gen.persistence.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.math.BigDecimal;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -34,7 +37,42 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
       @ApiModelProperty(value = "单元编号")
       private String unitCode;
 
-    
+    @ApiModelProperty(value = "面积")
+    private BigDecimal area;
+
+    @TableField(exist = false)
+    private String communityName;
+
+    @TableField(exist = false)
+    private String buildingCode;
+
+    @TableField(exist = false)
+    private String houseType;
+
+    public String getCommunityName() {
+        return communityName;
+    }
+
+    public void setCommunityName(String communityName) {
+        this.communityName = communityName;
+    }
+
+    public String getBuildingCode() {
+        return buildingCode;
+    }
+
+    public void setBuildingCode(String buildingCode) {
+        this.buildingCode = buildingCode;
+    }
+
+    public String getHouseType() {
+        return houseType;
+    }
+
+    public void setHouseType(String houseType) {
+        this.houseType = houseType;
+    }
+
     public Long getId() {
         return id;
     }
@@ -79,7 +117,16 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
 
       public static final String UNIT_CODE = "unit_code";
 
-      @Override
+    public BigDecimal getArea() {
+        return area;
+    }
+
+    public HousePropertyBuildingUnit setArea(BigDecimal area) {
+        this.area = area;
+        return this;
+    }
+
+    @Override
     protected Serializable pkVal() {
           return this.id;
       }
@@ -87,10 +134,11 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
     @Override
     public String toString() {
         return "HousePropertyBuildingUnit{" +
-              "id=" + id +
-                  ", buildingId=" + buildingId +
-                  ", designModelId=" + designModelId +
-                  ", unitCode=" + unitCode +
-              "}";
+                "id=" + id +
+                ", buildingId=" + buildingId +
+                ", designModelId=" + designModelId +
+                ", unitCode='" + unitCode + '\'' +
+                ", area='" + area + '\'' +
+                '}';
     }
 }

@@ -5,7 +5,7 @@
         t_house_property_building_unit
         .
         id
-        , t_house_property_building_unit.building_id AS buildingId, t_house_property_building_unit.design_model_id AS designModelId, t_house_property_building_unit.unit_code AS unitCode
+        , t_house_property_building_unit.building_id AS buildingId, t_house_property_building_unit.design_model_id AS designModelId, t_house_property_building_unit.unit_code AS unitCode,t_house_property_building_unit.area as area
     </sql>
 
 
@@ -24,7 +24,6 @@
 
 
         FROM t_house_property_building_unit
-
 
         WHERE 1=1
 
@@ -61,10 +60,39 @@
     -->
     </select>
     <delete id="deleteHouseBuildingUnitByBuildingId">
-        DELETE from t_house_property_building_unit WHERE t_house_property_building_unit.building_id=#{buildingId}
+        DELETE
+        from t_house_property_building_unit
+        WHERE t_house_property_building_unit.building_id = #{buildingId}
     </delete>
 
     <select id="queryHouseBuildingUnitByBuildingId" resultType="HousePropertyBuildingUnit">
-        SELECT * FROM t_house_property_building_unit WHERE t_house_property_building_unit.building_id=#{buildingId}
+        SELECT *
+        FROM t_house_property_building_unit
+        WHERE t_house_property_building_unit.building_id = #{buildingId}
+    </select>
+
+
+    <select id="queryExtraHouseBuildingUnitByEntity" resultType="HousePropertyBuildingUnit">
+        SELECT t_house_property_building_unit.*
+             <if test="entity.designModelId != null and entity.designModelId>0">
+                 , t_house_design_model.house_type      AS houseType
+             </if>
+        <if test="entity.buildingId != null and entity.BuildingId>0">
+            , t_house_property_community.community AS communityName
+            , t_house_property_building.`code`     As buildingCode
+        </if>
+
+        FROM t_house_property_building_unit
+        <if test="entity.designModelId != null and entity.designModelId>0">
+            JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+        </if>
+        <if test="entity.buildingId != null and entity.buildingId>0">
+            JOIN t_house_property_building
+            ON t_house_property_building_unit.building_id = t_house_property_building.id
+            JOIN t_house_property_community
+            ON t_house_property_building.community_id = t_house_property_community.id
+        </if>
+        WHERE t_house_property_building_unit.id = #{entity.id}
+        GROUP BY t_house_property_building_unit.id
     </select>
 </mapper>

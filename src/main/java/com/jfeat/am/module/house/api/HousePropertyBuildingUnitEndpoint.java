@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.format.support.FormattingConversionServiceFactoryBean;
 import org.springframework.web.bind.annotation.GetMapping;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -84,7 +85,9 @@ public class HousePropertyBuildingUnitEndpoint {
     @GetMapping("/{id}")
     @ApiOperation(value = "查看 HousePropertyBuildingUnit", response = HousePropertyBuildingUnit.class)
     public Tip getHousePropertyBuildingUnit(@PathVariable Long id) {
-        return SuccessTip.create(housePropertyBuildingUnitService.queryMasterModel(queryHousePropertyBuildingUnitDao, id));
+        HousePropertyBuildingUnit housePropertyBuildingUnit=housePropertyBuildingUnitService.queryMasterModel(queryHousePropertyBuildingUnitDao, id);
+        housePropertyBuildingUnit = queryHousePropertyBuildingUnitDao.queryExtraHouseBuildingUnitByEntity(housePropertyBuildingUnit);
+        return SuccessTip.create(housePropertyBuildingUnit);
     }
 
     @BusinessLog(name = "HousePropertyBuildingUnit", value = "update HousePropertyBuildingUnit")
@@ -157,6 +160,12 @@ public class HousePropertyBuildingUnitEndpoint {
         List<HousePropertyBuildingUnitRecord> housePropertyBuildingUnitPage = queryHousePropertyBuildingUnitDao.findHousePropertyBuildingUnitPage(page, record, tag, search, orderBy, null, null);
 
 
+        for (int i=0;i<housePropertyBuildingUnitPage.size();i++){
+            HousePropertyBuildingUnit housePropertyBuildingUnit = queryHousePropertyBuildingUnitDao.queryExtraHouseBuildingUnitByEntity(housePropertyBuildingUnitPage.get(i));
+            housePropertyBuildingUnitPage.get(i).setCommunityName(housePropertyBuildingUnit.getCommunityName());
+            housePropertyBuildingUnitPage.get(i).setBuildingCode(housePropertyBuildingUnit.getBuildingCode());
+            housePropertyBuildingUnitPage.get(i).setHouseType(housePropertyBuildingUnit.getHouseType());
+        }
         page.setRecords(housePropertyBuildingUnitPage);
 
         return SuccessTip.create(page);

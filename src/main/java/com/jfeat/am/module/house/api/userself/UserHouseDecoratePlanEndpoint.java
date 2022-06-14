@@ -13,7 +13,7 @@ import com.jfeat.am.module.house.services.domain.model.HouseDecoratePlanRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseUserDecorateAddressRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseUserDecorateAddressService;
 import com.jfeat.am.module.house.services.domain.service.HouseUserDecoratePlanService;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserDecorateAddress;
+import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -24,9 +24,6 @@ import com.jfeat.am.module.house.api.permission.HouseDecoratePlanPermission;
 import com.jfeat.am.module.house.services.domain.service.HouseDecoratePlanOverModelService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseDecoratePlanModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseUserDecoratePlanModel;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseDecoratePlan;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserDecoratePlan;
-import com.jfeat.am.module.house.services.gen.persistence.model.Product;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
@@ -64,6 +61,9 @@ public class UserHouseDecoratePlanEndpoint {
     @Resource
     HouseUserDecoratePlanService houseUserDecoratePlanService;
 
+    @Resource
+    QueryHouseUserAssetDao queryHouseUserAssetDao;
+
 
     @GetMapping()
     public Tip getUserHouseDecoratePlan(
@@ -83,22 +83,23 @@ public class UserHouseDecoratePlanEndpoint {
         List<HouseDecoratePlan> houseDecoratePlanList = JSON.parseArray(items, HouseDecoratePlan.class);
 
 
+        List<HouseUserAsset> housePropertyUserRoomList = queryHouseUserAssetDao.queryUserRoomByUserId(userId);
+        for (HouseDecoratePlan houseDecoratePlan : houseDecoratePlanList) {
 
-//        for (HouseDecoratePlan houseDecoratePlan : houseDecoratePlanList) {
-//
-//
-//
-//            HouseUserDecorateAddressRecord houseUserDecorateAddressRecord = queryHouseUserDecorateAddressDao.queryUserDecoratePlanAddress(userId, houseDecoratePlan.getId());
-//
-//
-//            if (houseUserDecorateAddressRecord != null) {
-//                String community = houseUserDecorateAddressRecord.getHousePropertyCommunity().getCommunity();
-//                String building = houseUserDecorateAddressRecord.getHousePropertyBuilding().getCode();
-//                String unit = houseUserDecorateAddressRecord.getHousePropertyBuildingUnit().getUnitCode();
-//                String address = "".concat(community).concat(building).concat("栋").concat(unit);
-//                houseDecoratePlan.setDecorateAddress(address);
-//            }
-//        }
+            List<HouseUserDecorateAddress> houseUserDecorateAddressList = queryHouseUserDecorateAddressDao.queryUserDecoratePlanAddress(userId, houseDecoratePlan.getId());
+
+            for (HouseUserDecorateAddress houseUserDecorateAddress:houseUserDecorateAddressList){
+                for (HouseUserAsset housePropertyUserRoom:housePropertyUserRoomList){
+                    if (houseUserDecorateAddress.getUnitId()==housePropertyUserRoom.getAssetId()){
+                        String community = housePropertyUserRoom.getCommunityName();
+                        String building = housePropertyUserRoom.getBuildingCode();
+                        String unit = housePropertyUserRoom.getRoomNumber();
+                        String address = "".concat(community).concat(building).concat("栋").concat(unit);
+                        houseDecoratePlan.setDecorateAddress(address);
+                    }
+                }
+            }
+        }
 
         page.setRecords(houseDecoratePlanList);
         return SuccessTip.create(page);
@@ -148,16 +149,22 @@ public class UserHouseDecoratePlanEndpoint {
             }
         }
         jsonObject.put("items", products);
+        jsonObject.put("decorateAddress", "");
 
-//        增加显示装修地址
-//        HouseUserDecorateAddressRecord houseUserDecorateAddressRecord = queryHouseUserDecorateAddressDao.queryUserDecoratePlanAddress(userId, decoratePlanId);
-//        if (houseUserDecorateAddressRecord != null) {
-//            String community = houseUserDecorateAddressRecord.getHousePropertyCommunity().getCommunity();
-//            String building = houseUserDecorateAddressRecord.getHousePropertyBuilding().getCode();
-//            String unit = houseUserDecorateAddressRecord.getHousePropertyBuildingUnit().getUnitCode();
-//            String address = "".concat(community).concat(building).concat("栋").concat(unit);
-//            jsonObject.put("decorateAddress", address);
-//        }
+        List<HouseUserAsset> housePropertyUserRoomList = queryHouseUserAssetDao.queryUserRoomByUserId(userId);
+        List<HouseUserDecorateAddress> houseUserDecorateAddressList = queryHouseUserDecorateAddressDao.queryUserDecoratePlanAddress(userId,decoratePlanId);
+
+        for (HouseUserDecorateAddress houseUserDecorateAddress:houseUserDecorateAddressList){
+            for (HouseUserAsset housePropertyUserRoom:housePropertyUserRoomList){
+                if (houseUserDecorateAddress.getUnitId()==housePropertyUserRoom.getAssetId()){
+                    String community = housePropertyUserRoom.getCommunityName();
+                    String building = housePropertyUserRoom.getBuildingCode();
+                    String unit = housePropertyUserRoom.getRoomNumber();
+                    String address = "".concat(community).concat(building).concat("栋").concat(unit);
+                    jsonObject.put("decorateAddress", address);
+                }
+            }
+        }
         if (entity != null) {
             return SuccessTip.create(jsonObject);
         } else {

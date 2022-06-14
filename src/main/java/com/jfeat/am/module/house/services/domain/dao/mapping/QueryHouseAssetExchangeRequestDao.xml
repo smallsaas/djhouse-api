@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetExchangeRequestDao">
+    <sql id="Base_Column_List">
+        t_house_asset_exchange_request
+        .
+        id
+        , t_house_asset_exchange_request.user_id AS userId, t_house_asset_exchange_request.asset_id AS assetId, t_house_asset_exchange_request.target_asset_range AS targetAssetRange, t_house_asset_exchange_request.target_asset_range_limit AS targetAssetRangeLimit
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseAssetExchangeRequestModel">
+        SELECT t_house_asset_exchange_request.*
+        FROM t_house_asset_exchange_request
+        WHERE t_house_asset_exchange_request.id = #{id}
+        GROUP BY t_house_asset_exchange_request.id
+    </select>
+
+
+    <select id="findHouseAssetExchangeRequestPage" resultType="HouseAssetExchangeRequestRecord"
+            parameterType="HouseAssetExchangeRequestRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_asset_exchange_request
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_asset_exchange_request.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_asset_exchange_request.user_id LIKE CONCAT('%',#{record.userId},'%')
+        </if>
+
+
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_asset_exchange_request.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+        </if>
+
+
+        <if test="record.targetAssetRange != null and record.targetAssetRange!= ''">
+            AND t_house_asset_exchange_request.target_asset_range LIKE CONCAT('%',#{record.targetAssetRange},'%')
+        </if>
+
+
+        <if test="record.targetAssetRangeLimit != null and record.targetAssetRangeLimit!= ''">
+            AND t_house_asset_exchange_request.target_asset_range_limit LIKE
+            CONCAT('%',#{record.targetAssetRangeLimit},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_asset_exchange_request.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_asset_exchange_request.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_asset_exchange_request.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
+
+    <select id="queryHouseAssetExchangeRequestByAssetId" resultType="HouseAssetExchangeRequest">
+        SELECT *
+        FROM t_house_asset_exchange_request
+        WHERE t_house_asset_exchange_request.asset_id = #{assetId};
+    </select>
+
+    <select id="queryHouseAssetHouseType" resultType="Long">
+        SELECT t_house_design_model.id
+        FROM t_house_asset
+                 JOIN t_house_property_building_unit ON t_house_asset.unit_id = t_house_property_building_unit.id
+                 JOIN t_house_design_model ON t_house_design_model.id = t_house_property_building_unit.design_model_id
+        WHERE t_house_asset.id = #{assetId}
+    </select>
+
+    <select id="queryHouseAssetExchangeRequestByUserId" resultType="HouseAssetExchangeRequest">
+        SELECT t_house_asset_exchange_request.* FROM t_house_asset_exchange_request
+        WHERE t_house_asset_exchange_request.user_id = #{userId};
+    </select>
+
+    <select id="queryHouseAssetExchangeRequestByAssetIdAndUserId" resultType="HouseAssetExchangeRequest">
+        SELECT *
+        FROM t_house_asset_exchange_request
+        WHERE t_house_asset_exchange_request.asset_id = #{assetId} AND t_house_asset_exchange_request.user_id=#{userId};
+    </select>
+
+
+</mapper>

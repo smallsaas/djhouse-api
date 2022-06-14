@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseEquityDemandSupplyDao">
+    <sql id="Base_Column_List">
+        t_house_equity_demand_supply
+        .
+        id
+        , t_house_equity_demand_supply.user_id AS userId, t_house_equity_demand_supply.equity_option AS equityOption, t_house_equity_demand_supply.area,t_end_user.phone AS phoneNumber
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseEquityDemandSupplyModel">
+        SELECT t_house_equity_demand_supply.*,t_end_user.phone AS phoneNumber
+        FROM t_house_equity_demand_supply
+                 JOIN t_end_user ON t_end_user.id = t_house_equity_demand_supply.user_id
+        WHERE t_house_equity_demand_supply.id = #{id}
+        GROUP BY t_house_equity_demand_supply.id
+    </select>
+
+
+    <select id="findHouseEquityDemandSupplyPage" resultType="HouseEquityDemandSupplyRecord"
+            parameterType="HouseEquityDemandSupplyRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_equity_demand_supply
+
+        JOIN t_end_user ON t_end_user.id = t_house_equity_demand_supply.user_id
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_equity_demand_supply.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_equity_demand_supply.user_id LIKE CONCAT('%',#{record.userId},'%')
+        </if>
+
+
+        <if test="record.equityOption != null and record.equityOption>0 ">
+            AND t_house_equity_demand_supply.equity_option LIKE CONCAT('%',#{record.equityOption},'%')
+        </if>
+        <if test="record.area != null and record.area>0 ">
+            AND t_house_equity_demand_supply.area LIKE CONCAT('%',#{record.area},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_equity_demand_supply.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_equity_demand_supply.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_equity_demand_supply.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
+</mapper>

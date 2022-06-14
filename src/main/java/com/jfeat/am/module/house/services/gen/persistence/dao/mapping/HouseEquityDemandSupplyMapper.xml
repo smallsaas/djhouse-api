@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.gen.persistence.dao.HouseEquityDemandSupplyMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jfeat.am.module.house.services.gen.persistence.model.HouseEquityDemandSupply">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="equity_option" property="equityOption" />
+        <result column="area" property="area" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id, equity_option, area
+    </sql>
+
+</mapper>

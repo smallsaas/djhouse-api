@@ -1,10 +1,14 @@
 @endpoint=http://localhost:8080
 @service=http://app1.console.smallsaas.cn:8001
 
-@token = Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6IiIsInVzZXJJZCI6Mjg1LCJhY2NvdW50IjoiMDAwYTY3NTcxNTM5NGJjYTk1ZmQ4OTcwOGViOTVhZDgiLCJkb21haW5Vc2VySWQiOiIiLCJpYXQiOjE2NTQ2NTg1NzcsImp0aSI6IjI4NSIsInN1YiI6IjAwMGE2NzU3MTUzOTRiY2E5NWZkODk3MDhlYjk1YWQ4IiwiZXhwIjoxNjU0OTE3Nzc3fQ.i1b1W5XaYlW3YLOLl1pfE4G2w69-qA-XZ4iUH7WF3jOf8iN6UrRTRNK3ad71Ltx7J1PbZQHtWH5XxaxfzRx8pA
+@adminToken =Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjUzNzA2MDA1LCJqdGkiOiIxIiwic3ViIjoiYWRtaW4iLCJleHAiOjE2NTYyOTgwMDV9.nH3W8nkLMzrBp_VybRJ-ZnNjCG96RqD5a6-HikifXV9hQ618btKd8MGxoPf2XIroEzDc4Gj4JoVKk7dSBoB0zA
+
+
+@token =Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6IiIsInVzZXJJZCI6Mjg3LCJhY2NvdW50IjoiMTIyNmJjMjk2OGI0NDYwMmE2YWQ1N2UwZDY2N2JhOTUiLCJkb21haW5Vc2VySWQiOiIiLCJpYXQiOjE2NTQ4MjUxMTgsImp0aSI6IjI4NyIsInN1YiI6IjEyMjZiYzI5NjhiNDQ2MDJhNmFkNTdlMGQ2NjdiYTk1IiwiZXhwIjoxNjU1MDg0MzE4fQ.CllbeQ_mbCjaNjbkNLza6GqRnbJIc8cRUTWHL80qLvqkwua5bLbtQU5jLAyKKl-oCnGtqjVogwG-m4B5vuwvUQ
 
 ### 获取全部楼栋信息
-GET {{service}}/api/u/house/house/housePropertyUnit?communityId=1
+GET {{endpoint}}/api/u/house/house/housePropertyUnit?common=false
+Authorization:{{token}}
 
 
 ### 通过楼栋id获取整栋楼的 房屋
@@ -49,6 +53,7 @@ Authorization:{{token}}
 ### 改变或者增加用户社区状态
 POST {{service}}/api/u/house/house/housePropertyUnit/userCommunityStatus
 Authorization:{{token}}
+
 {
       "communityId":3
 }

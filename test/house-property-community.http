@@ -11,12 +11,12 @@
 
 
 ### 获取社区列表
-GET {{endpoint}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies
+GET {{service}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies
 Authorization: {{adminToken}}
 
 
 ### 查询id为1 的社区信息
-GET {{endpoint}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies/9
+GET {{service}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies/2
 Authorization: {{adminToken}}
 
 ###分页查询unit信息
@@ -74,17 +74,19 @@ PUT {{endpoint}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies
 Content-Type: application/json
 Authorization:{{adminToken}}
 {
-  "community": "黄辉1",
-  "communityCode": "1",
+  "community": "黄辉",
+  "communityCode": "4",
   "items": [
     {
-        "code": "e1",
+      "id":61,
+        "code": "e5",
         "floors": 10,
         "units": 4,
         "communityId": 2,
         "orgId": 1
     },
     {
+      "id":62,
         "code": "E2",
         "floors": 10,
         "units": 4,
@@ -92,6 +94,7 @@ Authorization:{{adminToken}}
         "orgId": 1
     },
     {
+      "id":63,
         "code": "E3",
         "floors": 11,
         "units": 5,
@@ -99,6 +102,7 @@ Authorization:{{adminToken}}
         "orgId": 1
     },
     {
+      "id":64,
         "code": "E4",
         "floors": 10,
         "units": 5,
@@ -111,11 +115,17 @@ Authorization:{{adminToken}}
 PUT {{endpoint}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies/2
 Content-Type: application/json
 Authorization:{{adminToken}}
+
+{"id":2,"community":"黄辉","items":[{"code":"e1","floors":10,"id":24,"units":4,"communityId":2,"orgId":1},{"code":"E2","floors":10,"id":25,"units":4,"communityId":2,"orgId":1},{"code":"E5","floors":11,"id":26,"units":5,"communityId":2,"orgId":1},{"code":"E4","floors":10,"id":27,"units":5,"communityId":2,"orgId":1}],"communityCode":"1"}
+
+
+PUT {{endpoint}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies/2
+Content-Type: application/json
+Authorization:{{adminToken}}
 {
   "community": "黄辉1",
   "communityCode": "1"
 }
-
 
 
 ### 删除用户房产信息

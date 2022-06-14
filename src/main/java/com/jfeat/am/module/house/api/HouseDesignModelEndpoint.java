@@ -84,6 +84,7 @@ public class HouseDesignModelEndpoint {
     @GetMapping("/{id}")
     @ApiOperation(value = "查看 HouseDesignModel", response = HouseDesignModel.class)
     public Tip getHouseDesignModel(@PathVariable Long id) {
+
         return SuccessTip.create(houseDesignModelService.queryMasterModel(queryHouseDesignModelDao, id));
     }
 

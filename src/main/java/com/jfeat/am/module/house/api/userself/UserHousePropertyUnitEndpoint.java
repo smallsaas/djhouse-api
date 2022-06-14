@@ -1,18 +1,15 @@
 package com.jfeat.am.module.house.api.userself;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jfeat.am.common.annotation.Permission;
 import com.jfeat.am.core.jwt.JWTKit;
-import com.jfeat.am.module.house.api.permission.HousePropertyUserRoomPermission;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.HousePropertyBuildingRecord;
 import com.jfeat.am.module.house.services.domain.model.HousePropertyCommunityRecord;
 import com.jfeat.am.module.house.services.domain.service.HousePropertyBuildingOverModelService;
-import com.jfeat.am.module.house.services.domain.service.HousePropertyCommunityOverModelService;
-import com.jfeat.am.module.house.services.domain.service.HousePropertyUserRoomService;
+import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.domain.service.HouseUserCommunityStatusService;
 import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingModel;
-import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyUserRoom;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserCommunityStatus;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
@@ -25,7 +22,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,14 +40,14 @@ public class UserHousePropertyUnitEndpoint {
     HousePropertyBuildingOverModelService housePropertyBuildingOverModelService;
 
     @Resource
-    HousePropertyUserRoomService housePropertyUserRoomService;
+    HouseUserAssetService houseUserAssetService;
 
 
     @Resource
     QueryHousePropertyCommunityDao queryHousePropertyCommunityDao;
 
     @Resource
-    QueryHousePropertyUserRoomDao queryHousePropertyUserRoomDao;
+    QueryHouseAssetDao queryHouseAssetDao;
 
     @Resource
     QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
@@ -61,6 +57,9 @@ public class UserHousePropertyUnitEndpoint {
 
     @Resource
     QueryHouseUserCommunityStatusDao queryHouseUserCommunityStatusDao;
+
+    @Resource
+    QueryHouseUserAssetDao queryHouseUserAssetDao;
 
 
     //    通过楼栋id获取整栋楼的 unit
@@ -97,6 +96,7 @@ public class UserHousePropertyUnitEndpoint {
             @ApiImplicitParam(name = "sort", dataType = "String")
     })
     public Tip queryHousePropertyBuildingPage(Page<HousePropertyBuildingRecord> page,
+                                              @RequestParam(name = "common",required=false) String flag,
                                               @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                               @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                               // for tag feature query
@@ -142,6 +142,14 @@ public class UserHousePropertyUnitEndpoint {
         record.setFloors(floors);
         record.setUnits(units);
 
+//        判读用户是否需要登录，如果需要登录直接获取community转态
+        if ("false".equals(flag)){
+            if (JWTKit.getUserId()==null){
+                throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+            }
+            HouseUserCommunityStatus houseUserCommunityStatus =  queryHouseUserCommunityStatusDao.queryUserCommunityStatusByUserId(JWTKit.getUserId());
+            record.setCommunityId(houseUserCommunityStatus.getCommunityId());
+        }
 
         List<HousePropertyBuildingRecord> housePropertyBuildingPage = queryHousePropertyBuildingDao.findHousePropertyBuildingPage(page, record, tag, search, orderBy, null, null);
 
@@ -152,29 +160,30 @@ public class UserHousePropertyUnitEndpoint {
     }
 
 
-    @ApiOperation(value = "获取用户的unit", response = QueryHousePropertyUserRoomDao.class)
+    @ApiOperation(value = "获取用户的unit", response = QueryHouseAssetDao.class)
     @GetMapping("/userUnit")
     public Tip getUserUnite() {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
         Long userId = JWTKit.getUserId();
-        return SuccessTip.create(queryHousePropertyUserRoomDao.queryUserRoomByUserId(userId));
+
+        return SuccessTip.create(queryHouseUserAssetDao.queryUserRoomByUserId(userId));
     }
 
 
     //    新增安装unit位置
     @BusinessLog(name = "HousePropertyUserUnit", value = "create HousePropertyUserUnit")
     @PostMapping("/userUnit")
-    @ApiOperation(value = "新建 HousePropertyUserUnit", response = HousePropertyUserRoom.class)
-    public Tip createHousePropertyUserUnit(@RequestBody HousePropertyUserRoom entity) {
+    @ApiOperation(value = "新建 HousePropertyUserUnit", response = QueryHouseUserAssetDao.class)
+    public Tip createHousePropertyUserUnit(@RequestBody HouseUserAsset entity) {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
         entity.setUserId(JWTKit.getUserId());
         Integer affected = 0;
         try {
-            affected = housePropertyUserRoomService.createMaster(entity);
+            affected = houseUserAssetService.createMaster(entity);
         } catch (DuplicateKeyException e) {
             throw new BusinessException(BusinessCode.DuplicateKey);
         }
@@ -185,14 +194,14 @@ public class UserHousePropertyUnitEndpoint {
     //    修改用户的unit位置
     @BusinessLog(name = "HousePropertyUserUnit", value = "update HousePropertyUserUnit")
     @PutMapping("/userUnit/{id}")
-    @ApiOperation(value = "修改 HousePropertyUserUnit", response = HousePropertyUserRoom.class)
-    public Tip updateHousePropertyUserUnit(@PathVariable Long id, @RequestBody HousePropertyUserRoom entity) {
+    @ApiOperation(value = "修改 HousePropertyUserUnit", response = HouseUserAsset.class)
+    public Tip updateHousePropertyUserUnit(@PathVariable Long id, @RequestBody HouseUserAsset entity) {
         entity.setId(id);
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
         entity.setUserId(JWTKit.getUserId());
-        return SuccessTip.create(housePropertyUserRoomService.updateMaster(entity));
+        return SuccessTip.create(houseUserAssetService.updateMaster(entity));
     }
 
     //    删除用户unit
@@ -203,7 +212,7 @@ public class UserHousePropertyUnitEndpoint {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
-        return SuccessTip.create(housePropertyUserRoomService.deleteMaster(id));
+        return SuccessTip.create(houseUserAssetService.deleteMaster(id));
     }
 
 
@@ -254,7 +263,6 @@ public class UserHousePropertyUnitEndpoint {
 
         List<HousePropertyCommunityRecord> housePropertyCommunityPage = queryHousePropertyCommunityDao.findHousePropertyCommunityPage(page, record, tag, search, orderBy, null, null);
 
-
         page.setRecords(housePropertyCommunityPage);
 
         return SuccessTip.create(page);
@@ -269,7 +277,6 @@ public class UserHousePropertyUnitEndpoint {
         }
         Long userId = JWTKit.getUserId();
         return SuccessTip.create(queryHouseUserCommunityStatusDao.queryUserCommunityStatusByUserId(userId));
-
     }
 
 //    修改用户社区状态
@@ -289,12 +296,7 @@ public class UserHousePropertyUnitEndpoint {
            } catch (DuplicateKeyException e) {
                throw new BusinessException(BusinessCode.DuplicateKey);
            }
-
            return SuccessTip.create(affected);
        }
-
-
     }
-
-
 }

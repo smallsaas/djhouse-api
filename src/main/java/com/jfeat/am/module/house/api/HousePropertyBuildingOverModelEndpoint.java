@@ -2,8 +2,9 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingUnitDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyRoomDao;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -54,7 +55,7 @@ import com.alibaba.fastjson.JSONArray;
  * </p>
  *
  * @author Code generator
- * @since 2022-06-06
+ * @since 2022-06-11
  */
 @RestController
 @Api("HousePropertyBuilding")
@@ -67,8 +68,9 @@ public class HousePropertyBuildingOverModelEndpoint {
     @Resource
     QueryHousePropertyBuildingDao queryHousePropertyBuildingDao;
 
+
     @Resource
-    QueryHousePropertyRoomDao queryHousePropertyRoomDao;
+    QueryHouseAssetDao queryHousePropertyRoomDao;
 
     @Resource
     QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
@@ -76,7 +78,7 @@ public class HousePropertyBuildingOverModelEndpoint {
 
     // 要查询[从表]关联数据，取消下行注释
     // @Resource
-    // QueryHousePropertyRoomDao queryHousePropertyRoomDao;
+    // QueryHouseAssetDao queryHouseAssetDao;
 
     @BusinessLog(name = "HousePropertyBuilding", value = "create HousePropertyBuilding")
     @Permission(HousePropertyBuildingPermission.HOUSEPROPERTYBUILDING_NEW)
@@ -109,7 +111,7 @@ public class HousePropertyBuildingOverModelEndpoint {
         CRUDObject<HousePropertyBuildingModel> entity = housePropertyBuildingOverModelService
                 .registerQueryMasterDao(queryHousePropertyBuildingDao)
                 // 要查询[从表]关联数据，取消下行注释
-                //.registerQuerySlaveModelListDao(HousePropertyRoom.class, queryHousePropertyRoomDao)
+                //.registerQuerySlaveModelListDao(HouseAsset.class, queryHouseAssetDao)
                 .retrieveMaster(id, null, null, null);
 
         // sample query for registerQueryMasterDao
@@ -155,7 +157,7 @@ public class HousePropertyBuildingOverModelEndpoint {
                 housePropertyBuildingOverModelService.initHouseProperty(housePropertyBuildingModel);
             }
         }
-        return SuccessTip.create();
+        return SuccessTip.create(effect);
     }
 
     @BusinessLog(name = "HousePropertyBuilding", value = "delete HousePropertyBuilding")
@@ -163,6 +165,7 @@ public class HousePropertyBuildingOverModelEndpoint {
     @DeleteMapping("/{id}")
     @ApiOperation("删除 HousePropertyBuilding")
     public Tip deleteHousePropertyBuilding(@PathVariable Long id) {
+
         Integer affect = housePropertyBuildingOverModelService.deleteMaster(id);
         if (affect>0){
             queryHousePropertyRoomDao.deleteHouseRoomByBuildingId(id);

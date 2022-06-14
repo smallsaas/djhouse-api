@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by Code generator on 2022-06-06
+ * Created by Code generator on 2022-06-11
  */
 public interface QueryHousePropertyBuildingDao extends QueryMasterDao<HousePropertyBuilding> {
    /*

@@ -1,26 +1,24 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
-
 import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingUnitDao;
+import com.jfeat.am.module.house.services.domain.service.HouseAssetService;
 import com.jfeat.am.module.house.services.domain.service.HousePropertyBuildingOverModelService;
 import com.jfeat.am.module.house.services.domain.service.HousePropertyBuildingUnitService;
-import com.jfeat.am.module.house.services.domain.service.HousePropertyRoomService;
 import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingModel;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHousePropertyBuildingOverModelServiceImpl;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
-import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyRoom;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import io.jsonwebtoken.lang.Assert;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 /**
  * <p>
- * 服务实现类
+ *  服务实现类
  * </p>
  *
  * @author admin
@@ -33,7 +31,7 @@ public class HousePropertyBuildingOverModelServiceImpl extends CRUDHouseProperty
     @Resource
     HousePropertyBuildingUnitService housePropertyBuildingUnitService;
     @Resource
-    HousePropertyRoomService housePropertyRoomService;
+    HouseAssetService housePropertyRoomService;
 
     @Resource
     QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
@@ -43,8 +41,9 @@ public class HousePropertyBuildingOverModelServiceImpl extends CRUDHouseProperty
         return "HousePropertyBuilding";
     }
 
-    @Transactional
-    public int initHouseProperty(HousePropertyBuildingModel entity){
+
+    @Override
+    public int initHouseProperty(HousePropertyBuildingModel entity) {
         Assert.isTrue((entity.getUnits()!=null || entity.getUnits()>0),"单元数不能为空或者小于等于0");
         if ((entity.getUnits()==null || entity.getUnits()<=0)){
             throw new BusinessException(BusinessCode.BadRequest);
@@ -70,18 +69,20 @@ public class HousePropertyBuildingOverModelServiceImpl extends CRUDHouseProperty
         }
 
 //        自动插入房屋表
-       List<HousePropertyBuildingUnit> housePropertyBuildingUnitList =  queryHousePropertyBuildingUnitDao.queryHouseBuildingUnitByBuildingId(entity.getId());
+        List<HousePropertyBuildingUnit> housePropertyBuildingUnitList =  queryHousePropertyBuildingUnitDao.queryHouseBuildingUnitByBuildingId(entity.getId());
         Assert.isTrue(housePropertyBuildingUnitList.size()==entity.getUnits(),"单元表插入有误");
         if (housePropertyBuildingUnitList.size()!=entity.getUnits()){
             throw new BusinessException(BusinessCode.DatabaseInsertError);
         }
         for (int i=1;i<=entity.getFloors();i++){
             for (int j=1;j<=entity.getUnits();j++){
-                HousePropertyRoom housePropertyRoom = new HousePropertyRoom();
+                HouseAsset housePropertyRoom = new HouseAsset();
                 housePropertyRoom.setBuildingId(entity.getId());
 
 //                获取单元表id
                 housePropertyRoom.setUnitId(housePropertyBuildingUnitList.get(j-1).getId());
+
+                housePropertyRoom.setFloor(i);
 
                 housePropertyRoom.setNumber(String.format("%d%02d",i,j));
                 try{
@@ -94,6 +95,4 @@ public class HousePropertyBuildingOverModelServiceImpl extends CRUDHouseProperty
 
         return affected;
     }
-
-
-}
+    }

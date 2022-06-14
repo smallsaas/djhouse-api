@@ -1,4 +1,6 @@
-@endpoint=http://app1.console.smallsaas.cn:8001
+@endpoint=http://localhost:8080/
+
+@service = http://app1.console.smallsaas.cn:8001
 @adminToken=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjUzNzA2MDA1LCJqdGkiOiIxIiwic3ViIjoiYWRtaW4iLCJleHAiOjE2NTYyOTgwMDV9.nH3W8nkLMzrBp_VybRJ-ZnNjCG96RqD5a6-HikifXV9hQ618btKd8MGxoPf2XIroEzDc4Gj4JoVKk7dSBoB0zA
 
 @A_1token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjE4IiwidXNlcklkIjoiNiIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0xIiwidXNlclR5cGUiOjAsImRldlVzZXJUeXBlIjowLCJiVXNlclR5cGUiOiJTWVNURU0iLCJiVXNlcklkIjowLCJpYXQiOjE2NTM3MDYxMTAsImp0aSI6IjYiLCJzdWIiOiJBLTEiLCJleHAiOjE2NTYyOTgxMTB9.YN-_CKUKkWeLVnqNgfA3QHbKlI6kfr0-SK17X7akfhx25QMx-auwO8BnIDrFIqvAkOD3rZ251nWos3HrudZtow
@@ -10,12 +12,13 @@
 
 
 ### 获取unit列表
-GET {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits
+GET {{service}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits
 Authorization: {{adminToken}}
 
 
+
 ### 查询id为66 的unit信息
-GET {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits/66
+GET {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits/3
 Authorization: {{adminToken}}
 
 ###分页查询unit信息
@@ -27,12 +30,11 @@ Authorization:{{adminToken}}
 POST {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingUnits
 Content-Type: application/json
 Authorization: {{adminToken}}
-{
-    "area": 72,
-    "buildingId": "1",
-    "houseType": "一室两厅",
-    "houseTypePicture": null,
-    "number": "45"
+ {
+    "area": 0,
+    "buildingId": "60",
+    "designModelId": "1",
+    "unitCode": "B3-6"
 }
 
 ### 更新房产信息
@@ -40,11 +42,14 @@ PUT {{endpoint}}/api/crud/house/housePropertyBuildingUnit/housePropertyBuildingU
 Content-Type: application/json
 Authorization:{{adminToken}}
 {
-    "area": 72,
-    "buildingId": "1",
-    "houseType": "一室两厅",
-    "houseTypePicture": null,
-    "number": "46"
+  "area": 0,
+  "buildingCode": "B1",
+  "buildingId": "1",
+  "communityName": "时空花园",
+  "designModelId": "2",
+  "houseType": null,
+  "id": "5",
+  "unitCode": "B1-2"
 }
 
 

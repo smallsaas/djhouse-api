@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetExchangeRequestMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchangeRequest">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="asset_id" property="assetId" />
+        <result column="target_asset_range" property="targetAssetRange" />
+        <result column="target_asset_range_limit" property="targetAssetRangeLimit" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id, asset_id, target_asset_range, target_asset_range_limit
+    </sql>
+
+</mapper>

@@ -24,7 +24,7 @@ Authorization: {{adminToken}}
 
 
 ### 查询楼栋id为1 的详情信息
-GET {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/41
+GET {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/31
 Authorization: {{adminToken}}
 
 
@@ -45,7 +45,7 @@ Authorization: {{adminToken}}
 
 
 ### 更新楼栋id为40 的信息
-PUT {{service}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/14
+PUT {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/31
 Content-Type: application/json
 Authorization:{{adminToken}}
 {
@@ -78,5 +78,5 @@ Authorization:{{adminToken}}
 
 
 ### 删除楼栋信息
-DELETE {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/39
+DELETE {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/30
 Authorization:{{adminToken}}

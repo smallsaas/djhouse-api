@@ -8,11 +8,12 @@
         <result column="building_id" property="buildingId" />
         <result column="design_model_id" property="designModelId" />
         <result column="unit_code" property="unitCode" />
+        <result column="area" property="area"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, building_id, design_model_id, unit_code
+        id, building_id, design_model_id, unit_code,area
     </sql>
 
 </mapper>
