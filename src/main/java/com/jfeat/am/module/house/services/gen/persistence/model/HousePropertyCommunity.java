@@ -25,13 +25,44 @@ public class HousePropertyCommunity extends Model<HousePropertyCommunity> {
       @TableId(value = "id", type = IdType.AUTO)
       private Long id;
 
-      @ApiModelProperty(value = "社区")
+      @ApiModelProperty(value = "小区")
       private String community;
 
-      @ApiModelProperty(value = "社区编号")
+      @ApiModelProperty(value = "小区编号")
       private String communityCode;
 
-    
+      @ApiModelProperty(value = "社区id")
+      private Long tenantId;
+
+      @ApiModelProperty(value = "小区地址")
+      private String address;
+
+      @ApiModelProperty(value = "图片")
+      private String picture;
+
+      @ApiModelProperty(value = "邮码")
+      private String postcode;
+
+
+
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public HousePropertyCommunity setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+        return this;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public HousePropertyCommunity setAddress(String address) {
+        this.address = address;
+        return this;
+    }
+
     public Long getId() {
         return id;
     }
@@ -59,7 +90,25 @@ public class HousePropertyCommunity extends Model<HousePropertyCommunity> {
           return this;
       }
 
-      public static final String ID = "id";
+    public String getPicture() {
+        return picture;
+    }
+
+    public HousePropertyCommunity setPicture(String picture) {
+        this.picture = picture;
+        return this;
+    }
+
+    public String getPostcode() {
+        return postcode;
+    }
+
+    public HousePropertyCommunity setPostcode(String postcode) {
+        this.postcode = postcode;
+        return this;
+    }
+
+    public static final String ID = "id";
 
       public static final String COMMUNITY = "community";
 

@@ -11,12 +11,12 @@
 
 
 ### 获取社区列表
-GET {{service}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies
+GET {{service}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies?tenantId=64
 Authorization: {{adminToken}}
 
 
 ### 查询id为1 的社区信息
-GET {{service}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies/2
+GET {{service}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies/5
 Authorization: {{adminToken}}
 
 ###分页查询unit信息

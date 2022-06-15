@@ -63,6 +63,10 @@ public class HouseAsset extends Model<HouseAsset> {
     @TableField(exist = false)
     private String buildingArea;
 
+    @ApiModelProperty(value = "是否是自己的房产")
+    @TableField(exist = false)
+    private Boolean isMyselfAsset;
+
     public Long getCommunityId() {
         return communityId;
     }

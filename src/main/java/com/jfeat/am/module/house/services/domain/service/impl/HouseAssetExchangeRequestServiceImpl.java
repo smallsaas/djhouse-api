@@ -74,6 +74,7 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
                 houseAssetMatchLog1.setOwnerUserId(houseAssetExchangeRequest.getUserId());
                 houseAssetMatchLog1.setMathchedAssetId(assetExchangeRequest.getAssetId());
                 houseAssetMatchLog1.setMatchedUserId(assetExchangeRequest.getUserId());
+                houseAssetMatchLog1.setCreateTime(new Date());
                 houseAssetMatchLogService.createMaster(houseAssetMatchLog1);
             }
         }

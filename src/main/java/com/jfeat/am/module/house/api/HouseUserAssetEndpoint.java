@@ -151,8 +151,9 @@ public class HouseUserAssetEndpoint {
 
 
         List<HouseUserAssetRecord> houseUserAssetPage = queryHouseUserAssetDao.findHouseUserAssetPage(page, record, tag, search, orderBy, null, null);
+        for (int i=0;i<houseUserAssetPage.size();i++){
 
-
+        }
         page.setRecords(houseUserAssetPage);
 
         return SuccessTip.create(page);

@@ -7,11 +7,13 @@
         <id column="id" property="id" />
         <result column="community" property="community" />
         <result column="community_code" property="communityCode" />
+        <result column="tenant_id" property="tenantId"/>
+        <result column="address" property="address"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, community, community_code
+        id, community, community_code,tenant_id,address
     </sql>
 
 </mapper>

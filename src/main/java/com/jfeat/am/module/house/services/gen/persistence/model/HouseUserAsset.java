@@ -72,6 +72,30 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private String roomNumber;
 
+    @TableField(exist = false)
+    private String username;
+
+    @TableField(exist = false)
+    private String userPhone;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public HouseUserAsset setUsername(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    public HouseUserAsset setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
+        return this;
+    }
+
     public Long getCommunityId() {
         return communityId;
     }

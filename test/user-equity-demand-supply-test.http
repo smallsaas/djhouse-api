@@ -1,0 +1,24 @@
+@endpoint=http://localhost:8080
+@service=http://app1.console.smallsaas.cn:8001
+
+@token =Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6MSwidXNlcklkIjoyODMsImFjY291bnQiOiJYWkgxIiwiZG9tYWluVXNlcklkIjoiIiwiaWF0IjoxNjU1MTcxODQ0LCJqdGkiOiIyODMiLCJzdWIiOiJYWkgxIiwiZXhwIjoxNjU1NDMxMDQ0fQ.9rzm-G1rAeExBdE-zgZBuBmqIgME03BNOSsCPaF97XisJrqMIMglTR7FsdDGeO9HX0EQCWnnYmsNilwCYRfRYQ
+
+###权益api
+
+
+# equityOption 1：需求 2：供给'
+### 查询需求列表
+GET {{endpoint}}/api/u/house/houseEquityDemandSupply/houseEquityDemandSupplyies?equityOption=1
+
+### 查询供给列表
+GET {{endpoint}}/api/u/house/houseEquityDemandSupply/houseEquityDemandSupplyies?equityOption=2
+
+### 增加权益需求
+# area：面积
+# equityOption 权益选择 1代表需要的 2代表出让的
+POST {{service}}/api/u/house/houseEquityDemandSupply/houseEquityDemandSupplyies
+Authorization:{{token}}
+{
+    "area": 100.11,
+    "equityOption": 1
+}

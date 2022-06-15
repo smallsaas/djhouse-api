@@ -39,4 +39,5 @@ public interface QueryHousePropertyBuildingUnitDao extends QueryMasterDao<HouseP
     List<HousePropertyBuildingUnit> queryHouseBuildingUnitByBuildingId(@Param("buildingId") Long buildingId);
 
     HousePropertyBuildingUnit queryExtraHouseBuildingUnitByEntity(@Param("entity") HousePropertyBuildingUnit entity);
+
 }

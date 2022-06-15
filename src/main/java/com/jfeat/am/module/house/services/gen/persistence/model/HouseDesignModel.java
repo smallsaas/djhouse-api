@@ -32,6 +32,12 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
       @ApiModelProperty(value = "户型图")
       private String houseTypePicture;
 
+      @ApiModelProperty(value = "vr图")
+      private String vrPicture;
+
+      @ApiModelProperty(value = "总面积")
+      private BigDecimal area;
+
       @ApiModelProperty(value = "客厅宽度")
       private BigDecimal hallWidth;
 
@@ -432,7 +438,25 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
           return this;
       }
 
-      public static final String ID = "id";
+    public String getVrPicture() {
+        return vrPicture;
+    }
+
+    public HouseDesignModel setVrPicture(String vrPicture) {
+        this.vrPicture = vrPicture;
+        return this;
+    }
+
+    public BigDecimal getArea() {
+        return area;
+    }
+
+    public HouseDesignModel setArea(BigDecimal area) {
+        this.area = area;
+        return this;
+    }
+
+    public static final String ID = "id";
 
       public static final String HOUSE_TYPE = "house_type";
 
@@ -508,40 +532,42 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
     @Override
     public String toString() {
         return "HouseDesignModel{" +
-              "id=" + id +
-                  ", houseType=" + houseType +
-                  ", houseTypePicture=" + houseTypePicture +
-                  ", hallWidth=" + hallWidth +
-                  ", hallSubWidth=" + hallSubWidth +
-                  ", hallLength=" + hallLength +
-                  ", hallFrenchWindowWidth=" + hallFrenchWindowWidth +
-                  ", hallFrenchWindowHight=" + hallFrenchWindowHight +
-                  ", diningRoomWidth=" + diningRoomWidth +
-                  ", diningRoomLength=" + diningRoomLength +
-                  ", firstRoomWidth=" + firstRoomWidth +
-                  ", firstRoomLength=" + firstRoomLength +
-                  ", firstRoomDoorwallWidth=" + firstRoomDoorwallWidth +
-                  ", firstRoomWindowWidth=" + firstRoomWindowWidth +
-                  ", firstRoomWindowSubWidth=" + firstRoomWindowSubWidth +
-                  ", firstRoomWindowHight=" + firstRoomWindowHight +
-                  ", secondRoomWidth=" + secondRoomWidth +
-                  ", secondRoomLength=" + secondRoomLength +
-                  ", secondRoomDoorwallWidth=" + secondRoomDoorwallWidth +
-                  ", secondRoomWindowWidth=" + secondRoomWindowWidth +
-                  ", secondRoomWindowSubWidth=" + secondRoomWindowSubWidth +
-                  ", secondRoomWindowHight=" + secondRoomWindowHight +
-                  ", thirdRoomWidth=" + thirdRoomWidth +
-                  ", thirdRoomLength=" + thirdRoomLength +
-                  ", thirdRoomDoorwallWidth=" + thirdRoomDoorwallWidth +
-                  ", thirdRoomWindowWidth=" + thirdRoomWindowWidth +
-                  ", thirdRoomWindowSubWidth=" + thirdRoomWindowSubWidth +
-                  ", thirdRoomWindowHight=" + thirdRoomWindowHight +
-                  ", fourthRoomWidth=" + fourthRoomWidth +
-                  ", fourthRoomLength=" + fourthRoomLength +
-                  ", fourthRoomDoorwallWidth=" + fourthRoomDoorwallWidth +
-                  ", fourthRoomWindowWidth=" + fourthRoomWindowWidth +
-                  ", fourthRoomWindowSubWidth=" + fourthRoomWindowSubWidth +
-                  ", fourthRoomWindowHight=" + fourthRoomWindowHight +
-              "}";
+                "id=" + id +
+                ", houseType='" + houseType + '\'' +
+                ", houseTypePicture='" + houseTypePicture + '\'' +
+                ", vrPicture='" + vrPicture + '\'' +
+                ", area=" + area +
+                ", hallWidth=" + hallWidth +
+                ", hallSubWidth=" + hallSubWidth +
+                ", hallLength=" + hallLength +
+                ", hallFrenchWindowWidth=" + hallFrenchWindowWidth +
+                ", hallFrenchWindowHight=" + hallFrenchWindowHight +
+                ", diningRoomWidth=" + diningRoomWidth +
+                ", diningRoomLength=" + diningRoomLength +
+                ", firstRoomWidth=" + firstRoomWidth +
+                ", firstRoomLength=" + firstRoomLength +
+                ", firstRoomDoorwallWidth=" + firstRoomDoorwallWidth +
+                ", firstRoomWindowWidth=" + firstRoomWindowWidth +
+                ", firstRoomWindowSubWidth=" + firstRoomWindowSubWidth +
+                ", firstRoomWindowHight=" + firstRoomWindowHight +
+                ", secondRoomWidth=" + secondRoomWidth +
+                ", secondRoomLength=" + secondRoomLength +
+                ", secondRoomDoorwallWidth=" + secondRoomDoorwallWidth +
+                ", secondRoomWindowWidth=" + secondRoomWindowWidth +
+                ", secondRoomWindowSubWidth=" + secondRoomWindowSubWidth +
+                ", secondRoomWindowHight=" + secondRoomWindowHight +
+                ", thirdRoomWidth=" + thirdRoomWidth +
+                ", thirdRoomLength=" + thirdRoomLength +
+                ", thirdRoomDoorwallWidth=" + thirdRoomDoorwallWidth +
+                ", thirdRoomWindowWidth=" + thirdRoomWindowWidth +
+                ", thirdRoomWindowSubWidth=" + thirdRoomWindowSubWidth +
+                ", thirdRoomWindowHight=" + thirdRoomWindowHight +
+                ", fourthRoomWidth=" + fourthRoomWidth +
+                ", fourthRoomLength=" + fourthRoomLength +
+                ", fourthRoomDoorwallWidth=" + fourthRoomDoorwallWidth +
+                ", fourthRoomWindowWidth=" + fourthRoomWindowWidth +
+                ", fourthRoomWindowSubWidth=" + fourthRoomWindowSubWidth +
+                ", fourthRoomWindowHight=" + fourthRoomWindowHight +
+                '}';
     }
 }

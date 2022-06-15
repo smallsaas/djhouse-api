@@ -43,7 +43,40 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
       @ApiModelProperty(value = "每层单元数")
       private Integer units;
 
-    
+      @ApiModelProperty(value = "cad图纸")
+      private String cadPicture;
+
+      private Integer houseTypeNumber;
+
+      private Integer assertTotal;
+
+    public Integer getHouseTypeNumber() {
+        return houseTypeNumber;
+    }
+
+    public HousePropertyBuilding setHouseTypeNumber(Integer houseTypeNumber) {
+        this.houseTypeNumber = houseTypeNumber;
+        return this;
+    }
+
+    public Integer getAssertTotal() {
+        return assertTotal;
+    }
+
+    public HousePropertyBuilding setAssertTotal(Integer assertTotal) {
+        this.assertTotal = assertTotal;
+        return this;
+    }
+
+    public String getCadPicture() {
+        return cadPicture;
+    }
+
+    public HousePropertyBuilding setCadPicture(String cadPicture) {
+        this.cadPicture = cadPicture;
+        return this;
+    }
+
     public Long getId() {
         return id;
     }
@@ -129,13 +162,14 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
     @Override
     public String toString() {
         return "HousePropertyBuilding{" +
-              "id=" + id +
-                  ", orgId=" + orgId +
-                  ", communityId=" + communityId +
-                  ", area=" + area +
-                  ", code=" + code +
-                  ", floors=" + floors +
-                  ", units=" + units +
-              "}";
+                "id=" + id +
+                ", orgId=" + orgId +
+                ", communityId=" + communityId +
+                ", area='" + area + '\'' +
+                ", code='" + code + '\'' +
+                ", floors=" + floors +
+                ", units=" + units +
+                ", cadPicture='" + cadPicture + '\'' +
+                '}';
     }
 }

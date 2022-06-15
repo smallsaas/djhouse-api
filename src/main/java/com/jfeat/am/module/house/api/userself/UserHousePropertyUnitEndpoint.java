@@ -143,13 +143,17 @@ public class UserHousePropertyUnitEndpoint {
         record.setUnits(units);
 
 //        判读用户是否需要登录，如果需要登录直接获取community转态
-        if ("false".equals(flag)){
-            if (JWTKit.getUserId()==null){
-                throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
-            }
-            HouseUserCommunityStatus houseUserCommunityStatus =  queryHouseUserCommunityStatusDao.queryUserCommunityStatusByUserId(JWTKit.getUserId());
-            record.setCommunityId(houseUserCommunityStatus.getCommunityId());
+//        if ("false".equals(flag)){
+//
+//        }
+        if (JWTKit.getUserId()==null){
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
+        HouseUserCommunityStatus houseUserCommunityStatus =  queryHouseUserCommunityStatusDao.queryUserCommunityStatusByUserId(JWTKit.getUserId());
+        if (houseUserCommunityStatus==null){
+            throw new BusinessException(BusinessCode.UserNotExisted);
+        }
+        record.setCommunityId(houseUserCommunityStatus.getCommunityId());
 
         List<HousePropertyBuildingRecord> housePropertyBuildingPage = queryHousePropertyBuildingDao.findHousePropertyBuildingPage(page, record, tag, search, orderBy, null, null);
 

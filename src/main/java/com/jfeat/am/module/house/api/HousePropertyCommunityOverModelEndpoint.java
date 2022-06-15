@@ -147,7 +147,9 @@ public class HousePropertyCommunityOverModelEndpoint {
             @ApiImplicitParam(name = "search", dataType = "String"),
             @ApiImplicitParam(name = "id", dataType = "Long"),
             @ApiImplicitParam(name = "community", dataType = "String"),
+            @ApiImplicitParam(name = "tenantId", dataType = "Long"),
             @ApiImplicitParam(name = "communityCode", dataType = "String"),
+            @ApiImplicitParam(name = "address", dataType = "String"),
             @ApiImplicitParam(name = "orderBy", dataType = "String"),
             @ApiImplicitParam(name = "sort", dataType = "String")
     })
@@ -161,7 +163,11 @@ public class HousePropertyCommunityOverModelEndpoint {
 
                                                @RequestParam(name = "community", required = false) String community,
 
+                                               @RequestParam(name = "tenantId", required = false) Long tenantId,
+
                                                @RequestParam(name = "communityCode", required = false) String communityCode,
+
+                                               @RequestParam(name = "address", required = false) String address,
                                                @RequestParam(name = "orderBy", required = false) String orderBy,
                                                @RequestParam(name = "sort", required = false) String sort) {
 
@@ -181,7 +187,9 @@ public class HousePropertyCommunityOverModelEndpoint {
 
         HousePropertyCommunityRecord record = new HousePropertyCommunityRecord();
         record.setCommunity(community);
+        record.setTenantId(tenantId);
         record.setCommunityCode(communityCode);
+        record.setAddress(address);
 
 
         List<HousePropertyCommunityRecord> housePropertyCommunityPage = queryHousePropertyCommunityDao.findHousePropertyCommunityPage(page, record, tag, search, orderBy, null, null);

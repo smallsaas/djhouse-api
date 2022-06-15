@@ -22,7 +22,7 @@ Authorization:{{adminToken}}
 
 
 ### 获取装修计划id为1 的列表，包括子项家居数据
-GET {{endpoint}}/api/crud/house/houseDecoratePlan/houseDecoratePlans/1
+GET {{endpoint}}/api/crud/house/houseDecoratePlan/houseDecoratePlans/4
 Authorization:{{adminToken}}
 
 
@@ -38,7 +38,42 @@ Authorization:{{adminToken}}
     "colorStyle": null,
     "decorateStyleName": "三房一厅",
     "star": 1200,
-    "totalBudget": 5000
+    "totalBudget": 5000,
+    "items": [
+      {
+        "freight": 0,
+        "mid": 1,
+        "promoted": 0,
+        "sales": 26,
+        "cover": "https://api.cloud.biliya.cn/images/alliance/p/405487e899b22ac44cd3ccda94be44ee.jpg",
+        "freeShipping": 0,
+        "price": 60,
+        "id": 13,
+        "viewCount": 598,
+        "credit": 0,
+        "allowCoupon": 0,
+        "lastModifiedDate": "1583733433000",
+        "costPrice": 0,
+        "banner": "",
+        "weight": 128,
+        "presale": 100,
+        "suggestedPrice": 90,
+        "unit": "盒",
+        "createdDate": "1574394851000",
+        "fareId": 12,
+        "sortOrder": 3,
+        "name": "碧丽雅洗衣机槽活氧清洁剂128g/袋*3袋/盒*6/盒/箱",
+        "requiredParticipateExam": 0,
+        "stockBalance": 967,
+        "isVirtual": 0,
+        "bulk": 2,
+        "shortName": "洗衣机槽活氧清洁剂",
+        "categoryId": 17,
+        "partnerLevelZone": 2,
+        "status": "ONSELL"
+      }
+
+    ]
 }
 
 

@@ -2,8 +2,10 @@
 package com.jfeat.am.module.house.api;
 
 
-import com.jfeat.crud.plus.META;
-import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
+import com.jfeat.am.module.house.services.gen.persistence.model.EndpointUser;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -21,17 +23,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.dao.DuplicateKeyException;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetMatchLogDao;
 import com.jfeat.crud.base.tips.SuccessTip;
-import com.jfeat.crud.base.request.Ids;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
-import com.jfeat.crud.plus.CRUDObject;
-import com.jfeat.crud.plus.DefaultFilterResult;
 import com.jfeat.am.module.house.api.permission.*;
 import com.jfeat.am.common.annotation.Permission;
-
-import java.math.BigDecimal;
 
 import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetMatchLogRecord;
@@ -42,8 +39,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-
-import com.alibaba.fastjson.JSONArray;
 
 /**
  * <p>
@@ -63,6 +58,12 @@ public class HouseAssetMatchLogEndpoint {
 
     @Resource
     QueryHouseAssetMatchLogDao queryHouseAssetMatchLogDao;
+
+    @Resource
+    QueryHouseAssetDao queryHouseAssetDao;
+
+    @Resource
+    QueryEndpointUserDao queryEndUserDao;
 
 
     @BusinessLog(name = "HouseAssetMatchLog", value = "create HouseAssetMatchLog")
@@ -161,10 +162,29 @@ public class HouseAssetMatchLogEndpoint {
         record.setMatchedUserId(matchedUserId);
         record.setMathchedAssetId(mathchedAssetId);
         record.setCreateTime(createTime);
-
-
         List<HouseAssetMatchLogRecord> houseAssetMatchLogPage = queryHouseAssetMatchLogDao.findHouseAssetMatchLogPage(page, record, tag, search, orderBy, null, null);
 
+        for (int i=0;i<houseAssetMatchLogPage.size();i++){
+            HouseAsset ownerHouseAsset=  queryHouseAssetDao.queryMasterModel(houseAssetMatchLogPage.get(i).getOwnerAssetId());
+            EndpointUser ownerEndUser = queryEndUserDao.queryMasterModel(houseAssetMatchLogPage.get(i).getOwnerUserId());
+            HouseAsset matchedHouseAsset = queryHouseAssetDao.queryMasterModel(houseAssetMatchLogPage.get(i).getMathchedAssetId());
+            EndpointUser matchedEndUser = queryEndUserDao.queryMasterModel(houseAssetMatchLogPage.get(i).getMatchedUserId());
+            if (ownerHouseAsset!=null && ownerEndUser!=null && matchedHouseAsset!=null &&matchedEndUser!=null){
+                houseAssetMatchLogPage.get(i).setOwnerBuilding(ownerHouseAsset.getBuildingCode());
+                houseAssetMatchLogPage.get(i).setOwnerCommunity(ownerHouseAsset.getCommunityName());
+                houseAssetMatchLogPage.get(i).setOwnerNumber(ownerHouseAsset.getNumber());
+                houseAssetMatchLogPage.get(i).setOwnerName(ownerEndUser.getName());
+                houseAssetMatchLogPage.get(i).setOwnerPhone(ownerEndUser.getPhone());
+
+                houseAssetMatchLogPage.get(i).setMatchedBuilding(matchedHouseAsset.getBuildingCode());
+                houseAssetMatchLogPage.get(i).setMatchedCommunity(matchedHouseAsset.getCommunityName());
+                houseAssetMatchLogPage.get(i).setMatchedNumber(matchedHouseAsset.getNumber());
+                houseAssetMatchLogPage.get(i).setMatchedName(matchedEndUser.getName());
+                houseAssetMatchLogPage.get(i).setMatchedPhone(matchedEndUser.getPhone());
+
+            }
+
+        }
 
         page.setRecords(houseAssetMatchLogPage);
 

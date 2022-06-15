@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao">
+    <sql id="Base_Column_List">
+        t_end_user
+        .
+        id
+        , t_end_user.avatar, t_end_user.account, t_end_user.password, t_end_user.salt, t_end_user.name, t_end_user.dob, t_end_user.gender, t_end_user.email, t_end_user.phone, t_end_user.invite_code AS inviteCode, t_end_user.invitor_id AS invitorId, t_end_user.status, t_end_user.team_count AS teamCount, t_end_user.create_time AS createTime, t_end_user.version, t_end_user.delete_flag AS deleteFlag, t_end_user.registered_github_username AS registeredGithubUsername, t_end_user.registered_phone AS registeredPhone, t_end_user.registered_email AS registeredEmail, t_end_user.email_validated AS emailValidated, t_end_user.phone_validated AS phoneValidated, t_end_user.org_id AS orgId, t_end_user.tag, t_end_user.category_tag AS categoryTag, t_end_user.is_compere AS isCompere, t_end_user.is_register AS isRegister, t_end_user.type, t_end_user.sys_user_id AS sysUserId, t_end_user.vendor
+    </sql>
+
+    <sql id="QueryOwnedOrgIds">
+        SELECT children.id
+        FROM t_sys_org,
+             t_sys_org as children
+        WHERE t_sys_org.left_num &lt;= children.left_num
+          AND t_sys_org.right_num >= children.left_num
+          and t_sys_org.id = #{record.orgId}
+        order by t_sys_org.node_level ASC
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="EndpointUserModel">
+        SELECT t_end_user.*
+        FROM t_end_user
+        WHERE t_end_user.id = #{id}
+        GROUP BY t_end_user.id
+    </select>
+
+
+    <select id="findEndUserPage" resultType="EndpointUserRecord" parameterType="EndpointUserRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_end_user
+
+
+        <if test="record.orgId > 0">
+            ,(<include refid="QueryOwnedOrgIds"></include>) AS ownedOrgIds
+        </if>
+
+        WHERE 1=1
+        <if test="record.orgId > 0">
+            AND t_end_user.org_id = ownedOrgIds.id
+        </if>
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_end_user.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+        <if test="record.avatar != null and record.avatar!= ''">
+            AND t_end_user.avatar LIKE CONCAT('%',#{record.avatar},'%')
+        </if>
+        <if test="record.account != null and record.account!= ''">
+            AND t_end_user.account LIKE CONCAT('%',#{record.account},'%')
+        </if>
+        <if test="record.password != null and record.password!= ''">
+            AND t_end_user.password LIKE CONCAT('%',#{record.password},'%')
+        </if>
+        <if test="record.salt != null and record.salt!= ''">
+            AND t_end_user.salt LIKE CONCAT('%',#{record.salt},'%')
+        </if>
+        <if test="record.name != null and record.name!= ''">
+            AND t_end_user.name LIKE CONCAT('%',#{record.name},'%')
+        </if>
+        <if test="record.dob != null and record.dob>0 ">
+            AND t_end_user.dob LIKE CONCAT('%',#{record.dob},'%')
+        </if>
+        <if test="record.gender != null and record.gender>0 ">
+            AND t_end_user.gender LIKE CONCAT('%',#{record.gender},'%')
+        </if>
+        <if test="record.email != null and record.email!= ''">
+            AND t_end_user.email LIKE CONCAT('%',#{record.email},'%')
+        </if>
+        <if test="record.phone != null and record.phone!= ''">
+            AND t_end_user.phone LIKE CONCAT('%',#{record.phone},'%')
+        </if>
+
+
+        <if test="record.inviteCode != null and record.inviteCode!= ''">
+            AND t_end_user.invite_code LIKE CONCAT('%',#{record.inviteCode},'%')
+        </if>
+
+
+        <if test="record.invitorId != null and record.invitorId>0 ">
+            AND t_end_user.invitor_id LIKE CONCAT('%',#{record.invitorId},'%')
+        </if>
+        <if test="record.status != null and record.status>0 ">
+            AND t_end_user.status LIKE CONCAT('%',#{record.status},'%')
+        </if>
+
+
+        <if test="record.teamCount != null and record.teamCount>0 ">
+            AND t_end_user.team_count LIKE CONCAT('%',#{record.teamCount},'%')
+        </if>
+
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_end_user.create_time LIKE CONCAT('%',#{record.createTime},'%')
+        </if>
+        <if test="record.version != null and record.version>0 ">
+            AND t_end_user.version LIKE CONCAT('%',#{record.version},'%')
+        </if>
+
+
+        <if test="record.deleteFlag != null and record.deleteFlag>0 ">
+            AND t_end_user.delete_flag LIKE CONCAT('%',#{record.deleteFlag},'%')
+        </if>
+
+
+        <if test="record.registeredGithubUsername != null and record.registeredGithubUsername!= ''">
+            AND t_end_user.registered_github_username LIKE CONCAT('%',#{record.registeredGithubUsername},'%')
+        </if>
+
+
+        <if test="record.registeredPhone != null and record.registeredPhone!= ''">
+            AND t_end_user.registered_phone LIKE CONCAT('%',#{record.registeredPhone},'%')
+        </if>
+
+
+        <if test="record.registeredEmail != null and record.registeredEmail!= ''">
+            AND t_end_user.registered_email LIKE CONCAT('%',#{record.registeredEmail},'%')
+        </if>
+
+
+        <if test="record.emailValidated != null and record.emailValidated>0 ">
+            AND t_end_user.email_validated LIKE CONCAT('%',#{record.emailValidated},'%')
+        </if>
+
+
+        <if test="record.phoneValidated != null and record.phoneValidated>0 ">
+            AND t_end_user.phone_validated LIKE CONCAT('%',#{record.phoneValidated},'%')
+        </if>
+
+
+        <if test="record.orgId != null and record.orgId>0 ">
+            AND t_end_user.org_id IN (<include refid="QueryOwnedOrgIds"/>)
+        </if>
+        <if test="record.tag != null and record.tag!= ''">
+            AND t_end_user.tag LIKE CONCAT('%',#{record.tag},'%')
+        </if>
+
+
+        <if test="record.categoryTag != null and record.categoryTag!= ''">
+            AND t_end_user.category_tag LIKE CONCAT('%',#{record.categoryTag},'%')
+        </if>
+
+
+        <if test="record.isCompere != null and record.isCompere>0 ">
+            AND t_end_user.is_compere LIKE CONCAT('%',#{record.isCompere},'%')
+        </if>
+
+
+        <if test="record.isRegister != null and record.isRegister>0 ">
+            AND t_end_user.is_register LIKE CONCAT('%',#{record.isRegister},'%')
+        </if>
+        <if test="record.type != null and record.type>0 ">
+            AND t_end_user.type LIKE CONCAT('%',#{record.type},'%')
+        </if>
+
+
+        <if test="record.sysUserId != null and record.sysUserId>0 ">
+            AND t_end_user.sys_user_id LIKE CONCAT('%',#{record.sysUserId},'%')
+        </if>
+        <if test="record.vendor != null and record.vendor!= ''">
+            AND t_end_user.vendor LIKE CONCAT('%',#{record.vendor},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_end_user.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_end_user.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_end_user.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+        ORDER BY create_time DESC
+    </select>
+</mapper>

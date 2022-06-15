@@ -25,11 +25,14 @@ public class HouseUserCommunityStatus extends Model<HouseUserCommunityStatus> {
       @TableId(value = "id", type = IdType.AUTO)
       private Long id;
 
-      @ApiModelProperty(value = "社区id")
+      @ApiModelProperty(value = "小区id")
       private Long communityId;
 
       @ApiModelProperty(value = "用户id")
       private Long userId;
+
+      @ApiModelProperty(value = "社区id")
+      private Long tenantId;
 
     
     public Long getId() {
@@ -70,12 +73,23 @@ public class HouseUserCommunityStatus extends Model<HouseUserCommunityStatus> {
           return this.id;
       }
 
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public HouseUserCommunityStatus setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+        return this;
+
+    }
+
     @Override
     public String toString() {
         return "HouseUserCommunityStatus{" +
-              "id=" + id +
-                  ", communityId=" + communityId +
-                  ", userId=" + userId +
-              "}";
+                "id=" + id +
+                ", communityId=" + communityId +
+                ", userId=" + userId +
+                ", tenantId=" + tenantId +
+                '}';
     }
 }

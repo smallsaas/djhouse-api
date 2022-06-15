@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.services.gen.persistence.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -29,14 +30,53 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
       @ApiModelProperty(value = "物主用户id")
       private Long ownerUserId;
 
-      @ApiModelProperty(value = "物主用户的资产id")
-      private Long ownerAssetId;
+
+
+      @ApiModelProperty(value = "物主名字")
+      @TableField(exist = false)
+      private String ownerName;
+
+      @ApiModelProperty(value = "物主电话")
+      @TableField(exist = false)
+      private String ownerPhone;
+
+    @ApiModelProperty(value = "物主用户的资产id")
+    private Long ownerAssetId;
+
+    @TableField(exist = false)
+    private String ownerCommunity;
+
+    @TableField(exist = false)
+    private String ownerBuilding;
+
+    @TableField(exist = false)
+    private String ownerNumber;
+
+
+
 
       @ApiModelProperty(value = "匹配到的用户id")
       private Long matchedUserId;
 
+    @ApiModelProperty(value = "物主名字")
+    @TableField(exist = false)
+    private String matchedName;
+
+    @ApiModelProperty(value = "物主电话")
+    @TableField(exist = false)
+    private String matchedPhone;
+
       @ApiModelProperty(value = "匹配到的用户资产id")
       private Long mathchedAssetId;
+
+    @TableField(exist = false)
+    private String matchedCommunity;
+
+    @TableField(exist = false)
+    private String matchedBuilding;
+
+    @TableField(exist = false)
+    private String matchedNumber;
 
       @ApiModelProperty(value = "创建时间")
       private Date createTime;
@@ -86,7 +126,87 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
           this.mathchedAssetId = mathchedAssetId;
           return this;
       }
-    
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getOwnerPhone() {
+        return ownerPhone;
+    }
+
+    public void setOwnerPhone(String ownerPhone) {
+        this.ownerPhone = ownerPhone;
+    }
+
+    public String getOwnerCommunity() {
+        return ownerCommunity;
+    }
+
+    public void setOwnerCommunity(String ownerCommunity) {
+        this.ownerCommunity = ownerCommunity;
+    }
+
+    public String getOwnerBuilding() {
+        return ownerBuilding;
+    }
+
+    public void setOwnerBuilding(String ownerBuilding) {
+        this.ownerBuilding = ownerBuilding;
+    }
+
+    public String getOwnerNumber() {
+        return ownerNumber;
+    }
+
+    public void setOwnerNumber(String ownerNumber) {
+        this.ownerNumber = ownerNumber;
+    }
+
+    public String getMatchedName() {
+        return matchedName;
+    }
+
+    public void setMatchedName(String matchedName) {
+        this.matchedName = matchedName;
+    }
+
+    public String getMatchedPhone() {
+        return matchedPhone;
+    }
+
+    public void setMatchedPhone(String matchedPhone) {
+        this.matchedPhone = matchedPhone;
+    }
+
+    public String getMatchedCommunity() {
+        return matchedCommunity;
+    }
+
+    public void setMatchedCommunity(String matchedCommunity) {
+        this.matchedCommunity = matchedCommunity;
+    }
+
+    public String getMatchedBuilding() {
+        return matchedBuilding;
+    }
+
+    public void setMatchedBuilding(String matchedBuilding) {
+        this.matchedBuilding = matchedBuilding;
+    }
+
+    public String getMatchedNumber() {
+        return matchedNumber;
+    }
+
+    public void setMatchedNumber(String matchedNumber) {
+        this.matchedNumber = matchedNumber;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }

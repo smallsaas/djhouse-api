@@ -11,11 +11,12 @@
         <result column="code" property="code" />
         <result column="floors" property="floors" />
         <result column="units" property="units" />
+        <result column="cad_picture" property="cadPicture"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, org_id, community_id, area, code, floors, units
+        id, org_id, community_id, area, code, floors, units,cad_picture
     </sql>
 
 </mapper>

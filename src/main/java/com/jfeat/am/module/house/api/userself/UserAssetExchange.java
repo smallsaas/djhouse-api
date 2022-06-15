@@ -50,6 +50,7 @@ public class UserAssetExchange {
     @ApiOperation(value = "新建 HouseAssetExchangeRequest", response = HouseAssetExchangeRequest.class)
     public Tip createHouseAssetExchangeRequest(@RequestParam(value = "isSameHouseType", defaultValue = "true", required = false) Boolean isSameHouseType, @RequestBody HouseAssetExchangeRequest entity) {
         Integer affected = 0;
+        entity.setUserId(JWTKit.getUserId());
         try {
             affected = houseAssetExchangeRequestService.createMaster(entity);
             houseAssetExchangeRequestService.assetMachResult(entity, isSameHouseType);
@@ -125,7 +126,6 @@ public class UserAssetExchange {
         Integer effect = houseAssetExchangeRequestService.deleteMaster(houseAssetExchangeRequest.getId());
         effect +=queryHouseAssetMatchLogDao.deleteHouseAssetMatchLogByUserIdAndAssetId(id,JWTKit.getUserId());
         return SuccessTip.create(effect);
-
     }
 
     @ApiOperation(value = "HouseAssetExchangeRequest 列表信息", response = HouseAssetExchangeRequestRecord.class)

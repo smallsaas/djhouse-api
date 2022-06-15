@@ -1,0 +1,40 @@
+@endpoint=http://localhost:8080
+@service=http://app1.console.smallsaas.cn:8001
+
+@token =Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6MSwidXNlcklkIjoyODMsImFjY291bnQiOiJYWkgxIiwiZG9tYWluVXNlcklkIjoiIiwiaWF0IjoxNjU1MjEzNDI4LCJqdGkiOiIyODMiLCJzdWIiOiJYWkgxIiwiZXhwIjoxNjU1NDcyNjI4fQ.sHlfL7Q_dn-P-6PBlAThIqWLH3cRiQxWRlpmxM7UTEbq-s3zgUrbSfIUKQRL1wLpNR3SV97upTlp0FGWWUq8cA
+@adminToken=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjUzNzA2MDA1LCJqdGkiOiIxIiwic3ViIjoiYWRtaW4iLCJleHAiOjE2NTYyOTgwMDV9.nH3W8nkLMzrBp_VybRJ-ZnNjCG96RqD5a6-HikifXV9hQ618btKd8MGxoPf2XIroEzDc4Gj4JoVKk7dSBoB0zA
+
+
+##############用户资产交换api
+
+### 添加交换需求
+# assetId 为自己的资产Id
+#"targetAssetRange": 目标资产id 以英文逗号分割
+# isSameHouseType:是否需要户型一样 默认为true 可以不填
+POST {{endpoint}}/api/u/house/houseAssetExchangeRequest/houseAssetExchangeRequests?isSameHouseType=false
+Authorization:{{token}}
+{
+    "assetId": "759",
+    "targetAssetRange": "760,4,5,6",
+    "targetAssetRangeLimit": null
+}
+
+###个人资产交换请求
+GET {{endpoint}}/api/u/house/houseAssetExchangeRequest/houseAssetExchangeRequests/demand
+
+### 匹配成功记录
+GET {{endpoint}}/api/u/house/houseAssetExchangeRequest/houseAssetExchangeRequests/matchResult?assetId=760
+
+
+### 修改资产交换请求 
+#1为 资产id
+PUT {{endpoint}}/api/u/house/houseAssetExchangeRequest/houseAssetExchangeRequests/1
+
+
+### 删除资产交换请求
+#1为 资产id
+DELETE {{endpoint}}/api/u/house/houseAssetExchangeRequest/houseAssetExchangeRequests/1
+
+
+GET {{endpoint}}/api/crud/house/houseAssetMatchLog/houseAssetMatchLogs
+Authorization:{{adminToken}}

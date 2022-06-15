@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.gen.persistence.dao.EndpointUserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jfeat.am.module.house.services.gen.persistence.model.EndpointUser">
+        <id column="id" property="id" />
+        <result column="avatar" property="avatar" />
+        <result column="account" property="account" />
+        <result column="password" property="password" />
+        <result column="salt" property="salt" />
+        <result column="name" property="name" />
+        <result column="dob" property="dob" />
+        <result column="gender" property="gender" />
+        <result column="email" property="email" />
+        <result column="phone" property="phone" />
+        <result column="invite_code" property="inviteCode" />
+        <result column="invitor_id" property="invitorId" />
+        <result column="status" property="status" />
+        <result column="team_count" property="teamCount" />
+        <result column="create_time" property="createTime" />
+        <result column="version" property="version" />
+        <result column="delete_flag" property="deleteFlag" />
+        <result column="registered_github_username" property="registeredGithubUsername" />
+        <result column="registered_phone" property="registeredPhone" />
+        <result column="registered_email" property="registeredEmail" />
+        <result column="email_validated" property="emailValidated" />
+        <result column="phone_validated" property="phoneValidated" />
+        <result column="org_id" property="orgId" />
+        <result column="tag" property="tag" />
+        <result column="category_tag" property="categoryTag" />
+        <result column="is_compere" property="isCompere" />
+        <result column="is_register" property="isRegister" />
+        <result column="type" property="type" />
+        <result column="sys_user_id" property="sysUserId" />
+        <result column="vendor" property="vendor" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, avatar, account, password, salt, name, dob, gender, email, phone, invite_code, invitor_id, status, team_count, create_time, version, delete_flag, registered_github_username, registered_phone, registered_email, email_validated, phone_validated, org_id, tag, category_tag, is_compere, is_register, type, sys_user_id, vendor
+    </sql>
+
+</mapper>

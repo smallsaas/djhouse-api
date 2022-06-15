@@ -33,4 +33,6 @@ public interface QueryHousePropertyBuildingDao extends QueryMasterDao<HousePrope
      * Query entity model list for slave items
      */
     List<HousePropertyBuildingModel> queryMasterModelList(@Param("masterId") Object masterId);
+
+    List<HousePropertyBuilding> queryHousePropertyBuildingByUserId(@Param("userId") Long userId);
 }

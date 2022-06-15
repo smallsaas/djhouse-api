@@ -7,6 +7,8 @@
         <id column="id" property="id" />
         <result column="house_type" property="houseType" />
         <result column="house_type_picture" property="houseTypePicture" />
+        <result column="vr_picture" property="vrPicture"/>
+        <result column="area" property="area"/>
         <result column="hall_width" property="hallWidth" />
         <result column="hall_sub_width" property="hallSubWidth" />
         <result column="hall_length" property="hallLength" />
@@ -42,7 +44,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, house_type, house_type_picture, hall_width, hall_sub_width, hall_length, hall_french_window_width, hall_french_window_hight, dining_room_width, dining_room_length, first_room_width, first_room_length, first_room_doorwall_width, first_room_window_width, first_room_window_sub_width, first_room_window_hight, second_room_width, second_room_length, second_room_doorwall_width, second_room_window_width, second_room_window_sub_width, second_room_window_hight, third_room_width, third_room_length, third_room_doorwall_width, third_room_window_width, third_room_window_sub_width, third_room_window_hight, fourth_room_width, fourth_room_length, fourth_room_doorwall_width, fourth_room_window_width, fourth_room_window_sub_width, fourth_room_window_hight
+        id, house_type, house_type_picture,vr_picture,area, hall_width, hall_sub_width, hall_length, hall_french_window_width, hall_french_window_hight, dining_room_width, dining_room_length, first_room_width, first_room_length, first_room_doorwall_width, first_room_window_width, first_room_window_sub_width, first_room_window_hight, second_room_width, second_room_length, second_room_doorwall_width, second_room_window_width, second_room_window_sub_width, second_room_window_hight, third_room_width, third_room_length, third_room_doorwall_width, third_room_window_width, third_room_window_sub_width, third_room_window_hight, fourth_room_width, fourth_room_length, fourth_room_doorwall_width, fourth_room_window_width, fourth_room_window_sub_width, fourth_room_window_hight
     </sql>
 
 </mapper>
