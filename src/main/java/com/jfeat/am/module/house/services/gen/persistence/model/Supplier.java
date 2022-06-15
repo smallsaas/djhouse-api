@@ -56,8 +56,28 @@ public class Supplier extends Model<Supplier> {
       private Long endUserId;
 
 
-
     private Long orgId;
+
+
+    private String link;
+
+    private String snapshot;
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getSnapshot() {
+        return snapshot;
+    }
+
+    public void setSnapshot(String snapshot) {
+        this.snapshot = snapshot;
+    }
 
     public Long getEndUserId() {
         return endUserId;

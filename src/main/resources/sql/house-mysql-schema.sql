@@ -13,5 +13,7 @@ CREATE TABLE `t_supplier`  (
                                `phone` varchar(20) DEFAULT NULL,
                                `user_id` BIGINT ( 20 ) NULL DEFAULT NULL COMMENT '绑定平台用户id',
                                `end_user_id` BIGINT ( 20 ) NULL DEFAULT NULL COMMENT '绑定终端用户id',
+                               `link` text COLLATE utf8mb4_bin,
+                               `snapshot` text COLLATE utf8mb4_bin,
                                PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '供应商（软装修/家居/家电/装饰品）' ROW_FORMAT = Dynamic;
