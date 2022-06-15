@@ -63,7 +63,7 @@ public class HouseAssetMatchLogEndpoint {
     QueryHouseAssetDao queryHouseAssetDao;
 
     @Resource
-    QueryEndpointUserDao queryEndUserDao;
+    QueryEndpointUserDao queryEndpointUserDao;
 
 
     @BusinessLog(name = "HouseAssetMatchLog", value = "create HouseAssetMatchLog")
@@ -166,9 +166,9 @@ public class HouseAssetMatchLogEndpoint {
 
         for (int i=0;i<houseAssetMatchLogPage.size();i++){
             HouseAsset ownerHouseAsset=  queryHouseAssetDao.queryMasterModel(houseAssetMatchLogPage.get(i).getOwnerAssetId());
-            EndpointUser ownerEndUser = queryEndUserDao.queryMasterModel(houseAssetMatchLogPage.get(i).getOwnerUserId());
+            EndpointUser ownerEndUser = queryEndpointUserDao.queryMasterModel(houseAssetMatchLogPage.get(i).getOwnerUserId());
             HouseAsset matchedHouseAsset = queryHouseAssetDao.queryMasterModel(houseAssetMatchLogPage.get(i).getMathchedAssetId());
-            EndpointUser matchedEndUser = queryEndUserDao.queryMasterModel(houseAssetMatchLogPage.get(i).getMatchedUserId());
+            EndpointUser matchedEndUser = queryEndpointUserDao.queryMasterModel(houseAssetMatchLogPage.get(i).getMatchedUserId());
             if (ownerHouseAsset!=null && ownerEndUser!=null && matchedHouseAsset!=null &&matchedEndUser!=null){
                 houseAssetMatchLogPage.get(i).setOwnerBuilding(ownerHouseAsset.getBuildingCode());
                 houseAssetMatchLogPage.get(i).setOwnerCommunity(ownerHouseAsset.getCommunityName());

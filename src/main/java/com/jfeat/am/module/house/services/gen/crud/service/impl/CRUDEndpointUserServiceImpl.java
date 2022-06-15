@@ -28,11 +28,11 @@ public class CRUDEndpointUserServiceImpl extends CRUDServiceOnlyImpl<EndpointUse
 
 
         @Resource
-        protected EndpointUserMapper endUserMapper;
+        protected EndpointUserMapper endpointUserMapper;
 
         @Override
         protected BaseMapper<EndpointUser> getMasterMapper() {
-                return endUserMapper;
+                return endpointUserMapper;
         }
 
 

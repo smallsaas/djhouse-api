@@ -4,7 +4,6 @@ package com.jfeat.am.module.house.api;
 
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -51,10 +50,10 @@ import java.util.List;
 public class EndpointUserEndpoint {
 
     @Resource
-    EndpointUserService endUserService;
+    EndpointUserService endpointUserService;
 
     @Resource
-    QueryEndpointUserDao queryEndUserDao;
+    QueryEndpointUserDao queryEndpointUserDao;
 
 
     @Permission(EndUserPermission.ENDUSER_NEW)
@@ -63,7 +62,7 @@ public class EndpointUserEndpoint {
     public Tip createEndUser(@RequestBody EndpointUser entity) {
         Integer affected = 0;
         try {
-            affected = endUserService.createMaster(entity);
+            affected = endpointUserService.createMaster(entity);
         } catch (DuplicateKeyException e) {
             throw new BusinessException(BusinessCode.DuplicateKey);
         }
@@ -75,7 +74,7 @@ public class EndpointUserEndpoint {
     @GetMapping("/{id}")
     @ApiOperation(value = "查看 EndpointUser", response = EndpointUser.class)
     public Tip getEndUser(@PathVariable Long id) {
-        return SuccessTip.create(endUserService.queryMasterModel(queryEndUserDao, id));
+        return SuccessTip.create(endpointUserService.queryMasterModel(queryEndpointUserDao, id));
     }
 
     @BusinessLog(name = "EndpointUser", value = "update EndpointUser")
@@ -84,7 +83,7 @@ public class EndpointUserEndpoint {
     @ApiOperation(value = "修改 EndpointUser", response = EndpointUser.class)
     public Tip updateEndUser(@PathVariable Long id, @RequestBody EndpointUser entity) {
         entity.setId(id);
-        return SuccessTip.create(endUserService.updateMaster(entity));
+        return SuccessTip.create(endpointUserService.updateMaster(entity));
     }
 
     @BusinessLog(name = "EndpointUser", value = "delete EndpointUser")
@@ -92,7 +91,7 @@ public class EndpointUserEndpoint {
     @DeleteMapping("/{id}")
     @ApiOperation("删除 EndpointUser")
     public Tip deleteEndUser(@PathVariable Long id) {
-        return SuccessTip.create(endUserService.deleteMaster(id));
+        return SuccessTip.create(endpointUserService.deleteMaster(id));
     }
 
     @Permission(EndUserPermission.ENDUSER_VIEW)
@@ -252,7 +251,7 @@ public class EndpointUserEndpoint {
         record.setVendor(vendor);
 
 
-        List<EndpointUserRecord> endUserPage = queryEndUserDao.findEndUserPage(page, record, tag, search, orderBy, null, null);
+        List<EndpointUserRecord> endUserPage = queryEndpointUserDao.findEndUserPage(page, record, tag, search, orderBy, null, null);
 
 
         page.setRecords(endUserPage);
