@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -33,15 +34,27 @@ public class HouseEquityDemandSupply extends Model<HouseEquityDemandSupply> {
     @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    @ApiModelProperty(value = "权益选择，0：需求 1：供给")
+    @ApiModelProperty(value = "权益选择，1：需求 2：供给")
     private Integer equityOption;
 
     @ApiModelProperty(value = "面积")
     private BigDecimal area;
 
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
+
     @ApiModelProperty(value = "电话")
     @TableField(exist = false)
     private String phoneNumber;
+
+
+    @ApiModelProperty("用户名")
+    @TableField(exist = false)
+    private String username;
+
+    @ApiModelProperty(value = "用户头像")
+    @TableField(exist = false)
+    private String userAvatar;
 
 
     public Long getId() {
@@ -86,6 +99,32 @@ public class HouseEquityDemandSupply extends Model<HouseEquityDemandSupply> {
 
     public HouseEquityDemandSupply setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+        return this;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public HouseEquityDemandSupply setCreateTime(Date createTime) {
+        this.createTime = createTime;
+        return this;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUserAvatar() {
+        return userAvatar;
+    }
+
+    public HouseEquityDemandSupply setUserAvatar(String userAvatar) {
+        this.userAvatar = userAvatar;
         return this;
     }
 

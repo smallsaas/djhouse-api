@@ -33,4 +33,6 @@ public interface QueryEndpointUserDao extends QueryMasterDao<EndpointUser> {
      * Query entity model list for slave items
      */
     List<EndpointUserModel> queryMasterModelList(@Param("masterId") Object masterId);
+
+    EndpointUser queryEndpointUserByOrgId(@Param("orgId") Long orgId);
 }

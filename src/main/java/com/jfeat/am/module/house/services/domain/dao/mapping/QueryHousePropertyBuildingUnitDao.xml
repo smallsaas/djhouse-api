@@ -95,4 +95,5 @@
         WHERE t_house_property_building_unit.id = #{entity.id}
         GROUP BY t_house_property_building_unit.id
     </select>
+
 </mapper>

@@ -3,6 +3,8 @@
 
 @token =Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6MSwidXNlcklkIjoyODMsImFjY291bnQiOiJYWkgxIiwiZG9tYWluVXNlcklkIjoiIiwiaWF0IjoxNjU1MTcxODQ0LCJqdGkiOiIyODMiLCJzdWIiOiJYWkgxIiwiZXhwIjoxNjU1NDMxMDQ0fQ.9rzm-G1rAeExBdE-zgZBuBmqIgME03BNOSsCPaF97XisJrqMIMglTR7FsdDGeO9HX0EQCWnnYmsNilwCYRfRYQ
 
+@adminToken=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjUzNzA2MDA1LCJqdGkiOiIxIiwic3ViIjoiYWRtaW4iLCJleHAiOjE2NTYyOTgwMDV9.nH3W8nkLMzrBp_VybRJ-ZnNjCG96RqD5a6-HikifXV9hQ618btKd8MGxoPf2XIroEzDc4Gj4JoVKk7dSBoB0zA
+
 ###权益api
 
 
@@ -22,3 +24,6 @@ Authorization:{{token}}
     "area": 100.11,
     "equityOption": 1
 }
+
+GET {{endpoint}}/api/crud/house/houseEquityDemandSupply/houseEquityDemandSupplyies?equityOption=1
+Authorization:{{adminToken}}

@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.services.gen.persistence.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -46,8 +47,10 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
       @ApiModelProperty(value = "cad图纸")
       private String cadPicture;
 
+      @TableField(exist = false)
       private Integer houseTypeNumber;
 
+      @TableField(exist = false)
       private Integer assertTotal;
 
     public Integer getHouseTypeNumber() {

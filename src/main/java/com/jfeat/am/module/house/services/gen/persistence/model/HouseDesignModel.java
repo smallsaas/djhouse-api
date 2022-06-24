@@ -35,6 +35,12 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
       @ApiModelProperty(value = "vr图")
       private String vrPicture;
 
+      @ApiModelProperty(value = "vr图连接")
+      private String vrLink;
+
+      @ApiModelProperty(value = "vr缩略图")
+      private String vrSnapshot;
+
       @ApiModelProperty(value = "总面积")
       private BigDecimal area;
 
@@ -453,6 +459,24 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
 
     public HouseDesignModel setArea(BigDecimal area) {
         this.area = area;
+        return this;
+    }
+
+    public String getVrLink() {
+        return vrLink;
+    }
+
+    public HouseDesignModel setVrLink(String vrLink) {
+        this.vrLink = vrLink;
+        return this;
+    }
+
+    public String getVrSnapshot() {
+        return vrSnapshot;
+    }
+
+    public HouseDesignModel setVrSnapshot(String vrSnapshot) {
+        this.vrSnapshot = vrSnapshot;
         return this;
     }
 

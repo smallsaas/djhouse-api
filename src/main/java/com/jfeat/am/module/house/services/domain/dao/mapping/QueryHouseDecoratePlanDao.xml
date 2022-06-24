@@ -66,4 +66,11 @@
     </if>
     -->
     </select>
+
+    <select id="queryProductListByDesignModel" resultType="Product" >
+        SELECT t_product.* FROM t_house_decorate_plan
+                                    JOIN t_house_decorate_plan_funiture ON t_house_decorate_plan.id = t_house_decorate_plan_funiture.decorate_plan_id
+                                    JOIN t_product on t_house_decorate_plan_funiture.furniture_id = t_product.id
+        WHERE t_house_decorate_plan.design_model_id=#{designModelId}
+    </select>
 </mapper>

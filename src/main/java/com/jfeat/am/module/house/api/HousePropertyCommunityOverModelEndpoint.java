@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.GetMapping;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -198,6 +199,11 @@ public class HousePropertyCommunityOverModelEndpoint {
         page.setRecords(housePropertyCommunityPage);
 
         return SuccessTip.create(page);
+    }
+
+    @GetMapping("/getCommunityByOrgId")
+    public Tip getCommunity(@RequestParam("orgId") Long orgId){
+        return SuccessTip.create(queryHousePropertyCommunityDao.queryHouseCommunityByOrgId(orgId));
     }
 }
 

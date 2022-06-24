@@ -33,4 +33,7 @@ public interface QueryHouseDesignModelDao extends QueryMasterDao<HouseDesignMode
      * Query entity model list for slave items
      */
     List<HouseDesignModelModel> queryMasterModelList(@Param("masterId") Object masterId);
+
+    List<HouseDesignModelRecord> queryAllHouseDesignModel();
+
 }

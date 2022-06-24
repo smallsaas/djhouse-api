@@ -61,6 +61,7 @@
     </select>
 
     <update id="updateUserCommunityStatusByUserId">
-        UPDATE t_house_user_community_status SET community_id=#{entity.communityId}  WHERE user_id=#{entity.userId}
+        UPDATE t_house_user_community_status SET community_id=#{entity.communityId},tenant_id=#{entity.tenantId}  WHERE user_id=#{entity.userId}
     </update>
+
 </mapper>

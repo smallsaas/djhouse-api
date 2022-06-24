@@ -72,6 +72,7 @@ public class SupplierEndpoint {
     public Tip createSupplier(@RequestBody SupplierModel entity) {
         Supplier one = null;
         try {
+
             one = supplierService.createOne(entity);
 
         } catch (DuplicateKeyException e) {
@@ -113,7 +114,6 @@ public class SupplierEndpoint {
         return SuccessTip.create(supplierService.deleteOne(id));
     }
 
-    @Permission(SupplierPermission.SUPPLIER_VIEW)
     @ApiOperation(value = "Supplier 列表信息", response = SupplierRecord.class)
     @GetMapping
     @ApiImplicitParams({

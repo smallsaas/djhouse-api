@@ -2,6 +2,12 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseDecoratePlanDao;
+import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
+import com.jfeat.am.module.house.services.gen.persistence.model.EndpointUser;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -40,6 +46,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -63,6 +70,16 @@ public class HouseUserAssetEndpoint {
 
     @Resource
     QueryHouseUserAssetDao queryHouseUserAssetDao;
+
+    @Resource
+    QueryHouseAssetDao queryHouseAssetDao;
+
+    @Resource
+    QueryEndpointUserDao queryEndpointUserDao;
+
+    @Resource
+    QueryHouseDecoratePlanDao queryHouseDecoratePlanDao;
+
 
 
     @BusinessLog(name = "HouseUserAsset", value = "create HouseUserAsset")
@@ -127,6 +144,10 @@ public class HouseUserAssetEndpoint {
 
                                        @RequestParam(name = "userId", required = false) Long userId,
 
+                                       @RequestParam(name = "username" ,required = false) String username,
+
+                                       @RequestParam(name = "userPhone",required = false) String userPhone,
+
                                        @RequestParam(name = "assetId", required = false) Long assetId,
                                        @RequestParam(name = "orderBy", required = false) String orderBy,
                                        @RequestParam(name = "sort", required = false) String sort) {
@@ -148,15 +169,105 @@ public class HouseUserAssetEndpoint {
         HouseUserAssetRecord record = new HouseUserAssetRecord();
         record.setUserId(userId);
         record.setAssetId(assetId);
+        record.setUsername(username);
+        record.setUserPhone(userPhone);
 
 
         List<HouseUserAssetRecord> houseUserAssetPage = queryHouseUserAssetDao.findHouseUserAssetPage(page, record, tag, search, orderBy, null, null);
-        for (int i=0;i<houseUserAssetPage.size();i++){
+        for (int i = 0; i < houseUserAssetPage.size(); i++) {
 
         }
         page.setRecords(houseUserAssetPage);
 
         return SuccessTip.create(page);
     }
+
+
+    //   获取出租转态 0为不出租 1为出租
+    @GetMapping("/rent/{status}")
+    public Tip getALlRentAsset(Page<HouseAssetRecord> page,
+                               @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                               @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                               @RequestParam(name = "username",required = false) String username,
+                               @RequestParam(name = "search",required = false) String search,
+                               @PathVariable Integer status) {
+//        List<HouseUserAsset> houseUserAssetList = queryHouseUserAssetDao.queryALlRentStatus(status);
+//        List<HouseAssetRecord> houseAssetRecordList = new ArrayList<>();
+//        for (int i=0;i<houseUserAssetList.size();i++) {
+//            HouseAssetRecord houseAssetRecord = queryHouseAssetDao.queryHouseAssetDetails(houseUserAssetList.get(i).getAssetId());
+//            EndpointUser endpointUser = queryEndpointUserDao.queryMasterModel(houseUserAssetList.get(i).getUserId());
+//
+//            if (houseAssetRecord != null && endpointUser!=null) {
+//
+//                houseAssetRecord.setPhone(endpointUser.getPhone());
+//                houseAssetRecord.setUsername(endpointUser.getName());
+//                houseAssetRecord.setUserAvatar(endpointUser.getAvatar());
+//                houseAssetRecordList.add(houseAssetRecord);
+//            }
+//        }
+        List<HouseAssetRecord>houseAssetRecordList =  queryHouseAssetDao.queryUserAssetRent(status,username,search);
+        page.setCurrent(pageNum);
+        page.setSize(pageSize);
+        page.setRecords(houseAssetRecordList);
+        return SuccessTip.create(page);
+    }
+
+
+    @GetMapping("/rent/details/{id}")
+    public Tip getALlRentAsset(@PathVariable("id") Long id) {
+        HouseAssetRecord houseAssetRecord = queryHouseAssetDao.queryHouseAssetDetails(id);
+        houseAssetRecord.setDecoratePlanProductList(queryHouseDecoratePlanDao.queryProductListByDesignModel(houseAssetRecord.getDesignModelId()));
+        return SuccessTip.create(houseAssetRecord);
+    }
+
+
+    @GetMapping("/clash")
+    public Tip getALlClash(Page<HouseUserAsset> page,
+                           @RequestParam(name = "username",required = false) String username,
+                           @RequestParam(name = "search" ,required = false) String search,
+                           @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                           @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        List<HouseUserAsset> houseUserAssetList = queryHouseUserAssetDao.queryClashUserAsset(username,search);
+        for (int i = 0; i < houseUserAssetList.size(); i++) {
+            EndpointUser endpointUser = queryEndpointUserDao.queryMasterModel(houseUserAssetList.get(i).getClashUserId());
+            if (endpointUser != null) {
+                houseUserAssetList.get(i).setClashUserName(endpointUser.getName());
+                houseUserAssetList.get(i).setClashUserPhone(endpointUser.getPhone());
+                houseUserAssetList.get(i).setClashUserAvatar(endpointUser.getAvatar());
+            }
+
+        }
+        page.setCurrent(pageNum);
+        page.setSize(pageSize);
+        page.setRecords(houseUserAssetList);
+        return SuccessTip.create(page);
+    }
+
+    //    确认冲突
+    @DeleteMapping("/clash/confirm/{assetId}")
+    public Tip confirmClashInfo(@PathVariable("assetId") Long assetId) {
+        HouseUserAsset houseUserAsset = queryHouseUserAssetDao.queryBasicUserAsset(assetId);
+        HouseUserAsset newHouseUserAsset = new HouseUserAsset();
+        newHouseUserAsset.setUserId(houseUserAsset.getClashUserId());
+        newHouseUserAsset.setRentStatus(false);
+        newHouseUserAsset.setClashUserId(null);
+        newHouseUserAsset.setClashDescribe(null);
+        newHouseUserAsset.setClashCertificate(null);
+        Integer effect = queryHouseUserAssetDao.updateClashAssetByAssetId(assetId, newHouseUserAsset);
+        return SuccessTip.create(effect);
+    }
+
+    //    取消冲突
+    @DeleteMapping("/clash/cancel/{assetId}")
+    public Tip cancelClashInfo(@PathVariable("assetId") Long assetId) {
+        HouseUserAsset newHouseUserAsset = new HouseUserAsset();
+        newHouseUserAsset.setClashUserId(null);
+        newHouseUserAsset.setClashDescribe(null);
+        newHouseUserAsset.setClashCertificate(null);
+        Integer effect = queryHouseUserAssetDao.updateClashAssetByAssetId(assetId, newHouseUserAsset);
+        return SuccessTip.create(effect);
+    }
+
+
 }
 

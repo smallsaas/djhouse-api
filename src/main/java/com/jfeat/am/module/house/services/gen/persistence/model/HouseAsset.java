@@ -5,47 +5,51 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author Code generator
  * @since 2022-06-11
  */
 @TableName("t_house_asset")
-@ApiModel(value="HouseAsset对象", description="")
+@ApiModel(value = "HouseAsset对象", description = "")
 public class HouseAsset extends Model<HouseAsset> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
-      @TableId(value = "id", type = IdType.AUTO)
-      private Long id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
-      @ApiModelProperty(value = "楼栋id")
-      private Long buildingId;
+    @ApiModelProperty(value = "楼栋id")
+    private Long buildingId;
 
-      @ApiModelProperty(value = "单元id")
-      private Long unitId;
+    @ApiModelProperty(value = "单元id")
+    private Long unitId;
 
-      @ApiModelProperty(value = "第几楼陈")
-      private Integer floor;
+    @ApiModelProperty(value = "第几楼陈")
+    private Integer floor;
 
-      @ApiModelProperty(value = "房产编号")
-      private String number;
+    @ApiModelProperty(value = "房产编号")
+    private String number;
 
-      @ApiModelProperty(value = "资产卡位 备用")
-      private String assetSlot;
+    @ApiModelProperty(value = "资产卡位 备用")
+    private String assetSlot;
 
-      @ApiModelProperty(value = "资产类型")
-      private String assetType;
+    @ApiModelProperty(value = "资产类型")
+    private String assetType;
 
-      @ApiModelProperty(value = "资产类型id")
-      private Long assetTypeId;
+    @ApiModelProperty(value = "资产类型id")
+    private Long assetTypeId;
+
 
     @ApiModelProperty(value = "社区Id")
     @TableField(exist = false)
@@ -63,9 +67,50 @@ public class HouseAsset extends Model<HouseAsset> {
     @TableField(exist = false)
     private String buildingArea;
 
+    @ApiModelProperty(value = "地址")
+    @TableField(exist = false)
+    private String address;
+
+    @TableField(exist = false)
+    private String cadPicture;
+
+    @TableField(exist = false)
+    private Long designModelId;
+
+    @TableField(exist = false)
+    private String houseType;
+
+    @TableField(exist = false)
+    private String houseTypePicture;
+
+    @TableField(exist = false)
+    private String vrPicture;
+
+    @TableField(exist = false)
+    private String vrLink;
+
+    @TableField(exist = false)
+    private String vrSnapshot;
+
+    @TableField(exist = false)
+    private BigDecimal area;
+
+
+
     @ApiModelProperty(value = "是否是自己的房产")
     @TableField(exist = false)
     private Boolean isMyselfAsset;
+
+
+
+    public Boolean getMyselfAsset() {
+        return isMyselfAsset;
+    }
+
+    public HouseAsset setMyselfAsset(Boolean myselfAsset) {
+        isMyselfAsset = myselfAsset;
+        return this;
+    }
 
     public Long getCommunityId() {
         return communityId;
@@ -79,8 +124,9 @@ public class HouseAsset extends Model<HouseAsset> {
         return communityName;
     }
 
-    public void setCommunityName(String communityName) {
+    public HouseAsset setCommunityName(String communityName) {
         this.communityName = communityName;
+        return this;
     }
 
     public String getBuildingCode() {
@@ -103,106 +149,184 @@ public class HouseAsset extends Model<HouseAsset> {
         return id;
     }
 
-      public HouseAsset setId(Long id) {
-          this.id = id;
-          return this;
-      }
-    
+    public HouseAsset setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public Long getBuildingId() {
         return buildingId;
     }
 
-      public HouseAsset setBuildingId(Long buildingId) {
-          this.buildingId = buildingId;
-          return this;
-      }
-    
+    public HouseAsset setBuildingId(Long buildingId) {
+        this.buildingId = buildingId;
+        return this;
+    }
+
     public Long getUnitId() {
         return unitId;
     }
 
-      public HouseAsset setUnitId(Long unitId) {
-          this.unitId = unitId;
-          return this;
-      }
-    
+    public HouseAsset setUnitId(Long unitId) {
+        this.unitId = unitId;
+        return this;
+    }
+
     public Integer getFloor() {
         return floor;
     }
 
-      public HouseAsset setFloor(Integer floor) {
-          this.floor = floor;
-          return this;
-      }
-    
+    public HouseAsset setFloor(Integer floor) {
+        this.floor = floor;
+        return this;
+    }
+
     public String getNumber() {
         return number;
     }
 
-      public HouseAsset setNumber(String number) {
-          this.number = number;
-          return this;
-      }
-    
+    public HouseAsset setNumber(String number) {
+        this.number = number;
+        return this;
+    }
+
     public String getAssetSlot() {
         return assetSlot;
     }
 
-      public HouseAsset setAssetSlot(String assetSlot) {
-          this.assetSlot = assetSlot;
-          return this;
-      }
-    
+    public HouseAsset setAssetSlot(String assetSlot) {
+        this.assetSlot = assetSlot;
+        return this;
+    }
+
     public String getAssetType() {
         return assetType;
     }
 
-      public HouseAsset setAssetType(String assetType) {
-          this.assetType = assetType;
-          return this;
-      }
-    
+    public HouseAsset setAssetType(String assetType) {
+        this.assetType = assetType;
+        return this;
+    }
+
     public Long getAssetTypeId() {
         return assetTypeId;
     }
 
-      public HouseAsset setAssetTypeId(Long assetTypeId) {
-          this.assetTypeId = assetTypeId;
-          return this;
-      }
+    public HouseAsset setAssetTypeId(Long assetTypeId) {
+        this.assetTypeId = assetTypeId;
+        return this;
+    }
 
-      public static final String ID = "id";
+    public String getAddress() {
+        return address;
+    }
 
-      public static final String BUILDING_ID = "building_id";
+    public HouseAsset setAddress(String address) {
+        this.address = address;
+        return this;
+    }
 
-      public static final String UNIT_ID = "unit_id";
+    public String getCadPicture() {
+        return cadPicture;
+    }
 
-      public static final String FLOOR = "floor";
+    public HouseAsset setCadPicture(String cadPicture) {
+        this.cadPicture = cadPicture;
+        return this;
+    }
 
-      public static final String NUMBER = "number";
+    public Long getDesignModelId() {
+        return designModelId;
+    }
 
-      public static final String ASSET_SLOT = "asset_slot";
+    public HouseAsset setDesignModelId(Long designModelId) {
+        this.designModelId = designModelId;
+        return this;
+    }
 
-      public static final String ASSET_TYPE = "asset_type";
+    public String getHouseType() {
+        return houseType;
+    }
 
-      public static final String ASSET_TYPE_ID = "asset_type_id";
+    public void setHouseType(String houseType) {
+        this.houseType = houseType;
+    }
 
-      @Override
+    public String getHouseTypePicture() {
+        return houseTypePicture;
+    }
+
+    public HouseAsset setHouseTypePicture(String houseTypePicture) {
+        this.houseTypePicture = houseTypePicture;
+        return this;
+    }
+
+    public String getVrPicture() {
+        return vrPicture;
+    }
+
+    public HouseAsset setVrPicture(String vrPicture) {
+        this.vrPicture = vrPicture;
+        return this;
+    }
+
+    public String getVrLink() {
+        return vrLink;
+    }
+
+    public HouseAsset setVrLink(String vrLink) {
+        this.vrLink = vrLink;
+        return this;
+    }
+
+    public String getVrSnapshot() {
+        return vrSnapshot;
+    }
+
+    public void setVrSnapshot(String vrSnapshot) {
+        this.vrSnapshot = vrSnapshot;
+    }
+
+    public BigDecimal getArea() {
+        return area;
+    }
+
+    public void setArea(BigDecimal area) {
+        this.area = area;
+    }
+
+    public static final String ID = "id";
+
+    public static final String BUILDING_ID = "building_id";
+
+    public static final String UNIT_ID = "unit_id";
+
+    public static final String FLOOR = "floor";
+
+    public static final String NUMBER = "number";
+
+    public static final String ASSET_SLOT = "asset_slot";
+
+    public static final String ASSET_TYPE = "asset_type";
+
+    public static final String ASSET_TYPE_ID = "asset_type_id";
+
+    @Override
     protected Serializable pkVal() {
-          return this.id;
-      }
+        return this.id;
+    }
 
     @Override
     public String toString() {
         return "HouseAsset{" +
-              "id=" + id +
-                  ", buildingId=" + buildingId +
-                  ", unitId=" + unitId +
-                  ", floor=" + floor +
-                  ", number=" + number +
-                  ", assetSlot=" + assetSlot +
-                  ", assetType=" + assetType +
-                  ", assetTypeId=" + assetTypeId +
-              "}";
+                "id=" + id +
+                ", buildingId=" + buildingId +
+                ", unitId=" + unitId +
+                ", floor=" + floor +
+                ", number=" + number +
+                ", assetSlot=" + assetSlot +
+                ", assetType=" + assetType +
+                ", assetTypeId=" + assetTypeId +
+                "}";
     }
 }

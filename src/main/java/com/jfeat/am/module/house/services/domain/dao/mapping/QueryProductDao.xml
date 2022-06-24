@@ -1,225 +1,266 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryProductDao">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <sql id="Base_Column_List">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        t_product.id, t_product.category_id AS categoryId, t_product.brand_id AS brandId, t_product.name, t_product.short_name AS shortName, t_product.cover, t_product.stock_balance AS stockBalance, t_product.sales, t_product.status, t_product.created_date AS createdDate, t_product.last_modified_date AS lastModifiedDate, t_product.unit, t_product.price, t_product.cost_price AS costPrice, t_product.suggested_price AS suggestedPrice, t_product.promoted, t_product.freight, t_product.free_shipping AS freeShipping, t_product.sort_order AS sortOrder, t_product.partner_level_zone AS partnerLevelZone, t_product.view_count AS viewCount, t_product.fare_id AS fareId, t_product.barcode, t_product.store_location AS storeLocation, t_product.weight, t_product.bulk, t_product.sku_id AS skuId, t_product.sku_name AS skuName, t_product.sku_code AS skuCode, t_product.bar_code AS barCode, t_product.mid, t_product.allow_coupon AS allowCoupon, t_product.credit, t_product.is_virtual AS isVirtual, t_product.required_participate_exam AS requiredParticipateExam, t_product.distribution_price AS distributionPrice, t_product.presale, t_product.org_id AS orgId, t_product.banner, t_product.region, t_product.description
+    <sql id="Base_Column_List">
+        t_product.id,
+t_product.category_id AS categoryId,
+t_product.brand_id AS brandId,
+t_product.name,
+t_product.short_name AS shortName,
+t_product.cover,
+t_product.stock_balance AS stockBalance,
+t_product.sales,
+t_product.status,
+t_product.created_date AS createdDate,
+t_product.last_modified_date AS lastModifiedDate,
+t_product.unit,
+t_product.price,
+t_product.cost_price AS costPrice,
+t_product.suggested_price AS suggestedPrice,
+t_product.promoted,
+t_product.freight,
+t_product.free_shipping AS freeShipping,
+t_product.sort_order AS sortOrder,
+t_product.partner_level_zone AS partnerLevelZone,
+t_product.view_count AS viewCount,
+t_product.fare_id AS fareId,
+t_product.barcode,
+t_product.store_location AS storeLocation,
+t_product.weight, t_product.bulk,
+t_product.sku_id AS skuId,
+t_product.sku_name AS skuName,
+t_product.sku_code AS skuCode,
+t_product.bar_code AS barCode,
+t_product.mid,
+t_product.allow_coupon AS allowCoupon,
+t_product.credit,
+t_product.is_virtual AS isVirtual,
+t_product.required_participate_exam AS requiredParticipateExam,
+t_product.distribution_price AS distributionPrice,
+t_product.presale,
+t_product.org_id AS orgId,
+t_product.banner,
+t_product.region,
+t_product.description
     </sql>
 
-        <sql id="QueryOwnedOrgIds">
-         SELECT children.id FROM t_sys_org, t_sys_org as children WHERE t_sys_org.left_num &lt;= children.left_num AND
-         t_sys_org.right_num >= children.left_num and t_sys_org.id=#{record.orgId} order by t_sys_org.node_level ASC
+    <sql id="QueryOwnedOrgIds">
+        SELECT children.id
+        FROM t_sys_org,
+             t_sys_org as children
+        WHERE t_sys_org.left_num &lt;= children.left_num
+          AND t_sys_org.right_num >= children.left_num
+          and t_sys_org.id = #{record.orgId}
+        order by t_sys_org.node_level ASC
     </sql>
-    
-    
+
+
     <select id="queryMasterModel" resultType="ProductModel">
-       SELECT t_product.*
-       FROM t_product
-       WHERE t_product.id=#{id}
-       GROUP BY t_product.id
+        SELECT t_product.*
+        FROM t_product
+        WHERE t_product.id = #{id}
+        GROUP BY t_product.id
     </select>
 
 
-
-                                                                                                                                                                        
     <select id="findProductPage" resultType="ProductRecord" parameterType="ProductRecord">
-            SELECT <include refid="Base_Column_List"/>
+        SELECT
+        <include refid="Base_Column_List"/>
 
-        
 
         FROM t_product
 
-        
-                    <if test="record.orgId > 0">
-                ,(<include refid="QueryOwnedOrgIds"></include>) AS ownedOrgIds
-            </if>
-        
+
+        <if test="record.orgId > 0">
+            ,(<include refid="QueryOwnedOrgIds"></include>) AS ownedOrgIds
+        </if>
+
         WHERE 1=1
-                <if test="record.orgId > 0">
+        <if test="record.orgId > 0">
             AND t_product.org_id = ownedOrgIds.id
         </if>
-        
 
-        
-                                                                            <if test="record.id != null and record.id>0 ">
-                                    AND t_product.id LIKE CONCAT('%',#{record.id},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.categoryId != null and record.categoryId>0 ">
-                                    AND t_product.category_id LIKE CONCAT('%',#{record.categoryId},'%')
-                            </if>
-                                                                    
+        <if test="record.id != null and record.id>0 ">
+            AND t_product.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
 
-                                                                                        <if test="record.brandId != null and record.brandId>0 ">
-                                    AND t_product.brand_id LIKE CONCAT('%',#{record.brandId},'%')
-                            </if>
-                                                                    <if test="record.name != null and record.name!= ''">
-                                    AND t_product.name LIKE CONCAT('%',#{record.name},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.shortName != null and record.shortName!= ''">
-                                    AND t_product.short_name LIKE CONCAT('%',#{record.shortName},'%')
-                            </if>
-                                                                    <if test="record.cover != null and record.cover!= ''">
-                                    AND t_product.cover LIKE CONCAT('%',#{record.cover},'%')
-                            </if>
-                                                                    
+        <if test="record.categoryId != null and record.categoryId>0 ">
+            AND t_product.category_id LIKE CONCAT('%',#{record.categoryId},'%')
+        </if>
 
-                                                                                        <if test="record.stockBalance != null and record.stockBalance>0 ">
-                                    AND t_product.stock_balance LIKE CONCAT('%',#{record.stockBalance},'%')
-                            </if>
-                                                                    <if test="record.sales != null and record.sales>0 ">
-                                    AND t_product.sales LIKE CONCAT('%',#{record.sales},'%')
-                            </if>
-                                                                    <if test="record.status != null and record.status!= ''">
-                                    AND t_product.status LIKE CONCAT('%',#{record.status},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.createdDate != null and record.createdDate>0 ">
-                                    AND t_product.created_date LIKE CONCAT('%',#{record.createdDate},'%')
-                            </if>
-                                                                    
+        <if test="record.brandId != null and record.brandId>0 ">
+            AND t_product.brand_id LIKE CONCAT('%',#{record.brandId},'%')
+        </if>
+        <if test="record.name != null and record.name!= ''">
+            AND t_product.name LIKE CONCAT('%',#{record.name},'%')
+        </if>
 
-                                                                                                        <if test="record.lastModifiedDate != null and record.lastModifiedDate>0 ">
-                                    AND t_product.last_modified_date LIKE CONCAT('%',#{record.lastModifiedDate},'%')
-                            </if>
-                                                                    <if test="record.unit != null and record.unit!= ''">
-                                    AND t_product.unit LIKE CONCAT('%',#{record.unit},'%')
-                            </if>
-                                                                    <if test="record.price != null and record.price>0 ">
-                                    AND t_product.price LIKE CONCAT('%',#{record.price},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.costPrice != null and record.costPrice>0 ">
-                                    AND t_product.cost_price LIKE CONCAT('%',#{record.costPrice},'%')
-                            </if>
-                                                                    
+        <if test="record.shortName != null and record.shortName!= ''">
+            AND t_product.short_name LIKE CONCAT('%',#{record.shortName},'%')
+        </if>
+        <if test="record.cover != null and record.cover!= ''">
+            AND t_product.cover LIKE CONCAT('%',#{record.cover},'%')
+        </if>
 
-                                                                                        <if test="record.suggestedPrice != null and record.suggestedPrice>0 ">
-                                    AND t_product.suggested_price LIKE CONCAT('%',#{record.suggestedPrice},'%')
-                            </if>
-                                                                    <if test="record.promoted != null and record.promoted>0 ">
-                                    AND t_product.promoted LIKE CONCAT('%',#{record.promoted},'%')
-                            </if>
-                                                                    <if test="record.freight != null and record.freight>0 ">
-                                    AND t_product.freight LIKE CONCAT('%',#{record.freight},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.freeShipping != null and record.freeShipping>0 ">
-                                    AND t_product.free_shipping LIKE CONCAT('%',#{record.freeShipping},'%')
-                            </if>
-                                                                    
+        <if test="record.stockBalance != null and record.stockBalance>0 ">
+            AND t_product.stock_balance LIKE CONCAT('%',#{record.stockBalance},'%')
+        </if>
+        <if test="record.sales != null and record.sales>0 ">
+            AND t_product.sales LIKE CONCAT('%',#{record.sales},'%')
+        </if>
+        <if test="record.status != null and record.status!= ''">
+            AND t_product.status LIKE CONCAT('%',#{record.status},'%')
+        </if>
 
-                                                                                        <if test="record.sortOrder != null and record.sortOrder>0 ">
-                                    AND t_product.sort_order LIKE CONCAT('%',#{record.sortOrder},'%')
-                            </if>
-                                                                    
 
-                                                                                                        <if test="record.partnerLevelZone != null and record.partnerLevelZone>0 ">
-                                    AND t_product.partner_level_zone LIKE CONCAT('%',#{record.partnerLevelZone},'%')
-                            </if>
-                                                                    
+        <if test="record.createdDate != null and record.createdDate>0 ">
+            AND t_product.created_date LIKE CONCAT('%',#{record.createdDate},'%')
+        </if>
 
-                                                                                        <if test="record.viewCount != null and record.viewCount>0 ">
-                                    AND t_product.view_count LIKE CONCAT('%',#{record.viewCount},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.fareId != null and record.fareId>0 ">
-                                    AND t_product.fare_id LIKE CONCAT('%',#{record.fareId},'%')
-                            </if>
-                                                                    <if test="record.barcode != null and record.barcode!= ''">
-                                    AND t_product.barcode LIKE CONCAT('%',#{record.barcode},'%')
-                            </if>
-                                                                    
+        <if test="record.lastModifiedDate != null and record.lastModifiedDate>0 ">
+            AND t_product.last_modified_date LIKE CONCAT('%',#{record.lastModifiedDate},'%')
+        </if>
+        <if test="record.unit != null and record.unit!= ''">
+            AND t_product.unit LIKE CONCAT('%',#{record.unit},'%')
+        </if>
+        <if test="record.price != null and record.price>0 ">
+            AND t_product.price LIKE CONCAT('%',#{record.price},'%')
+        </if>
 
-                                                                                        <if test="record.storeLocation != null and record.storeLocation!= ''">
-                                    AND t_product.store_location LIKE CONCAT('%',#{record.storeLocation},'%')
-                            </if>
-                                                                    <if test="record.weight != null and record.weight>0 ">
-                                    AND t_product.weight LIKE CONCAT('%',#{record.weight},'%')
-                            </if>
-                                                                    <if test="record.bulk != null and record.bulk>0 ">
-                                    AND t_product.bulk LIKE CONCAT('%',#{record.bulk},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.skuId != null and record.skuId!= ''">
-                                    AND t_product.sku_id LIKE CONCAT('%',#{record.skuId},'%')
-                            </if>
-                                                                    
+        <if test="record.costPrice != null and record.costPrice>0 ">
+            AND t_product.cost_price LIKE CONCAT('%',#{record.costPrice},'%')
+        </if>
 
-                                                                                        <if test="record.skuName != null and record.skuName!= ''">
-                                    AND t_product.sku_name LIKE CONCAT('%',#{record.skuName},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.skuCode != null and record.skuCode!= ''">
-                                    AND t_product.sku_code LIKE CONCAT('%',#{record.skuCode},'%')
-                            </if>
-                                                                    
+        <if test="record.suggestedPrice != null and record.suggestedPrice>0 ">
+            AND t_product.suggested_price LIKE CONCAT('%',#{record.suggestedPrice},'%')
+        </if>
+        <if test="record.promoted != null and record.promoted>0 ">
+            AND t_product.promoted LIKE CONCAT('%',#{record.promoted},'%')
+        </if>
+        <if test="record.freight != null and record.freight>0 ">
+            AND t_product.freight LIKE CONCAT('%',#{record.freight},'%')
+        </if>
 
-                                                                                        <if test="record.barCode != null and record.barCode!= ''">
-                                    AND t_product.bar_code LIKE CONCAT('%',#{record.barCode},'%')
-                            </if>
-                                                                    <if test="record.mid != null and record.mid>0 ">
-                                    AND t_product.mid LIKE CONCAT('%',#{record.mid},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.allowCoupon != null and record.allowCoupon>0 ">
-                                    AND t_product.allow_coupon LIKE CONCAT('%',#{record.allowCoupon},'%')
-                            </if>
-                                                                    <if test="record.credit != null and record.credit>0 ">
-                                    AND t_product.credit LIKE CONCAT('%',#{record.credit},'%')
-                            </if>
-                                                                    
+        <if test="record.freeShipping != null and record.freeShipping>0 ">
+            AND t_product.free_shipping LIKE CONCAT('%',#{record.freeShipping},'%')
+        </if>
 
-                                                                                        <if test="record.isVirtual != null and record.isVirtual>0 ">
-                                    AND t_product.is_virtual LIKE CONCAT('%',#{record.isVirtual},'%')
-                            </if>
-                                                                    
 
-                                                                                                        <if test="record.requiredParticipateExam != null and record.requiredParticipateExam>0 ">
-                                    AND t_product.required_participate_exam LIKE CONCAT('%',#{record.requiredParticipateExam},'%')
-                            </if>
-                                                                    
+        <if test="record.sortOrder != null and record.sortOrder>0 ">
+            AND t_product.sort_order LIKE CONCAT('%',#{record.sortOrder},'%')
+        </if>
 
-                                                                                        <if test="record.distributionPrice != null and record.distributionPrice>0 ">
-                                    AND t_product.distribution_price LIKE CONCAT('%',#{record.distributionPrice},'%')
-                            </if>
-                                                                    <if test="record.presale != null and record.presale>0 ">
-                                    AND t_product.presale LIKE CONCAT('%',#{record.presale},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.orgId != null and record.orgId>0 ">
-                                    AND t_product.org_id IN (<include refid="QueryOwnedOrgIds"/>)
-                            </if>
-                                                                    <if test="record.banner != null and record.banner!= ''">
-                                    AND t_product.banner LIKE CONCAT('%',#{record.banner},'%')
-                            </if>
-                                                                    <if test="record.region != null and record.region!= ''">
-                                    AND t_product.region LIKE CONCAT('%',#{record.region},'%')
-                            </if>
-                                                                    <if test="record.description != null and record.description!= ''">
-                                    AND t_product.description LIKE CONCAT('%',#{record.description},'%')
-                            </if>
-        
+        <if test="record.partnerLevelZone != null and record.partnerLevelZone>0 ">
+            AND t_product.partner_level_zone LIKE CONCAT('%',#{record.partnerLevelZone},'%')
+        </if>
+
+
+        <if test="record.viewCount != null and record.viewCount>0 ">
+            AND t_product.view_count LIKE CONCAT('%',#{record.viewCount},'%')
+        </if>
+
+
+        <if test="record.fareId != null and record.fareId>0 ">
+            AND t_product.fare_id LIKE CONCAT('%',#{record.fareId},'%')
+        </if>
+        <if test="record.barcode != null and record.barcode!= ''">
+            AND t_product.barcode LIKE CONCAT('%',#{record.barcode},'%')
+        </if>
+
+
+        <if test="record.storeLocation != null and record.storeLocation!= ''">
+            AND t_product.store_location LIKE CONCAT('%',#{record.storeLocation},'%')
+        </if>
+        <if test="record.weight != null and record.weight>0 ">
+            AND t_product.weight LIKE CONCAT('%',#{record.weight},'%')
+        </if>
+        <if test="record.bulk != null and record.bulk>0 ">
+            AND t_product.bulk LIKE CONCAT('%',#{record.bulk},'%')
+        </if>
+
+
+        <if test="record.skuId != null and record.skuId!= ''">
+            AND t_product.sku_id LIKE CONCAT('%',#{record.skuId},'%')
+        </if>
+
+
+        <if test="record.skuName != null and record.skuName!= ''">
+            AND t_product.sku_name LIKE CONCAT('%',#{record.skuName},'%')
+        </if>
+
+
+        <if test="record.skuCode != null and record.skuCode!= ''">
+            AND t_product.sku_code LIKE CONCAT('%',#{record.skuCode},'%')
+        </if>
+
+
+        <if test="record.barCode != null and record.barCode!= ''">
+            AND t_product.bar_code LIKE CONCAT('%',#{record.barCode},'%')
+        </if>
+        <if test="record.mid != null and record.mid>0 ">
+            AND t_product.mid LIKE CONCAT('%',#{record.mid},'%')
+        </if>
+
+
+        <if test="record.allowCoupon != null and record.allowCoupon>0 ">
+            AND t_product.allow_coupon LIKE CONCAT('%',#{record.allowCoupon},'%')
+        </if>
+        <if test="record.credit != null and record.credit>0 ">
+            AND t_product.credit LIKE CONCAT('%',#{record.credit},'%')
+        </if>
+
+
+        <if test="record.isVirtual != null and record.isVirtual>0 ">
+            AND t_product.is_virtual LIKE CONCAT('%',#{record.isVirtual},'%')
+        </if>
+
+
+        <if test="record.requiredParticipateExam != null and record.requiredParticipateExam>0 ">
+            AND t_product.required_participate_exam LIKE CONCAT('%',#{record.requiredParticipateExam},'%')
+        </if>
+
+
+        <if test="record.distributionPrice != null and record.distributionPrice>0 ">
+            AND t_product.distribution_price LIKE CONCAT('%',#{record.distributionPrice},'%')
+        </if>
+        <if test="record.presale != null and record.presale>0 ">
+            AND t_product.presale LIKE CONCAT('%',#{record.presale},'%')
+        </if>
+
+
+        <if test="record.orgId != null and record.orgId>0 ">
+            AND t_product.org_id IN (<include refid="QueryOwnedOrgIds"/>)
+        </if>
+        <if test="record.banner != null and record.banner!= ''">
+            AND t_product.banner LIKE CONCAT('%',#{record.banner},'%')
+        </if>
+        <if test="record.region != null and record.region!= ''">
+            AND t_product.region LIKE CONCAT('%',#{record.region},'%')
+        </if>
+        <if test="record.description != null and record.description!= ''">
+            AND t_product.description LIKE CONCAT('%',#{record.description},'%')
+        </if>
+
         <if test="startTime != null">
             <![CDATA[AND t_product.start_time >= DATE(#{startTime})]]>
         </if>
         <if test="endTime != null">
             <![CDATA[AND t_product.end_time <= DATE(#{endTime}]]>
         </if>
-            <!--
-        <if test="search != null and search != ''">
-            OR t_product.name LIKE CONCAT('%',#{search},'%')
-        </if>
-        -->
-                                    </select>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_product.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
 </mapper>

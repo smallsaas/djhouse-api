@@ -26,4 +26,6 @@ public interface QuerySupplierDao extends QueryMasterDao<Supplier> {
      * Query entity model for details
      */
     SupplierModel queryMasterModel(@Param("id") Long id);
+
+    List<SupplierRecord> queryAllSupplier();
 }

@@ -5,6 +5,8 @@
         t_house_design_model.id, t_house_design_model.house_type AS houseType,
 t_house_design_model.house_type_picture AS houseTypePicture,
 t_house_design_model.vr_picture AS vrPicture,
+t_house_design_model.vr_link AS vrLink,
+t_house_design_model.vr_snapshot AS vrSnapshot,
 t_house_design_model.area AS area,
 t_house_design_model.hall_width AS hallWidth,
 t_house_design_model.hall_sub_width AS hallSubWidth,
@@ -216,5 +218,10 @@ t_house_design_model.dining_room_width AS diningRoomWidth, t_house_design_model.
         OR t_house_design_model.name LIKE CONCAT('%',#{search},'%')
     </if>
     -->
+    </select>
+    <select id="queryAllHouseDesignModel" resultType="HouseDesignModelRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_house_design_model
     </select>
 </mapper>

@@ -89,6 +89,12 @@
             <artifactId>pinyin4j</artifactId>
             <version>2.5.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>eav</artifactId>
+            <version>2.1.1</version>
+        </dependency>
         
         
     </dependencies>

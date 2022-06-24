@@ -2,10 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetMatchLogDao">
     <sql id="Base_Column_List">
-        t_house_asset_match_log
-        .
-        id
-        , t_house_asset_match_log.owner_user_id AS ownerUserId, t_house_asset_match_log.owner_asset_id AS ownerAssetId, t_house_asset_match_log.matched_user_id AS matchedUserId, t_house_asset_match_log.mathched_asset_id AS mathchedAssetId, t_house_asset_match_log.create_time AS createTime
+        t_house_asset_match_log.id,
+        t_house_asset_match_log.owner_user_id AS ownerUserId,
+        t_house_asset_match_log.owner_asset_id AS ownerAssetId,
+        t_house_asset_match_log.matched_user_id AS matchedUserId,
+        t_house_asset_match_log.mathched_asset_id AS mathchedAssetId,
+        t_house_asset_match_log.create_time AS createTime,
+
+        t_end_user1.name As ownerName,
+        t_end_user1.avatar AS ownerAvatar,
+        t_end_user1.phone AS ownerPhone,
+        t_end_user2.name As matchedName,
+        t_end_user2.avatar AS matchedAvatar,
+        t_end_user2.phone AS matchedPhone
     </sql>
 
 
@@ -24,6 +33,9 @@
 
 
         FROM t_house_asset_match_log
+
+        JOIN t_end_user As t_end_user1 ON t_house_asset_match_log.owner_user_id=t_end_user1.id
+        JOIN t_end_user AS t_end_user2 ON t_house_asset_match_log.matched_user_id=t_end_user2.id
 
 
         WHERE 1=1
@@ -64,26 +76,31 @@
         <if test="endTime != null">
             <![CDATA[AND t_house_asset_match_log.end_time <= DATE(#{endTime}]]>
         </if>
-        <!--
-    <if test="search != null and search != ''">
-        OR t_house_asset_match_log.name LIKE CONCAT('%',#{search},'%')
-    </if>
-    -->
-        ORDER BY create_time DESC
+        <if test="search != null and search != ''">
+            AND t_end_user1.name LIKE CONCAT('%',#{search},'%')
+            OR t_end_user1.phone LIKE CONCAT('%',#{search},'%')
+            OR t_end_user2.name LIKE CONCAT('%',#{search},'%')
+            OR t_end_user2.phone LIKE CONCAT('%',#{search},'%')
+        </if>
+        ORDER BY t_house_asset_match_log.create_time DESC,t_house_asset_match_log.owner_user_id
     </select>
 
 
     <delete id="deleteHouseAssetMatchLogByUserIdAndAssetId">
         DELETE
         FROM t_house_asset_match_log
-        Where (t_house_asset_match_log.owner_user_id = #{userId} and t_house_asset_match_log.owner_asset_id = #{assetId})
-           or (t_house_asset_match_log.matched_user_id = #{userId} and t_house_asset_match_log.mathched_asset_id = #{assetId})
+        Where (t_house_asset_match_log.owner_user_id = #{userId} and
+               t_house_asset_match_log.owner_asset_id = #{assetId})
+           or (t_house_asset_match_log.matched_user_id = #{userId} and
+               t_house_asset_match_log.mathched_asset_id = #{assetId})
     </delete>
 
     <select id="queryHouseAssetMatchLogByUserId" resultType="HouseAssetMatchLog">
-        select t_house_asset_match_log.* FROM t_house_asset_match_log where t_house_asset_match_log.owner_user_id = #{userId} and t_house_asset_match_log.owner_asset_id = #{assetId}
+        select t_house_asset_match_log.*
+        FROM t_house_asset_match_log
+        where t_house_asset_match_log.owner_user_id = #{userId}
+          and t_house_asset_match_log.owner_asset_id = #{assetId}
     </select>
-
 
 
 </mapper>

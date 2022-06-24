@@ -7,6 +7,15 @@ import com.jfeat.am.module.house.services.gen.persistence.model.Supplier;
  */
 public class SupplierRecord extends Supplier{
     String account;
+    String snapshotUrl;
+
+    public String getSnapshotUrl() {
+        return snapshotUrl;
+    }
+
+    public void setSnapshotUrl(String snapshotUrl) {
+        this.snapshotUrl = snapshotUrl;
+    }
 
     public String getAccount() {
         return account;

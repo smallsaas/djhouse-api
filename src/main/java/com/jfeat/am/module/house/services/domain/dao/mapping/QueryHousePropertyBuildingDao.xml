@@ -2,10 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingDao">
     <sql id="Base_Column_List">
-        t_house_property_building.id
-        , t_house_property_building.org_id AS orgId,
-t_house_property_building.cad_picture AS cadPicture,
-t_house_property_building.community_id AS communityId, t_house_property_building.area, t_house_property_building.code, t_house_property_building.floors, t_house_property_building.units
+        t_house_property_building.id,
+        t_house_property_building.org_id AS orgId,
+        t_house_property_building.cad_picture AS cadPicture,
+        t_house_property_building.community_id AS communityId,
+        t_house_property_building.area,
+        t_house_property_building.code,
+        t_house_property_building.floors,
+        t_house_property_building.units
     </sql>
 
     <sql id="QueryOwnedOrgIds">
@@ -85,10 +89,22 @@ t_house_property_building.community_id AS communityId, t_house_property_building
     -->
     </select>
 
-<!--    根据用户的小区状态查询楼栋信息-->
+    <!--    根据用户的小区状态查询楼栋信息-->
     <select id="queryHousePropertyBuildingByUserId" resultType="HousePropertyBuilding">
-        SELECT t_house_property_building.* FROM t_house_property_building
-                                                    JOIN t_house_user_community_status ON t_house_property_building.id = t_house_user_community_status.community_id
+        SELECT t_house_property_building.*
+        FROM t_house_property_building
+                 JOIN t_house_user_community_status
+                      ON t_house_property_building.community_id = t_house_user_community_status.community_id
         WHERE t_house_user_community_status.user_id = #{userId};
     </select>
+
+    <select id="queryHouseTypeNumberByBuildingId" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM (SELECT * FROM t_house_property_building_unit WHERE t_house_property_building_unit.building_id=#{buildingId}
+                              GROUP BY t_house_property_building_unit.design_model_id) AS num;
+    </select>
+
+    <select id="queryHouseAssetNumberByBuildingId" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM (SELECT * FROM t_house_asset WHERE t_house_asset.building_id=#{buildingId}) AS num;
+    </select>
+
 </mapper>

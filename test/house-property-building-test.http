@@ -24,7 +24,7 @@ Authorization: {{adminToken}}
 
 
 ### 查询楼栋id为1 的详情信息
-GET {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/31
+GET s/api/crud/house/housePropertyBuilding/housePropertyBuildings/6
 Authorization: {{adminToken}}
 
 
@@ -36,11 +36,11 @@ Content-Type: application/json
 Authorization: {{adminToken}}
 
 {
-    "communityId":2,
+    "communityId":1,
     "area":"",
-    "code":"B3",
-    "floors":30,
-    "units":5
+    "code":"B8",
+    "floors":19,
+    "units":11
 }
 
 
@@ -79,4 +79,8 @@ Authorization:{{adminToken}}
 
 ### 删除楼栋信息
 DELETE {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/30
+Authorization:{{adminToken}}
+
+
+GET http://app1.console.smallsaas.cn:8001/api/crud/house/housePropertyBuilding/housePropertyBuildings
 Authorization:{{adminToken}}

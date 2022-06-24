@@ -91,4 +91,11 @@
                 or t_sys_user.account LIKE CONCAT('%',#{search},'%') )
         </if>
     </select>
+
+<!--    查询所有供应商-->
+    <select id="queryAllSupplier" resultType="SupplierRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_supplier
+    </select>
 </mapper>

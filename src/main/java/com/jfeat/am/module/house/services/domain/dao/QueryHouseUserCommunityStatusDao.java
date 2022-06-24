@@ -37,4 +37,5 @@ public interface QueryHouseUserCommunityStatusDao extends QueryMasterDao<HouseUs
     HouseUserCommunityStatus queryUserCommunityStatusByUserId(@Param("userId") Long userId);
 
     int updateUserCommunityStatusByUserId(@Param("entity") HouseUserCommunityStatus entity);
+
 }

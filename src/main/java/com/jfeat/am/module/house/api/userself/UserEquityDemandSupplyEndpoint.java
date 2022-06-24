@@ -104,7 +104,7 @@ public class UserEquityDemandSupplyEndpoint {
         record.setArea(area);
 
 
-        List<HouseEquityDemandSupplyRecord> houseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, record, tag, search, orderBy, null, null);
+        List<HouseEquityDemandSupplyRecord> houseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, record, tag, search, orderBy, null, null,null);
 
         for (HouseEquityDemandSupply houseEquityDemandSupply:houseEquityDemandSupplyPage){
             houseEquityDemandSupply.setUserId(null);

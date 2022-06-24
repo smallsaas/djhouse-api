@@ -1,0 +1,46 @@
+@endpoint=http://localhost:8080
+@service=http://app1.console.smallsaas.cn:8001
+
+@adminToken =Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjUzNzA2MDA1LCJqdGkiOiIxIiwic3ViIjoiYWRtaW4iLCJleHAiOjE2NTYyOTgwMDV9.nH3W8nkLMzrBp_VybRJ-ZnNjCG96RqD5a6-HikifXV9hQ618btKd8MGxoPf2XIroEzDc4Gj4JoVKk7dSBoB0zA
+
+@token =Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6MSwidXNlcklkIjoyODMsImFjY291bnQiOiJYWkgxIiwiZG9tYWluVXNlcklkIjoiIiwiaWF0IjoxNjU1Nzc4OTYxLCJqdGkiOiIyODMiLCJzdWIiOiJYWkgxIiwiZXhwIjoxNjU2MDM4MTYxfQ.O2ZlooZb8Xq3WzVyXmxV6XHroQGIqyYEGZ9OXkp_9Y4ytm3WEl8XG9lOlvdBs-VwEBA4gg7Pd93__fYvBN2_tw
+
+
+#### 获取vr分类列表
+GET {{service}}/api/data/services/vrType
+Authorization:{{adminToken}}
+
+
+### 增加vr分类列表
+POST {{service}}/api/data/services/vrType
+Authorization:{{adminToken}}
+
+{
+    "en_name":"houseType",
+    "cn_name":"户型"
+}
+
+### 修改vr分类信息
+PUT {{service}}/api/data/services/vrType/66
+Authorization:{{adminToken}}
+{
+ "en_name":"supplier",
+ "cn_name":"供应商"
+}
+
+### 删除vr分类
+DELETE {{service}}/api/data/services/vrType/66
+Authorization:{{adminToken}}
+
+
+### 查询vr类别集合
+GET {{service}}/api/u/vr/allVrCategory
+Authorization:{{token}}
+
+### 查询vr某一个分类列表
+# 目前只支持 户型：houseType  供应商：supplier
+# snapshot是缩略图
+# link是vr连接
+GET {{service}}/api/u/vr?category=supplier
+Authorization:{{token}}
+

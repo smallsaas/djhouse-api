@@ -2,8 +2,10 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.crud.plus.util.QueryParamUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 
@@ -132,7 +135,8 @@ public class HouseEquityDemandSupplyEndpoint {
 
                                                 @RequestParam(name = "area", required = false) BigDecimal area,
                                                 @RequestParam(name = "orderBy", required = false) String orderBy,
-                                                @RequestParam(name = "sort", required = false) String sort) {
+                                                @RequestParam(name = "sort", required = false) String sort,
+                                                @RequestParam(name = "areaRange",required = false) Double[] areaRange) {
 
         if (orderBy != null && orderBy.length() > 0) {
             if (sort != null && sort.length() > 0) {
@@ -153,9 +157,9 @@ public class HouseEquityDemandSupplyEndpoint {
         record.setEquityOption(equityOption);
         record.setArea(area);
 
-
-        List<HouseEquityDemandSupplyRecord> houseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, record, tag, search, orderBy, null, null);
-
+//        QueryWrapper multiEntityWrapper = QueryParamUtils.getMultiEntityWrapper(params, HouseEquityDemandSupplyRecord.class,"t_house_equity_demand_supply.");
+//        System.out.println(areaRange[1]);
+        List<HouseEquityDemandSupplyRecord> houseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, record, tag, search, orderBy, null, null,areaRange);
 
         page.setRecords(houseEquityDemandSupplyPage);
 

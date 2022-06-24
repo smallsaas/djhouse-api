@@ -3,13 +3,16 @@
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyCommunityDao">
     <sql id="Base_Column_List">
         t_house_property_community.id, t_house_property_community.community, t_house_property_community.community_code AS communityCode,
-        t_house_property_community.tenant_id AS tenantId,t_house_property_community.address,t_house_property_community.picture,t_house_property_community.postcode
+        t_house_property_community.tenant_id AS tenantId,
+        t_tenant.name AS tenant,
+t_house_property_community.address,t_house_property_community.picture,t_house_property_community.postcode
     </sql>
 
 
     <select id="queryMasterModel" resultType="HousePropertyCommunityModel">
-        SELECT t_house_property_community.*
+        SELECT t_house_property_community.*,t_tenant.name AS tenant
         FROM t_house_property_community
+                 JOIN t_tenant ON t_tenant.org_id = t_house_property_community.tenant_id
         WHERE t_house_property_community.id = #{id}
         GROUP BY t_house_property_community.id
     </select>
@@ -22,6 +25,7 @@
 
 
         FROM t_house_property_community
+        JOIN t_tenant ON t_tenant.org_id = t_house_property_community.tenant_id
 
 
         WHERE 1=1
@@ -58,5 +62,16 @@
         OR t_house_property_community.name LIKE CONCAT('%',#{search},'%')
     </if>
     -->
+    </select>
+    <select id="queryHouseCommunityByTenantId" resultType="HousePropertyCommunity">
+        SELECT t_house_property_community.* FROM t_house_property_community WHERE t_house_property_community.tenant_id=#{tenantId}
+    </select>
+
+    <select id="queryHouseCommunityByOrgId" resultType="HousePropertyCommunity">
+        SELECT t_house_property_community.*,t_tenant.name AS tenant
+        FROM t_house_property_community
+                 JOIN t_tenant ON t_tenant.org_id = t_house_property_community.tenant_id
+                 JOIN t_house_user_community_status ON t_house_user_community_status.community_id = t_house_property_community.id
+        WHERE t_house_user_community_status.user_id=#{userId}
     </select>
 </mapper>

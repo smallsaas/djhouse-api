@@ -3,6 +3,7 @@ package com.jfeat.am.module.house.services.domain.dao;
 import com.jfeat.am.module.house.services.domain.model.HouseDecoratePlanRecord;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.module.house.services.gen.persistence.model.Product;
 import com.jfeat.crud.plus.QueryMasterDao;
 import org.apache.ibatis.annotations.Param;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseDecoratePlan;
@@ -33,6 +34,8 @@ public interface QueryHouseDecoratePlanDao extends QueryMasterDao<HouseDecorateP
      * Query entity model list for slave items
      */
     List<HouseDecoratePlanModel> queryMasterModelList(@Param("masterId") Object masterId);
+
+    List<Product> queryProductListByDesignModel(@Param("designModelId") Long designModelId);
 
 
 }

@@ -16,7 +16,7 @@ Authorization: {{adminToken}}
 
 
 ### 查询id为1 的社区信息
-GET {{service}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies/5
+GET {{endpoint}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies/1
 Authorization: {{adminToken}}
 
 ###分页查询unit信息
@@ -30,8 +30,10 @@ POST {{service}}/api/crud/house/housePropertyCommunity/housePropertyCommunityies
 Content-Type: application/json
 Authorization: {{adminToken}}
 {
+  "address": "广东省广州市",
     "community": "黄辉小区",
-    "communityCode": "2"
+    "communityCode": "2",
+    "tenantId": "64"
 }
 
 ### 增添社区信息 item为子项楼栋信息

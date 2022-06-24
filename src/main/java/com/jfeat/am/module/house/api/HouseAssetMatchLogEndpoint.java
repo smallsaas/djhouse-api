@@ -173,14 +173,10 @@ public class HouseAssetMatchLogEndpoint {
                 houseAssetMatchLogPage.get(i).setOwnerBuilding(ownerHouseAsset.getBuildingCode());
                 houseAssetMatchLogPage.get(i).setOwnerCommunity(ownerHouseAsset.getCommunityName());
                 houseAssetMatchLogPage.get(i).setOwnerNumber(ownerHouseAsset.getNumber());
-                houseAssetMatchLogPage.get(i).setOwnerName(ownerEndUser.getName());
-                houseAssetMatchLogPage.get(i).setOwnerPhone(ownerEndUser.getPhone());
 
                 houseAssetMatchLogPage.get(i).setMatchedBuilding(matchedHouseAsset.getBuildingCode());
                 houseAssetMatchLogPage.get(i).setMatchedCommunity(matchedHouseAsset.getCommunityName());
                 houseAssetMatchLogPage.get(i).setMatchedNumber(matchedHouseAsset.getNumber());
-                houseAssetMatchLogPage.get(i).setMatchedName(matchedEndUser.getName());
-                houseAssetMatchLogPage.get(i).setMatchedPhone(matchedEndUser.getPhone());
 
             }
 

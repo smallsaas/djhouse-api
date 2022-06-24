@@ -12,7 +12,8 @@ Authorization:{{token}}
 
 
 ### 通过楼栋id获取整栋楼的 房屋
-GET {{service}}/api/u/house/house/housePropertyUnit
+GET {{endpoint}}/api/u/house/house/housePropertyUnit/4
+Authorization:{{token}}
 
 
 ### 获取用户的安装地址信息
@@ -24,22 +25,24 @@ Authorization:{{token}}
 POST {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit
 Authorization:{{token}}
 {
-      "room_id": 303
+      "asset_id": 337
 }
 
 ### 修改用户安装地址
-# 7为主键id
+# 7为assetId
 PUT {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit/7
 Authorization:{{token}}
 
 {
-      "room_id": 23
+      "asset_id": 23
 }
 
 ### 删除用户安装地址
-# 7为主键id
+# 7为主键assetId
 DELETE {{endpoint}}/api/u/house/house/housePropertyUnit/userUnit/7
 Authorization:{{token}}
+
+
 
 ### 获取社区
 GET {{service}}/api/u/house/house/housePropertyUnit/community
@@ -57,3 +60,5 @@ Authorization:{{token}}
 {
       "communityId":3
 }
+
+
