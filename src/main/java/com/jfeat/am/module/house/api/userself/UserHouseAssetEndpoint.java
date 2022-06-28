@@ -132,7 +132,7 @@ public class UserHouseAssetEndpoint {
         Long userId = JWTKit.getUserId();
         List<HouseUserAsset> houseUserAssets = queryHouseUserAssetDao.queryUserRoomByUserId(userId);
         logger.info("userId:{},size:{}",userId,houseUserAssets.size());
-        return SuccessTip.create();
+        return SuccessTip.create(houseUserAssets);
     }
 
 
