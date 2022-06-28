@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.api.userself;
 
+import com.jfeat.AmApplication;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
@@ -15,6 +16,8 @@ import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +29,7 @@ import java.util.List;
 @Api("UserHouseAsset")
 @RequestMapping("/api/u/asset")
 public class UserHouseAssetEndpoint {
+    protected final static Logger logger = LoggerFactory.getLogger(UserHouseAssetEndpoint.class);
 
     @Resource
     QueryHousePropertyCommunityDao queryHousePropertyCommunityDao;
@@ -126,8 +130,9 @@ public class UserHouseAssetEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
         Long userId = JWTKit.getUserId();
-
-        return SuccessTip.create(queryHouseUserAssetDao.queryUserRoomByUserId(userId));
+        List<HouseUserAsset> houseUserAssets = queryHouseUserAssetDao.queryUserRoomByUserId(userId);
+        logger.info("userId:{},size:{}",userId,houseUserAssets.size());
+        return SuccessTip.create();
     }
 
 
