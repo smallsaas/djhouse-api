@@ -2,7 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseDecoratePlanDao">
     <sql id="Base_Column_List">
-        t_house_decorate_plan.id
+        t_house_decorate_plan
+        .
+        id
         , t_house_decorate_plan.decorate_style_name AS decorateStyleName, t_house_decorate_plan.allow_changed AS allowChanged, t_house_decorate_plan.color_style AS colorStyle, t_house_decorate_plan.total_budget AS totalBudget, t_house_decorate_plan.star,
         t_house_decorate_plan.cover,t_house_decorate_plan.merchant
     </sql>
@@ -67,10 +69,29 @@
     -->
     </select>
 
-    <select id="queryProductListByDesignModel" resultType="Product" >
-        SELECT t_product.* FROM t_house_decorate_plan
-                                    JOIN t_house_decorate_plan_funiture ON t_house_decorate_plan.id = t_house_decorate_plan_funiture.decorate_plan_id
-                                    JOIN t_product on t_house_decorate_plan_funiture.furniture_id = t_product.id
-        WHERE t_house_decorate_plan.design_model_id=#{designModelId}
+    <select id="queryProductListByDesignModel" resultType="Product">
+        SELECT t_product.*
+        FROM t_house_decorate_plan
+                 JOIN t_house_decorate_plan_funiture
+                      ON t_house_decorate_plan.id = t_house_decorate_plan_funiture.decorate_plan_id
+                 JOIN t_product on t_house_decorate_plan_funiture.furniture_id = t_product.id
+        WHERE t_house_decorate_plan.design_model_id = #{designModelId}
+    </select>
+
+
+    <select id="queryDecoratePlanStar" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM (SELECT *
+              FROM t_house_user_decorate_plan
+              WHERE t_house_user_decorate_plan.decorate_plan_id = #{decoratePlanId}
+              GROUP BY t_house_user_decorate_plan.user_id) AS t
+    </select>
+
+    <select id="queryDecoratePlanTotalPrice" resultType="java.lang.Double">
+        SELECT SUM(t_product.price)
+        FROM t_product
+                 JOIN t_house_decorate_plan_funiture ON t_house_decorate_plan_funiture.decorate_plan_id = #{decoratePlanId}
+            AND t_house_decorate_plan_funiture.furniture_id = t_product.id
+        WHERE t_house_decorate_plan_funiture.furniture_id = t_product.id
     </select>
 </mapper>

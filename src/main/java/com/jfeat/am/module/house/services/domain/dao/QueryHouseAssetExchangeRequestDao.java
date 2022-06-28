@@ -41,4 +41,6 @@ public interface QueryHouseAssetExchangeRequestDao extends QueryMasterDao<HouseA
     List<HouseAssetExchangeRequest> queryHouseAssetExchangeRequestByUserId(@Param("userId") Long userId);
 
     HouseAssetExchangeRequest queryHouseAssetExchangeRequestByAssetIdAndUserId(@Param("assetId") Long assetId,@Param("userId") Long userId);
+
+    List<HouseAssetExchangeRequest> queryAllHouseAssetExchangeRequest();
 }

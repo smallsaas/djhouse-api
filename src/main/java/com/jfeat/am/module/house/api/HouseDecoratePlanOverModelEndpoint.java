@@ -2,6 +2,9 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.alibaba.fastjson.JSONObject;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseDecoratePlanFunitureDao;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseDecoratePlanFuniture;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -41,6 +44,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseDecoratePla
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -65,6 +69,9 @@ public class HouseDecoratePlanOverModelEndpoint {
     @Resource
     QueryHouseDecoratePlanDao queryHouseDecoratePlanDao;
 
+    @Resource
+    QueryHouseDecoratePlanFunitureDao queryHouseDecoratePlanFunitureDao;
+
 
     // 要查询[从表]关联数据，取消下行注释
     // @Resource
@@ -79,6 +86,7 @@ public class HouseDecoratePlanOverModelEndpoint {
         try {
             DefaultFilterResult filterResult = new DefaultFilterResult();
             affected = houseDecoratePlanOverModelService.createMaster(entity, filterResult, null, null);
+            System.out.println(entity);
             if (affected > 0) {
                 return SuccessTip.create(filterResult.result());
             }
@@ -110,7 +118,16 @@ public class HouseDecoratePlanOverModelEndpoint {
         //    </select>
 
         if (entity != null) {
-            return SuccessTip.create(entity.toJSONObject());
+            List<Long> itemsID = new ArrayList<>();
+            JSONObject jsonObject = entity.toJSONObject();
+            JSONArray jsonArray  = (JSONArray) jsonObject.get("items");
+            for (int i=0;i<jsonArray.size();i++){
+                JSONObject item = (JSONObject) jsonArray.get(i);
+                Long itemId = item.getLong("id");
+                itemsID.add(itemId);
+            }
+            jsonObject.put("itemsID",itemsID);
+            return SuccessTip.create(jsonObject);
         } else {
             return SuccessTip.create();
         }
@@ -123,11 +140,29 @@ public class HouseDecoratePlanOverModelEndpoint {
     @ApiOperation(value = "修改 HouseDecoratePlan", response = HouseDecoratePlanModel.class)
     public Tip updateHouseDecoratePlan(@PathVariable Long id, @RequestBody HouseDecoratePlanModel entity) {
         entity.setId(id);
+        int newOptions = META.UPDATE_CASCADING_DELETION_FLAG;
+        int effect = houseDecoratePlanOverModelService.updateMaster(entity, null, null, null, newOptions);
+        if (entity.getItemsID()!=null && entity.getItemsID().length>0){
+            for (int i=0;i<entity.getItemsID().length;i++){
+               HouseDecoratePlanFuniture houseDecoratePlanFuniture =  queryHouseDecoratePlanFunitureDao.queryHouseDecoratePlanFunitureExists(id,entity.getItemsID()[i]);
+               if (houseDecoratePlanFuniture!=null){
+                   HouseDecoratePlanFuniture decoratePlanFuniture = new HouseDecoratePlanFuniture();
+                   decoratePlanFuniture.setDecoratePlanId(id);
+                   decoratePlanFuniture.setFurnitureId(entity.getItemsID()[i]);
+                   effect+=queryHouseDecoratePlanFunitureDao.updateDecoratePlanFuniture(houseDecoratePlanFuniture.getId(),decoratePlanFuniture);
+               }else {
+                   HouseDecoratePlanFuniture decoratePlanFuniture = new HouseDecoratePlanFuniture();
+                   decoratePlanFuniture.setDecoratePlanId(id);
+                   decoratePlanFuniture.setFurnitureId(entity.getItemsID()[i]);
+                  effect+= queryHouseDecoratePlanFunitureDao.createDecoratePlanFuniture(decoratePlanFuniture);
+               }
+            }
+        }
         // use update flags
-        int newOptions = META.UPDATE_CASCADING_DELETION_FLAG;  //default to delete not exist items
+         //default to delete not exist items
         // newOptions = FlagUtil.setFlag(newOptions, META.UPDATE_ALL_COLUMNS_FLAG);
 
-        return SuccessTip.create(houseDecoratePlanOverModelService.updateMaster(entity, null, null, null, newOptions));
+        return SuccessTip.create(effect);
     }
 
     @BusinessLog(name = "HouseDecoratePlan", value = "delete HouseDecoratePlan")
@@ -197,7 +232,20 @@ public class HouseDecoratePlanOverModelEndpoint {
 
 
         List<HouseDecoratePlanRecord> houseDecoratePlanPage = queryHouseDecoratePlanDao.findHouseDecoratePlanPage(page, record, tag, search, orderBy, null, null);
+        for (int i=0;i<houseDecoratePlanPage.size();i++){
+            Integer queryStar = queryHouseDecoratePlanDao.queryDecoratePlanStar(houseDecoratePlanPage.get(i).getId());
+            if (queryStar!=null && queryStar>0){
+                houseDecoratePlanPage.get(i).setStar(queryStar);
+            }else {
+                houseDecoratePlanPage.get(i).setStar(0);
+            }
 
+            Double totalBudegt = queryHouseDecoratePlanDao.queryDecoratePlanTotalPrice(houseDecoratePlanPage.get(i).getId());
+            if (totalBudegt!=null && totalBudegt>=0){
+                houseDecoratePlanPage.get(i).setTotalBudget(BigDecimal.valueOf(totalBudegt));
+            }
+
+        }
 
         page.setRecords(houseDecoratePlanPage);
 

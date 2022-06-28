@@ -2,6 +2,8 @@ package com.jfeat.am.module.house.services.domain.model;
 
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,6 +18,56 @@ public class HouseAssetRecord extends HouseAsset {
     private String phone;
 
     private String userAvatar;
+
+    private Date rentTime;
+
+    private BigDecimal rentPrice;
+
+    private String rentTags;
+
+    private String rentDescribe;
+
+    private String slideshow;
+
+    public Date getRentTime() {
+        return rentTime;
+    }
+
+    public void setRentTime(Date rentTime) {
+        this.rentTime = rentTime;
+    }
+
+    public BigDecimal getRentPrice() {
+        return rentPrice;
+    }
+
+    public void setRentPrice(BigDecimal rentPrice) {
+        this.rentPrice = rentPrice;
+    }
+
+    public String getRentTags() {
+        return rentTags;
+    }
+
+    public void setRentTags(String rentTags) {
+        this.rentTags = rentTags;
+    }
+
+    public String getRentDescribe() {
+        return rentDescribe;
+    }
+
+    public void setRentDescribe(String rentDescribe) {
+        this.rentDescribe = rentDescribe;
+    }
+
+    public String getSlideshow() {
+        return slideshow;
+    }
+
+    public void setSlideshow(String slideshow) {
+        this.slideshow = slideshow;
+    }
 
     public String getUsername() {
         return username;

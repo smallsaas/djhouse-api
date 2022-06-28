@@ -209,5 +209,28 @@ t_end_user.name AS userName,t_end_user.phone AS userPhone,t_end_user.avatar AS u
         </if>
     </select>
 
+    <select id="queryHouseUserAssetByEntity" resultType="HouseUserAsset">
+        SELECT t_house_user_asset.* FROM t_house_user_asset
+        <where>
+            <if test="entity.id !=null and entity.id>0">
+                t_house_user_asset.id  = #{entity.id}
+            </if>
+            <if test="entity.assetId and entity.assetId>0">
+               and t_house_user_asset.asset_id  = #{entity.assetId}
+            </if>
+            <if test="entity.userId!=null and entity.userId>0">
+                and t_house_user_asset.user_id  = #{entity.userId}
+            </if>
+            <if test="entity.clashUserId!=null and entity.clashUserId>0">
+                and t_house_user_asset.clash_user_id  = #{entity.clashUserId}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryHouseUserAssetByAssetId" resultType="HouseUserAsset">
+        SELECT t_house_user_asset.*
+        FROM t_house_user_asset
+        WHERE t_house_user_asset.asset_id = #{assetId};
+    </select>
 
 </mapper>

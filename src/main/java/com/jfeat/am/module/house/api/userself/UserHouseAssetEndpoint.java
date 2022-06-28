@@ -1,6 +1,6 @@
 package com.jfeat.am.module.house.api.userself;
 
-import com.jfeat.AmApplication;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
@@ -55,7 +55,7 @@ public class UserHouseAssetEndpoint {
 //    获取小区
     @GetMapping("/community")
     public Tip getHousePropertyCommunityByTenantId() {
-        Long tenantId = JWTKit.getTenantOrgId();
+        Long tenantId = JWTKit.getOrgId();
         return SuccessTip.create(queryHousePropertyCommunityDao.queryHouseCommunityByTenantId(tenantId));
     }
 
@@ -114,7 +114,9 @@ public class UserHouseAssetEndpoint {
                 }
             }
         }
-        return SuccessTip.create(houseAssetList);
+        Page<HouseAsset> page = new Page<>();
+        page.setRecords(houseAssetList);
+        return SuccessTip.create(page);
     }
 
     @GetMapping("/asset/details/{assetId}")

@@ -59,4 +59,13 @@
         WHERE t_house_decorate_plan_funiture.decorate_plan_id = #{decoratePlanId}
           AND t_house_decorate_plan_funiture.furniture_id = #{furnitureId}
     </select>
+
+    <update id="updateDecoratePlanFuniture">
+        update t_house_decorate_plan_funiture set t_house_decorate_plan_funiture.decorate_plan_id =#{entity.decoratePlanId},t_house_decorate_plan_funiture.furniture_id =#{entity.furnitureId}
+        where t_house_decorate_plan_funiture.id = #{id}
+    </update>
+
+    <insert id="createDecoratePlanFuniture">
+        insert into t_house_decorate_plan_funiture set t_house_decorate_plan_funiture.decorate_plan_id =#{entity.decoratePlanId},t_house_decorate_plan_funiture.furniture_id =#{entity.furnitureId}
+    </insert>
 </mapper>

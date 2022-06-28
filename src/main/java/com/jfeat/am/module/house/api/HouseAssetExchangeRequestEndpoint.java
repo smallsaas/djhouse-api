@@ -2,6 +2,8 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -40,10 +42,12 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchan
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
+import springfox.documentation.spring.web.json.Json;
 
 /**
  * <p>
@@ -63,6 +67,9 @@ public class HouseAssetExchangeRequestEndpoint {
 
     @Resource
     QueryHouseAssetExchangeRequestDao queryHouseAssetExchangeRequestDao;
+
+    @Resource
+    QueryHouseAssetDao queryHouseAssetDao;
 
 
     @BusinessLog(name = "HouseAssetExchangeRequest", value = "create HouseAssetExchangeRequest")
@@ -170,6 +177,30 @@ public class HouseAssetExchangeRequestEndpoint {
 
         page.setRecords(houseAssetExchangeRequestPage);
 
+        return SuccessTip.create(page);
+    }
+
+    @GetMapping("/allAssetExchangeRequest")
+    public Tip getALlAssetExchangeRequest(@RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                          @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                          @RequestParam(name = "search", required = false) String search){
+        List<HouseAssetExchangeRequest> houseAssetExchangeRequestList = queryHouseAssetExchangeRequestDao.queryAllHouseAssetExchangeRequest();
+        for (int i=0;i<houseAssetExchangeRequestList.size();i++){
+            List<String> targetRange = Arrays.asList(houseAssetExchangeRequestList.get(i).getTargetAssetRange().split(","));
+            StringBuffer stringBuffer = new StringBuffer();
+            for (String s:targetRange){
+               HouseAsset houseAsset =  queryHouseAssetDao.queryMasterModel(Long.parseLong(s));
+               if (houseAsset!=null){
+                   String buildingCode = houseAsset.getBuildingCode();
+                   String number = houseAsset.getNumber();
+                   stringBuffer.append("".concat(buildingCode).concat("-").concat(number).concat("    "));
+               }
+
+            }
+            houseAssetExchangeRequestList.get(i).setTargetAssetRange(stringBuffer.toString());
+        }
+        Page<HouseAssetExchangeRequest> page = new Page<>();
+        page.setRecords(houseAssetExchangeRequestList);
         return SuccessTip.create(page);
     }
 }

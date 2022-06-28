@@ -37,5 +37,8 @@ public interface QueryHouseDecoratePlanDao extends QueryMasterDao<HouseDecorateP
 
     List<Product> queryProductListByDesignModel(@Param("designModelId") Long designModelId);
 
+    Integer queryDecoratePlanStar(@Param("decoratePlanId") Long decoratePlanId);
+
+    Double queryDecoratePlanTotalPrice(@Param("decoratePlanId") Long decoratePlanId);
 
 }

@@ -40,17 +40,29 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
 
     private Boolean rentStatus;
 
-    private Data createTime;
-
     private Date rentTime;
 
-    private String note;
+    private BigDecimal rentPrice;
+
+    private String rentTags;
+
+    private String rentDescribe;
+
+    private String slideshow;
+
+
+
+
 
     private Long clashUserId;
 
     private String clashDescribe;
 
     private String clashCertificate;
+
+    private String note;
+
+    private Data createTime;
 
 
 
@@ -92,17 +104,23 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private String roomNumber;
 
+    @ApiModelProperty("地址")
+    @TableField(exist = false)
+    private String address;
+
+    @ApiModelProperty("用户名")
     @TableField(exist = false)
     private String username;
 
+    @ApiModelProperty("用户电话")
     @TableField(exist = false)
     private String userPhone;
 
+    @ApiModelProperty("用户头像")
     @TableField(exist = false)
     private String userAvatar;
 
-    @TableField(exist = false)
-    private String address;
+
 
     @ApiModelProperty("冲突用户名")
     @TableField(exist = false)
@@ -339,6 +357,38 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
 
     public void setClashUserAvatar(String clashUserAvatar) {
         this.clashUserAvatar = clashUserAvatar;
+    }
+
+    public BigDecimal getRentPrice() {
+        return rentPrice;
+    }
+
+    public void setRentPrice(BigDecimal rentPrice) {
+        this.rentPrice = rentPrice;
+    }
+
+    public String getRentTags() {
+        return rentTags;
+    }
+
+    public void setRentTags(String rentTags) {
+        this.rentTags = rentTags;
+    }
+
+    public String getRentDescribe() {
+        return rentDescribe;
+    }
+
+    public void setRentDescribe(String rentDescribe) {
+        this.rentDescribe = rentDescribe;
+    }
+
+    public String getSlideshow() {
+        return slideshow;
+    }
+
+    public void setSlideshow(String slideshow) {
+        this.slideshow = slideshow;
     }
 
     public static final String ID = "id";

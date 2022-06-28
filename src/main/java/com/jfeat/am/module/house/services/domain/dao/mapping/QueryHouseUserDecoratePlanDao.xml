@@ -2,7 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseUserDecoratePlanDao">
     <sql id="Base_Column_List">
-        t_house_user_decorate_plan.id, t_house_user_decorate_plan.funiture_number AS funitureNumber,t_house_user_decorate_plan.user_id AS userId, t_house_user_decorate_plan.decorate_plan_id AS decoratePlanId, t_house_user_decorate_plan.change_option AS changeOption, t_house_user_decorate_plan.funiture_id AS funitureId, t_house_user_decorate_plan.changed_funiture_id AS changedFunitureId, t_house_user_decorate_plan.note
+        t_house_user_decorate_plan.id, t_house_user_decorate_plan.funiture_number AS funitureNumber,t_house_user_decorate_plan.user_id AS userId, t_house_user_decorate_plan.decorate_plan_id AS decoratePlanId, t_house_user_decorate_plan.change_option AS changeOption, t_house_user_decorate_plan.funiture_id AS funitureId, t_house_user_decorate_plan.changed_funiture_id AS changedFunitureId, t_house_user_decorate_plan.note,
+t_end_user.name                      AS userName,
+               t_end_user.phone                     AS userPhone,
+               t_end_user.avatar                    AS userAvatar
+
     </sql>
 
 
@@ -21,6 +25,7 @@
 
 
         FROM t_house_user_decorate_plan
+        JOIN t_end_user ON t_end_user.id = t_house_user_decorate_plan.user_id
 
 
         WHERE 1=1
