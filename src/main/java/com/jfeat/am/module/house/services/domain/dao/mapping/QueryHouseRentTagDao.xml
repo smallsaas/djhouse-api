@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseRentTagDao">
+                                                                                                                        <sql id="Base_Column_List">
+                                                                                                                                                                                                                                                                                                                                                t_house_rent_tag.id, t_house_rent_tag.cn_name AS cnName, t_house_rent_tag.en_name AS enName
+    </sql>
+
+    
+    
+    <select id="queryMasterModel" resultType="HouseRentTagModel">
+       SELECT t_house_rent_tag.*
+       FROM t_house_rent_tag
+       WHERE t_house_rent_tag.id=#{id}
+       GROUP BY t_house_rent_tag.id
+    </select>
+
+
+
+            
+    <select id="findHouseRentTagPage" resultType="HouseRentTagRecord" parameterType="HouseRentTagRecord">
+            SELECT <include refid="Base_Column_List"/>
+
+        
+
+        FROM t_house_rent_tag
+
+        
+        
+        WHERE 1=1
+        
+
+        
+                                                                            <if test="record.id != null and record.id>0 ">
+                                    AND t_house_rent_tag.id LIKE CONCAT('%',#{record.id},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.cnName != null and record.cnName!= ''">
+                                    AND t_house_rent_tag.cn_name LIKE CONCAT('%',#{record.cnName},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.enName != null and record.enName!= ''">
+                                    AND t_house_rent_tag.en_name LIKE CONCAT('%',#{record.enName},'%')
+                            </if>
+        
+        <if test="startTime != null">
+            <![CDATA[AND t_house_rent_tag.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_rent_tag.end_time <= DATE(#{endTime}]]>
+        </if>
+            <!--
+        <if test="search != null and search != ''">
+            OR t_house_rent_tag.name LIKE CONCAT('%',#{search},'%')
+        </if>
+        -->
+                                    </select>
+</mapper>
