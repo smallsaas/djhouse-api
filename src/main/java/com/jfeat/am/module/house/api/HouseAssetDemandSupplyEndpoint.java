@@ -156,7 +156,12 @@ public class HouseAssetDemandSupplyEndpoint {
         record.setAssetOption(assetOption);
         List<HouseAssetDemandSupplyRecord> houseAssetDemandSupplyPage = queryHouseAssetDemandSupplyDao.findHouseAssetDemandSupplyPage(page, record, tag, search, orderBy, null, null);
         for (int i=0;i<houseAssetDemandSupplyPage.size();i++){
-            houseAssetDemandSupplyPage.get(i).setCombinationNumber(houseAssetDemandSupplyPage.get(i).getBuildingCode().concat("-").concat(houseAssetDemandSupplyPage.get(i).getNumber()));
+            String buildingCode = houseAssetDemandSupplyPage.get(i).getBuildingCode();
+            String number = houseAssetDemandSupplyPage.get(i).getNumber();
+            if (buildingCode!=null && number!=null){
+                houseAssetDemandSupplyPage.get(i).setCombinationNumber(buildingCode.concat("-").concat(number));
+            }
+
             if (houseAssetDemandSupplyPage.get(i).getAssetOption().equals(1)){
                 houseAssetDemandSupplyPage.get(i).setOption("sell");
             }else {
