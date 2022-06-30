@@ -1,0 +1,19 @@
+# @endpoint=http://localhost:8080
+@endpoint=http://app1.console.smallsaas.cn:8001
+@token=Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6IiIsInVzZXJJZCI6MzExLCJhY2NvdW50IjoiMDNiMzBhMjMzYzllNGFmNGI4MWQxNTE1MDdjNDQwOGIiLCJkb21haW5Vc2VySWQiOiIiLCJpYXQiOjE2NTY0NzI4MzMsImp0aSI6IjMxMSIsInN1YiI6IjAzYjMwYTIzM2M5ZTRhZjRiODFkMTUxNTA3YzQ0MDhiIiwiZXhwIjoxNjU2NzMyMDMzfQ.Y89zEBrTuOh_utVELbFcpFj-bSgVu9HFX3aHjBjBu0n1hUu2aKUoWEdj1IdYQHmbKpiQSYR2RDrstzMmgdrvkg
+
+
+### 产权买卖
+# assetOption 1：卖 2：买
+GET {{endpoint}}/api/u/house/houseAssetDemandSupply/houseAssetDemandSupplyies?assetOption=2
+Authorization:{{token}}
+
+### 添加产权买卖
+# assetOption 1：卖 2：买
+# 卖必须是用户拥有的产权
+POST {{endpoint}}/api/u/house/houseAssetDemandSupply/houseAssetDemandSupplyies
+Authorization:{{token}}
+{
+    "assetId":426,
+    "assetOption":2
+}

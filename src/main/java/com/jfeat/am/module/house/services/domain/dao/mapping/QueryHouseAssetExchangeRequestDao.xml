@@ -92,5 +92,38 @@
         WHERE t_house_asset_exchange_request.asset_id = #{assetId} AND t_house_asset_exchange_request.user_id=#{userId};
     </select>
 
+    <select id="queryAllHouseAssetExchangeRequest" resultType="HouseAssetExchangeRequest">
+        SELECT t_house_asset_exchange_request.*,
 
+               t_house_property_community.address   AS address,
+               t_house_property_community.id        AS communityId,
+               t_house_property_community.community As communityName,
+
+               t_house_property_building.id         As buildingId,
+               t_house_property_building.code       AS buildingCode,
+               t_house_property_building_unit.id    AS unitId,
+
+               t_house_design_model.id AS designModelId,
+               t_house_design_model.house_type AS houseType,
+               t_house_design_model.house_type_picture AS houseTypePicture,
+               t_house_design_model.vr_picture AS vrPicture,
+               t_house_design_model.vr_link AS vrLink,
+               t_house_design_model.vr_snapshot AS vrSnapshot,
+               t_house_design_model.area AS area,
+
+               t_house_asset.number                 AS number,
+               t_house_asset.floor AS floor,
+
+               t_end_user.name                      AS userName,
+               t_end_user.phone                     AS userPhone,
+               t_end_user.avatar                    AS userAvatar
+
+        FROM t_house_asset_exchange_request
+                 JOIN t_end_user ON t_house_asset_exchange_request.user_id=t_end_user.id
+                 JOIN t_house_asset ON t_house_asset_exchange_request.asset_id=t_house_asset.id
+                 JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+                 JOIN t_house_property_community on t_house_property_building.community_id =t_house_property_community.id
+                 JOIN t_house_property_building_unit ON t_house_property_building_unit.id = t_house_asset.unit_id
+                 JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+    </select>
 </mapper>

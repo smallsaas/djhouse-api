@@ -23,7 +23,8 @@ public interface QueryHouseEquityDemandSupplyDao extends QueryMasterDao<HouseEqu
                                                                         @Param("tag") String tag,
                                                                         @Param("search") String search, @Param("orderBy") String orderBy,
                                                                         @Param("startTime") Date startTime, @Param("endTime") Date endTime,
-                                                                        @Param("areaRange") Double[] areaRange
+                                                                        @Param("leftRange") Double leftRange,
+                                                                        @Param("rightRange") Double rightRange
     );
 
     /*
@@ -36,4 +37,6 @@ public interface QueryHouseEquityDemandSupplyDao extends QueryMasterDao<HouseEqu
      * Query entity model list for slave items
      */
     List<HouseEquityDemandSupplyModel> queryMasterModelList(@Param("masterId") Object masterId);
+
+
 }

@@ -54,5 +54,7 @@ public interface QueryHouseUserAssetDao extends QueryMasterDao<HouseUserAsset> {
 
     List<HouseUserAsset> queryClashUserAsset(@Param("username") String username,@Param("search") String search);
 
+    HouseUserAsset queryHouseUserAssetByEntity(@Param("entity") HouseUserAsset houseUserAsset);
 
+    HouseUserAsset queryHouseUserAssetByAssetId(@Param("assetId") Long assetId);
 }

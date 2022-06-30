@@ -18,6 +18,16 @@ public class HouseDecoratePlanModel extends HouseDecoratePlan{
     // product
     // Product
     // product
+    private Long[] itemsID;
+
+    public Long[] getItemsID() {
+        return itemsID;
+    }
+
+    public void setItemsID(Long[] itemsID) {
+        this.itemsID = itemsID;
+    }
+
     private List<Product> items;
 
     public List<Product> getItems() {

@@ -157,9 +157,21 @@ public class HouseEquityDemandSupplyEndpoint {
         record.setEquityOption(equityOption);
         record.setArea(area);
 
+
 //        QueryWrapper multiEntityWrapper = QueryParamUtils.getMultiEntityWrapper(params, HouseEquityDemandSupplyRecord.class,"t_house_equity_demand_supply.");
 //        System.out.println(areaRange[1]);
-        List<HouseEquityDemandSupplyRecord> houseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, record, tag, search, orderBy, null, null,areaRange);
+        Double leftRange =null;
+        Double rightRange = null;
+
+        if (areaRange.length==1){
+            leftRange =areaRange[0];
+        }
+        if (areaRange.length>0 && areaRange.length<3){
+            leftRange =areaRange[0];
+           rightRange = areaRange[1];
+        }
+
+        List<HouseEquityDemandSupplyRecord> houseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, record, tag, search, orderBy, null, null,leftRange,rightRange);
 
         page.setRecords(houseEquityDemandSupplyPage);
 

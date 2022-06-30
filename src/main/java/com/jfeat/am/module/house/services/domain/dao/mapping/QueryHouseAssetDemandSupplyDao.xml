@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDemandSupplyDao">
+    <sql id="Base_Column_List">
+        t_house_asset_demand_supply.id,
+        t_house_asset_demand_supply.user_id AS userId,
+        t_house_asset_demand_supply.asset_id AS assetId,
+        t_house_asset_demand_supply.asset_option AS assetOption,
+t_house_asset_demand_supply.design_model_id AS designModelId,
+t_house_asset_demand_supply.create_time AS createTime,
+
+        t_house_property_community.address AS address,
+       t_house_property_community.community AS communityName,
+        t_house_property_building.code       AS buildingCode,
+        t_house_asset.floor AS floor,
+        t_house_asset.number AS number ,
+        t_house_design_model.area AS area,
+
+        t_house_design_model.house_type AS houseType,
+        t_house_design_model.house_type_picture AS houseTypePicture,
+        t_house_design_model.vr_picture AS vrPicture,
+        t_house_design_model.vr_link AS vrLink,
+
+        t_end_user.name                      AS userName,
+       t_end_user.phone                     AS phone,
+       t_end_user.avatar                    AS userAvatar
+
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseAssetDemandSupplyModel">
+        SELECT t_house_asset_demand_supply.*
+        FROM t_house_asset_demand_supply
+        WHERE t_house_asset_demand_supply.id = #{id}
+        GROUP BY t_house_asset_demand_supply.id
+    </select>
+
+
+    <select id="findHouseAssetDemandSupplyPage" resultType="HouseAssetDemandSupplyRecord"
+            parameterType="HouseAssetDemandSupplyRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_asset_demand_supply
+        LEFT JOIN t_end_user ON t_house_asset_demand_supply.user_id=t_end_user.id
+        LEFT JOIN t_house_asset ON t_house_asset_demand_supply.asset_id=t_house_asset.id
+        LEFT JOIN t_house_property_building ON t_house_asset.building_id = t_house_property_building.id
+        LEFT JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
+        LEFT JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
+        LEFT JOIN t_house_design_model ON t_house_design_model.id=t_house_asset_demand_supply.design_model_id
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_asset_demand_supply.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_asset_demand_supply.user_id LIKE CONCAT('%',#{record.userId},'%')
+        </if>
+
+
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_asset_demand_supply.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+        </if>
+        <if test="record.designModelId != null and record.designModelId>=0 ">
+            AND t_house_asset_demand_supply.design_model_id LIKE CONCAT('%',#{record.designModelId},'%')
+        </if>
+
+
+        <if test="record.assetOption != null and record.assetOption>0 ">
+            AND t_house_asset_demand_supply.asset_option LIKE CONCAT('%',#{record.assetOption},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_asset_demand_supply.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_asset_demand_supply.end_time <= DATE(#{endTime}]]>
+        </if>
+
+        <if test="search != null and search != ''">
+
+            AND (t_house_property_community.community LIKE CONCAT('%',#{search},'%')
+            OR t_house_property_building.code  LIKE CONCAT('%',#{search},'%')
+            OR t_house_design_model.house_type  LIKE CONCAT('%',#{search},'%')
+            OR t_house_asset.number LIKE CONCAT('%',#{search},'%')
+            OR  t_end_user.name LIKE CONCAT('%',#{search},'%')
+            OR t_end_user.phone LIKE CONCAT('%',#{search},'%')
+            )
+        </if>
+        ORDER BY t_house_asset_demand_supply.create_time DESC,t_house_asset_demand_supply.user_id
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_asset_demand_supply.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
+</mapper>

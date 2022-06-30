@@ -61,13 +61,13 @@
         <if test="endTime != null">
             <![CDATA[AND t_house_equity_demand_supply.end_time <= DATE(#{endTime}]]>
         </if>
-        <if test="areaRange!=null and areaRange[0]>=0">
-            AND t_house_equity_demand_supply.area &gt;= #{areaRange[0]}
+        <if test="leftRange!=null and leftRange>=0">
+            AND t_house_equity_demand_supply.area &gt;= #{leftRange}
 <!--            <![CDATA[AND t_house_equity_demand_supply.area >= #{areaRange[0]]]>-->
 
         </if>
-        <if test="areaRange!=null and areaRange[1]>=0">
-            AND t_house_equity_demand_supply.area &lt;= #{areaRange[1]}
+        <if test="rightRange!=null and rightRange>=0">
+            AND t_house_equity_demand_supply.area &lt;= #{rightRange}
 <!--            <![CDATA[AND t_house_equity_demand_supply.area <= #{areaRange[1]}]]>-->
         </if>
         <if test="search != null and search != ''">

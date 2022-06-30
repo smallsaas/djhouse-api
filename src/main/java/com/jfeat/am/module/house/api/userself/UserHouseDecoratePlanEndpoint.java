@@ -234,6 +234,7 @@ public class UserHouseDecoratePlanEndpoint {
 
 
 
+//    添加装修地址
     @BusinessLog(name = "HouseUserDecorateAddress", value = "create HouseUserDecorateAddress")
     @PostMapping("/userDecoratePlanAddress")
     @ApiOperation(value = "新建 HouseUserDecorateAddress", response = HouseUserDecorateAddress.class)
@@ -252,6 +253,8 @@ public class UserHouseDecoratePlanEndpoint {
         return SuccessTip.create(affected);
     }
 
+
+//    修改装修地址
     @BusinessLog(name = "HouseUserDecorateAddress", value = "update HouseUserDecorateAddress")
     @PutMapping("/userDecoratePlanAddress")
     @ApiOperation(value = "修改 HouseUserDecorateAddress", response = HouseUserDecorateAddress.class)

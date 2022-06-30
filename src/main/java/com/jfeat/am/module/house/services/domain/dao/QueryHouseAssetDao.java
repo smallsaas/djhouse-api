@@ -42,4 +42,5 @@ public interface QueryHouseAssetDao extends QueryMasterDao<HouseAsset> {
 
     List<HouseAssetRecord> queryUserAssetRent(@Param("status") Integer status,@Param("username")String username,@Param("search") String search);
 
+    HouseAssetRecord queryHouseAssetDetails1(@Param("assetId") Long assetId);
 }

@@ -2,12 +2,13 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseDecoratePlanDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
-import com.jfeat.am.module.house.services.gen.persistence.model.EndpointUser;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
+import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -41,7 +42,6 @@ import java.math.BigDecimal;
 
 import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
 
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,8 +49,10 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
+import springfox.documentation.spring.web.json.Json;
 
 /**
  * <p>
@@ -79,6 +81,9 @@ public class HouseUserAssetEndpoint {
 
     @Resource
     QueryHouseDecoratePlanDao queryHouseDecoratePlanDao;
+
+    @Resource
+    HouseRentTagService houseRentTagService;
 
 
 
@@ -191,21 +196,15 @@ public class HouseUserAssetEndpoint {
                                @RequestParam(name = "username",required = false) String username,
                                @RequestParam(name = "search",required = false) String search,
                                @PathVariable Integer status) {
-//        List<HouseUserAsset> houseUserAssetList = queryHouseUserAssetDao.queryALlRentStatus(status);
-//        List<HouseAssetRecord> houseAssetRecordList = new ArrayList<>();
-//        for (int i=0;i<houseUserAssetList.size();i++) {
-//            HouseAssetRecord houseAssetRecord = queryHouseAssetDao.queryHouseAssetDetails(houseUserAssetList.get(i).getAssetId());
-//            EndpointUser endpointUser = queryEndpointUserDao.queryMasterModel(houseUserAssetList.get(i).getUserId());
-//
-//            if (houseAssetRecord != null && endpointUser!=null) {
-//
-//                houseAssetRecord.setPhone(endpointUser.getPhone());
-//                houseAssetRecord.setUsername(endpointUser.getName());
-//                houseAssetRecord.setUserAvatar(endpointUser.getAvatar());
-//                houseAssetRecordList.add(houseAssetRecord);
-//            }
-//        }
         List<HouseAssetRecord>houseAssetRecordList =  queryHouseAssetDao.queryUserAssetRent(status,username,search);
+        for (int i=0;i<houseAssetRecordList.size();i++){
+            HouseUserAsset houseUserAsset = queryHouseUserAssetDao.queryHouseUserAssetByAssetId(houseAssetRecordList.get(i).getId());
+            houseAssetRecordList.get(i).setRentDescribe(houseUserAsset.getRentDescribe());
+            houseAssetRecordList.get(i).setRentPrice(houseUserAsset.getRentPrice());
+            houseAssetRecordList.get(i).setSlideshow(houseUserAsset.getSlideshow());
+            houseAssetRecordList.get(i).setRentTime(houseUserAsset.getRentTime());
+        }
+
         page.setCurrent(pageNum);
         page.setSize(pageSize);
         page.setRecords(houseAssetRecordList);
@@ -215,9 +214,48 @@ public class HouseUserAssetEndpoint {
 
     @GetMapping("/rent/details/{id}")
     public Tip getALlRentAsset(@PathVariable("id") Long id) {
-        HouseAssetRecord houseAssetRecord = queryHouseAssetDao.queryHouseAssetDetails(id);
-        houseAssetRecord.setDecoratePlanProductList(queryHouseDecoratePlanDao.queryProductListByDesignModel(houseAssetRecord.getDesignModelId()));
-        return SuccessTip.create(houseAssetRecord);
+        HouseAssetRecord houseAssetRecord = queryHouseAssetDao.queryHouseAssetDetails1(id);
+        if (houseAssetRecord!=null){
+            List<Product> productList= queryHouseDecoratePlanDao.queryProductListByDesignModel(houseAssetRecord.getDesignModelId());
+            if (productList!=null){
+                houseAssetRecord.setDecoratePlanProductList(productList);
+            }
+        }
+//        查询家居列表
+
+
+
+//        添加tag
+        String s = JSON.toJSONString(houseAssetRecord);
+        JSONObject jsonObject = JSON.parseObject(s);
+        HouseUserAsset houseUserAsset = new HouseUserAsset();
+        houseUserAsset.setAssetId(id);
+        List<String> tags = new ArrayList<>();
+        HouseUserAsset userTags = queryHouseUserAssetDao.queryHouseUserAssetByEntity(houseUserAsset);
+        if (userTags.getRentTags()!=null && "".equals(userTags.getRentTags())){
+            List<HouseRentTag> houseRentTagList =  houseRentTagService.getHouseRentTags(userTags.getRentTags());
+
+            for (HouseRentTag houseRentTag:houseRentTagList){
+                tags.add(houseRentTag.getCnName());
+            }
+        }
+
+
+
+        houseUserAsset = queryHouseUserAssetDao.queryHouseUserAssetByAssetId(id);
+        if (houseUserAsset!=null){
+            jsonObject.put("rentPrice",houseUserAsset.getRentPrice());
+            jsonObject.put("rentDescribe",houseUserAsset.getRentDescribe());
+            jsonObject.put("slideshow",houseUserAsset.getSlideshow());
+            jsonObject.put("rentTime",houseUserAsset.getRentTime());
+        }else {
+            jsonObject.put("rentPrice",null);
+            jsonObject.put("rentDescribe",null);
+            jsonObject.put("slideshow",null);
+            jsonObject.put("rentTime",null);
+        }
+        jsonObject.put("tags",tags);
+        return SuccessTip.create(jsonObject);
     }
 
 
