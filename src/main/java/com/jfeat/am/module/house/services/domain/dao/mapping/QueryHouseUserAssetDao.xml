@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao">
     <sql id="Base_Column_List">
-        t_house_user_asset
-        .
-        id
-        , t_house_user_asset.user_id AS userId, t_house_user_asset.asset_id AS assetId,t_house_property_community.id AS communityId,t_house_property_community.community As communityName,
+        t_house_user_asset.id, t_house_user_asset.user_id AS userId,
+t_house_user_asset.asset_id AS assetId,
+t_house_property_community.id AS communityId,
+t_house_property_community.community As communityName,
                t_house_property_building.id As buildingId,t_house_property_building.area AS buildingArea,t_house_property_building.code AS buildingCode,
                t_house_property_building_unit.id AS unitId,t_house_design_model.area AS unitArea,t_house_design_model.house_type AS houseType,
                t_house_asset.number AS roomNumber,

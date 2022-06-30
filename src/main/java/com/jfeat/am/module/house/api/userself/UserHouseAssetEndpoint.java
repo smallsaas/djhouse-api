@@ -56,6 +56,7 @@ public class UserHouseAssetEndpoint {
     @GetMapping("/community")
     public Tip getHousePropertyCommunityByTenantId() {
         Long tenantId = JWTKit.getOrgId();
+        System.out.println(tenantId);
         return SuccessTip.create(queryHousePropertyCommunityDao.queryHouseCommunityByTenantId(tenantId));
     }
 
@@ -114,9 +115,9 @@ public class UserHouseAssetEndpoint {
                 }
             }
         }
-        Page<HouseAsset> page = new Page<>();
-        page.setRecords(houseAssetList);
-        return SuccessTip.create(page);
+//        Page<HouseAsset> page = new Page<>();
+//        page.setRecords(houseAssetList);
+        return SuccessTip.create(houseAssetList);
     }
 
     @GetMapping("/asset/details/{assetId}")

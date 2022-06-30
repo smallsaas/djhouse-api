@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -49,10 +52,8 @@ public class UserEquityDemandSupplyEndpoint {
         } catch (DuplicateKeyException e) {
             throw new BusinessException(BusinessCode.DuplicateKey);
         }
-
         return SuccessTip.create(affected);
     }
-
 
 
     @ApiOperation(value = "HouseEquityDemandSupply 列表信息", response = HouseEquityDemandSupplyRecord.class)
@@ -82,6 +83,8 @@ public class UserEquityDemandSupplyEndpoint {
 
                                                 @RequestParam(name = "area", required = false) BigDecimal area,
                                                 @RequestParam(name = "orderBy", required = false) String orderBy,
+                                                @RequestParam(name = "leftRange", required = false) Double leftRange,
+                                                @RequestParam(name = "rightRange", required = false) Double rightRange,
                                                 @RequestParam(name = "sort", required = false) String sort) {
 
         if (orderBy != null && orderBy.length() > 0) {
@@ -104,15 +107,77 @@ public class UserEquityDemandSupplyEndpoint {
         record.setArea(area);
 
 
-        List<HouseEquityDemandSupplyRecord> houseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, record, tag, search, orderBy, null, null,null);
+        List<HouseEquityDemandSupplyRecord> houseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, record, tag, search, orderBy, null, null, leftRange, rightRange);
 
-        for (HouseEquityDemandSupply houseEquityDemandSupply:houseEquityDemandSupplyPage){
+        for (HouseEquityDemandSupply houseEquityDemandSupply : houseEquityDemandSupplyPage) {
             houseEquityDemandSupply.setUserId(null);
-            houseEquityDemandSupply.setPhoneNumber(null);
-        }
+            houseEquityDemandSupply.setUsername(null);
+            String number = houseEquityDemandSupply.getPhoneNumber();
 
+            houseEquityDemandSupply.setPhoneNumber(number.substring(0, 1).concat("****").concat(number.substring(number.length() - 1, number.length())));
+            houseEquityDemandSupply.setUserAvatar(null);
+        }
         page.setRecords(houseEquityDemandSupplyPage);
 
         return SuccessTip.create(page);
     }
+
+    @GetMapping("/userDemandSupply")
+    public Tip getDemandSupply(
+            Page<HouseEquityDemandSupplyRecord> page, @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+            @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "areaRange", required = false) Double areaRange,
+            @RequestParam(name = "option",required = false) String option,
+            @RequestParam(name = "area", required = false) BigDecimal area) {
+
+
+        page.setCurrent(pageNum);
+        page.setSize(pageSize);
+        HouseEquityDemandSupplyRecord record = new HouseEquityDemandSupplyRecord();
+        record.setArea(area);
+        record.setUserId(JWTKit.getUserId());
+
+        Double leftRange = null;
+        Double rightRange = null;
+
+
+        List<BigDecimal> demandArea = new LinkedList<>();
+        List<BigDecimal> supplyArea = new LinkedList<>();
+        List<HouseEquityDemandSupplyRecord> houseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, record, null, search, null, null, null, leftRange, rightRange);
+
+        for (HouseEquityDemandSupply houseEquityDemandSupply : houseEquityDemandSupplyPage) {
+            houseEquityDemandSupply.setUserId(null);
+            houseEquityDemandSupply.setUsername(null);
+            String number = houseEquityDemandSupply.getPhoneNumber();
+            if (number!=null){
+                houseEquityDemandSupply.setPhoneNumber(number.substring(0, 1).concat("****").concat(number.substring(number.length() - 1, number.length())));
+            }
+            houseEquityDemandSupply.setUserAvatar(null);
+            if (houseEquityDemandSupply.getEquityOption().equals(1)){
+                demandArea.add(houseEquityDemandSupply.getArea());
+            }
+            if (houseEquityDemandSupply.getEquityOption().equals(2)){
+                supplyArea.add(houseEquityDemandSupply.getArea());
+            }
+        }
+        BigDecimal max = Collections.max(demandArea);
+        BigDecimal min  = Collections.min(supplyArea);
+
+        HouseEquityDemandSupplyRecord resultRecord = new HouseEquityDemandSupplyRecord();
+        if ("demand".equals(option)){
+            resultRecord.setEquityOption(2);
+            leftRange = max.doubleValue();
+        }
+        if ("supply".equals(option)){
+            resultRecord.setEquityOption(1);
+            rightRange = min.doubleValue();
+        }
+        List<HouseEquityDemandSupplyRecord> resultHouseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, resultRecord, null, search, null, null, null, leftRange, rightRange);
+        page.setRecords(resultHouseEquityDemandSupplyPage);
+
+        return SuccessTip.create(page);
+    }
+
+
 }
