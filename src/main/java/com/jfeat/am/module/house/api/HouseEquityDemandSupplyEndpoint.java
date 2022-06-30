@@ -163,10 +163,10 @@ public class HouseEquityDemandSupplyEndpoint {
         Double leftRange =null;
         Double rightRange = null;
 
-        if (areaRange.length==1){
+        if (areaRange!=null && areaRange.length==1){
             leftRange =areaRange[0];
         }
-        if (areaRange.length>0 && areaRange.length<3){
+        if (areaRange!=null && areaRange.length>0 && areaRange.length<3){
             leftRange =areaRange[0];
            rightRange = areaRange[1];
         }

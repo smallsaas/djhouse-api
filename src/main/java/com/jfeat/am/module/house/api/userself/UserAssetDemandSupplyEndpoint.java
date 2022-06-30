@@ -5,11 +5,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.common.annotation.Permission;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.api.permission.HouseAssetDemandSupplyPermission;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDemandSupplyDao;
+import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingUnitDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetDemandSupplyRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetDemandSupplyService;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetDemandSupply;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
@@ -42,6 +46,12 @@ public class UserAssetDemandSupplyEndpoint {
     @Resource
     QueryHouseUserAssetDao queryHouseUserAssetDao;
 
+    @Resource
+    QueryHouseAssetDao queryHouseAssetDao;
+
+    @Resource
+    QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
+
     @BusinessLog(name = "HouseAssetDemandSupply", value = "create HouseAssetDemandSupply")
     @PostMapping
     @ApiOperation(value = "新建 HouseAssetDemandSupply", response = HouseAssetDemandSupply.class)
@@ -55,6 +65,11 @@ public class UserAssetDemandSupplyEndpoint {
             if (houseUserAsset==null || !(houseUserAsset.getUserId().equals(JWTKit.getUserId()))){
                 throw new BusinessException(BusinessCode.CodeBase, "该用户没有房产");
             }
+            HouseAsset houseAsset =  queryHouseAssetDao.queryMasterModel(entity.getAssetId());
+            Long unitId = houseAsset.getUnitId();
+            HousePropertyBuildingUnit housePropertyBuildingUnit = queryHousePropertyBuildingUnitDao.queryMasterModel(unitId);
+            entity.setDesignModelId(housePropertyBuildingUnit.getDesignModelId());
+
         }
         Long userId = JWTKit.getUserId();
         entity.setUserId(userId);
@@ -127,6 +142,8 @@ public class UserAssetDemandSupplyEndpoint {
         return SuccessTip.create(page);
     }
 
+
+//    我的房屋买卖
 
     @GetMapping("/userDemandSupply")
     public Tip getHouseAssetDemandSupply(Page<HouseAssetDemandSupplyRecord> page,

@@ -62,6 +62,7 @@ public class UserVrCategoryEndpoint {
         Map<String,Object> map = new HashMap<>();
         JSONArray list = dataServiceService.getList(page, entity.getId(), DataServiceServiceImpl.KEY_ROW_ID);
 
+//        获取分类名称
         for (int i=0;i<list.size();i++){
             JSONObject item = (JSONObject) list.get(i);
             JSONObject extra = (JSONObject) item.get("extra");
@@ -70,27 +71,45 @@ public class UserVrCategoryEndpoint {
             String value = valueJson.getString("value");
             valueList.add(value);
         }
+
+
         for (String value:valueList){
             if ("supplier".equals(value)){
                 List<SupplierRecord> supplierRecords = querySupplierDao.queryAllSupplier();
+                JSONArray jsonArray = new JSONArray();
+
 
                 for (int i=0;i<supplierRecords.size();i++){
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("id",supplierRecords.get(i).getId());
+                    jsonObject.put("name",supplierRecords.get(i).getName());
+                    jsonObject.put("vrUrl",supplierRecords.get(i).getLink());
+
+
                     String snapshot =  supplierRecords.get(i).getSnapshot();
                     String pattern = "/attachments(.*)\\.jpg";
                     Pattern r = Pattern.compile(pattern);
                     if (snapshot!=null){
                         Matcher m = r.matcher(snapshot);
                         if (m.find()) {
-                            supplierRecords.get(i).setSnapshotUrl(m.group(0));
+                            jsonObject.put("snapshotUrl",m.group(0));
+//                            supplierRecords.get(i).setSnapshotUrl();
                         }
                     }
+                    jsonArray.add(jsonObject);
 
                 }
-                map.put(value,supplierRecords);
+                map.put(value,jsonArray);
             }
             if ("houseType".equals(value)){
                 List<HouseDesignModelRecord> houseDesignModelRecords = queryHouseDesignModelDao.queryAllHouseDesignModel();
+                JSONArray jsonArray = new JSONArray();
                 for (int i=0;i<houseDesignModelRecords.size();i++){
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("id",houseDesignModelRecords.get(i).getId());
+                    jsonObject.put("name",houseDesignModelRecords.get(i).getHouseType());
+                    jsonObject.put("vrUrl",houseDesignModelRecords.get(i).getVrLink());
+
                     String snapshot =  houseDesignModelRecords.get(i).getVrSnapshot();
                     String pattern = "/attachments(.*)\\.jpg";
 
@@ -98,12 +117,14 @@ public class UserVrCategoryEndpoint {
                     if (snapshot!=null){
                         Matcher m = r.matcher(snapshot);
                         if (m.find()) {
-                            houseDesignModelRecords.get(i).setSnapshotUrl(m.group(0));
+                            jsonObject.put("snapshotUrl",m.group(0));
+//                            houseDesignModelRecords.get(i).setSnapshotUrl(m.group(0));
                         }
                     }
+                    jsonArray.add(jsonObject);
 
                 }
-                map.put(value,houseDesignModelRecords);
+                map.put(value,jsonArray);
             }
         }
         return SuccessTip.create(map);
