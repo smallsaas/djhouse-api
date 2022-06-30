@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.core.model.UserType;
+import com.jfeat.am.module.house.services.domain.model.SupplierBindModel;
+import com.jfeat.am.module.house.services.domain.model.SupplierBindType;
 import com.jfeat.am.module.house.services.domain.service.SupplierService;
 import com.jfeat.am.module.house.services.gen.crud.model.SupplierModel;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDSupplierServiceImpl;
@@ -187,5 +189,62 @@ public class SupplierServiceImpl extends CRUDSupplierServiceImpl implements Supp
         return convert.toString().toUpperCase();
     }
 
+
+    //绑定
+    @Override
+    public Integer bindSupplier(SupplierBindModel supplierBindModel){
+
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("end_user_id",supplierBindModel.getUserId());
+        List list = supplierMapper.selectList(queryWrapper);
+        if(supplierBindModel.getSupplierId() == null){
+            throw new BusinessException(BusinessCode.BadRequest,"供应商id不能为空");
+        }
+        if( list.size()>0){
+            throw new BusinessException(BusinessCode.BadRequest,"该用户已绑定其他供应商");
+        }
+
+        Supplier supplier = supplierMapper.selectById(supplierBindModel.getSupplierId());
+        if(supplier == null){
+            throw new BusinessException(BusinessCode.BadRequest,"供应商不存在");
+        }
+        supplier.setBindType(SupplierBindType.BIND);
+        supplier.setBindUserId(supplierBindModel.getUserId());
+        supplier.setEndUserId(supplierBindModel.getUserId());
+
+        int i = supplierMapper.updateById(supplier);
+        return i;
+    }
+
+
+    @Override
+    public Integer unBind(SupplierBindModel supplierBindModel){
+        Integer effect = 0;
+        List<Supplier> list = new ArrayList<>();
+        //如果有用户id
+        if(supplierBindModel.getUserId()!= null){
+            QueryWrapper<Supplier> queryWrapper = new QueryWrapper();
+            queryWrapper.eq("end_user_id",supplierBindModel.getUserId());
+            list = supplierMapper.selectList(queryWrapper);
+        }
+         //如果有供应商id
+         if(supplierBindModel.getSupplierId() != null){
+             Supplier supplier = supplierMapper.selectById(supplierBindModel.getSupplierId());
+             list.add(supplier);
+         }
+         for(Supplier supp:list){
+             supp.setBindType(SupplierBindType.UNBIND);
+             supp.setEndUserId(null);
+             supp.setBindUserId(null);
+             effect += supplierMapper.updateById(supp);
+         }
+        return effect;
+    }
+
+
+/*    @Override
+    public String SupplierCode(SupplierBindModel supplierBindModel){
+
+    }*/
 
 }

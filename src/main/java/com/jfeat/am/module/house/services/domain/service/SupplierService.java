@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.services.domain.service;
 
+import com.jfeat.am.module.house.services.domain.model.SupplierBindModel;
 import com.jfeat.am.module.house.services.gen.crud.model.SupplierModel;
 import com.jfeat.am.module.house.services.gen.crud.service.CRUDSupplierService;
 import com.jfeat.am.module.house.services.gen.persistence.model.Supplier;
@@ -18,4 +19,8 @@ public interface SupplierService extends CRUDSupplierService{
     Integer deleteOne(Long id);
 
     String genAccountName(String name);
+
+    Integer bindSupplier(SupplierBindModel supplierBindModel);
+
+    Integer unBind(SupplierBindModel supplierBindModel);
 }

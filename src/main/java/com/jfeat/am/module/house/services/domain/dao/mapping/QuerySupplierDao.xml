@@ -11,6 +11,9 @@
         , t_supplier.end_user_id as endUserId
         , t_supplier.link as link
         , t_supplier.snapshot as snapshot
+        , t_supplier.bind_key as bindKey
+        , t_supplier.bind_type as bindType
+        , t_supplier.bind_user_id as bindUserId
     </sql>
 
     <sql id="QueryOwnedOrgIds">

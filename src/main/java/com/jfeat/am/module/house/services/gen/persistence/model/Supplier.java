@@ -1,9 +1,7 @@
 package com.jfeat.am.module.house.services.gen.persistence.model;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
 
@@ -54,6 +52,7 @@ public class Supplier extends Model<Supplier> {
 
     private Long userId;
 
+    @TableField(updateStrategy = FieldStrategy.IGNORED )
     private Long endUserId;
 
 
@@ -63,6 +62,36 @@ public class Supplier extends Model<Supplier> {
     private String link;
 
     private String snapshot;
+    @TableField(updateStrategy = FieldStrategy.IGNORED )
+    private String bindKey;
+
+    private Integer bindType;
+    @TableField(updateStrategy = FieldStrategy.IGNORED )
+    private Long bindUserId;
+
+    public Long getBindUserId() {
+        return bindUserId;
+    }
+
+    public void setBindUserId(Long bindUserId) {
+        this.bindUserId = bindUserId;
+    }
+
+    public Integer getBindType() {
+        return bindType;
+    }
+
+    public void setBindType(Integer bindType) {
+        this.bindType = bindType;
+    }
+
+    public String getBindKey() {
+        return bindKey;
+    }
+
+    public void setBindKey(String bindKey) {
+        this.bindKey = bindKey;
+    }
 
     public String getLink() {
         return link;

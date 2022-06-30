@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.jfeat.am.module.house.services.domain.model.SupplierBindModel;
 import com.jfeat.am.module.house.services.gen.crud.model.SupplierModel;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.plus.META;
@@ -182,4 +183,17 @@ public class SupplierEndpoint {
 
         return SuccessTip.create(page);
     }
+
+    @PutMapping("/bind")
+    public Tip BindSupplier(@RequestBody SupplierBindModel supplierBindModel){
+        Integer integer = supplierService.bindSupplier(supplierBindModel);
+        return SuccessTip.create(integer);
+    }
+
+    @PutMapping("/unBind")
+    public Tip UnBindSupplier(@RequestBody SupplierBindModel supplierBindModel){
+        Integer integer = supplierService.unBind(supplierBindModel);
+        return SuccessTip.create(integer);
+    }
+
 }
