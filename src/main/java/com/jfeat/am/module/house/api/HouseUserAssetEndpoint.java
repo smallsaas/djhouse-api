@@ -4,10 +4,9 @@ package com.jfeat.am.module.house.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseDecoratePlanDao;
+import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseUserAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.dao.DuplicateKeyException;
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.request.Ids;
 import com.jfeat.crud.base.tips.Tip;
@@ -46,6 +44,7 @@ import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -83,7 +82,7 @@ public class HouseUserAssetEndpoint {
     QueryHouseDecoratePlanDao queryHouseDecoratePlanDao;
 
     @Resource
-    HouseRentTagService houseRentTagService;
+    QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
 
 
 
@@ -136,6 +135,18 @@ public class HouseUserAssetEndpoint {
             @ApiImplicitParam(name = "id", dataType = "Long"),
             @ApiImplicitParam(name = "userId", dataType = "Long"),
             @ApiImplicitParam(name = "assetId", dataType = "Long"),
+            @ApiImplicitParam(name = "rentStatus", dataType = "Integer"),
+            @ApiImplicitParam(name = "rentTitle", dataType = "String"),
+            @ApiImplicitParam(name = "rentPrice", dataType = "BigDecimal"),
+            @ApiImplicitParam(name = "rentDescribe", dataType = "String"),
+            @ApiImplicitParam(name = "rentTags", dataType = "String"),
+            @ApiImplicitParam(name = "slideshow", dataType = "String"),
+            @ApiImplicitParam(name = "rentTime", dataType = "Date"),
+            @ApiImplicitParam(name = "note", dataType = "String"),
+            @ApiImplicitParam(name = "clashUserId", dataType = "Long"),
+            @ApiImplicitParam(name = "clashDescribe", dataType = "String"),
+            @ApiImplicitParam(name = "clashCertificate", dataType = "String"),
+            @ApiImplicitParam(name = "createTime", dataType = "Date"),
             @ApiImplicitParam(name = "orderBy", dataType = "String"),
             @ApiImplicitParam(name = "sort", dataType = "String")
     })
@@ -149,11 +160,33 @@ public class HouseUserAssetEndpoint {
 
                                        @RequestParam(name = "userId", required = false) Long userId,
 
-                                       @RequestParam(name = "username" ,required = false) String username,
-
-                                       @RequestParam(name = "userPhone",required = false) String userPhone,
-
                                        @RequestParam(name = "assetId", required = false) Long assetId,
+
+                                       @RequestParam(name = "rentStatus", required = false) Integer rentStatus,
+
+                                       @RequestParam(name = "rentTitle", required = false) String rentTitle,
+
+                                       @RequestParam(name = "rentPrice", required = false) BigDecimal rentPrice,
+
+                                       @RequestParam(name = "rentDescribe", required = false) String rentDescribe,
+
+                                       @RequestParam(name = "rentTags", required = false) String rentTags,
+
+                                       @RequestParam(name = "slideshow", required = false) String slideshow,
+
+                                       @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                       @RequestParam(name = "rentTime", required = false) Date rentTime,
+
+                                       @RequestParam(name = "note", required = false) String note,
+
+                                       @RequestParam(name = "clashUserId", required = false) Long clashUserId,
+
+                                       @RequestParam(name = "clashDescribe", required = false) String clashDescribe,
+
+                                       @RequestParam(name = "clashCertificate", required = false) String clashCertificate,
+
+                                       @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                       @RequestParam(name = "createTime", required = false) Date createTime,
                                        @RequestParam(name = "orderBy", required = false) String orderBy,
                                        @RequestParam(name = "sort", required = false) String sort) {
 
@@ -174,14 +207,23 @@ public class HouseUserAssetEndpoint {
         HouseUserAssetRecord record = new HouseUserAssetRecord();
         record.setUserId(userId);
         record.setAssetId(assetId);
-        record.setUsername(username);
-        record.setUserPhone(userPhone);
+        record.setRentStatus(rentStatus);
+        record.setRentTitle(rentTitle);
+        record.setRentPrice(rentPrice);
+        record.setRentDescribe(rentDescribe);
+        record.setRentTags(rentTags);
+        record.setSlideshow(slideshow);
+        record.setRentTime(rentTime);
+        record.setNote(note);
+        record.setClashUserId(clashUserId);
+        record.setClashDescribe(clashDescribe);
+        record.setClashCertificate(clashCertificate);
+        record.setCreateTime((Data) createTime);
 
 
         List<HouseUserAssetRecord> houseUserAssetPage = queryHouseUserAssetDao.findHouseUserAssetPage(page, record, tag, search, orderBy, null, null);
-        for (int i = 0; i < houseUserAssetPage.size(); i++) {
 
-        }
+
         page.setRecords(houseUserAssetPage);
 
         return SuccessTip.create(page);
@@ -212,50 +254,18 @@ public class HouseUserAssetEndpoint {
     }
 
 
+
     @GetMapping("/rent/details/{id}")
     public Tip getALlRentAsset(@PathVariable("id") Long id) {
-        HouseAssetRecord houseAssetRecord = queryHouseAssetDao.queryHouseAssetDetails1(id);
+        HouseUserAssetModel houseAssetRecord = queryHouseUserAssetDao.queryMasterModel(id);
         if (houseAssetRecord!=null){
-            List<Product> productList= queryHouseDecoratePlanDao.queryProductListByDesignModel(houseAssetRecord.getDesignModelId());
+            HousePropertyBuildingUnit housePropertyBuildingUnit =  queryHousePropertyBuildingUnitDao.queryMasterModel(houseAssetRecord.getUnitId());
+            List<Product> productList= queryHouseDecoratePlanDao.queryProductListByDesignModel(housePropertyBuildingUnit.getDesignModelId());
             if (productList!=null){
-                houseAssetRecord.setDecoratePlanProductList(productList);
+                houseAssetRecord.setProductList(productList);
             }
         }
-//        查询家居列表
-
-
-
-//        添加tag
-        String s = JSON.toJSONString(houseAssetRecord);
-        JSONObject jsonObject = JSON.parseObject(s);
-        HouseUserAsset houseUserAsset = new HouseUserAsset();
-        houseUserAsset.setAssetId(id);
-        List<String> tags = new ArrayList<>();
-        HouseUserAsset userTags = queryHouseUserAssetDao.queryHouseUserAssetByEntity(houseUserAsset);
-        if (userTags.getRentTags()!=null && "".equals(userTags.getRentTags())){
-            List<HouseRentTag> houseRentTagList =  houseRentTagService.getHouseRentTags(userTags.getRentTags());
-
-            for (HouseRentTag houseRentTag:houseRentTagList){
-                tags.add(houseRentTag.getCnName());
-            }
-        }
-
-
-
-        houseUserAsset = queryHouseUserAssetDao.queryHouseUserAssetByAssetId(id);
-        if (houseUserAsset!=null){
-            jsonObject.put("rentPrice",houseUserAsset.getRentPrice());
-            jsonObject.put("rentDescribe",houseUserAsset.getRentDescribe());
-            jsonObject.put("slideshow",houseUserAsset.getSlideshow());
-            jsonObject.put("rentTime",houseUserAsset.getRentTime());
-        }else {
-            jsonObject.put("rentPrice",null);
-            jsonObject.put("rentDescribe",null);
-            jsonObject.put("slideshow",null);
-            jsonObject.put("rentTime",null);
-        }
-        jsonObject.put("tags",tags);
-        return SuccessTip.create(jsonObject);
+        return SuccessTip.create(houseAssetRecord);
     }
 
 
@@ -287,7 +297,7 @@ public class HouseUserAssetEndpoint {
         HouseUserAsset houseUserAsset = queryHouseUserAssetDao.queryBasicUserAsset(assetId);
         HouseUserAsset newHouseUserAsset = new HouseUserAsset();
         newHouseUserAsset.setUserId(houseUserAsset.getClashUserId());
-        newHouseUserAsset.setRentStatus(false);
+        newHouseUserAsset.setRentStatus(0);
         newHouseUserAsset.setClashUserId(null);
         newHouseUserAsset.setClashDescribe(null);
         newHouseUserAsset.setClashCertificate(null);

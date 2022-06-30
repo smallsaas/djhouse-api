@@ -38,7 +38,9 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @ApiModelProperty(value = "资产id")
     private Long assetId;
 
-    private Boolean rentStatus;
+    private Integer rentStatus;
+
+    private String rentTitle;
 
     private Date rentTime;
 
@@ -50,10 +52,6 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
 
     private String slideshow;
 
-
-
-
-
     private Long clashUserId;
 
     private String clashDescribe;
@@ -63,6 +61,18 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     private String note;
 
     private Data createTime;
+
+
+    @TableField(exist = false)
+    private String extra;
+
+    public String getExtra() {
+        return extra;
+    }
+
+    public void setExtra(String extra) {
+        this.extra = extra;
+    }
 
 
 
@@ -92,6 +102,7 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private Long unitId;
 
+
     @ApiModelProperty(value = "户型")
     @TableField(exist = false)
     private String houseType;
@@ -100,13 +111,20 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private BigDecimal unitArea;
 
+
     @ApiModelProperty(value = "房屋编号")
     @TableField(exist = false)
     private String roomNumber;
 
+    @ApiModelProperty(value = "楼层")
+    @TableField(exist = false)
+    private Integer floor;
+
+
     @ApiModelProperty("地址")
     @TableField(exist = false)
     private String address;
+
 
     @ApiModelProperty("用户名")
     @TableField(exist = false)
@@ -135,6 +153,13 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     private String clashUserAvatar;
 
 
+    public String getRentTitle() {
+        return rentTitle;
+    }
+
+    public void setRentTitle(String rentTitle) {
+        this.rentTitle = rentTitle;
+    }
 
     public String getClashUserName() {
         return clashUserName;
@@ -154,13 +179,12 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
         return this;
     }
 
-    public Boolean getRentStatus() {
+    public Integer getRentStatus() {
         return rentStatus;
     }
 
-    public HouseUserAsset setRentStatus(Boolean rentStatus) {
+    public void setRentStatus(Integer rentStatus) {
         this.rentStatus = rentStatus;
-        return this;
     }
 
     public Data getCreateTime() {

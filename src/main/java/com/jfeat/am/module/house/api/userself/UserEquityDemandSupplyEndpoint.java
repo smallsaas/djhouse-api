@@ -161,19 +161,41 @@ public class UserEquityDemandSupplyEndpoint {
                 supplyArea.add(houseEquityDemandSupply.getArea());
             }
         }
-        BigDecimal max = Collections.max(demandArea);
-        BigDecimal min  = Collections.min(supplyArea);
+        BigDecimal max = null;
+        if (demandArea!=null && demandArea.size()>0){
+            max  = Collections.max(demandArea);
+        }
+
+        BigDecimal min=null;
+        if (supplyArea!=null && supplyArea.size()>0){
+            min  = Collections.min(supplyArea);
+        }
+
 
         HouseEquityDemandSupplyRecord resultRecord = new HouseEquityDemandSupplyRecord();
         if ("demand".equals(option)){
             resultRecord.setEquityOption(2);
-            leftRange = max.doubleValue();
+            if (max!=null){
+                leftRange = max.doubleValue();
+            }
+
         }
         if ("supply".equals(option)){
             resultRecord.setEquityOption(1);
-            rightRange = min.doubleValue();
+            if (min!=null){
+                rightRange = min.doubleValue();
+            }
+
         }
         List<HouseEquityDemandSupplyRecord> resultHouseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, resultRecord, null, search, null, null, null, leftRange, rightRange);
+        for (HouseEquityDemandSupply houseEquityDemandSupply : resultHouseEquityDemandSupplyPage) {
+            houseEquityDemandSupply.setUserId(null);
+            houseEquityDemandSupply.setUsername(null);
+            String number = houseEquityDemandSupply.getPhoneNumber();
+
+            houseEquityDemandSupply.setPhoneNumber(number.substring(0, 1).concat("****").concat(number.substring(number.length() - 1, number.length())));
+            houseEquityDemandSupply.setUserAvatar(null);
+        }
         page.setRecords(resultHouseEquityDemandSupplyPage);
 
         return SuccessTip.create(page);

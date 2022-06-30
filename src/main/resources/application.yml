@@ -64,6 +64,12 @@ spring:
     data: classpath*:sql/**/*-data.sql
     initialize: false
 
+crud-plus:
+  features:
+    - eav
+    - saas
+    - tag
+
 logging:
   level: debug
   file: logs/trace.log
