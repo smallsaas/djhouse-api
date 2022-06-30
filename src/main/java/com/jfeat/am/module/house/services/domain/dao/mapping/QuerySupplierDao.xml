@@ -39,9 +39,9 @@
         SELECT
         <include refid="Base_Column_List"/>
         ,t_sys_user.account as 'account'
-
+        ,t_end_user.`name` as 'endUserName'
         FROM t_supplier left join t_sys_user on t_sys_user.id = t_supplier.user_id
-
+        left join t_end_user on t_end_user.id = t_supplier.end_user_id
 
         <if test="record.orgId > 0">
             ,(<include refid="QueryOwnedOrgIds"></include>) AS ownedOrgIds

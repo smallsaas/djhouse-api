@@ -8,6 +8,16 @@ import com.jfeat.am.module.house.services.gen.persistence.model.Supplier;
 public class SupplierRecord extends Supplier{
     String account;
     String snapshotUrl;
+    String endUserName;
+
+    public String getEndUserName() {
+        return endUserName;
+    }
+
+    public void setEndUserName(String endUserName) {
+        this.endUserName = endUserName;
+    }
+
 
     public String getSnapshotUrl() {
         return snapshotUrl;
