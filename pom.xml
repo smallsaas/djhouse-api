@@ -95,6 +95,12 @@
             <artifactId>eav</artifactId>
             <version>2.1.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>saas-mall-api</artifactId>
+            <version>1.2.0</version>
+        </dependency>
         
         
     </dependencies>
