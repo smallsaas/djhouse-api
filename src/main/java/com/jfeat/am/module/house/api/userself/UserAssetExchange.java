@@ -7,7 +7,9 @@ import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetExchangeRequestDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetMatchLogDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseAssetMatchLogRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetExchangeRequestService;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchangeRequest;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetMatchLog;
@@ -88,23 +90,56 @@ public class UserAssetExchange {
         return SuccessTip.create(list);
     }
 
-    @GetMapping("/matchResult")
-    public Tip getHouseAssetExchangeRequestResult(@RequestParam("assetId") Long assetId) {
-        List<HouseAssetMatchLog> houseAssetMatchLogs = queryHouseAssetMatchLogDao.queryHouseAssetMatchLogByUserId(assetId, JWTKit.getUserId());
-        List<Map<String, Object>> list = new ArrayList<>();
-        for (HouseAssetMatchLog houseAssetMatchLog : houseAssetMatchLogs) {
-            Map<String, Object> houseAssetMap = new HashMap<>();
-            HouseAsset ownerHouseAsset = queryHouseAssetDao.queryMasterModel(houseAssetMatchLog.getOwnerAssetId());
-            HouseAsset matchedHouseAsset = queryHouseAssetDao.queryMasterModel(houseAssetMatchLog.getMathchedAssetId());
-            houseAssetMap.put("owner", ownerHouseAsset);
-            houseAssetMap.put("matchde", matchedHouseAsset);
-            list.add(houseAssetMap);
+    @GetMapping("/userAssetExchangeDemand")
+    public Tip getUserAssetExchangeDemand(Page<HouseAssetExchangeRequestRecord> page,
+                                          @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                          @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize){
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        HouseAssetExchangeRequestRecord record = new HouseAssetExchangeRequestRecord();
+        record.setUserId(JWTKit.getUserId());
+        page.setSize(pageSize);
+        page.setCurrent(pageNum);
+        List<HouseAssetModel> houseAssetModels = new ArrayList<>();
+        List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecordList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(page,record,null,null,null,null,null);
+        for (HouseAssetExchangeRequestRecord exchangeRequestRecord:houseAssetExchangeRequestRecordList){
+            List<String> matchedAssetRange = Arrays.asList(exchangeRequestRecord.getTargetAssetRange().split(","));
+            HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(exchangeRequestRecord.getAssetId());
+            houseAssetModel.setExchangeNumber(matchedAssetRange.size());
+            houseAssetModels.add(houseAssetModel);
 
         }
-        return SuccessTip.create(list);
+        Page<HouseAssetModel> houseAssetModelPage = new Page<>();
+        houseAssetModelPage.setCurrent(pageNum);
+        houseAssetModelPage.setSize(pageNum);
+        houseAssetModelPage.setRecords(houseAssetModels);
+        return SuccessTip.create(houseAssetModelPage);
     }
 
 
+
+//    请求交换结构
+    @GetMapping("/matchResult")
+    public Tip getHouseAssetExchangeRequestResult(Page<HouseAssetMatchLogRecord> page,
+                                                  @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                                  @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        HouseAssetMatchLogRecord record = new HouseAssetMatchLogRecord();
+        record.setOwnerUserId(JWTKit.getUserId());
+        List<HouseAssetMatchLogRecord> houseAssetMatchLogs = queryHouseAssetMatchLogDao.findHouseAssetMatchLogPage(page,record,null,null,null,null,null);
+        for (int i=0;i<houseAssetMatchLogs.size();i++) {
+            Map<String, Object> houseAssetMap = new HashMap<>();
+            HouseAsset ownerHouseAsset = queryHouseAssetDao.queryMasterModel(houseAssetMatchLogs.get(i).getOwnerAssetId());
+            HouseAsset matchedHouseAsset = queryHouseAssetDao.queryMasterModel(houseAssetMatchLogs.get(i).getMathchedAssetId());
+            houseAssetMatchLogs.get(i).setOwner(ownerHouseAsset);
+            houseAssetMatchLogs.get(i).setMatcher(matchedHouseAsset);
+        }
+        page.setRecords(houseAssetMatchLogs);
+        return SuccessTip.create(page);
+    }
+
+
+//    更新房屋请求
     @PutMapping("/{id}")
     public Tip updateHouseAssetExchangeRequest(@PathVariable Long id, @RequestBody HouseAssetExchangeRequest entity, @RequestParam(value = "isSameHouseType", defaultValue = "true", required = false) Boolean isSameHouseType) {
         System.out.println(JWTKit.getUserId());
@@ -120,6 +155,7 @@ public class UserAssetExchange {
     }
 
 
+//    删除资产交换请求
     @DeleteMapping("/{id}")
     public Tip deleteHouseAssetExchangeRequest(@PathVariable Long id) {
         HouseAssetExchangeRequest houseAssetExchangeRequest = queryHouseAssetExchangeRequestDao.queryHouseAssetExchangeRequestByAssetIdAndUserId(id, JWTKit.getUserId());

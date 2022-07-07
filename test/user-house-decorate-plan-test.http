@@ -1,7 +1,7 @@
 @endpoint=http://localhost:8080
 @service=http://app1.console.smallsaas.cn:8001
 
-@token =Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6IiIsInVzZXJJZCI6Mjg3LCJhY2NvdW50IjoiMTIyNmJjMjk2OGI0NDYwMmE2YWQ1N2UwZDY2N2JhOTUiLCJkb21haW5Vc2VySWQiOiIiLCJpYXQiOjE2NTQ4MjUxMTgsImp0aSI6IjI4NyIsInN1YiI6IjEyMjZiYzI5NjhiNDQ2MDJhNmFkNTdlMGQ2NjdiYTk1IiwiZXhwIjoxNjU1MDg0MzE4fQ.CllbeQ_mbCjaNjbkNLza6GqRnbJIc8cRUTWHL80qLvqkwua5bLbtQU5jLAyKKl-oCnGtqjVogwG-m4B5vuwvUQ
+@token=Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6MzAsInVzZXJJZCI6Mjk4LCJhY2NvdW50IjoiNTc0ZTY2N2VlODEyNDI1OTlhMzZkOWU3YzJmMGJlYWEiLCJkb21haW5Vc2VySWQiOiIiLCJpYXQiOjE2NTY2Mjk3ODIsImp0aSI6IjI5OCIsInN1YiI6IjU3NGU2NjdlZTgxMjQyNTk5YTM2ZDllN2MyZjBiZWFhIiwiZXhwIjoxNjU2ODg4OTgyfQ.xpZSWhJa-RFxmzI_-9NI_HJ0s-2b-XAdKT8DYLxqs96MDrxQF-UPL8WSP7zeDZNsWknnuYzpcDlqiNCiUpFz9A
 
 
 
@@ -9,7 +9,7 @@
 GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans?pageNum=1&pageSize=10
 Authorization:{{token}}
 
-### 获取用户装修计划里面的id
+### 获取用户装修计划里面的家居
 GET {{endpoint}}/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans/funiture?decoratePlanId=1
 Authorization:{{token}}
 

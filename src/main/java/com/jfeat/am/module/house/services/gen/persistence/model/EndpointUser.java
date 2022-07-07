@@ -1,12 +1,15 @@
 package com.jfeat.am.module.house.services.gen.persistence.model;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import java.io.Serializable;
+import java.util.List;
+
+import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
+import com.jfeat.am.module.house.services.domain.model.ProductRecord;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -114,6 +117,18 @@ public class EndpointUser extends Model<EndpointUser> {
 
       @ApiModelProperty(value = "用户所属渠道")
       private String vendor;
+
+      @ApiModelProperty(value = "用户拥有房产列表")
+      @TableField(exist = false)
+      private List<HouseUserAssetRecord> houseUserAssetRecords;
+
+      @ApiModelProperty(value = "交换记录")
+      @TableField(exist = false)
+      private List<HouseAssetExchangeRequestRecord> exchangeRequestRecords;
+
+      @ApiModelProperty(value = "团购列表")
+      @TableField(exist = false)
+      private List<Product> products;
 
     
     public Long getId() {
@@ -386,7 +401,32 @@ public class EndpointUser extends Model<EndpointUser> {
           return this;
       }
 
-      public static final String ID = "id";
+
+    public List<HouseUserAssetRecord> getHouseUserAssetRecords() {
+        return houseUserAssetRecords;
+    }
+
+    public void setHouseUserAssetRecords(List<HouseUserAssetRecord> houseUserAssetRecords) {
+        this.houseUserAssetRecords = houseUserAssetRecords;
+    }
+
+    public List<HouseAssetExchangeRequestRecord> getExchangeRequestRecords() {
+        return exchangeRequestRecords;
+    }
+
+    public void setExchangeRequestRecords(List<HouseAssetExchangeRequestRecord> exchangeRequestRecords) {
+        this.exchangeRequestRecords = exchangeRequestRecords;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
+    public static final String ID = "id";
 
       public static final String AVATAR = "avatar";
 

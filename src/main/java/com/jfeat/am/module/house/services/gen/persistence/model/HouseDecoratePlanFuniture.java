@@ -31,6 +31,8 @@ public class HouseDecoratePlanFuniture extends Model<HouseDecoratePlanFuniture> 
       @ApiModelProperty(value = "家居id")
       private Long furnitureId;
 
+      private Integer number;
+
     
     public Long getId() {
         return id;
@@ -59,7 +61,15 @@ public class HouseDecoratePlanFuniture extends Model<HouseDecoratePlanFuniture> 
           return this;
       }
 
-      public static final String ID = "id";
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    public static final String ID = "id";
 
       public static final String DECORATE_PLAN_ID = "decorate_plan_id";
 

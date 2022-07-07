@@ -40,6 +40,9 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
     @ApiModelProperty(value = "面积")
     private BigDecimal area;
 
+    @ApiModelProperty(value = "方向")
+    private String direction;
+
     @TableField(exist = false)
     private String communityName;
 
@@ -124,6 +127,14 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
     public HousePropertyBuildingUnit setArea(BigDecimal area) {
         this.area = area;
         return this;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
     @Override

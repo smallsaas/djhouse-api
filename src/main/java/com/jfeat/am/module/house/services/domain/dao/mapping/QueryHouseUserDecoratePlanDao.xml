@@ -2,11 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseUserDecoratePlanDao">
     <sql id="Base_Column_List">
-        t_house_user_decorate_plan.id, t_house_user_decorate_plan.funiture_number AS funitureNumber,t_house_user_decorate_plan.user_id AS userId, t_house_user_decorate_plan.decorate_plan_id AS decoratePlanId, t_house_user_decorate_plan.change_option AS changeOption, t_house_user_decorate_plan.funiture_id AS funitureId, t_house_user_decorate_plan.changed_funiture_id AS changedFunitureId, t_house_user_decorate_plan.note,
-t_end_user.name                      AS userName,
-               t_end_user.phone                     AS userPhone,
-               t_end_user.avatar                    AS userAvatar
-
+        t_house_user_decorate_plan.id,
+t_house_user_decorate_plan.user_id AS userId,
+t_house_user_decorate_plan.decorate_plan_id AS decoratePlanId,
+t_house_user_decorate_plan.asset_id AS assetId,
+t_house_user_decorate_plan.option_type AS optionType,
+t_house_user_decorate_plan.create_time AS createTime
     </sql>
 
 
@@ -25,7 +26,6 @@ t_end_user.name                      AS userName,
 
 
         FROM t_house_user_decorate_plan
-        JOIN t_end_user ON t_end_user.id = t_house_user_decorate_plan.user_id
 
 
         WHERE 1=1
@@ -46,21 +46,16 @@ t_end_user.name                      AS userName,
         </if>
 
 
-        <if test="record.changeOption != null and record.changeOption!= ''">
-            AND t_house_user_decorate_plan.change_option LIKE CONCAT('%',#{record.changeOption},'%')
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_user_decorate_plan.asset_id LIKE CONCAT('%',#{record.assetId},'%')
         </if>
 
-
-        <if test="record.funitureId != null and record.funitureId>0 ">
-            AND t_house_user_decorate_plan.funiture_id LIKE CONCAT('%',#{record.funitureId},'%')
+        <if test="record.optionType != null and record.optionType>0 ">
+            AND t_house_user_decorate_plan.option_type LIKE CONCAT('%',#{record.optionType},'%')
         </if>
 
-
-        <if test="record.changedFunitureId != null and record.changedFunitureId>0 ">
-            AND t_house_user_decorate_plan.changed_funiture_id LIKE CONCAT('%',#{record.changedFunitureId},'%')
-        </if>
-        <if test="record.note != null and record.note!= ''">
-            AND t_house_user_decorate_plan.note LIKE CONCAT('%',#{record.note},'%')
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_user_decorate_plan.create_time LIKE CONCAT('%',#{record.createTime},'%')
         </if>
 
         <if test="startTime != null">
@@ -74,63 +69,6 @@ t_end_user.name                      AS userName,
         OR t_house_user_decorate_plan.name LIKE CONCAT('%',#{search},'%')
     </if>
     -->
+        ORDER BY create_time DESC
     </select>
-
-    <select id="queryHouseUserDecoratePlanByUserId" resultType="HouseDecoratePlanModel">
-        SELECT dp.* FROM t_house_decorate_plan AS dp,t_house_user_decorate_plan AS udp WHERE udp.user_id=#{userId} AND udp.decorate_plan_id=dp.id
-        GROUP BY udp.decorate_plan_id
-    </select>
-
-    <select id="queryHouseUserDecoratePlanFuniture" resultType="HouseUserDecoratePlanModel">
-        SELECT t_house_user_decorate_plan.*
-        FROM t_house_user_decorate_plan
-        WHERE t_house_user_decorate_plan.decorate_plan_id = #{decoratePlanId}
-        AND t_house_user_decorate_plan.user_id = #{userId}
-    </select>
-
-    <update id="updateUserDecoratePlanFuniture">
-        UPDATE t_house_user_decorate_plan
-        <set>
-            <if test="entity.funitureNumber !=null and entity.funitureNumber!=''">
-                funiture_number = #{entity.funitureNumber},
-            </if>
-            <if test="entity.changeOption !=null and entity.changeOption!=''">
-                change_option = #{entity.changeOption},
-            </if>
-            <if test="entity.changedFunitureId !=null and entity.changedFunitureId!=''">
-                changed_funiture_id = #{entity.changedFunitureId},
-            </if>
-            <if test="entity.note !=null and entity.note!=''">
-                note = #{entity.note},
-            </if>
-        </set>
-        where user_id=#{userId} And decorate_plan_id=#{decoratePlanId} AND (funiture_id=#{funitureId} OR changed_funiture_id=#{funitureId})
-
-    </update>
-
-    <update id="removeExistsUserDecoratePlanFuniture">
-        UPDATE t_house_user_decorate_plan
-        <set>
-            <if test="entity.funitureNumber !=null and entity.funitureNumber!=''">
-                funiture_number = #{entity.funitureNumber},
-            </if>
-            <if test="entity.changeOption !=null and entity.changeOption!=''">
-                change_option = #{entity.changeOption},
-            </if>
-            <if test="1==1">
-                changed_funiture_id = null,
-            </if>
-            <if test="entity.note !=null and entity.note!=''">
-                note = #{entity.note},
-            </if>
-        </set>
-        where user_id=#{userId} And decorate_plan_id=#{decoratePlanId} AND (funiture_id=#{funitureId} OR changed_funiture_id=#{funitureId})
-    </update>
-
-    <select id="queryUserDecoratePlanFunitureExists" resultType="HouseUserDecoratePlan">
-        SELECT t_house_user_decorate_plan.*
-        FROM t_house_user_decorate_plan
-        where user_id=#{userId} And decorate_plan_id=#{decoratePlanId} AND funiture_id=#{funitureId}
-    </select>
-
 </mapper>

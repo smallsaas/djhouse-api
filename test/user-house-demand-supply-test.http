@@ -2,3 +2,31 @@
 @endpoint=http://app1.console.smallsaas.cn:8001
 @token=Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6IiIsInVzZXJJZCI6MzExLCJhY2NvdW50IjoiMDNiMzBhMjMzYzllNGFmNGI4MWQxNTE1MDdjNDQwOGIiLCJkb21haW5Vc2VySWQiOiIiLCJpYXQiOjE2NTY0NzI4MzMsImp0aSI6IjMxMSIsInN1YiI6IjAzYjMwYTIzM2M5ZTRhZjRiODFkMTUxNTA3YzQ0MDhiIiwiZXhwIjoxNjU2NzMyMDMzfQ.Y89zEBrTuOh_utVELbFcpFj-bSgVu9HFX3aHjBjBu0n1hUu2aKUoWEdj1IdYQHmbKpiQSYR2RDrstzMmgdrvkg
 
+
+GET {{endpoint}}/api/u/asset/building/5
+Authorization:{{token}}
+###
+GET {{service}}/api/crud/house/houseAssetDemandSupply/houseAssetDemandSupplyies
+Authorization:{{adminToken}}
+
+
+### 产权买卖
+# assetOption 1：卖 2：买
+GET {{endpoint}}/api/u/house/houseAssetDemandSupply/houseAssetDemandSupplyies?assetOption=1
+Authorization:{{token}}
+
+### 添加产权买卖
+# assetOption 1：卖 2：买
+# 卖填assetId（资产id）  买需要填designModelId （户型id）
+# 卖必须是用户拥有的产权
+POST {{endpoint}}/api/u/house/houseAssetDemandSupply/houseAssetDemandSupplyies
+Authorization:{{token}}
+{
+    "assetId":426,
+    "assetOption":1
+}
+
+### 我的户型买卖
+# option 需求：demand 供给：supply
+GET {{endpoint}}/api/u/house/houseAssetDemandSupply/houseAssetDemandSupplyies/userDemandSupply?option=supply
+Authorization:{{token}}

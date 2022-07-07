@@ -140,11 +140,10 @@ public class HouseAssetEndpoint {
 
                                    @RequestParam(name = "assetSlot", required = false) String assetSlot,
 
-                                   @RequestParam(name = "assetType", required = false) String assetType,
+                                   @RequestParam(name = "assetType", required = false) Integer assetType,
                                    @RequestParam(name = "buildingCode", required = false) String buildingCode,
                                    @RequestParam(name = "communityName", required = false) String communityName,
 
-                                   @RequestParam(name = "assetTypeId", required = false) Long assetTypeId,
                                    @RequestParam(name = "orderBy", required = false) String orderBy,
                                    @RequestParam(name = "sort", required = false) String sort) {
 
@@ -169,7 +168,6 @@ public class HouseAssetEndpoint {
         record.setNumber(number);
         record.setAssetSlot(assetSlot);
         record.setAssetType(assetType);
-        record.setAssetTypeId(assetTypeId);
         record.setBuildingCode(buildingCode);
         record.setCommunityName(communityName);
         System.out.println(buildingCode);

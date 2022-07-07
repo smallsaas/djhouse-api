@@ -2,6 +2,9 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.jfeat.am.module.house.services.domain.dao.*;
+import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -19,7 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.dao.DuplicateKeyException;
-import com.jfeat.am.module.house.services.domain.dao.QueryProductDao;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.request.Ids;
 import com.jfeat.crud.base.tips.Tip;
@@ -63,6 +65,8 @@ public class ProductEndpoint {
 
     @Resource
     QueryProductDao queryProductDao;
+
+
 
 
     @BusinessLog(name = "Product", value = "create Product")
@@ -307,6 +311,8 @@ public class ProductEndpoint {
 
 
         List<ProductRecord> productPage = queryProductDao.findProductPage(page, record, tag, search, orderBy, null, null);
+
+
 
 
         page.setRecords(productPage);

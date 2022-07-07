@@ -5,14 +5,15 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.jfeat.am.module.house.services.gen.persistence.model.HouseVrPicture">
         <id column="id" property="id" />
-        <result column="decorate_plan_id" property="decoratePlanId" />
         <result column="name" property="name" />
-        <result column="vr_address" property="vrAddress" />
+        <result column="link" property="link" />
+        <result column="vr_picture" property="vrPicture" />
+        <result column="snapshot" property="snapshot" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, decorate_plan_id, name, vr_address
+        id, name, link, vr_picture, snapshot
     </sql>
 
 </mapper>

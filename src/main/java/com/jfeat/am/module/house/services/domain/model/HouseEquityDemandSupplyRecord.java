@@ -5,6 +5,5 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseEquityDeman
 /**
  * Created by Code generator on 2022-06-11
  */
-public class HouseEquityDemandSupplyRecord extends HouseEquityDemandSupply{
-    
-    }
+public class HouseEquityDemandSupplyRecord extends HouseEquityDemandSupply {
+}

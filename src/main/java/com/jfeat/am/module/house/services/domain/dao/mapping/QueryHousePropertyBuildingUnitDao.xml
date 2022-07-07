@@ -2,10 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingUnitDao">
     <sql id="Base_Column_List">
-        t_house_property_building_unit
-        .
-        id
-        , t_house_property_building_unit.building_id AS buildingId, t_house_property_building_unit.design_model_id AS designModelId, t_house_property_building_unit.unit_code AS unitCode,t_house_property_building_unit.area as area
+        t_house_property_building_unit.id,
+t_house_property_building_unit.building_id AS buildingId,
+t_house_property_building_unit.design_model_id AS designModelId,
+t_house_property_building_unit.unit_code AS unitCode,
+t_house_property_building_unit.area as area,
+t_house_property_building_unit.direction AS direction
     </sql>
 
 
@@ -45,6 +47,10 @@
 
         <if test="record.unitCode != null and record.unitCode!= ''">
             AND t_house_property_building_unit.unit_code LIKE CONCAT('%',#{record.unitCode},'%')
+        </if>
+
+        <if test="record.direction != null and record.direction!= ''">
+            AND t_house_property_building_unit.direction LIKE CONCAT('%',#{record.direction},'%')
         </if>
 
         <if test="startTime != null">

@@ -43,6 +43,9 @@ public class HouseEquityDemandSupply extends Model<HouseEquityDemandSupply> {
     @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
+    @TableField(exist = false)
+    private String simpleTime;
+
     @ApiModelProperty(value = "电话")
     @TableField(exist = false)
     private String phoneNumber;
@@ -128,6 +131,14 @@ public class HouseEquityDemandSupply extends Model<HouseEquityDemandSupply> {
         return this;
     }
 
+    public String getSimpleTime() {
+        return simpleTime;
+    }
+
+    public void setSimpleTime(String simpleTime) {
+        this.simpleTime = simpleTime;
+    }
+
     public static final String ID = "id";
 
     public static final String USER_ID = "user_id";
@@ -135,6 +146,7 @@ public class HouseEquityDemandSupply extends Model<HouseEquityDemandSupply> {
     public static final String EQUITY_OPTION = "equity_option";
 
     public static final String AREA = "area";
+
 
     @Override
     protected Serializable pkVal() {

@@ -5,16 +5,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.common.annotation.Permission;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.api.permission.HouseAssetDemandSupplyPermission;
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDemandSupplyDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingUnitDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
+import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetDemandSupplyRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetDemandSupplyService;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetDemandSupply;
-import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
+import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseUserAssetModel;
+import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -51,6 +47,12 @@ public class UserAssetDemandSupplyEndpoint {
 
     @Resource
     QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
+
+    @Resource
+    HouseUserAssetService houseUserAssetService;
+
+    @Resource
+    QueryHouseDecoratePlanDao queryHouseDecoratePlanDao;
 
     @BusinessLog(name = "HouseAssetDemandSupply", value = "create HouseAssetDemandSupply")
     @PostMapping

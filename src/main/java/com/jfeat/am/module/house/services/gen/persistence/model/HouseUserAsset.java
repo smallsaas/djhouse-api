@@ -42,6 +42,8 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
 
     private String rentTitle;
 
+    private String rentCover;
+
     private Date rentTime;
 
     private BigDecimal rentPrice;
@@ -63,6 +65,22 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     private Data createTime;
 
 
+    @ApiModelProperty(value = "详细地址")
+    @TableField(exist = false)
+    private String addressDetail;
+
+    public String getAddressDetail() {
+        return addressDetail;
+    }
+
+    public void setAddressDetail(String addressDetail) {
+        this.addressDetail = addressDetail;
+    }
+
+    @ApiModelProperty("方向")
+    @TableField(exist = false)
+    private String direction;
+
     @TableField(exist = false)
     private String extra;
 
@@ -74,9 +92,24 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
         this.extra = extra;
     }
 
+    @TableField(exist = false)
+    private String tags;
 
+    public String getTags() {
+        return tags;
+    }
 
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
 
+    public Integer getFloor() {
+        return floor;
+    }
+
+    public void setFloor(Integer floor) {
+        this.floor = floor;
+    }
 
     @ApiModelProperty(value = "社区Id")
     @TableField(exist = false)
@@ -106,6 +139,20 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @ApiModelProperty(value = "户型")
     @TableField(exist = false)
     private String houseType;
+
+    @ApiModelProperty(value = "户型图")
+    @TableField(exist = false)
+    private String houseTypePicture;
+
+    @ApiModelProperty(value = "vr缩略图")
+    @TableField(exist = false)
+    private String vrSnapshot;
+
+    @ApiModelProperty(value = "vr连接")
+    @TableField(exist = false)
+    private String vrLink;
+
+
 
     @ApiModelProperty(value = "房屋面积")
     @TableField(exist = false)
@@ -413,6 +460,46 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
 
     public void setSlideshow(String slideshow) {
         this.slideshow = slideshow;
+    }
+
+    public String getHouseTypePicture() {
+        return houseTypePicture;
+    }
+
+    public void setHouseTypePicture(String houseTypePicture) {
+        this.houseTypePicture = houseTypePicture;
+    }
+
+    public String getVrSnapshot() {
+        return vrSnapshot;
+    }
+
+    public void setVrSnapshot(String vrSnapshot) {
+        this.vrSnapshot = vrSnapshot;
+    }
+
+    public String getVrLink() {
+        return vrLink;
+    }
+
+    public void setVrLink(String vrLink) {
+        this.vrLink = vrLink;
+    }
+
+    public String getRentCover() {
+        return rentCover;
+    }
+
+    public void setRentCover(String rentCover) {
+        this.rentCover = rentCover;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
     public static final String ID = "id";

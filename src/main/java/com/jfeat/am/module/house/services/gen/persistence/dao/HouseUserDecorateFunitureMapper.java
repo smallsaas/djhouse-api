@@ -1,6 +1,6 @@
 package com.jfeat.am.module.house.services.gen.persistence.dao;
 
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserDecoratePlan;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserDecorateFuniture;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author Code generator
  * @since 2022-07-01
  */
-public interface HouseUserDecoratePlanMapper extends BaseMapper<HouseUserDecoratePlan> {
+public interface HouseUserDecorateFunitureMapper extends BaseMapper<HouseUserDecorateFuniture> {
 
 }

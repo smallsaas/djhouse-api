@@ -51,7 +51,7 @@ import com.alibaba.fastjson.JSONArray;
  * </p>
  *
  * @author Code generator
- * @since 2022-05-27
+ * @since 2022-07-04
  */
 @RestController
 @Api("HouseVrPicture")
@@ -112,9 +112,10 @@ public class HouseVrPictureEndpoint {
             @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
             @ApiImplicitParam(name = "search", dataType = "String"),
             @ApiImplicitParam(name = "id", dataType = "Long"),
-            @ApiImplicitParam(name = "decoratePlanId", dataType = "Long"),
             @ApiImplicitParam(name = "name", dataType = "String"),
-            @ApiImplicitParam(name = "vrAddress", dataType = "String"),
+            @ApiImplicitParam(name = "link", dataType = "String"),
+            @ApiImplicitParam(name = "vrPicture", dataType = "String"),
+            @ApiImplicitParam(name = "snapshot", dataType = "String"),
             @ApiImplicitParam(name = "orderBy", dataType = "String"),
             @ApiImplicitParam(name = "sort", dataType = "String")
     })
@@ -126,11 +127,18 @@ public class HouseVrPictureEndpoint {
                                        // end tag
                                        @RequestParam(name = "search", required = false) String search,
 
-                                       @RequestParam(name = "decoratePlanId", required = false) Long decoratePlanId,
-
                                        @RequestParam(name = "name", required = false) String name,
 
-                                       @RequestParam(name = "vrAddress", required = false) String vrAddress,
+                                       @RequestParam(name = "link", required = false) String link,
+
+                                       @RequestParam(name = "vrPicture", required = false) String vrPicture,
+                                       @RequestParam(name = "snapshot", required = false) String snapshot,
+                                       @RequestParam(name = "star", required = false) Integer star,
+                                       @RequestParam(name = "bedrooms", required = false) String bedrooms,
+                                       @RequestParam(name = "style", required = false) String style,
+
+                                       @RequestParam(name = "typeOption", required = false) String typeOption,
+                                       @RequestParam(name = "note", required = false) String note,
                                        @RequestParam(name = "orderBy", required = false) String orderBy,
                                        @RequestParam(name = "sort", required = false) String sort) {
 
@@ -149,9 +157,15 @@ public class HouseVrPictureEndpoint {
         page.setSize(pageSize);
 
         HouseVrPictureRecord record = new HouseVrPictureRecord();
-        record.setDecoratePlanId(decoratePlanId);
         record.setName(name);
-        record.setVrAddress(vrAddress);
+        record.setLink(link);
+        record.setVrPicture(vrPicture);
+        record.setSnapshot(snapshot);
+        record.setStar(star);
+        record.setBedrooms(bedrooms);
+        record.setStyle(style);
+        record.setTypeOption(typeOption);
+        record.setNote(note);
 
 
         List<HouseVrPictureRecord> houseVrPicturePage = queryHouseVrPictureDao.findHouseVrPicturePage(page, record, tag, search, orderBy, null, null);

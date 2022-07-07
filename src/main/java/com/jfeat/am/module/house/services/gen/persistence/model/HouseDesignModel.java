@@ -32,6 +32,12 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
       @ApiModelProperty(value = "户型图")
       private String houseTypePicture;
 
+      @ApiModelProperty("描述信息")
+      private String note;
+
+      @ApiModelProperty(value = "vrId")
+      private Long vrId;
+
       @ApiModelProperty(value = "vr图")
       private String vrPicture;
 
@@ -155,6 +161,7 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
           this.houseType = houseType;
           return this;
       }
+
     
     public String getHouseTypePicture() {
         return houseTypePicture;
@@ -478,6 +485,22 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
     public HouseDesignModel setVrSnapshot(String vrSnapshot) {
         this.vrSnapshot = vrSnapshot;
         return this;
+    }
+
+    public Long getVrId() {
+        return vrId;
+    }
+
+    public void setVrId(Long vrId) {
+        this.vrId = vrId;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public static final String ID = "id";

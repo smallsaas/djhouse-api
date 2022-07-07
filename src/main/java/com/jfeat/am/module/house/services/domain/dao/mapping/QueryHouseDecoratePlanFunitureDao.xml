@@ -2,7 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseDecoratePlanFunitureDao">
     <sql id="Base_Column_List">
-        t_house_decorate_plan_funiture.id, t_house_decorate_plan_funiture.decorate_plan_id AS decoratePlanId, t_house_decorate_plan_funiture.furniture_id AS furnitureId
+        t_house_decorate_plan_funiture.id,
+t_house_decorate_plan_funiture.decorate_plan_id AS decoratePlanId,
+t_house_decorate_plan_funiture.furniture_id AS furnitureId,
+t_house_decorate_plan_funiture.number AS number
     </sql>
 
 
@@ -38,6 +41,10 @@
 
         <if test="record.furnitureId != null and record.furnitureId>0 ">
             AND t_house_decorate_plan_funiture.furniture_id LIKE CONCAT('%',#{record.furnitureId},'%')
+        </if>
+
+        <if test="record.number != null and record.number>0 ">
+            AND t_house_decorate_plan_funiture.number LIKE CONCAT('%',#{record.number},'%')
         </if>
 
         <if test="startTime != null">

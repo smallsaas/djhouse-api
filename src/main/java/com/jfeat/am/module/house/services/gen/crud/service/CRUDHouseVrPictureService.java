@@ -8,7 +8,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseVrPicture;
  * </p>
  *
  * @author Code generator
- * @since 2022-05-27
+ * @since 2022-07-04
  * Master: serviceOnly
   * Slave : t_house_vr_picture
   */

@@ -1,7 +1,7 @@
 @endpoint=http://localhost:8080
 @service=http://app1.console.smallsaas.cn:8001
 
-@token =Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6MSwidXNlcklkIjoyODMsImFjY291bnQiOiJYWkgxIiwiZG9tYWluVXNlcklkIjoiIiwiaWF0IjoxNjU1MjEzNDI4LCJqdGkiOiIyODMiLCJzdWIiOiJYWkgxIiwiZXhwIjoxNjU1NDcyNjI4fQ.sHlfL7Q_dn-P-6PBlAThIqWLH3cRiQxWRlpmxM7UTEbq-s3zgUrbSfIUKQRL1wLpNR3SV97upTlp0FGWWUq8cA
+@token =Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6MzAsInVzZXJJZCI6Mjk4LCJhY2NvdW50IjoiNTc0ZTY2N2VlODEyNDI1OTlhMzZkOWU3YzJmMGJlYWEiLCJkb21haW5Vc2VySWQiOiIiLCJpYXQiOjE2NTY2Mjk3ODIsImp0aSI6IjI5OCIsInN1YiI6IjU3NGU2NjdlZTgxMjQyNTk5YTM2ZDllN2MyZjBiZWFhIiwiZXhwIjoxNjU2ODg4OTgyfQ.xpZSWhJa-RFxmzI_-9NI_HJ0s-2b-XAdKT8DYLxqs96MDrxQF-UPL8WSP7zeDZNsWknnuYzpcDlqiNCiUpFz9A
 @adminToken=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjUzNzA2MDA1LCJqdGkiOiIxIiwic3ViIjoiYWRtaW4iLCJleHAiOjE2NTYyOTgwMDV9.nH3W8nkLMzrBp_VybRJ-ZnNjCG96RqD5a6-HikifXV9hQ618btKd8MGxoPf2XIroEzDc4Gj4JoVKk7dSBoB0zA
 
 
@@ -21,10 +21,11 @@ Authorization:{{token}}
 
 ###个人资产交换请求
 GET {{endpoint}}/api/u/house/houseAssetExchangeRequest/houseAssetExchangeRequests/demand
+Authorization:{{token}}
 
 ### 匹配成功记录
-GET {{endpoint}}/api/u/house/houseAssetExchangeRequest/houseAssetExchangeRequests/matchResult?assetId=760
-
+GET {{endpoint}}/api/u/house/houseAssetExchangeRequest/houseAssetExchangeRequests/matchResult
+Authorization:{{token}}
 
 ### 修改资产交换请求 
 #1为 资产id

@@ -12,4 +12,13 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
  *  * modelpack : $modelpack
  */
 public class HouseAssetModel extends HouseAsset{
+    private Integer exchangeNumber;
+
+    public Integer getExchangeNumber() {
+        return exchangeNumber;
+    }
+
+    public void setExchangeNumber(Integer exchangeNumber) {
+        this.exchangeNumber = exchangeNumber;
+    }
 }

@@ -17,9 +17,9 @@ import io.swagger.annotations.ApiModelProperty;
  * @author Code generator
  * @since 2022-07-01
  */
-@TableName("t_house_user_decorate_plan")
-@ApiModel(value="HouseUserDecoratePlan对象", description="")
-public class HouseUserDecoratePlan extends Model<HouseUserDecoratePlan> {
+@TableName("t_house_user_decorate_funiture")
+@ApiModel(value="HouseUserDecorateFuniture对象", description="")
+public class HouseUserDecorateFuniture extends Model<HouseUserDecorateFuniture> {
 
     private static final long serialVersionUID=1L;
 
@@ -32,21 +32,28 @@ public class HouseUserDecoratePlan extends Model<HouseUserDecoratePlan> {
       @ApiModelProperty(value = "装修计划id")
       private Long decoratePlanId;
 
-      @ApiModelProperty(value = "资产id")
-      private Long assetId;
+      @ApiModelProperty(value = "家居id")
+      private Long funitureId;
 
-    @ApiModelProperty(value = "类型 1是装修方案 2是团购")
-    private Integer optionType;
+    @ApiModelProperty(value = "装修地址")
+    private Long assetId;
+
+      @ApiModelProperty(value = "家居数量")
+      private Integer funitureNumber;
+
+
 
       @ApiModelProperty(value = "创建时间")
       private Date createTime;
+
+
 
     
     public Long getId() {
         return id;
     }
 
-      public HouseUserDecoratePlan setId(Long id) {
+      public HouseUserDecorateFuniture setId(Long id) {
           this.id = id;
           return this;
       }
@@ -55,7 +62,7 @@ public class HouseUserDecoratePlan extends Model<HouseUserDecoratePlan> {
         return userId;
     }
 
-      public HouseUserDecoratePlan setUserId(Long userId) {
+      public HouseUserDecorateFuniture setUserId(Long userId) {
           this.userId = userId;
           return this;
       }
@@ -64,44 +71,54 @@ public class HouseUserDecoratePlan extends Model<HouseUserDecoratePlan> {
         return decoratePlanId;
     }
 
-      public HouseUserDecoratePlan setDecoratePlanId(Long decoratePlanId) {
+      public HouseUserDecorateFuniture setDecoratePlanId(Long decoratePlanId) {
           this.decoratePlanId = decoratePlanId;
           return this;
       }
     
-    public Long getAssetId() {
-        return assetId;
+    public Long getFunitureId() {
+        return funitureId;
     }
 
-      public HouseUserDecoratePlan setAssetId(Long assetId) {
-          this.assetId = assetId;
+      public HouseUserDecorateFuniture setFunitureId(Long funitureId) {
+          this.funitureId = funitureId;
           return this;
       }
 
-    public Integer getOptionType() {
-        return optionType;
+    public Integer getFunitureNumber() {
+        return funitureNumber;
     }
 
-    public void setOptionType(Integer optionType) {
-        this.optionType = optionType;
+    public void setFunitureNumber(Integer funitureNumber) {
+        this.funitureNumber = funitureNumber;
     }
 
     public Date getCreateTime() {
         return createTime;
     }
 
-      public HouseUserDecoratePlan setCreateTime(Date createTime) {
+      public HouseUserDecorateFuniture setCreateTime(Date createTime) {
           this.createTime = createTime;
           return this;
       }
 
-      public static final String ID = "id";
+    public Long getAssetId() {
+        return assetId;
+    }
+
+    public void setAssetId(Long assetId) {
+        this.assetId = assetId;
+    }
+
+    public static final String ID = "id";
 
       public static final String USER_ID = "user_id";
 
       public static final String DECORATE_PLAN_ID = "decorate_plan_id";
 
-      public static final String ASSET_ID = "asset_id";
+      public static final String FUNITURE_ID = "funiture_id";
+
+      public static final String FUNITURE_NUMBER = "funiture_number";
 
       public static final String CREATE_TIME = "create_time";
 
@@ -112,11 +129,12 @@ public class HouseUserDecoratePlan extends Model<HouseUserDecoratePlan> {
 
     @Override
     public String toString() {
-        return "HouseUserDecoratePlan{" +
+        return "HouseUserDecorateFuniture{" +
               "id=" + id +
                   ", userId=" + userId +
                   ", decoratePlanId=" + decoratePlanId +
-                  ", assetId=" + assetId +
+                  ", funitureId=" + funitureId +
+                  ", funitureNumber=" + funitureNumber +
                   ", createTime=" + createTime +
               "}";
     }

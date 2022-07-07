@@ -222,7 +222,11 @@ public class HouseUserAssetEndpoint {
 
 
         List<HouseUserAssetRecord> houseUserAssetPage = queryHouseUserAssetDao.findHouseUserAssetPage(page, record, tag, search, orderBy, null, null);
-
+        for (int i=0;i<houseUserAssetPage.size();i++){
+            Long id = houseUserAssetPage.get(i).getId();
+            HouseUserAssetModel houseAssetRecord = houseUserAssetService.queryMasterModel(queryHouseUserAssetDao, id);
+            houseUserAssetPage.get(i).setExtra(houseAssetRecord.getExtra());
+        }
 
         page.setRecords(houseUserAssetPage);
 
@@ -257,7 +261,7 @@ public class HouseUserAssetEndpoint {
 
     @GetMapping("/rent/details/{id}")
     public Tip getALlRentAsset(@PathVariable("id") Long id) {
-        HouseUserAssetModel houseAssetRecord = queryHouseUserAssetDao.queryMasterModel(id);
+        HouseUserAssetModel houseAssetRecord = houseUserAssetService.queryMasterModel(queryHouseUserAssetDao, id);
         if (houseAssetRecord!=null){
             HousePropertyBuildingUnit housePropertyBuildingUnit =  queryHousePropertyBuildingUnitDao.queryMasterModel(houseAssetRecord.getUnitId());
             List<Product> productList= queryHouseDecoratePlanDao.queryProductListByDesignModel(housePropertyBuildingUnit.getDesignModelId());

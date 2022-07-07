@@ -6,8 +6,9 @@
         t_house_user_asset.user_id AS userId,
         t_house_user_asset.asset_id AS assetId,
         t_house_user_asset.rent_status AS rentStatus,
-        t_house_user_asset.rent_status AS rentTitle,
-        t_house_user_asset.rent_status AS rentPrice,
+        t_house_user_asset.rent_title AS rentTitle,
+        t_house_user_asset.rent_cover AS rentCover,
+        t_house_user_asset.rent_price AS rentPrice,
         t_house_user_asset.rent_describe AS rentDescribe,
         t_house_user_asset.rent_tags AS rentTags,
         t_house_user_asset.slideShow AS slideshow,
@@ -28,9 +29,13 @@
         t_house_property_building.area AS buildingArea,
         t_house_property_building.code AS buildingCode,
         t_house_property_building_unit.id AS unitId,
+        t_house_property_building_unit.direction AS direction,
 
         t_house_design_model.area AS unitArea,
         t_house_design_model.house_type AS houseType,
+       t_house_design_model.house_type_picture AS houseTypePicture,
+        t_house_design_model.vr_link AS vrLink,
+        t_house_design_model.vr_snapshot AS vrSnapshot,
 
         t_end_user.name AS userName,
         t_end_user.phone AS userPhone,
@@ -40,22 +45,29 @@
 
     <select id="queryMasterModel" resultType="HouseUserAssetModel">
         SELECT t_house_user_asset.*,
-               t_house_property_community.id        AS communityId,
-               t_house_property_community.community As communityName,
-               t_house_property_community.address   AS address,
-               t_house_property_building.id         As buildingId,
-               t_house_property_building.area       AS buildingArea,
-               t_house_property_building.code       AS buildingCode,
-               t_house_property_building_unit.id    AS unitId,
-               t_house_design_model.area            AS unitArea,
-               t_house_design_model.house_type      AS houseType,
+               t_house_property_community.id            AS communityId,
+               t_house_property_community.community     As communityName,
+               t_house_property_community.address       AS address,
 
-               t_house_asset.number                 AS roomNumber,
-               t_house_asset.floor                  AS floor,
+               t_house_property_building.id             As buildingId,
+               t_house_property_building.area           AS buildingArea,
+               t_house_property_building.code           AS buildingCode,
 
-               t_end_user.name                      AS userName,
-               t_end_user.phone                     AS userPhone,
-               t_end_user.avatar                    AS userAvatar
+               t_house_property_building_unit.id        AS unitId,
+               t_house_property_building_unit.direction AS direction,
+
+               t_house_design_model.area                AS unitArea,
+               t_house_design_model.house_type          AS houseType,
+               t_house_design_model.house_type_picture  AS houseTypePicture,
+               t_house_design_model.vr_link             AS vrLink,
+               t_house_design_model.vr_snapshot         AS vrSnapshot,
+
+               t_house_asset.number                     AS roomNumber,
+               t_house_asset.floor                      AS floor,
+
+               t_end_user.name                          AS userName,
+               t_end_user.phone                         AS userPhone,
+               t_end_user.avatar                        AS userAvatar
 
         FROM t_house_user_asset
                  JOIN t_house_asset ON t_house_asset.id = t_house_user_asset.asset_id
@@ -220,6 +232,15 @@
             <if test="entity.assetId!=null">asset_id=#{entity.assetId},</if>
             <if test="entity.userId!=null">user_id=#{entity.userId},</if>
             <if test="entity.rentStatus!=null">rent_status=#{entity.rentStatus},</if>
+
+
+            <if test="entity.rentTitle!=null">rent_title=#{entity.rentTitle},</if>
+            <if test="entity.rentPrice!=null">rent_price=#{entity.rentPrice},</if>
+            <if test="entity.rentDescribe!=null">rent_describe=#{entity.rentDescribe},</if>
+            <if test="entity.slideshow!=null">slideshow=#{entity.slideshow},</if>
+            <if test="entity.rentTime!=null">rent_time=#{entity.rentTime},</if>
+
+
             <if test="entity.createTime!=null">create_time=#{entity.createTime},</if>
             <if test="entity.rentTime!=null">rent_time=#{entity.rentTime},</if>
             <if test="entity.note!=null">note=#{entity.note},</if>

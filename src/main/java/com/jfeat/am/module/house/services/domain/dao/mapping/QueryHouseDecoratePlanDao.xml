@@ -2,11 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseDecoratePlanDao">
     <sql id="Base_Column_List">
-        t_house_decorate_plan
-        .
-        id
-        , t_house_decorate_plan.decorate_style_name AS decorateStyleName, t_house_decorate_plan.allow_changed AS allowChanged, t_house_decorate_plan.color_style AS colorStyle, t_house_decorate_plan.total_budget AS totalBudget, t_house_decorate_plan.star,
-        t_house_decorate_plan.cover,t_house_decorate_plan.merchant
+        t_house_decorate_plan.id, t_house_decorate_plan.decorate_style_name AS decorateStyleName,
+t_house_decorate_plan.allow_changed AS allowChanged,
+t_house_decorate_plan.color_style AS colorStyle, t_house_decorate_plan.total_budget AS totalBudget,
+t_house_decorate_plan.star,
+        t_house_decorate_plan.cover,t_house_decorate_plan.merchant,
+t_house_decorate_plan.option_type AS optionType
     </sql>
 
 
@@ -54,6 +55,9 @@
         </if>
         <if test="record.star != null and record.star>0 ">
             AND t_house_decorate_plan.star LIKE CONCAT('%',#{record.star},'%')
+        </if>
+        <if test="record.optionType != null and record.optionType>0 ">
+            AND t_house_decorate_plan.option_type LIKE CONCAT('%',#{record.optionType},'%')
         </if>
 
         <if test="startTime != null">

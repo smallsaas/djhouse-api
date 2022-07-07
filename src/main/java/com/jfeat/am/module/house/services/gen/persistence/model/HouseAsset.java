@@ -45,10 +45,8 @@ public class HouseAsset extends Model<HouseAsset> {
     private String assetSlot;
 
     @ApiModelProperty(value = "资产类型")
-    private String assetType;
+    private Integer assetType;
 
-    @ApiModelProperty(value = "资产类型id")
-    private Long assetTypeId;
 
 
     @ApiModelProperty(value = "社区Id")
@@ -70,6 +68,8 @@ public class HouseAsset extends Model<HouseAsset> {
     @ApiModelProperty(value = "地址")
     @TableField(exist = false)
     private String address;
+
+
 
     @TableField(exist = false)
     private String cadPicture;
@@ -101,7 +101,52 @@ public class HouseAsset extends Model<HouseAsset> {
     @TableField(exist = false)
     private Boolean isMyselfAsset;
 
+    @TableField(exist = false)
+    private Boolean isExistUser;
 
+    @ApiModelProperty("用户名")
+    @TableField(exist = false)
+    private String username;
+
+    @ApiModelProperty("用户电话")
+    @TableField(exist = false)
+    private String userPhone;
+
+    @ApiModelProperty("用户头像")
+    @TableField(exist = false)
+    private String userAvatar;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
+    }
+
+    public String getUserAvatar() {
+        return userAvatar;
+    }
+
+    public void setUserAvatar(String userAvatar) {
+        this.userAvatar = userAvatar;
+    }
+
+    public Boolean getExistUser() {
+        return isExistUser;
+    }
+
+    public void setExistUser(Boolean existUser) {
+        isExistUser = existUser;
+    }
 
     public Boolean getMyselfAsset() {
         return isMyselfAsset;
@@ -199,22 +244,12 @@ public class HouseAsset extends Model<HouseAsset> {
         return this;
     }
 
-    public String getAssetType() {
+    public Integer getAssetType() {
         return assetType;
     }
 
-    public HouseAsset setAssetType(String assetType) {
+    public void setAssetType(Integer assetType) {
         this.assetType = assetType;
-        return this;
-    }
-
-    public Long getAssetTypeId() {
-        return assetTypeId;
-    }
-
-    public HouseAsset setAssetTypeId(Long assetTypeId) {
-        this.assetTypeId = assetTypeId;
-        return this;
     }
 
     public String getAddress() {
@@ -279,6 +314,8 @@ public class HouseAsset extends Model<HouseAsset> {
         return this;
     }
 
+
+
     public String getVrSnapshot() {
         return vrSnapshot;
     }
@@ -309,7 +346,9 @@ public class HouseAsset extends Model<HouseAsset> {
 
     public static final String ASSET_TYPE = "asset_type";
 
-    public static final String ASSET_TYPE_ID = "asset_type_id";
+    public static final Integer ASSET_Type_HOUSE=1;
+
+    public static final Integer ASSET_TYPE_PARKING=2;
 
     @Override
     protected Serializable pkVal() {
@@ -326,7 +365,6 @@ public class HouseAsset extends Model<HouseAsset> {
                 ", number=" + number +
                 ", assetSlot=" + assetSlot +
                 ", assetType=" + assetType +
-                ", assetTypeId=" + assetTypeId +
                 "}";
     }
 }

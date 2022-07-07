@@ -4,93 +4,164 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author Code generator
- * @since 2022-05-27
+ * @since 2022-07-04
  */
 @TableName("t_house_vr_picture")
-@ApiModel(value="HouseVrPicture对象", description="")
+@ApiModel(value = "HouseVrPicture对象", description = "")
 public class HouseVrPicture extends Model<HouseVrPicture> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
-      @TableId(value = "id", type = IdType.AUTO)
-      private Long id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
-      @ApiModelProperty(value = "装修计划id")
-      private Long decoratePlanId;
+    @ApiModelProperty(value = "vr图名")
+    private String name;
 
-      @ApiModelProperty(value = "vr图名")
-      private String name;
+    @ApiModelProperty(value = "vr link")
+    private String link;
 
-      @ApiModelProperty(value = "vr图地址")
-      private String vrAddress;
+    @ApiModelProperty(value = "vr图")
+    private String vrPicture;
 
-    
+    @ApiModelProperty(value = "vr 缩略图")
+    private String snapshot;
+
+    @ApiModelProperty(value = "人气值")
+    private Integer star;
+
+    @ApiModelProperty(value = "几居室")
+    private String bedrooms;
+
+    @ApiModelProperty(value = "风格")
+    private String style;
+
+    @ApiModelProperty(value = "类型")
+    private String typeOption;
+
+    @ApiModelProperty(value = "备注")
+    private String note;
+
     public Long getId() {
         return id;
     }
 
-      public HouseVrPicture setId(Long id) {
-          this.id = id;
-          return this;
-      }
-    
-    public Long getDecoratePlanId() {
-        return decoratePlanId;
+    public HouseVrPicture setId(Long id) {
+        this.id = id;
+        return this;
     }
 
-      public HouseVrPicture setDecoratePlanId(Long decoratePlanId) {
-          this.decoratePlanId = decoratePlanId;
-          return this;
-      }
-    
     public String getName() {
         return name;
     }
 
-      public HouseVrPicture setName(String name) {
-          this.name = name;
-          return this;
-      }
-    
-    public String getVrAddress() {
-        return vrAddress;
+    public HouseVrPicture setName(String name) {
+        this.name = name;
+        return this;
     }
 
-      public HouseVrPicture setVrAddress(String vrAddress) {
-          this.vrAddress = vrAddress;
-          return this;
-      }
+    public String getLink() {
+        return link;
+    }
 
-      public static final String ID = "id";
+    public HouseVrPicture setLink(String link) {
+        this.link = link;
+        return this;
+    }
 
-      public static final String DECORATE_PLAN_ID = "decorate_plan_id";
+    public String getVrPicture() {
+        return vrPicture;
+    }
 
-      public static final String NAME = "name";
+    public HouseVrPicture setVrPicture(String vrPicture) {
+        this.vrPicture = vrPicture;
+        return this;
+    }
 
-      public static final String VR_ADDRESS = "vr_address";
+    public String getSnapshot() {
+        return snapshot;
+    }
 
-      @Override
+    public HouseVrPicture setSnapshot(String snapshot) {
+        this.snapshot = snapshot;
+        return this;
+    }
+
+    public Integer getStar() {
+        return star;
+    }
+
+    public void setStar(Integer star) {
+        this.star = star;
+    }
+
+    public String getBedrooms() {
+        return bedrooms;
+    }
+
+    public void setBedrooms(String bedrooms) {
+        this.bedrooms = bedrooms;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public String getTypeOption() {
+        return typeOption;
+    }
+
+    public void setTypeOption(String typeOption) {
+        this.typeOption = typeOption;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public static final String ID = "id";
+
+    public static final String NAME = "name";
+
+    public static final String LINK = "link";
+
+    public static final String VR_PICTURE = "vr_picture";
+
+    public static final String SNAPSHOT = "snapshot";
+
+    @Override
     protected Serializable pkVal() {
-          return this.id;
-      }
+        return this.id;
+    }
 
     @Override
     public String toString() {
         return "HouseVrPicture{" +
-              "id=" + id +
-                  ", decoratePlanId=" + decoratePlanId +
-                  ", name=" + name +
-                  ", vrAddress=" + vrAddress +
-              "}";
+                "id=" + id +
+                ", name=" + name +
+                ", link=" + link +
+                ", vrPicture=" + vrPicture +
+                ", snapshot=" + snapshot +
+                "}";
     }
 }

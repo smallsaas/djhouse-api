@@ -19,7 +19,7 @@ import com.jfeat.crud.plus.impl.CRUDServiceOnlyImpl;
  * </p>
  *CRUDHouseVrPictureService
  * @author Code generator
- * @since 2022-05-27
+ * @since 2022-07-04
  */
 
 @Service

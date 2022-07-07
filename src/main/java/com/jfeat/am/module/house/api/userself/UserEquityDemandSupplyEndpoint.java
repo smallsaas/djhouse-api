@@ -1,7 +1,12 @@
 package com.jfeat.am.module.house.api.userself;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -11,19 +16,18 @@ import com.jfeat.am.module.house.services.domain.dao.QueryHouseEquityDemandSuppl
 import com.jfeat.am.module.house.services.domain.model.HouseEquityDemandSupplyRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseEquityDemandSupplyService;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseEquityDemandSupply;
+import com.jfeat.crud.base.util.DateTimeKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 
 @RestController
@@ -36,6 +40,7 @@ public class UserEquityDemandSupplyEndpoint {
     @Resource
     QueryHouseEquityDemandSupplyDao queryHouseEquityDemandSupplyDao;
 
+
     @BusinessLog(name = "HouseEquityDemandSupply", value = "create HouseEquityDemandSupply")
     @PostMapping
     @ApiOperation(value = "新建 HouseEquityDemandSupply", response = HouseEquityDemandSupply.class)
@@ -46,12 +51,25 @@ public class UserEquityDemandSupplyEndpoint {
         }
         Long userId = JWTKit.getUserId();
         entity.setUserId(userId);
+        entity.setCreateTime(new Date());
+
         Integer affected = 0;
-        try {
-            affected = houseEquityDemandSupplyService.createMaster(entity);
-        } catch (DuplicateKeyException e) {
-            throw new BusinessException(BusinessCode.DuplicateKey);
+
+        HouseEquityDemandSupplyRecord record = new HouseEquityDemandSupplyRecord();
+        record.setUserId(JWTKit.getUserId());
+        List<HouseEquityDemandSupplyRecord> houseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(null, record, null, null, null, null, null, null, null);
+        if (houseEquityDemandSupplyPage==null|| houseEquityDemandSupplyPage.size()==0){
+            try {
+                affected = houseEquityDemandSupplyService.createMaster(entity);
+            } catch (DuplicateKeyException e) {
+                throw new BusinessException(BusinessCode.DuplicateKey);
+            }
         }
+        if (houseEquityDemandSupplyPage!=null && houseEquityDemandSupplyPage.size()==1){
+            entity.setId(houseEquityDemandSupplyPage.get(0).getId());
+            return SuccessTip.create(houseEquityDemandSupplyService.updateMaster(entity));
+        }
+
         return SuccessTip.create(affected);
     }
 
@@ -114,7 +132,7 @@ public class UserEquityDemandSupplyEndpoint {
             houseEquityDemandSupply.setUsername(null);
             String number = houseEquityDemandSupply.getPhoneNumber();
 
-            houseEquityDemandSupply.setPhoneNumber(number.substring(0, 1).concat("****").concat(number.substring(number.length() - 1, number.length())));
+            houseEquityDemandSupply.setPhoneNumber(number.substring(0, 3).concat("********").concat(number.substring(number.length() - 1, number.length())));
             houseEquityDemandSupply.setUserAvatar(null);
         }
         page.setRecords(houseEquityDemandSupplyPage);
@@ -127,11 +145,11 @@ public class UserEquityDemandSupplyEndpoint {
             Page<HouseEquityDemandSupplyRecord> page, @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(name = "search", required = false) String search,
-            @RequestParam(name = "areaRange", required = false) Double areaRange,
-            @RequestParam(name = "option",required = false) String option,
             @RequestParam(name = "area", required = false) BigDecimal area) {
 
-
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
         page.setCurrent(pageNum);
         page.setSize(pageSize);
         HouseEquityDemandSupplyRecord record = new HouseEquityDemandSupplyRecord();
@@ -140,65 +158,69 @@ public class UserEquityDemandSupplyEndpoint {
 
         Double leftRange = null;
         Double rightRange = null;
+        Integer optionStatus = null;
 
 
-        List<BigDecimal> demandArea = new LinkedList<>();
-        List<BigDecimal> supplyArea = new LinkedList<>();
+
         List<HouseEquityDemandSupplyRecord> houseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, record, null, search, null, null, null, leftRange, rightRange);
-
-        for (HouseEquityDemandSupply houseEquityDemandSupply : houseEquityDemandSupplyPage) {
-            houseEquityDemandSupply.setUserId(null);
-            houseEquityDemandSupply.setUsername(null);
-            String number = houseEquityDemandSupply.getPhoneNumber();
-            if (number!=null){
-                houseEquityDemandSupply.setPhoneNumber(number.substring(0, 1).concat("****").concat(number.substring(number.length() - 1, number.length())));
-            }
-            houseEquityDemandSupply.setUserAvatar(null);
-            if (houseEquityDemandSupply.getEquityOption().equals(1)){
-                demandArea.add(houseEquityDemandSupply.getArea());
-            }
-            if (houseEquityDemandSupply.getEquityOption().equals(2)){
-                supplyArea.add(houseEquityDemandSupply.getArea());
-            }
-        }
-        BigDecimal max = null;
-        if (demandArea!=null && demandArea.size()>0){
-            max  = Collections.max(demandArea);
-        }
-
-        BigDecimal min=null;
-        if (supplyArea!=null && supplyArea.size()>0){
-            min  = Collections.min(supplyArea);
-        }
-
-
         HouseEquityDemandSupplyRecord resultRecord = new HouseEquityDemandSupplyRecord();
-        if ("demand".equals(option)){
-            resultRecord.setEquityOption(2);
-            if (max!=null){
-                leftRange = max.doubleValue();
+
+        List<HouseEquityDemandSupplyRecord> resultHouseEquityDemandSupplyPage =null;
+
+
+        if (houseEquityDemandSupplyPage!=null && houseEquityDemandSupplyPage.size()==1){
+            optionStatus = houseEquityDemandSupplyPage.get(0).getEquityOption();
+            if (optionStatus!=null && optionStatus.equals(1)){
+                leftRange = houseEquityDemandSupplyPage.get(0).getArea().doubleValue();
+                resultRecord.setEquityOption(2);
+            }
+            if (optionStatus!=null && optionStatus.equals(2)){
+                rightRange= houseEquityDemandSupplyPage.get(0).getArea().doubleValue();
+                resultRecord.setEquityOption(1);
             }
 
-        }
-        if ("supply".equals(option)){
-            resultRecord.setEquityOption(1);
-            if (min!=null){
-                rightRange = min.doubleValue();
+            resultHouseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, resultRecord, null, search, null, null, null, leftRange, rightRange);
+            for (HouseEquityDemandSupply houseEquityDemandSupply : resultHouseEquityDemandSupplyPage) {
+                houseEquityDemandSupply.setUserId(null);
+                if (houseEquityDemandSupply.getCreateTime()!=null){
+                    houseEquityDemandSupply.setSimpleTime(DateTimeKit.toTimeline(houseEquityDemandSupply.getCreateTime()));
+                }
+
+                String name  = houseEquityDemandSupply.getUsername();
+                if (name!=null&&!("".equals(name))){
+                   houseEquityDemandSupply.setUsername(name.substring(0,1).concat("*"));
+                }
+                houseEquityDemandSupply.setUserAvatar(null);
+                String number = houseEquityDemandSupply.getPhoneNumber();
+                if (number!=null && number.length()>=3){
+                    houseEquityDemandSupply.setPhoneNumber(number.substring(0, 1).concat("*********").concat(number.substring(number.length() - 1, number.length())));
+
+                }
+
             }
-
-        }
-        List<HouseEquityDemandSupplyRecord> resultHouseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, resultRecord, null, search, null, null, null, leftRange, rightRange);
-        for (HouseEquityDemandSupply houseEquityDemandSupply : resultHouseEquityDemandSupplyPage) {
-            houseEquityDemandSupply.setUserId(null);
-            houseEquityDemandSupply.setUsername(null);
-            String number = houseEquityDemandSupply.getPhoneNumber();
-
-            houseEquityDemandSupply.setPhoneNumber(number.substring(0, 1).concat("****").concat(number.substring(number.length() - 1, number.length())));
-            houseEquityDemandSupply.setUserAvatar(null);
         }
         page.setRecords(resultHouseEquityDemandSupplyPage);
 
         return SuccessTip.create(page);
+    }
+
+//    返回自己的权益状态数据
+    @GetMapping("/userStatus")
+    public Tip getUserStatus(){
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        HouseEquityDemandSupplyRecord record = new HouseEquityDemandSupplyRecord();
+        record.setUserId(JWTKit.getUserId());
+
+        Integer optionStatus = null;
+        List<HouseEquityDemandSupplyRecord> houseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(null, record, null, null, null, null, null, null, null);
+        HouseEquityDemandSupplyRecord houseEquityDemandSupplyRecord = null;
+        if (houseEquityDemandSupplyPage!=null && houseEquityDemandSupplyPage.size()==1){
+            houseEquityDemandSupplyRecord = houseEquityDemandSupplyPage.get(0);
+        }
+
+        return SuccessTip.create(houseEquityDemandSupplyRecord);
     }
 
 

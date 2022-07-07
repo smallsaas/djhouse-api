@@ -15,6 +15,12 @@ GET {{endpoint}}/api/u/house/houseEquityDemandSupply/houseEquityDemandSupplyies?
 ### 查询供给列表
 GET {{endpoint}}/api/u/house/houseEquityDemandSupply/houseEquityDemandSupplyies?equityOption=2
 
+
+### 我的方数买卖
+# option 需求：demand 供给：supply
+GET {{endpoint}}/api/u/house/houseEquityDemandSupply/houseEquityDemandSupplyies/userDemandSupply
+Authorization:{{token}}
+
 ### 增加权益需求
 # area：面积
 # equityOption 权益选择 1代表需要的 2代表出让的
@@ -24,6 +30,3 @@ Authorization:{{token}}
     "area": 100.11,
     "equityOption": 1
 }
-
-GET {{endpoint}}/api/crud/house/houseEquityDemandSupply/houseEquityDemandSupplyies?equityOption=1
-Authorization:{{adminToken}}

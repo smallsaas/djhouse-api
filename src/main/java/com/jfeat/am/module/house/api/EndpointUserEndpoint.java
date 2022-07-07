@@ -2,6 +2,9 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.jfeat.am.module.house.services.domain.dao.*;
+import com.jfeat.am.module.house.services.domain.model.*;
+import com.jfeat.am.module.house.services.gen.persistence.model.Product;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.ApiImplicitParam;
@@ -18,7 +21,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.dao.DuplicateKeyException;
-import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.crud.base.annotation.BusinessLog;
@@ -28,12 +30,12 @@ import com.jfeat.am.module.house.api.permission.*;
 import com.jfeat.am.common.annotation.Permission;
 
 import com.jfeat.am.module.house.services.domain.service.*;
-import com.jfeat.am.module.house.services.domain.model.EndpointUserRecord;
 import com.jfeat.am.module.house.services.gen.persistence.model.EndpointUser;
 
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -55,6 +57,21 @@ public class EndpointUserEndpoint {
     @Resource
     QueryEndpointUserDao queryEndpointUserDao;
 
+    @Resource
+    QueryHouseUserAssetDao queryHouseUserAssetDao;
+
+    @Resource
+    QueryHouseAssetExchangeRequestDao queryHouseAssetExchangeRequestDao;
+
+    @Resource
+    QueryHouseUserDecoratePlanDao queryHouseUserDecoratePlanDao;
+
+    @Resource
+    QueryHouseUserDecorateFunitureDao queryHouseUserDecorateFunitureDao;
+
+    @Resource
+    QueryProductDao queryProductDao;
+
 
     @Permission(EndUserPermission.ENDUSER_NEW)
     @PostMapping
@@ -74,7 +91,38 @@ public class EndpointUserEndpoint {
     @GetMapping("/{id}")
     @ApiOperation(value = "查看 EndpointUser", response = EndpointUser.class)
     public Tip getEndUser(@PathVariable Long id) {
-        return SuccessTip.create(endpointUserService.queryMasterModel(queryEndpointUserDao, id));
+        EndpointUser endpointUser =  endpointUserService.queryMasterModel(queryEndpointUserDao, id);
+        if (endpointUser!=null){
+            HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
+            houseUserAssetRecord.setUserId(id);
+            List<HouseUserAssetRecord>houseUserAssetRecordList =  queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord,null,null,null,null,null);
+            endpointUser.setHouseUserAssetRecords(houseUserAssetRecordList);
+
+            HouseAssetExchangeRequestRecord houseAssetExchangeRequestRecord = new HouseAssetExchangeRequestRecord();
+            houseAssetExchangeRequestRecord.setUserId(id);
+            List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecords = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null,houseAssetExchangeRequestRecord,null,null,null,null,null);
+            endpointUser.setExchangeRequestRecords(houseAssetExchangeRequestRecords);
+
+
+            HouseUserDecoratePlanRecord houseUserDecoratePlanRecord = new HouseUserDecoratePlanRecord();
+            houseUserDecoratePlanRecord.setUserId(id);
+            houseUserDecoratePlanRecord.setOptionType(2);
+            List<Product> products = new ArrayList<>();
+            List<HouseUserDecoratePlanRecord> houseUserDecoratePlanRecordList = queryHouseUserDecoratePlanDao.findHouseUserDecoratePlanPage(null,houseUserDecoratePlanRecord,null,null,null,null,null);
+            for (int j=0;j<houseUserDecoratePlanRecordList.size();j++){
+                HouseUserDecorateFunitureRecord houseUserDecorateFunitureRecord = new HouseUserDecorateFunitureRecord();
+                houseUserDecorateFunitureRecord.setUserId(id);
+                houseUserDecorateFunitureRecord.setDecoratePlanId(houseUserDecoratePlanRecordList.get(j).getDecoratePlanId());
+                List<HouseUserDecorateFunitureRecord> houseUserDecorateFunitureRecordList = queryHouseUserDecorateFunitureDao.findHouseUserDecorateFuniturePage(null,houseUserDecorateFunitureRecord,null,null,null,null,null);
+                for (HouseUserDecorateFunitureRecord funitureRecord:houseUserDecorateFunitureRecordList){
+                    Product product = queryProductDao.queryMasterModel(funitureRecord.getFunitureId());
+                    products.add(product);
+                }
+            }
+            endpointUser.setProducts(products);
+        }
+
+        return SuccessTip.create(endpointUser);
     }
 
     @BusinessLog(name = "EndpointUser", value = "update EndpointUser")
@@ -253,10 +301,41 @@ public class EndpointUserEndpoint {
 
         List<EndpointUserRecord> endUserPage = queryEndpointUserDao.findEndUserPage(page, record, tag, search, orderBy, null, null);
 
+        for (int i=0;i<endUserPage.size();i++){
+
+            Long id = endUserPage.get(i).getId();
+//            统计资产数
+            HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
+            houseUserAssetRecord.setUserId(id);
+            List<HouseUserAssetRecord>houseUserAssetRecordList =  queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord,null,null,null,null,null);
+            endUserPage.get(i).setAssetCount(houseUserAssetRecordList.size());
+
+//            统计置换需求
+            HouseAssetExchangeRequestRecord houseAssetExchangeRequestRecord = new HouseAssetExchangeRequestRecord();
+            houseAssetExchangeRequestRecord.setUserId(id);
+            List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecords = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null,houseAssetExchangeRequestRecord,null,null,null,null,null);
+            endUserPage.get(i).setExchangeCount(houseAssetExchangeRequestRecords.size());
+
+            HouseUserDecoratePlanRecord houseUserDecoratePlanRecord = new HouseUserDecoratePlanRecord();
+            houseUserDecoratePlanRecord.setUserId(id);
+            houseUserDecoratePlanRecord.setOptionType(2);
+            int bulkCount=0;
+            List<HouseUserDecoratePlanRecord> houseUserDecoratePlanRecordList = queryHouseUserDecoratePlanDao.findHouseUserDecoratePlanPage(null,houseUserDecoratePlanRecord,null,null,null,null,null);
+            for (int j=0;j<houseUserDecoratePlanRecordList.size();j++){
+                HouseUserDecorateFunitureRecord houseUserDecorateFunitureRecord = new HouseUserDecorateFunitureRecord();
+                houseUserDecorateFunitureRecord.setUserId(id);
+                houseUserDecorateFunitureRecord.setDecoratePlanId(houseUserDecoratePlanRecordList.get(j).getDecoratePlanId());
+                List<HouseUserDecorateFunitureRecord> houseUserDecorateFunitureRecordList = queryHouseUserDecorateFunitureDao.findHouseUserDecorateFuniturePage(null,houseUserDecorateFunitureRecord,null,null,null,null,null);
+                bulkCount+=houseUserDecorateFunitureRecordList.size();
+            }
+            endUserPage.get(i).setBulkCount(bulkCount);
+        }
 
         page.setRecords(endUserPage);
 
         return SuccessTip.create(page);
     }
+
+    
 }
 

@@ -49,6 +49,9 @@ public class HouseDecoratePlan extends Model<HouseDecoratePlan> {
       @ApiModelProperty(value = "商家")
       private String merchant;
 
+      @ApiModelProperty(value = "选项")
+      private Integer optionType;
+
     @ApiModelProperty(value = "装修地址")
     @TableField(exist = false)
     private String decorateAddress;
@@ -125,7 +128,15 @@ public class HouseDecoratePlan extends Model<HouseDecoratePlan> {
           this.totalBudget = totalBudget;
           return this;
       }
-    
+
+    public Integer getOptionType() {
+        return optionType;
+    }
+
+    public void setOptionType(Integer optionType) {
+        this.optionType = optionType;
+    }
+
     public Integer getStar() {
         return star;
     }

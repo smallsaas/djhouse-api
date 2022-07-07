@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.services.domain.model;
 
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseDecoratePlan;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.Product;
 
