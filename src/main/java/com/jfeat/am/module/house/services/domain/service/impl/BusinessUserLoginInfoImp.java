@@ -44,13 +44,16 @@ public class BusinessUserLoginInfoImp implements BusinessUserLoginInfo {
 
         HousePropertyCommunity community = queryHousePropertyCommunityDao.queryHouseCommunityByOrgId(userAccount.getId());
 
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("end_user_id",userAccount.getId());
-        queryWrapper.last("limit 0,1");
-        Supplier supplier = supplierMapper.selectOne(queryWrapper);
-        if(supplier != null){
-            isSupplier = true;
+        if(userAccount.getPhone() != null){
+            QueryWrapper queryWrapper = new QueryWrapper();
+            queryWrapper.eq("phone",userAccount.getPhone());
+            queryWrapper.last("limit 0,1");
+            Supplier supplier = supplierMapper.selectOne(queryWrapper);
+            if(supplier != null){
+                isSupplier = true;
+            }
         }
+
 
         if (community!=null){
             communityId = community.getId();
