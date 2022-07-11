@@ -36,14 +36,10 @@ public interface QueryHouseUserAssetDao extends QueryMasterDao<HouseUserAsset> {
      */
     List<HouseUserAssetModel> queryMasterModelList(@Param("masterId") Object masterId);
 
-    List<HouseUserAsset> queryUserRoomByUserId(@Param("userId") Long userId);
 
-    List<HouseUserAsset> queryUserAssetByUserId(@Param("userId") Long userId);
 
     int updateUserAssetByUserIdAndAsset(@Param("userId") Long userId, @Param("assetId") Long assetId, @Param("entity") HouseUserAsset entity);
 
-//    更新出租状态信息
-    List<HouseUserAsset> queryALlRentStatus(@Param("status") Integer status);
 
 //    更新冲突信息
     int updateClashAssetByAssetId(@Param("assetId") Long clashUserId,@Param("entity") HouseUserAsset entity);
@@ -54,7 +50,6 @@ public interface QueryHouseUserAssetDao extends QueryMasterDao<HouseUserAsset> {
 
     List<HouseUserAsset> queryClashUserAsset(@Param("username") String username,@Param("search") String search);
 
-    HouseUserAsset queryHouseUserAssetByEntity(@Param("entity") HouseUserAsset houseUserAsset);
 
     HouseUserAsset queryHouseUserAssetByAssetId(@Param("assetId") Long assetId);
 }

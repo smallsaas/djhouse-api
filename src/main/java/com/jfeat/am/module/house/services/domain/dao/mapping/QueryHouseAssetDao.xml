@@ -48,9 +48,9 @@
                  JOIN t_house_property_community
                       ON t_house_property_community.id = t_house_property_building.community_id
 
-                 JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
+                 left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
 
-                 JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+                 left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
 
         WHERE t_house_asset.id = #{id}
         GROUP BY t_house_asset.id
@@ -66,8 +66,8 @@
 
         JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
         JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
-        JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
-        JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+        left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
+        left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
 
         WHERE 1=1
 

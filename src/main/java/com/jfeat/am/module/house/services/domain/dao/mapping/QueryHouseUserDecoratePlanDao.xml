@@ -3,11 +3,12 @@
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseUserDecoratePlanDao">
     <sql id="Base_Column_List">
         t_house_user_decorate_plan.id,
-t_house_user_decorate_plan.user_id AS userId,
-t_house_user_decorate_plan.decorate_plan_id AS decoratePlanId,
-t_house_user_decorate_plan.asset_id AS assetId,
-t_house_user_decorate_plan.option_type AS optionType,
-t_house_user_decorate_plan.create_time AS createTime
+        t_house_user_decorate_plan.user_id AS userId,
+        t_house_user_decorate_plan.decorate_plan_id AS decoratePlanId,
+        t_house_user_decorate_plan.asset_id AS assetId,
+        t_house_user_decorate_plan.option_type AS optionType,
+        t_house_user_decorate_plan.modify_option AS modifyOption,
+        t_house_user_decorate_plan.create_time AS createTime
     </sql>
 
 

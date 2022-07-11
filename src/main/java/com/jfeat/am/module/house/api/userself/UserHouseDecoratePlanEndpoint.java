@@ -15,6 +15,10 @@ import com.jfeat.am.module.house.services.domain.service.HouseUserDecorateAddres
 import com.jfeat.am.module.house.services.domain.service.HouseUserDecorateFunitureService;
 import com.jfeat.am.module.house.services.domain.service.HouseUserDecoratePlanService;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
+import com.jfeat.am.module.order.definition.OrderType;
+import com.jfeat.am.module.order.services.domain.model.OrderItemRecord;
+import com.jfeat.am.module.order.services.domain.model.RequestOrder;
+import com.jfeat.am.module.order.services.domain.service.OrderService;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -35,9 +39,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.rmi.ServerException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans")
@@ -70,6 +76,9 @@ public class UserHouseDecoratePlanEndpoint {
 
     @Resource
     QueryProductDao queryProductDao;
+
+    @Resource
+    OrderService orderService;
 
 
     @ApiOperation(value = "HouseDecoratePlan 列表信息", response = HouseDecoratePlanRecord.class)
@@ -303,10 +312,16 @@ public class UserHouseDecoratePlanEndpoint {
         return SuccessTip.create(page);
     }
 
+//    public Tip submitOrder(){
+//
+//        RequestOrder requestOrder = orderService.createOrder()
+//    }
+
     //    获取用户装修详情
     @GetMapping("/userDecorateDetails/{id}")
     public Tip getUserDecoratePlanDetails(@PathVariable("id") Long id) {
         HouseUserDecoratePlanRecord record = new HouseUserDecoratePlanRecord();
+
         record.setUserId(JWTKit.getUserId());
         record.setOptionType(1);
         record.setId(id);
@@ -344,6 +359,73 @@ public class UserHouseDecoratePlanEndpoint {
         }
         return SuccessTip.create(result);
     }
+
+
+//    确认装修计划家居 确认后生成订单，不可修改家居
+
+    @PostMapping("/confirmDecoratePlanFurniture/{id}")
+    public Tip confirmDecoratePlanFurniture(
+            @PathVariable("id") Long id,
+            @RequestBody List<HouseUserDecorateFunitureRecord> funitureRecordList) throws ServerException {
+//        修改我的装修状态是否可修改
+
+        HouseUserDecoratePlan houseUserDecoratePlan = queryHouseUserDecoratePlanDao.queryMasterModel(id);
+        houseUserDecoratePlan.setModifyOption(HouseUserDecoratePlan.MODIFY_TYPE_REFUSE);
+        houseUserDecoratePlanService.updateMaster(houseUserDecoratePlan);
+
+//        查询用户房子之前的家居
+        HouseUserDecorateFunitureRecord houseUserDecorateFunitureRecord = new HouseUserDecorateFunitureRecord();
+        houseUserDecorateFunitureRecord.setDecoratePlanId(id);
+        houseUserDecorateFunitureRecord.setUserId(JWTKit.getUserId());
+        houseUserDecorateFunitureRecord.setAssetId(funitureRecordList.get(0).getAssetId());
+        List<HouseUserDecorateFunitureRecord> userDecorateFunitureRecordList = queryHouseUserDecorateFunitureDao.findHouseUserDecorateFuniturePage(null,houseUserDecorateFunitureRecord,null,null,null,null,null);
+//        生成订单
+        Integer effect = 0;
+
+        List<Long> furnitureIdList = new ArrayList<>();
+
+        for (int i=0;i<funitureRecordList.size();i++){
+
+            Product product = funitureRecordList.get(i).getProduct();
+            if (product!=null){
+                RequestOrder order = new RequestOrder();
+                List<OrderItemRecord> items = new ArrayList<>();
+                OrderItemRecord itemRecord = new OrderItemRecord();
+
+                itemRecord.setProductId(product.getId());
+                itemRecord.setQuantity(funitureRecordList.get(i).getFunitureNumber());
+                itemRecord.setPrice(product.getPrice());
+                itemRecord.setWeight(product.getWeight());
+                itemRecord.setBulk(product.getBulk());
+                itemRecord.setCover(product.getCover());
+                itemRecord.setProductName(product.getName());
+                items.add(itemRecord);
+
+                order.setType(OrderType.ORDER.name());
+                order.setItems(items);
+                order.setOrgId(JWTKit.getOrgId());
+                order.setUserId(JWTKit.getUserId());
+                effect+=orderService.createOrder(order);
+                funitureRecordList.get(i).setOrderId(order.getId().intValue());
+                effect+=houseUserDecorateFunitureService.updateMaster(funitureRecordList.get(i));
+
+                furnitureIdList.add(funitureRecordList.get(i).getId());
+            }
+        }
+
+//        删除和多余的用户家居
+      for (int i=0;i<userDecorateFunitureRecordList.size();i++){
+          if (!furnitureIdList.contains(userDecorateFunitureRecordList.get(i).getId())){
+              houseUserDecorateFunitureService.deleteMaster(userDecorateFunitureRecordList.get(i).getId());
+          }
+      }
+
+//        将订单id 填写 我的家居表中
+
+
+        return SuccessTip.create(effect);
+    }
+
 
     //    修改装修计划家居
     @PutMapping("/funiture/{funitureId}")

@@ -6,6 +6,7 @@ import com.jfeat.am.crud.tag.services.domain.dao.QueryStockTagDao;
 import com.jfeat.am.crud.tag.services.domain.record.StockTagRecord;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseUserDecoratePlanRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
@@ -20,6 +21,7 @@ import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.java.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -125,39 +127,80 @@ public class UserHouseAssetEndpoint {
         return SuccessTip.create(housePropertyBuildingList);
     }
 
+//    查询楼栋下面的房子
     @GetMapping("/asset/{buildingId}")
     public Tip getAssetsByBuildingId(@PathVariable("buildingId") Long buildingId) {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
+        Long start = System.currentTimeMillis();
         List<HouseAsset> houseAssetList = queryHouseAssetDao.queryHouseAssetByBuildingId(buildingId);
-        List<HouseUserAsset> houseUserAssetList = queryHouseUserAssetDao.queryUserAssetByUserId(JWTKit.getUserId());
+
+        HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
+        List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,userAssetRecord,null,null,null,null,null);
+
+        Long uStart = System.currentTimeMillis();
         for (int i = 0; i < houseAssetList.size(); i++) {
-
 //            判断是否有人居住
-            HouseUserAssetRecord record = new HouseUserAssetRecord();
-            record.setAssetId(houseAssetList.get(i).getId());
-            List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,record,null,null,null,null,null);
-            if (recordList!=null && recordList.size()==1){
-                EndpointUserModel endpointUser  = queryEndpointUserDao.queryMasterModel(recordList.get(0).getUserId());
-                if (endpointUser!=null){
-                    if (endpointUser.getPhone()!=null){
-                        houseAssetList.get(i).setUserPhone(endpointUser.getPhone());
-                    }
-                    if (endpointUser.getAvatar()!=null){
-                        houseAssetList.get(i).setUserAvatar(endpointUser.getAvatar());
-                    }
-                    if (endpointUser.getName()!=null){
-                        houseAssetList.get(i).setUsername(endpointUser.getName());
-                    }
-
+            for (int j = 0;j<recordList.size();j++){
+                if (recordList.get(j).getAssetId().equals(houseAssetList.get(i).getId())){
                     houseAssetList.get(i).setExistUser(true);
-                    if (JWTKit.getUserId().equals(endpointUser.getId())){
-                        houseAssetList.get(i).setMyselfAsset(true);
-                    }
+                }
+                if (recordList.get(j).getUserId().equals(JWTKit.getUserId())){
+                    houseAssetList.get(i).setMyselfAsset(true);
                 }
             }
         }
+        Long endTime = System.currentTimeMillis();
+        System.out.println((endTime-start));
+        System.out.println((endTime-uStart));
+//        Page<HouseAsset> page = new Page<>();
+//        page.setRecords(houseAssetList);
+        return SuccessTip.create(houseAssetList);
+    }
+
+
+    //    查询楼栋下面的房子 带用户信息
+    @GetMapping("/userInfoAsset/{buildingId}")
+    public Tip getUserInfoAssetsByBuildingId(@PathVariable("buildingId") Long buildingId) {
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        Long start = System.currentTimeMillis();
+        List<HouseAsset> houseAssetList = queryHouseAssetDao.queryHouseAssetByBuildingId(buildingId);
+
+        HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
+        List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,userAssetRecord,null,null,null,null,null);
+
+        Long uStart = System.currentTimeMillis();
+        for (int i = 0; i < houseAssetList.size(); i++) {
+//            判断是否有人居住
+            for (int j = 0;j<recordList.size();j++){
+                if (recordList.get(j).getAssetId().equals(houseAssetList.get(i).getId())){
+
+//                    添加用户信息
+                    EndpointUserModel endpointUser  = queryEndpointUserDao.queryMasterModel(recordList.get(j).getUserId());
+                    if (endpointUser!=null){
+                        if (endpointUser.getPhone()!=null){
+                            houseAssetList.get(i).setUserPhone(endpointUser.getPhone());
+                        }
+                        if (endpointUser.getAvatar()!=null){
+                            houseAssetList.get(i).setUserAvatar(endpointUser.getAvatar());
+                        }
+                        if (endpointUser.getName()!=null){
+                            houseAssetList.get(i).setUsername(endpointUser.getName());
+                        }
+                    }
+                    houseAssetList.get(i).setExistUser(true);
+                }
+                if (recordList.get(j).getUserId().equals(JWTKit.getUserId())){
+                    houseAssetList.get(i).setMyselfAsset(true);
+                }
+            }
+        }
+        Long endTime = System.currentTimeMillis();
+        System.out.println((endTime-start));
+        System.out.println((endTime-uStart));
 //        Page<HouseAsset> page = new Page<>();
 //        page.setRecords(houseAssetList);
         return SuccessTip.create(houseAssetList);
@@ -172,21 +215,52 @@ public class UserHouseAssetEndpoint {
 
 
 
+//    获取用户房子信息
     @ApiOperation(value = "获取用户的unit", response = QueryHouseAssetDao.class)
     @GetMapping("/user/userAsset")
     public Tip getUserUnite() {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
-        Long userId = JWTKit.getUserId();
-        List<HouseUserAsset> houseUserAssets = queryHouseUserAssetDao.queryUserRoomByUserId(userId);
+
+        HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
+        userAssetRecord.setUserId(JWTKit.getUserId());
+        List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null,userAssetRecord,null,null,null,null,null);
+
         for (int i=0;i<houseUserAssets.size();i++){
+            //        连接地址信息
             String address = houseUserAssets.get(i).getAddress();
             String buildingCode = houseUserAssets.get(i).getBuildingCode();
             String number = houseUserAssets.get(i).getRoomNumber();
             houseUserAssets.get(i).setAddressDetail("".concat(address).concat(" ").concat(buildingCode).concat(" ").concat(number));
+
+//            设置 出租 托管 装修 团购状态
+            if (houseUserAssets.get(i).getTrust()>0){
+                houseUserAssets.get(i).setExistTrust(true);
+            }
+            if (houseUserAssets.get(i).getRentStatus()>0){
+                houseUserAssets.get(i).setExistRent(true);
+            }
+
+            HouseUserDecoratePlanRecord userDecoratePlanRecord = new HouseUserDecoratePlanRecord();
+            userDecoratePlanRecord.setUserId(JWTKit.getUserId());
+            userDecoratePlanRecord.setAssetId(houseUserAssets.get(i).getAssetId());
+
+            List<HouseUserDecoratePlanRecord> decoratePlanRecordList = queryHouseUserDecoratePlanDao.findHouseUserDecoratePlanPage(null,userDecoratePlanRecord,null,null,null,null,null);
+            for (HouseUserDecoratePlanRecord decoratePlanRecord:decoratePlanRecordList){
+                if (decoratePlanRecord.getOptionType().equals(HouseUserDecoratePlan.DECORATE_TYPE)){
+                    houseUserAssets.get(i).setExistDecorate(true);
+                }else if (decoratePlanRecord.getOptionType().equals(HouseUserDecoratePlan.BULK_TYPE)){
+                    houseUserAssets.get(i).setExistBulk(true);
+                }
+            }
+
+
+
+
+
         }
-        logger.info("userId:{},size:{}",userId,houseUserAssets.size());
+//        logger.info("userId:{},size:{}",userId,houseUserAssets.size());
         return SuccessTip.create(houseUserAssets);
     }
 

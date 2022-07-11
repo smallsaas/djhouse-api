@@ -47,6 +47,9 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
       @ApiModelProperty(value = "cad图纸")
       private String cadPicture;
 
+      @ApiModelProperty()
+      private Integer multipleNumber;
+
       @TableField(exist = false)
       private Integer houseTypeNumber;
 
@@ -143,7 +146,15 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
           return this;
       }
 
-      public static final String ID = "id";
+    public Integer getMultipleNumber() {
+        return multipleNumber;
+    }
+
+    public void setMultipleNumber(Integer multipleNumber) {
+        this.multipleNumber = multipleNumber;
+    }
+
+    public static final String ID = "id";
 
       public static final String ORG_ID = "org_id";
 

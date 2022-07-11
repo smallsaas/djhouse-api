@@ -38,6 +38,10 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @ApiModelProperty(value = "资产id")
     private Long assetId;
 
+    @ApiModelProperty(value = "是否托管 0不托管 1托管")
+    private Integer trust;
+
+    @ApiModelProperty(value = "是否出租 0不出租 1出租")
     private Integer rentStatus;
 
     private String rentTitle;
@@ -69,14 +73,6 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private String addressDetail;
 
-    public String getAddressDetail() {
-        return addressDetail;
-    }
-
-    public void setAddressDetail(String addressDetail) {
-        this.addressDetail = addressDetail;
-    }
-
     @ApiModelProperty("方向")
     @TableField(exist = false)
     private String direction;
@@ -84,32 +80,9 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private String extra;
 
-    public String getExtra() {
-        return extra;
-    }
-
-    public void setExtra(String extra) {
-        this.extra = extra;
-    }
 
     @TableField(exist = false)
     private String tags;
-
-    public String getTags() {
-        return tags;
-    }
-
-    public void setTags(String tags) {
-        this.tags = tags;
-    }
-
-    public Integer getFloor() {
-        return floor;
-    }
-
-    public void setFloor(Integer floor) {
-        this.floor = floor;
-    }
 
     @ApiModelProperty(value = "社区Id")
     @TableField(exist = false)
@@ -135,7 +108,6 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private Long unitId;
 
-
     @ApiModelProperty(value = "户型")
     @TableField(exist = false)
     private String houseType;
@@ -152,12 +124,9 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private String vrLink;
 
-
-
     @ApiModelProperty(value = "房屋面积")
     @TableField(exist = false)
     private BigDecimal unitArea;
-
 
     @ApiModelProperty(value = "房屋编号")
     @TableField(exist = false)
@@ -186,7 +155,6 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     private String userAvatar;
 
 
-
     @ApiModelProperty("冲突用户名")
     @TableField(exist = false)
     private String clashUserName;
@@ -198,6 +166,46 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @ApiModelProperty("冲突用户头像")
     @TableField(exist = false)
     private String clashUserAvatar;
+
+    public Integer getTrust() {
+        return trust;
+    }
+
+    public void setTrust(Integer trust) {
+        this.trust = trust;
+    }
+
+    public String getExtra() {
+        return extra;
+    }
+
+    public void setExtra(String extra) {
+        this.extra = extra;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public Integer getFloor() {
+        return floor;
+    }
+
+    public void setFloor(Integer floor) {
+        this.floor = floor;
+    }
+
+    public String getAddressDetail() {
+        return addressDetail;
+    }
+
+    public void setAddressDetail(String addressDetail) {
+        this.addressDetail = addressDetail;
+    }
 
 
     public String getRentTitle() {

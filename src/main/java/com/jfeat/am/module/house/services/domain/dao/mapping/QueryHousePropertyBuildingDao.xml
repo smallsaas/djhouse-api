@@ -9,7 +9,8 @@
         t_house_property_building.area,
         t_house_property_building.code,
         t_house_property_building.floors,
-        t_house_property_building.units
+        t_house_property_building.units,
+t_house_property_building.multiple_number AS multipleNumber
     </sql>
 
     <sql id="QueryOwnedOrgIds">

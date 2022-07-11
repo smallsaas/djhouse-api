@@ -6,6 +6,7 @@
         t_house_user_decorate_funiture.user_id AS userId,
         t_house_user_decorate_funiture.decorate_plan_id AS decoratePlanId,
         t_house_user_decorate_funiture.funiture_id AS funitureId,
+        t_house_user_decorate_funiture.order_id AS orderId,
         t_house_user_decorate_funiture.asset_id AS assetId,
         t_house_user_decorate_funiture.funiture_number AS funitureNumber,
         t_house_user_decorate_funiture.create_time AS createTime
