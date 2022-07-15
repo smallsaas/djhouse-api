@@ -29,6 +29,26 @@ public class HouseAssetRecord extends HouseAsset {
 
     private String slideshow;
 
+    /*
+    是否是自己的
+     */
+    private Boolean self;
+
+    /*
+    是否在匹配需求里
+     */
+    private Boolean matchDemand;
+
+    /*
+    是否匹配成功
+     */
+    private Boolean successMatch;
+
+    /*
+    是否是相同户型
+     */
+    private Boolean sameHouseType;
+
     public Date getRentTime() {
         return rentTime;
     }
@@ -99,5 +119,37 @@ public class HouseAssetRecord extends HouseAsset {
 
     public void setUserAvatar(String userAvatar) {
         this.userAvatar = userAvatar;
+    }
+
+    public Boolean getSelf() {
+        return self;
+    }
+
+    public void setSelf(Boolean self) {
+        this.self = self;
+    }
+
+    public Boolean getMatchDemand() {
+        return matchDemand;
+    }
+
+    public void setMatchDemand(Boolean matchDemand) {
+        this.matchDemand = matchDemand;
+    }
+
+    public Boolean getSuccessMatch() {
+        return successMatch;
+    }
+
+    public void setSuccessMatch(Boolean successMatch) {
+        this.successMatch = successMatch;
+    }
+
+    public Boolean getSameHouseType() {
+        return sameHouseType;
+    }
+
+    public void setSameHouseType(Boolean sameHouseType) {
+        this.sameHouseType = sameHouseType;
     }
 }

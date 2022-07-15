@@ -10,6 +10,8 @@ public class EndpointUserRecord extends EndpointUser{
     private Integer bulkCount;
     private Integer exchangeCount;
 
+    private Integer houseTypeCount;
+
     public Integer getAssetCount() {
         return assetCount;
     }
@@ -32,5 +34,13 @@ public class EndpointUserRecord extends EndpointUser{
 
     public void setExchangeCount(Integer exchangeCount) {
         this.exchangeCount = exchangeCount;
+    }
+
+    public Integer getHouseTypeCount() {
+        return houseTypeCount;
+    }
+
+    public void setHouseTypeCount(Integer houseTypeCount) {
+        this.houseTypeCount = houseTypeCount;
     }
 }

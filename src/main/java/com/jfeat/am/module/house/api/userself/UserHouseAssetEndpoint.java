@@ -25,6 +25,7 @@ import lombok.extern.java.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -74,7 +75,8 @@ public class UserHouseAssetEndpoint {
     @Resource
     QueryEndpointUserDao queryEndpointUserDao;
 
-
+    @Resource
+    QueryHouseAssetExchangeRequestDao queryHouseAssetExchangeRequestDao;
 
 
 
@@ -152,8 +154,6 @@ public class UserHouseAssetEndpoint {
             }
         }
         Long endTime = System.currentTimeMillis();
-        System.out.println((endTime-start));
-        System.out.println((endTime-uStart));
 //        Page<HouseAsset> page = new Page<>();
 //        page.setRecords(houseAssetList);
         return SuccessTip.create(houseAssetList);
@@ -234,7 +234,7 @@ public class UserHouseAssetEndpoint {
             String number = houseUserAssets.get(i).getRoomNumber();
             houseUserAssets.get(i).setAddressDetail("".concat(address).concat(" ").concat(buildingCode).concat(" ").concat(number));
 
-//            设置 出租 托管 装修 团购状态
+//            设置 出租 托管 装修 团购状态 是否有置换
             if (houseUserAssets.get(i).getTrust()>0){
                 houseUserAssets.get(i).setExistTrust(true);
             }
@@ -248,16 +248,23 @@ public class UserHouseAssetEndpoint {
 
             List<HouseUserDecoratePlanRecord> decoratePlanRecordList = queryHouseUserDecoratePlanDao.findHouseUserDecoratePlanPage(null,userDecoratePlanRecord,null,null,null,null,null);
             for (HouseUserDecoratePlanRecord decoratePlanRecord:decoratePlanRecordList){
+//                是否有装修方案
                 if (decoratePlanRecord.getOptionType().equals(HouseUserDecoratePlan.DECORATE_TYPE)){
                     houseUserAssets.get(i).setExistDecorate(true);
+//                    是否有团购
                 }else if (decoratePlanRecord.getOptionType().equals(HouseUserDecoratePlan.BULK_TYPE)){
                     houseUserAssets.get(i).setExistBulk(true);
                 }
             }
 
-
-
-
+//            是否存在置换房屋
+            HouseAssetExchangeRequestRecord exchangeRequestRecord = new HouseAssetExchangeRequestRecord();
+            exchangeRequestRecord.setAssetId(houseUserAssets.get(i).getAssetId());
+            exchangeRequestRecord.setUserId(JWTKit.getUserId());
+            List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null,exchangeRequestRecord,null,null,null,null,null);
+            if (houseAssetExchangeRequestList.size()>0){
+                houseUserAssets.get(i).setExistExchange(true);
+            }
 
         }
 //        logger.info("userId:{},size:{}",userId,houseUserAssets.size());
@@ -272,18 +279,23 @@ public class UserHouseAssetEndpoint {
         if (houseAssetRecord!=null){
             houseUserDecoratePlanRecord.setUserId(JWTKit.getUserId());
             houseUserDecoratePlanRecord.setAssetId(houseAssetRecord.getAssetId());
+            houseUserDecoratePlanRecord.setOptionType(HouseUserDecoratePlan.DECORATE_TYPE);
             List<HouseUserDecoratePlanRecord> houseUserDecoratePlanRecordList =  queryHouseUserDecoratePlanDao.findHouseUserDecoratePlanPage(null,houseUserDecoratePlanRecord,null,null,null,null,null);
             if (houseUserDecoratePlanRecordList!=null && houseUserDecoratePlanRecordList.size()>0){
                 Long planId =  houseUserDecoratePlanRecordList.get(0).getDecoratePlanId();
                 HouseDecoratePlan houseDecoratePlan = queryHouseDecoratePlanDao.queryMasterModel(planId);
                 houseAssetRecord.setHouseDecoratePlan(houseDecoratePlan);
+
+//                装修方案是否可改
+                houseAssetRecord.setDecorateModifyOption(houseUserDecoratePlanRecordList.get(0).getModifyOption());
             }
+
         }
         return SuccessTip.create(houseAssetRecord);
     }
 
 
-    //    新增安装unit位置
+    //    添加房屋位置
     @BusinessLog(name = "HousePropertyUserUnit", value = "create HousePropertyUserUnit")
     @PostMapping("/user/userAsset")
     @ApiOperation(value = "新建 HousePropertyUserUnit", response = QueryHouseUserAssetDao.class)
@@ -324,6 +336,7 @@ public class UserHouseAssetEndpoint {
         }
         return SuccessTip.create(houseUserAssetService.deleteMaster(id));
     }
+
 
 //    出租或者下架出租房屋
     @PutMapping("/user/rent/{id}")

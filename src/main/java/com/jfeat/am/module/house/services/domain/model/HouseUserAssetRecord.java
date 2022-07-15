@@ -19,6 +19,16 @@ public class HouseUserAssetRecord extends HouseUserAsset {
 
     private Boolean isExistDecorate;
 
+    private Boolean isExistExchange;
+
+    public Boolean getExistExchange() {
+        return isExistExchange;
+    }
+
+    public void setExistExchange(Boolean existExchange) {
+        isExistExchange = existExchange;
+    }
+
     public Boolean getExistRent() {
         return isExistRent;
     }

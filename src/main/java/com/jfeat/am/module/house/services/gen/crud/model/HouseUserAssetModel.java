@@ -18,9 +18,10 @@ import java.util.List;
 public class HouseUserAssetModel extends HouseUserAsset{
     private List<Product> productList;
 
-
-
     private HouseDecoratePlan houseDecoratePlan;
+
+//    装修方案是否可修改
+    private Integer decorateModifyOption;
 
     public List<Product> getProductList() {
         return productList;
@@ -39,5 +40,11 @@ public class HouseUserAssetModel extends HouseUserAsset{
         this.houseDecoratePlan = houseDecoratePlan;
     }
 
+    public Integer getDecorateModifyOption() {
+        return decorateModifyOption;
+    }
 
+    public void setDecorateModifyOption(Integer decorateModifyOption) {
+        this.decorateModifyOption = decorateModifyOption;
+    }
 }

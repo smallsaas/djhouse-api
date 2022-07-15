@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.gen.persistence.dao.HouseAppointmentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jfeat.am.module.house.services.gen.persistence.model.HouseAppointment">
+        <id column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="type_id" property="typeId" />
+        <result column="type" property="type" />
+        <result column="user_id" property="userId" />
+        <result column="user_phone" property="userPhone" />
+        <result column="user_name" property="userName" />
+        <result column="server_id" property="serverId" />
+        <result column="server_name" property="serverName" />
+        <result column="server_phone" property="serverPhone" />
+        <result column="name" property="name" />
+        <result column="address_id" property="addressId" />
+        <result column="address_name" property="addressName" />
+        <result column="description" property="description" />
+        <result column="icon" property="icon" />
+        <result column="status" property="status" />
+        <result column="fee" property="fee" />
+        <result column="create_time" property="createTime" />
+        <result column="appointment_time" property="appointmentTime" />
+        <result column="close_time" property="closeTime" />
+        <result column="payment_timestamp" property="paymentTimestamp" />
+        <result column="payment_method" property="paymentMethod" />
+        <result column="earliest_time" property="earliestTime" />
+        <result column="latest_time" property="latestTime" />
+        <result column="field_c" property="fieldC" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, code, type_id, type, user_id, user_phone, user_name, server_id, server_name, server_phone, name, address_id, address_name, description, icon, status, fee, create_time, appointment_time, close_time, payment_timestamp, payment_method, earliest_time, latest_time, field_c
+    </sql>
+
+</mapper>

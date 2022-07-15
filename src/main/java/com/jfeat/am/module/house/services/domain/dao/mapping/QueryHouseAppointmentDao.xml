@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseAppointmentDao">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <sql id="Base_Column_List">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        t_house_appointment.id, t_house_appointment.code, t_house_appointment.type_id AS typeId, t_house_appointment.type, t_house_appointment.user_id AS userId, t_house_appointment.user_phone AS userPhone, t_house_appointment.user_name AS userName, t_house_appointment.server_id AS serverId, t_house_appointment.server_name AS serverName, t_house_appointment.server_phone AS serverPhone, t_house_appointment.name, t_house_appointment.address_id AS addressId, t_house_appointment.address_name AS addressName, t_house_appointment.description, t_house_appointment.icon, t_house_appointment.status, t_house_appointment.fee, t_house_appointment.create_time AS createTime, t_house_appointment.appointment_time AS appointmentTime, t_house_appointment.close_time AS closeTime, t_house_appointment.payment_timestamp AS paymentTimestamp, t_house_appointment.payment_method AS paymentMethod, t_house_appointment.earliest_time AS earliestTime, t_house_appointment.latest_time AS latestTime, t_house_appointment.field_c AS fieldC
+    </sql>
+
+    
+    
+    <select id="queryMasterModel" resultType="HouseAppointmentModel">
+       SELECT t_house_appointment.*
+       FROM t_house_appointment
+       WHERE t_house_appointment.id=#{id}
+       GROUP BY t_house_appointment.id
+    </select>
+
+
+
+                                                                                                    
+    <select id="findHouseAppointmentPage" resultType="HouseAppointmentRecord" parameterType="HouseAppointmentRecord">
+            SELECT <include refid="Base_Column_List"/>
+
+        
+
+        FROM t_house_appointment
+
+        
+        
+        WHERE 1=1
+        
+
+        
+                                                                            <if test="record.id != null and record.id>0 ">
+                                    AND t_house_appointment.id LIKE CONCAT('%',#{record.id},'%')
+                            </if>
+                                                                    <if test="record.code != null and record.code!= ''">
+                                    AND t_house_appointment.code LIKE CONCAT('%',#{record.code},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.typeId != null and record.typeId>0 ">
+                                    AND t_house_appointment.type_id LIKE CONCAT('%',#{record.typeId},'%')
+                            </if>
+                                                                    <if test="record.type != null and record.type!= ''">
+                                    AND t_house_appointment.type LIKE CONCAT('%',#{record.type},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.userId != null and record.userId>0 ">
+                                    AND t_house_appointment.user_id LIKE CONCAT('%',#{record.userId},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.userPhone != null and record.userPhone!= ''">
+                                    AND t_house_appointment.user_phone LIKE CONCAT('%',#{record.userPhone},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.userName != null and record.userName!= ''">
+                                    AND t_house_appointment.user_name LIKE CONCAT('%',#{record.userName},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.serverId != null and record.serverId>0 ">
+                                    AND t_house_appointment.server_id LIKE CONCAT('%',#{record.serverId},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.serverName != null and record.serverName!= ''">
+                                    AND t_house_appointment.server_name LIKE CONCAT('%',#{record.serverName},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.serverPhone != null and record.serverPhone!= ''">
+                                    AND t_house_appointment.server_phone LIKE CONCAT('%',#{record.serverPhone},'%')
+                            </if>
+                                                                    <if test="record.name != null and record.name!= ''">
+                                    AND t_house_appointment.name LIKE CONCAT('%',#{record.name},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.addressId != null and record.addressId>0 ">
+                                    AND t_house_appointment.address_id LIKE CONCAT('%',#{record.addressId},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.addressName != null and record.addressName!= ''">
+                                    AND t_house_appointment.address_name LIKE CONCAT('%',#{record.addressName},'%')
+                            </if>
+                                                                    <if test="record.description != null and record.description!= ''">
+                                    AND t_house_appointment.description LIKE CONCAT('%',#{record.description},'%')
+                            </if>
+                                                                    <if test="record.icon != null and record.icon!= ''">
+                                    AND t_house_appointment.icon LIKE CONCAT('%',#{record.icon},'%')
+                            </if>
+                                                                    <if test="record.status != null and record.status>0 ">
+                                    AND t_house_appointment.status LIKE CONCAT('%',#{record.status},'%')
+                            </if>
+                                                                    <if test="record.fee != null and record.fee>0 ">
+                                    AND t_house_appointment.fee LIKE CONCAT('%',#{record.fee},'%')
+                            </if>
+                                                                                
+
+                                                                                        <if test="record.createTime != null and record.createTime>0 ">
+                                    AND t_house_appointment.create_time LIKE CONCAT('%',#{record.createTime},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.appointmentTime != null and record.appointmentTime>0 ">
+                                    AND t_house_appointment.appointment_time LIKE CONCAT('%',#{record.appointmentTime},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.closeTime != null and record.closeTime>0 ">
+                                    AND t_house_appointment.close_time LIKE CONCAT('%',#{record.closeTime},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.paymentTimestamp != null and record.paymentTimestamp>0 ">
+                                    AND t_house_appointment.payment_timestamp LIKE CONCAT('%',#{record.paymentTimestamp},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.paymentMethod != null and record.paymentMethod!= ''">
+                                    AND t_house_appointment.payment_method LIKE CONCAT('%',#{record.paymentMethod},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.earliestTime != null and record.earliestTime>0 ">
+                                    AND t_house_appointment.earliest_time LIKE CONCAT('%',#{record.earliestTime},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.latestTime != null and record.latestTime>0 ">
+                                    AND t_house_appointment.latest_time LIKE CONCAT('%',#{record.latestTime},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.fieldC != null and record.fieldC!= ''">
+                                    AND t_house_appointment.field_c LIKE CONCAT('%',#{record.fieldC},'%')
+                            </if>
+        
+        <if test="startTime != null">
+            <![CDATA[AND t_house_appointment.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_appointment.end_time <= DATE(#{endTime}]]>
+        </if>
+            <!--
+        <if test="search != null and search != ''">
+            OR t_house_appointment.name LIKE CONCAT('%',#{search},'%')
+        </if>
+        -->
+                                                            ORDER BY create_time DESC
+                        </select>
+</mapper>

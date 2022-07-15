@@ -53,7 +53,7 @@
                  left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
 
         WHERE t_house_asset.id = #{id}
-        GROUP BY t_house_asset.id
+        GROUP BY  t_house_asset.id
     </select>
 
 
@@ -112,7 +112,6 @@
             AND t_house_property_building.code LIKE CONCAT('%',#{record.buildingCode},'%')
         </if>
 
-
         <if test="startTime != null">
             <![CDATA[AND t_house_asset.start_time >= DATE(#{startTime})]]>
         </if>
@@ -120,6 +119,7 @@
             <![CDATA[AND t_house_asset.end_time <= DATE(#{endTime}]]>
         </if>
 
+        ORDER BY t_house_asset.number*1 desc
 
         <!--
     <if test="search != null and search != ''">

@@ -68,7 +68,6 @@ public class ProductEndpoint {
 
 
 
-
     @BusinessLog(name = "Product", value = "create Product")
     @Permission(ProductPermission.PRODUCT_NEW)
     @PostMapping
@@ -311,9 +310,6 @@ public class ProductEndpoint {
 
 
         List<ProductRecord> productPage = queryProductDao.findProductPage(page, record, tag, search, orderBy, null, null);
-
-
-
 
         page.setRecords(productPage);
 

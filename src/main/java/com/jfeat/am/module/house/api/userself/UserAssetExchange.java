@@ -1,27 +1,35 @@
 package com.jfeat.am.module.house.api.userself;
 
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.JsonArray;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetExchangeRequestDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetMatchLogDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetMatchLogRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetExchangeRequestService;
+import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchangeRequest;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetMatchLog;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.users.weChatMiniprogram.constant.SecurityConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,27 +54,62 @@ public class UserAssetExchange {
     @Resource
     QueryHouseAssetMatchLogDao queryHouseAssetMatchLogDao;
 
+    @Resource
+    HouseUserAssetService houseUserAssetService;
 
+
+//    新建或者修改资产交换记录并匹配
     @BusinessLog(name = "HouseAssetExchangeRequest", value = "create HouseAssetExchangeRequest")
     @PostMapping
     @ApiOperation(value = "新建 HouseAssetExchangeRequest", response = HouseAssetExchangeRequest.class)
     public Tip createHouseAssetExchangeRequest(@RequestParam(value = "isSameHouseType", defaultValue = "true", required = false) Boolean isSameHouseType, @RequestBody HouseAssetExchangeRequest entity) {
-        Integer affected = 0;
-        entity.setUserId(JWTKit.getUserId());
-        try {
-            affected = houseAssetExchangeRequestService.createMaster(entity);
-//            匹配请求
-            houseAssetExchangeRequestService.assetMachResult(entity, isSameHouseType);
-        } catch (DuplicateKeyException e) {
-            throw new BusinessException(BusinessCode.DuplicateKey);
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
+        if (entity.getAssetId() ==null){
+            throw new BusinessException(BusinessCode.BadRequest,"assetId为必填项");
+        }
+        if (entity.getTargetAssetRange()==null){
+            throw new BusinessException(BusinessCode.BadRequest,"targetAssetRange为必填项");
+        }
+        HouseAssetExchangeRequestRecord exchangeRequestRecord = new HouseAssetExchangeRequestRecord();
+        exchangeRequestRecord.setUserId(JWTKit.getUserId());
+        exchangeRequestRecord.setAssetId(entity.getAssetId());
+        List<HouseAssetExchangeRequestRecord> exchangeRequestRecordList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null,exchangeRequestRecord,null,null,null,null,null);
+        Integer affected = 0;
+        /*
+        判读是否存在匹配记录，如果不存在就创建匹配记录，然后匹配
+                            如果存在就行修改匹配范围
+         */
+        if (exchangeRequestRecordList==null || exchangeRequestRecordList.size()==0){
+            entity.setUserId(JWTKit.getUserId());
+            try {
+                affected = houseAssetExchangeRequestService.createMaster(entity);
+//            匹配请求
+                houseAssetExchangeRequestService.assetMachResult(entity, isSameHouseType);
+            } catch (DuplicateKeyException e) {
+                throw new BusinessException(BusinessCode.DuplicateKey);
+            }
+        }else {
+            entity.setId(exchangeRequestRecordList.get(0).getId());
+            entity.setUserId(JWTKit.getUserId());
+            entity.setAssetId(exchangeRequestRecordList.get(0).getAssetId());
+            affected = houseAssetExchangeRequestService.updateMaster(entity);
+            if (affected > 0) {
+                houseAssetExchangeRequestService.assetMachResult(entity, isSameHouseType);
+            }
+        }
+
+
         return SuccessTip.create(affected);
     }
 
     @GetMapping("/demand")
     public Tip getHouseAssetExchangeRequest() {
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
         List<Map<String, Object>> list = new ArrayList<>();
-        System.out.println(JWTKit.getUserId());
         List<HouseAssetExchangeRequest> houseAssetExchangeRequestList = queryHouseAssetExchangeRequestDao.queryHouseAssetExchangeRequestByUserId(JWTKit.getUserId());
         for (HouseAssetExchangeRequest houseAssetExchangeRequest : houseAssetExchangeRequestList) {
             Map<String, Object> houseAssetMap = new HashMap<>();
@@ -91,11 +134,11 @@ public class UserAssetExchange {
         return SuccessTip.create(list);
     }
 
-//    用户资产交换信息
+    //    用户资产交换信息
     @GetMapping("/userAssetExchangeDemand")
     public Tip getUserAssetExchangeDemand(Page<HouseAssetExchangeRequestRecord> page,
                                           @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                                          @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize){
+                                          @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
@@ -104,13 +147,12 @@ public class UserAssetExchange {
         page.setSize(pageSize);
         page.setCurrent(pageNum);
         List<HouseAssetModel> houseAssetModels = new ArrayList<>();
-        List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecordList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(page,record,null,null,null,null,null);
-        for (HouseAssetExchangeRequestRecord exchangeRequestRecord:houseAssetExchangeRequestRecordList){
+        List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecordList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(page, record, null, null, null, null, null);
+        for (HouseAssetExchangeRequestRecord exchangeRequestRecord : houseAssetExchangeRequestRecordList) {
             List<String> matchedAssetRange = Arrays.asList(exchangeRequestRecord.getTargetAssetRange().split(","));
             HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(exchangeRequestRecord.getAssetId());
             houseAssetModel.setExchangeNumber(matchedAssetRange.size());
             houseAssetModels.add(houseAssetModel);
-
         }
         Page<HouseAssetModel> houseAssetModelPage = new Page<>();
         houseAssetModelPage.setCurrent(pageNum);
@@ -119,57 +161,141 @@ public class UserAssetExchange {
         return SuccessTip.create(houseAssetModelPage);
     }
 
+    //    换房记录
+    @GetMapping("/userAllAssetExchangeDemand")
+    public Tip getUserAllAssetExchangeDemand(Page<HouseAssetExchangeRequestRecord> page,
+                                             @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
-////    返回匹配结果
-//    @GetMapping("/matchResult/{assetId}")
-//    public Tip getAssetExchangeRequestResult(Page<HouseAssetMatchLogRecord> page,
-//                                             @PathVariable("assetId") Long assetId,
-//                                             @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-//                                             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize){
-//        if (JWTKit.getUserId() == null) {
-//            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
-//        }
-//        HouseAssetMatchLogRecord record = new HouseAssetMatchLogRecord();
-//        record.setOwnerUserId(JWTKit.getUserId());
-//        record.setOwnerAssetId(assetId);
-//
-//        page.setSize(pageSize);
-//        page.setCurrent(pageNum);
-//        List<HouseAssetMatchLogRecord> houseAssetMatchLogs = queryHouseAssetMatchLogDao.findHouseAssetMatchLogPage(page,record,null,null,null,null,null);
-//
-//        for (HouseAssetMatchLogRecord matchLogRecord:houseAssetMatchLogs){
-//            HouseAsset houseAsset = queryHouseAssetDao.queryMasterModel(matchLogRecord.getMathchedAssetId());
-//            if (houseAsset!=null){
-//                matchLogRecord.setMatcher(houseAsset);
-//            }
-//
-////            隐匿用户信息
-//            String name  = matchLogRecord.getMatchedName();
-//            matchLogRecord.setMatchedUserId(null);
-//            if (name!=null&&!("".equals(name))){
-//                matchLogRecord.setMatchedName(name.substring(0,1).concat("*"));
-//            }
-//            matchLogRecord.setMatchedAvatar(null);
-//            String number = matchLogRecord.getMatchedPhone();
-//            if (number!=null && number.length()>=3){
-//                matchLogRecord.setMatchedPhone(number.substring(0, 1).concat("*********").concat(number.substring(number.length() - 1, number.length())));
-//
-//            }
-//
-//        }
-//        page.setRecords(houseAssetMatchLogs);
-//        return SuccessTip.create(page);
-//    }
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+//        获取用户全部置换记录
+        HouseAssetExchangeRequestRecord record = new HouseAssetExchangeRequestRecord();
+        record.setUserId(JWTKit.getUserId());
+        page.setSize(pageSize);
+        page.setCurrent(pageNum);
+        List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecordList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(page, record, null, null, null, null, null);
 
-//    请求交换结果
+        JSONObject jsonObject = houseUserAssetService.parseMatchAssetData(houseAssetExchangeRequestRecordList);
+        System.out.println(jsonObject);
+        JSONArray result = houseUserAssetService.formatAssetMatchResult(jsonObject);
+        System.out.println(result);
+        return SuccessTip.create(result);
+    }
+
+    /*
+    选择房屋交换匹配数据
+     */
+
+    @GetMapping("/buildingAsset")
+    public Tip getHouseAssetExchangeBuilding(@RequestParam(value = "buildingId",required = true) Long buildingId,
+                                            @RequestParam(value = "assetId",required = true) Long assetId){
+
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        if (assetId==null || "".equals(assetId)){
+            throw new BusinessException(BusinessCode.BadRequest,"assetId为空");
+        }
+        /*
+        查询楼栋全部房屋
+         */
+        HouseAssetRecord houseAssetRecord = new HouseAssetRecord();
+        houseAssetRecord.setBuildingId(buildingId);
+        houseAssetRecord.setAssetType(HouseAsset.ASSET_Type_HOUSE);
+        List<HouseAssetRecord> houseAssetRecordList = queryHouseAssetDao.findHouseAssetPage(null,houseAssetRecord,null,null,null,
+                null,null);
+
+        HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(assetId);
+        /*
+        查询匹配需求记录
+         */
+        List<HouseAssetModel> exchangeRequestResult = new ArrayList<>();
+        HouseAssetExchangeRequestRecord exchangeRequestRecord = new HouseAssetExchangeRequestRecord();
+        exchangeRequestRecord.setUserId(JWTKit.getUserId());
+        exchangeRequestRecord.setAssetId(assetId);
+        List<HouseAssetExchangeRequestRecord> exchangeRequestRecordList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null,exchangeRequestRecord,null,null,null,null,null);
+        if (exchangeRequestRecordList!=null && exchangeRequestRecordList.size()==1){
+            List<String> matchedAssetRange = Arrays.asList(exchangeRequestRecordList.get(0).getTargetAssetRange().split(","));
+            List<Long> matchedAssetRangeIds = matchedAssetRange.stream().map(Long::valueOf).collect(Collectors.toList());
+
+            for (Long id : matchedAssetRangeIds) {
+                HouseAssetModel matchHouseAsset = queryHouseAssetDao.queryMasterModel(id);
+                if (matchHouseAsset != null) {
+                    exchangeRequestResult.add(matchHouseAsset);
+                }
+            }
+        }
+        /*
+        查询匹配成功记录
+         */
+        HouseAssetMatchLogRecord matchLogRecord = new HouseAssetMatchLogRecord();
+        matchLogRecord.setOwnerAssetId(assetId);
+        matchLogRecord.setOwnerUserId(JWTKit.getUserId());
+        List<HouseAssetMatchLogRecord> matchLogRecordList = queryHouseAssetMatchLogDao.findHouseAssetMatchLogPage(null,matchLogRecord,null,null,null,null,null);
+
+        /*
+          遍历房屋，标记相同户型、自己房屋、匹配成功房屋、匹配需求房屋
+         */
+
+        for (int i=0;i<houseAssetRecordList.size();i++){
+            /*
+            是否是自己的
+             */
+            if (houseAssetRecordList.get(i).getId().equals(houseAssetModel.getId())){
+                houseAssetRecordList.get(i).setSelf(true);
+            }else {
+                houseAssetRecordList.get(i).setSelf(false);
+            }
+            /*
+            是否相同户型
+             */
+            if (houseAssetRecordList.get(i).getDesignModelId().equals(houseAssetModel.getDesignModelId())){
+                houseAssetRecordList.get(i).setSameHouseType(true);
+            }else {
+                houseAssetRecordList.get(i).setSameHouseType(false);
+            }
+
+            /*
+            标记交换需求房屋
+             */
+            for (HouseAssetModel houseAssetDemand:exchangeRequestResult){
+                if (houseAssetDemand.getId().equals(houseAssetRecordList.get(i).getId())){
+                    houseAssetRecordList.get(i).setMatchDemand(true);
+                    break;
+                }else {
+                    houseAssetRecordList.get(i).setMatchDemand(false);
+                }
+            }
+
+            /*
+            标记匹配成功
+             */
+            for (HouseAssetMatchLogRecord assetMatchLogRecord:matchLogRecordList){
+                if (assetMatchLogRecord.getMathchedAssetId().equals(houseAssetRecordList.get(i).getId())){
+                    houseAssetRecordList.get(i).setSuccessMatch(true);
+                    break;
+                }else {
+                    houseAssetRecordList.get(i).setSuccessMatch(false);
+                }
+            }
+
+        }
+
+        return SuccessTip.create(houseAssetRecordList);
+    }
+
+
+    //    请求交换结果
     @GetMapping("/matchResult")
     public Tip getHouseAssetExchangeRequestResult(Page<HouseAssetMatchLogRecord> page,
                                                   @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                                   @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         HouseAssetMatchLogRecord record = new HouseAssetMatchLogRecord();
         record.setOwnerUserId(JWTKit.getUserId());
-        List<HouseAssetMatchLogRecord> houseAssetMatchLogs = queryHouseAssetMatchLogDao.findHouseAssetMatchLogPage(page,record,null,null,null,null,null);
-        for (int i=0;i<houseAssetMatchLogs.size();i++) {
+        List<HouseAssetMatchLogRecord> houseAssetMatchLogs = queryHouseAssetMatchLogDao.findHouseAssetMatchLogPage(page, record, null, null, null, null, null);
+        for (int i = 0; i < houseAssetMatchLogs.size(); i++) {
             Map<String, Object> houseAssetMap = new HashMap<>();
             HouseAsset ownerHouseAsset = queryHouseAssetDao.queryMasterModel(houseAssetMatchLogs.get(i).getOwnerAssetId());
             HouseAsset matchedHouseAsset = queryHouseAssetDao.queryMasterModel(houseAssetMatchLogs.get(i).getMathchedAssetId());
@@ -181,10 +307,13 @@ public class UserAssetExchange {
     }
 
 
-//    更新房屋请求
+    //    更新房屋请求
     @PutMapping("/{id}")
     public Tip updateHouseAssetExchangeRequest(@PathVariable Long id, @RequestBody HouseAssetExchangeRequest entity, @RequestParam(value = "isSameHouseType", defaultValue = "true", required = false) Boolean isSameHouseType) {
         System.out.println(JWTKit.getUserId());
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
         HouseAssetExchangeRequest houseAssetExchangeRequest = queryHouseAssetExchangeRequestDao.queryHouseAssetExchangeRequestByAssetIdAndUserId(id, JWTKit.getUserId());
         entity.setId(houseAssetExchangeRequest.getId());
         entity.setUserId(JWTKit.getUserId());
@@ -197,29 +326,38 @@ public class UserAssetExchange {
     }
 
 
-//    删除资产交换请求
+    //    删除资产交换请求
     @DeleteMapping("/{id}")
     public Tip deleteHouseAssetExchangeRequest(@PathVariable Long id) {
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
         HouseAssetExchangeRequest houseAssetExchangeRequest = queryHouseAssetExchangeRequestDao.queryHouseAssetExchangeRequestByAssetIdAndUserId(id, JWTKit.getUserId());
         Integer effect = houseAssetExchangeRequestService.deleteMaster(houseAssetExchangeRequest.getId());
-        effect +=queryHouseAssetMatchLogDao.deleteHouseAssetMatchLogByUserIdAndAssetId(id,JWTKit.getUserId());
+        effect += queryHouseAssetMatchLogDao.deleteHouseAssetMatchLogByUserIdAndAssetId(id, JWTKit.getUserId());
         return SuccessTip.create(effect);
     }
 
-    @ApiOperation(value = "HouseAssetExchangeRequest 列表信息", response = HouseAssetExchangeRequestRecord.class)
+//    获取用户某间房间 换房需求房源数组
+    @GetMapping("/userAssetExchangeDemand/{assetId}")
+    public Tip getUserAssetExchangeDemand(@PathVariable("assetId") Long assetId){
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        HouseAssetExchangeRequestRecord houseAssetExchangeRequestRecord = new HouseAssetExchangeRequestRecord();
+        houseAssetExchangeRequestRecord.setAssetId(assetId);
+        houseAssetExchangeRequestRecord.setUserId(JWTKit.getUserId());
+
+        List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecordList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null,houseAssetExchangeRequestRecord,null,null,null,null,null);
+        if (houseAssetExchangeRequestRecordList!=null && houseAssetExchangeRequestRecordList.size()==1){
+            List<String> matchedAssetRange = Arrays.asList(houseAssetExchangeRequestRecordList.get(0).getTargetAssetRange().split(","));
+//            List<Long> matchedAssetRangeIds = matchedAssetRange.stream().map(Long::valueOf).collect(Collectors.toList());
+            return SuccessTip.create(matchedAssetRange);
+        }
+        return SuccessTip.create();
+    }
+
     @GetMapping
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "pageNum", dataType = "Integer"),
-            @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
-            @ApiImplicitParam(name = "search", dataType = "String"),
-            @ApiImplicitParam(name = "id", dataType = "Long"),
-            @ApiImplicitParam(name = "userId", dataType = "Long"),
-            @ApiImplicitParam(name = "assetId", dataType = "Long"),
-            @ApiImplicitParam(name = "targetAssetRange", dataType = "String"),
-            @ApiImplicitParam(name = "target_assetRangeLimit", dataType = "String"),
-            @ApiImplicitParam(name = "orderBy", dataType = "String"),
-            @ApiImplicitParam(name = "sort", dataType = "String")
-    })
     public Tip queryHouseAssetExchangeRequestPage(Page<HouseAssetExchangeRequestRecord> page,
                                                   @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                                   @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
