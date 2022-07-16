@@ -9,6 +9,8 @@
         t_house_asset.number,
         t_house_asset.asset_slot AS assetSlot,
         t_house_asset.asset_type AS assetType,
+        t_house_asset.asset_flag AS assetFlag,
+        t_house_asset.house_type_id AS houseTypeId,
 
         t_house_property_building.cad_picture AS cadPicture,
         t_house_property_building.code       AS buildingCode,

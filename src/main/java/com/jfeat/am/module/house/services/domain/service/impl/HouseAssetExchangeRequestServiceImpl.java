@@ -44,22 +44,42 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
 
     @Override
     public List<HouseAssetExchangeRequest> assetMachResult(HouseAssetExchangeRequest assetExchangeRequest,Boolean isSameHouseType) {
+        /*
+        删除原有的 已经匹配成功记录
+         */
         queryHouseAssetMatchLogDao.deleteHouseAssetMatchLogByUserIdAndAssetId(assetExchangeRequest.getAssetId(),assetExchangeRequest.getUserId());
-        Long ownHouseTypeId = queryHouseAssetExchangeRequestDao.queryHouseAssetHouseType(assetExchangeRequest.getAssetId());
+
+        /*
+        查询交换的房子户型
+         */
+//        Long ownHouseTypeId = queryHouseAssetExchangeRequestDao.queryHouseAssetHouseType(assetExchangeRequest.getAssetId());
         List<HouseAssetExchangeRequest> matchedAsset = new ArrayList<>();
         List<String> targetAssetRange = Arrays.asList(assetExchangeRequest.getTargetAssetRange().split(","));
         List<Long> targetAssetRangeIds = targetAssetRange.stream().map(Long::valueOf).collect(Collectors.toList());
+
+
         for (int i=0;i<targetAssetRangeIds.size();i++){
+
+            /*
+            查询 需求房屋是否 添加到需求表中
+            没有就跳过
+             */
             HouseAssetExchangeRequest houseAssetExchangeRequest =  queryHouseAssetExchangeRequestDao.queryHouseAssetExchangeRequestByAssetId(targetAssetRangeIds.get(i));
             if (houseAssetExchangeRequest ==null){
                 continue;
             }
-            if (isSameHouseType && (ownHouseTypeId==null|| ownHouseTypeId!=queryHouseAssetExchangeRequestDao.queryHouseAssetHouseType(houseAssetExchangeRequest.getAssetId()))){
-                continue;
-            }
+//            if (isSameHouseType && (ownHouseTypeId==null|| ownHouseTypeId!=queryHouseAssetExchangeRequestDao.queryHouseAssetHouseType(houseAssetExchangeRequest.getAssetId()))){
+//                continue;
+//            }
+
             List<String>  matchedAssetRange = Arrays.asList(houseAssetExchangeRequest.getTargetAssetRange().split(","));
             List<Long> matchedAssetRangeIds = matchedAssetRange.stream().map(Long::valueOf).collect(Collectors.toList());
-            if (houseAssetExchangeRequest.getUserId()!=assetExchangeRequest.getUserId() &&matchedAssetRangeIds.contains(assetExchangeRequest.getAssetId())){
+
+            /*
+            如果 匹配到的人id 不等于自己id 而且 匹配到的人的需求范围正好有自己
+            添加匹配成功表
+             */
+            if (houseAssetExchangeRequest.getUserId()!=assetExchangeRequest.getUserId() && matchedAssetRangeIds.contains(assetExchangeRequest.getAssetId())){
                 matchedAsset.add(houseAssetExchangeRequest);
                 HouseAssetMatchLog houseAssetMatchLog = new HouseAssetMatchLog();
                 houseAssetMatchLog.setOwnerAssetId(assetExchangeRequest.getAssetId());

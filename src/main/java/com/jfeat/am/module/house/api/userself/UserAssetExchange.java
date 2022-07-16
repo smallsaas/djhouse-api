@@ -59,9 +59,7 @@ public class UserAssetExchange {
 
 
 //    新建或者修改资产交换记录并匹配
-    @BusinessLog(name = "HouseAssetExchangeRequest", value = "create HouseAssetExchangeRequest")
     @PostMapping
-    @ApiOperation(value = "新建 HouseAssetExchangeRequest", response = HouseAssetExchangeRequest.class)
     public Tip createHouseAssetExchangeRequest(@RequestParam(value = "isSameHouseType", defaultValue = "true", required = false) Boolean isSameHouseType, @RequestBody HouseAssetExchangeRequest entity) {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
@@ -177,11 +175,15 @@ public class UserAssetExchange {
         page.setCurrent(pageNum);
         List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecordList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(page, record, null, null, null, null, null);
 
-        JSONObject jsonObject = houseUserAssetService.parseMatchAssetData(houseAssetExchangeRequestRecordList);
-        System.out.println(jsonObject);
-        JSONArray result = houseUserAssetService.formatAssetMatchResult(jsonObject);
-        System.out.println(result);
-        return SuccessTip.create(result);
+        if (houseAssetExchangeRequestRecordList!=null && houseAssetExchangeRequestRecordList.size()>0){
+            JSONObject jsonObject = houseUserAssetService.parseMatchAssetData(houseAssetExchangeRequestRecordList);
+            System.out.println(jsonObject);
+            JSONArray result = houseUserAssetService.formatAssetMatchResult(jsonObject);
+            System.out.println(result);
+            return SuccessTip.create(result);
+        }
+        return SuccessTip.create();
+
     }
 
     /*
@@ -194,6 +196,9 @@ public class UserAssetExchange {
 
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        if (buildingId==null || "".equals(buildingId)){
+            throw new BusinessException(BusinessCode.BadRequest,"building为空");
         }
         if (assetId==null || "".equals(assetId)){
             throw new BusinessException(BusinessCode.BadRequest,"assetId为空");

@@ -69,6 +69,8 @@ crud-plus:
     - eav
     - saas
     - tag
+io:
+  excel-template-dir: "excel-templates"
 
 logging:
   level: debug

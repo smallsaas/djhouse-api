@@ -1,4 +1,4 @@
-package com.jfeat.am.module.house.api.userself;
+package com.jfeat.am.module.house.api.userself.rent;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -228,12 +228,18 @@ public class UserAppointmentEndpoint {
 //        填写信息电话
         List<HouseAppointmentRecord> houseAppointmentPage = queryHouseAppointmentDao.findHouseAppointmentPage(page, record, tag, search, orderBy, null, null);
         for (HouseAppointmentRecord houseAppointmentRecord:houseAppointmentPage){
-            if (userModel.getType().equals(SecurityConstants.USER_TYPE_INTERMEDIARY) && houseAppointmentRecord.getUserId()!=null){
-                EndpointUserModel user = queryEndpointUserDao.queryMasterModel(houseAppointmentRecord.getUserId());
+            EndpointUserModel user = queryEndpointUserDao.queryMasterModel(houseAppointmentRecord.getUserId());
+            if (user!=null){
                 houseAppointmentRecord.setUserPhone(user.getPhone());
-            }else {
-                EndpointUserModel server = queryEndpointUserDao.queryMasterModel(houseAppointmentRecord.getServerId());
+                houseAppointmentRecord.setUserName(user.getName());
+                houseAppointmentRecord.setUserAvatar(user.getAvatar());
+            }
+
+            EndpointUserModel server = queryEndpointUserDao.queryMasterModel(houseAppointmentRecord.getServerId());
+            if (server!=null){
                 houseAppointmentRecord.setServerPhone(server.getPhone());
+                houseAppointmentRecord.setServerAvatar(server.getAvatar());
+                houseAppointmentRecord.setServerName(server.getName());
             }
 //            设置房屋地址
             HouseAsset houseAsset = queryHouseAssetDao.queryMasterModel(houseAppointmentRecord.getAddressId());

@@ -47,6 +47,12 @@ public class HouseAsset extends Model<HouseAsset> {
     @ApiModelProperty(value = "资产类型")
     private Integer assetType;
 
+    @ApiModelProperty(value = "0-无效房子 1-平房  2-复式房")
+    private Integer assetFlag;
+
+    @ApiModelProperty("当为复式时有户型id")
+    private Long houseTypeId;
+
 
 
     @ApiModelProperty(value = "社区Id")
@@ -332,6 +338,22 @@ public class HouseAsset extends Model<HouseAsset> {
         this.area = area;
     }
 
+    public Integer getAssetFlag() {
+        return assetFlag;
+    }
+
+    public void setAssetFlag(Integer assetFlag) {
+        this.assetFlag = assetFlag;
+    }
+
+    public Long getHouseTypeId() {
+        return houseTypeId;
+    }
+
+    public void setHouseTypeId(Long houseTypeId) {
+        this.houseTypeId = houseTypeId;
+    }
+
     public static final String ID = "id";
 
     public static final String BUILDING_ID = "building_id";
@@ -346,9 +368,30 @@ public class HouseAsset extends Model<HouseAsset> {
 
     public static final String ASSET_TYPE = "asset_type";
 
+    /*
+    房子类型
+     */
     public static final Integer ASSET_Type_HOUSE=1;
 
+    /*
+    车位类型
+     */
     public static final Integer ASSET_TYPE_PARKING=2;
+
+    /*
+    无效房子
+     */
+    public static final Integer ASSET_FLAG_INVALID=0;
+
+    /*
+    平房
+     */
+    public static final Integer ASSET_FLAG_BUNGALOW=1;
+
+    /*
+    复式
+     */
+    public static final Integer ASSET_FLAG_MULTIPLE=2;
 
     @Override
     protected Serializable pkVal() {

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.gen.persistence.dao.HouseRentAssetMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset">
+        <id column="id" property="id" />
+        <result column="asset_id" property="assetId" />
+        <result column="community_id" property="communityId" />
+        <result column="house_type_id" property="houseTypeId" />
+        <result column="landlord_id" property="landlordId" />
+        <result column="area" property="area" />
+        <result column="introduce_picture" property="introducePicture" />
+        <result column="server_id" property="serverId" />
+        <result column="cover" property="cover" />
+        <result column="title" property="title" />
+        <result column="price" property="price" />
+        <result column="slide" property="slide" />
+        <result column="describe" property="describe" />
+        <result column="rent_status" property="rentStatus" />
+        <result column="note" property="note" />
+        <result column="rent_time" property="rentTime" />
+        <result column="shelves_time" property="shelvesTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, asset_id, community_id, house_type_id, landlord_id, area, introduce_picture, server_id, cover, title, price, slide, describe, rent_status, note, rent_time, shelves_time
+    </sql>
+
+</mapper>

@@ -15,6 +15,26 @@ public class HouseAppointmentRecord extends HouseAppointment {
 
     private String simpleTime;
 
+    private String userAvatar;
+
+    private String serverAvatar;
+
+    public String getUserAvatar() {
+        return userAvatar;
+    }
+
+    public void setUserAvatar(String userAvatar) {
+        this.userAvatar = userAvatar;
+    }
+
+    public String getServerAvatar() {
+        return serverAvatar;
+    }
+
+    public void setServerAvatar(String serverAvatar) {
+        this.serverAvatar = serverAvatar;
+    }
+
     public HouseAsset getHouseAsset() {
         return houseAsset;
     }

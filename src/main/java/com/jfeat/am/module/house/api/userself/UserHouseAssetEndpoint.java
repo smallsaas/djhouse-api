@@ -5,13 +5,11 @@ import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.crud.tag.services.domain.dao.QueryStockTagDao;
 import com.jfeat.am.crud.tag.services.domain.record.StockTagRecord;
 import com.jfeat.am.module.house.services.domain.dao.*;
-import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
-import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
-import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
-import com.jfeat.am.module.house.services.domain.model.HouseUserDecoratePlanRecord;
+import com.jfeat.am.module.house.services.domain.model.*;
 import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.domain.service.HouseUserCommunityStatusService;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseUserAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.crud.base.annotation.BusinessLog;
@@ -78,6 +76,9 @@ public class UserHouseAssetEndpoint {
     @Resource
     QueryHouseAssetExchangeRequestDao queryHouseAssetExchangeRequestDao;
 
+    @Resource
+    QueryHouseDesignModelDao queryHouseDesignModelDao;
+
 
 
 //    获取小区
@@ -121,11 +122,19 @@ public class UserHouseAssetEndpoint {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
+        Long start = System.currentTimeMillis();
         List<HousePropertyBuilding> housePropertyBuildingList = housePropertyBuildingDao.queryHousePropertyBuildingByUserId(JWTKit.getUserId());
-        for (int i = 0; i < housePropertyBuildingList.size(); i++) {
-            housePropertyBuildingList.get(i).setAssertTotal(housePropertyBuildingDao.queryHouseAssetNumberByBuildingId(housePropertyBuildingList.get(i).getId()));
-            housePropertyBuildingList.get(i).setHouseTypeNumber(housePropertyBuildingDao.queryHouseTypeNumberByBuildingId(housePropertyBuildingList.get(i).getId()));
-        }
+
+
+//        HouseAssetRecord houseAssetRecord = new HouseAssetRecord();
+//        List<HouseAssetRecord> houseAssetRecordList = queryHouseAssetDao.findHouseAssetPage(null,houseAssetRecord,null,null,null,null,null);
+//        HouseDesignModelRecord houseDesignModelRecord = new HouseDesignModelRecord();
+//        List<HouseDesignModelRecord> houseDesignModelRecordList = queryHouseDesignModelDao.findHouseDesignModelPage(null,houseDesignModelRecord,null,null,null,null,null);
+//        for (int i = 0; i < housePropertyBuildingList.size(); i++) {
+//            housePropertyBuildingList.get(i).setAssertTotal(housePropertyBuildingDao.queryHouseAssetNumberByBuildingId(housePropertyBuildingList.get(i).getId()));
+//            housePropertyBuildingList.get(i).setHouseTypeNumber(housePropertyBuildingDao.queryHouseTypeNumberByBuildingId(housePropertyBuildingList.get(i).getId()));
+//        }
+        System.out.println(System.currentTimeMillis()-start);
         return SuccessTip.create(housePropertyBuildingList);
     }
 
@@ -424,7 +433,7 @@ public class UserHouseAssetEndpoint {
         }
         entity.setClashUserId(JWTKit.getUserId());
         Integer effect =  queryHouseUserAssetDao.updateClashAssetByAssetId(assetId,entity);
-        return SuccessTip.create();
+        return SuccessTip.create(effect);
     }
 
 

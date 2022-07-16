@@ -185,4 +185,19 @@ public class UserVrCategoryEndpoint {
     }
 
 
+    /*
+    新组件测试用api 后面删除
+     */
+    @GetMapping("/testImage")
+    public Tip getTestImages(){
+        List<String> images = new ArrayList<>();
+        images.add("https://img0.baidu.com/it/u=3741814049,1596806643&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500");
+        images.add("https://img1.baidu.com/it/u=742421947,2110405846&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500");
+        images.add("https://img2.baidu.com/it/u=4253479904,3449894731&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800");
+        images.add("https://img0.baidu.com/it/u=282262975,2495783424&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800");
+        return SuccessTip.create(images);
+    }
+
+
+
 }

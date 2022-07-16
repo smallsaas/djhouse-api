@@ -68,6 +68,8 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
 
     private Data createTime;
 
+    private Integer finalFlag;
+
 
     @ApiModelProperty(value = "详细地址")
     @TableField(exist = false)
@@ -510,11 +512,30 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
         this.direction = direction;
     }
 
+    public Integer getFinalFlag() {
+        return finalFlag;
+    }
+
+    public void setFinalFlag(Integer finalFlag) {
+        this.finalFlag = finalFlag;
+    }
+
     public static final String ID = "id";
 
     public static final String USER_ID = "user_id";
 
     public static final String ASSET_ID = "asset_id";
+
+    /*
+    后台最终确认 房子最终产权
+     */
+    public static final Integer FINAL_FLAG_CONFIRM = 1;
+
+    /*
+    后台没有确认产权 默认值
+     */
+    public static final Integer FINAL_FLAG_NOT_CONFIRM = 0;
+
 
     @Override
     protected Serializable pkVal() {

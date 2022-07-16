@@ -93,6 +93,9 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
             JSONObject buildings = (JSONObject) entry.getValue();
 
             HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(Long.parseLong((String) entry.getKey()));
+            if (houseAssetModel==null){
+                continue;
+            }
 
 //            查询匹配记录
             List<Integer> ids = new ArrayList<>();

@@ -112,6 +112,11 @@
             <artifactId>banner-service</artifactId>
             <version>1.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>zero-io-excel</artifactId>
+            <version>1.2.0</version>
+        </dependency>
         
         
     </dependencies>
