@@ -8,4 +8,6 @@ import com.jfeat.am.module.house.services.gen.crud.service.CRUDHousePropertyBuil
  */
 public interface HousePropertyBuildingOverModelService extends CRUDHousePropertyBuildingOverModelService {
     int initHouseProperty(HousePropertyBuildingModel entity);
+
+    int modifyHouseBuilding(HousePropertyBuildingModel housePropertyBuildingModel);
 }

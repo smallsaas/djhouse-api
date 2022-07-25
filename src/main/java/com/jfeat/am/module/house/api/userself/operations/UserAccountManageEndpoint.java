@@ -1,5 +1,7 @@
 package com.jfeat.am.module.house.api.userself.operations;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
@@ -14,7 +16,9 @@ import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.crud.plus.META;
+import com.jfeat.users.account.services.domain.service.UserAccountService;
 import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
+import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +31,8 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping("/api/u/house/operations/userCountManage")
-public class UserCountManageEndpoint {
+@RequestMapping("/api/u/house/operations/userAccountManage")
+public class UserAccountManageEndpoint {
 
     @Resource
     QueryEndpointUserDao queryEndpointUserDao;
@@ -44,11 +48,15 @@ public class UserCountManageEndpoint {
 
     UserAccountMapper userAccountMapper;
 
+    @Resource
+    UserAccountService userAccountService;
+
     /*
     返回最近注册的10个用户 提供电话查询
      */
-    @GetMapping("getRecentlyRegisteredUser")
-    public Tip getRecentlyRegisteredUser( @RequestParam(name = "phone", required = false) String phone) {
+    @GetMapping("/getRecentlyRegisteredUser")
+    public Tip getRecentlyRegisteredUser(@RequestParam(name = "phone", required = false) String phone,
+                                         @RequestParam(name = "type", required = false) Integer type) {
 
          /*
         验证用户是否是运营身份
@@ -60,9 +68,11 @@ public class UserCountManageEndpoint {
         if (!authentication.verifyOperation(JWTKit.getUserId())){
             throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
         }
+        System.out.println("tenant"+JWTKit.getTenantOrgId());
 
         EndpointUserRecord record = new EndpointUserRecord();
         record.setPhone(phone);
+        record.setType(type);
 
         List<EndpointUserRecord> userRecordList =  queryEndpointUserDao.findEndUserPage(null,record,null,null,null,null,null);
 
@@ -81,6 +91,19 @@ public class UserCountManageEndpoint {
         }
 
 
+        for (int i=0;i<userRecordList.size();i++){
+            if (userRecordList.get(i).getType()==null){
+                continue;
+            }
+            List<Integer> userTypeList = userAccountService.getUserTypeList(userRecordList.get(i).getType());
+
+            if (userRecordList!=null && userRecordList.size()>0){
+                userRecordList.get(i).setTypeList(userTypeList);
+            }
+
+        }
+
+
         return SuccessTip.create(userRecordList);
     }
 
@@ -90,8 +113,10 @@ public class UserCountManageEndpoint {
     修改设置用户类型
      */
 
-    @PutMapping("/updateUserCountType")
-    public Tip updateUserCountType(@RequestBody EndpointUser entity){
+    @PutMapping("/updateUserAccountType/{id}")
+    public Tip updateUserCountType(
+            @PathVariable("id")Long id,
+            @RequestBody EndpointUser entity){
 
          /*
         验证用户是否是运营身份
@@ -103,17 +128,14 @@ public class UserCountManageEndpoint {
         if (!authentication.verifyOperation(JWTKit.getUserId())){
             throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
         }
-
-        if (entity.getId()==null){
-            throw new BusinessException(BusinessCode.EmptyNotAllowed,"id不能为空");
-        }
-        if (entity.getType()==null){
-            throw new BusinessException(BusinessCode.EmptyNotAllowed,"type不能为空");
+        if (entity.getTypeList()==null && entity.getTypeList().size()>0){
+            throw new BusinessException(BusinessCode.EmptyNotAllowed,"typeList不能为空");
         }
 
-        EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(entity.getId());
+        EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(id);
         if (endpointUserModel!=null){
-            endpointUserModel.setType(entity.getType());
+            Integer userType = userAccountService.getUserTypeByList(entity.getTypeList());
+            endpointUserModel.setType(userType);
             return SuccessTip.create(endpointUserMapper.updateById(endpointUserModel));
         }
 

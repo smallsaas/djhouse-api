@@ -3,7 +3,6 @@
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingDao">
     <sql id="Base_Column_List">
         t_house_property_building.id,
-        t_house_property_building.org_id AS orgId,
         t_house_property_building.cad_picture AS cadPicture,
         t_house_property_building.community_id AS communityId,
         t_house_property_building.area,
@@ -13,15 +12,7 @@
 t_house_property_building.multiple_number AS multipleNumber
     </sql>
 
-    <sql id="QueryOwnedOrgIds">
-        SELECT children.id
-        FROM t_sys_org,
-             t_sys_org as children
-        WHERE t_sys_org.left_num &lt;= children.left_num
-          AND t_sys_org.right_num >= children.left_num
-          and t_sys_org.id = #{record.orgId}
-        order by t_sys_org.node_level ASC
-    </sql>
+
 
 
     <select id="queryMasterModel" resultType="HousePropertyBuildingModel">
@@ -41,14 +32,10 @@ t_house_property_building.multiple_number AS multipleNumber
         FROM t_house_property_building
 
 
-        <if test="record.orgId > 0">
-            ,(<include refid="QueryOwnedOrgIds"></include>) AS ownedOrgIds
-        </if>
+
 
         WHERE 1=1
-        <if test="record.orgId > 0">
-            AND t_house_property_building.org_id = ownedOrgIds.id
-        </if>
+
 
 
         <if test="record.id != null and record.id>0 ">
@@ -56,9 +43,7 @@ t_house_property_building.multiple_number AS multipleNumber
         </if>
 
 
-        <if test="record.orgId != null and record.orgId>0 ">
-            AND t_house_property_building.org_id IN (<include refid="QueryOwnedOrgIds"/>)
-        </if>
+
 
 
         <if test="record.communityId != null and record.communityId>0 ">

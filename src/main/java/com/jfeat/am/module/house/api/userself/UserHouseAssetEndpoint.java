@@ -6,12 +6,14 @@ import com.jfeat.am.crud.tag.services.domain.dao.QueryStockTagDao;
 import com.jfeat.am.crud.tag.services.domain.record.StockTagRecord;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
+import com.jfeat.am.module.house.services.domain.service.HouseAssetComplaintService;
 import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.domain.service.HouseUserCommunityStatusService;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseUserAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
+import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -24,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -78,6 +81,21 @@ public class UserHouseAssetEndpoint {
 
     @Resource
     QueryHouseDesignModelDao queryHouseDesignModelDao;
+
+    @Resource
+    QueryHousePropertyBuildingDao queryHousePropertyBuildingDao;
+
+    @Resource
+    UserCommunityAsset userCommunityAsset;
+
+    @Resource
+    QueryHouseRentAssetDao queryHouseRentAssetDao;
+
+    @Resource
+    HouseAssetComplaintService houseAssetComplaintService;
+
+    @Resource
+    QueryHouseAssetComplaintDao queryHouseAssetComplaintDao;
 
 
 
@@ -144,27 +162,45 @@ public class UserHouseAssetEndpoint {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
-        Long start = System.currentTimeMillis();
-        List<HouseAsset> houseAssetList = queryHouseAssetDao.queryHouseAssetByBuildingId(buildingId);
+
+        HouseAssetRecord houseAssetRecord = new HouseAssetRecord();
+        houseAssetRecord.setBuildingId(buildingId);
+        List<HouseAssetRecord>  houseAssetList  = queryHouseAssetDao.findHouseAssetPage(null,houseAssetRecord,null,null,null,null,null);
+//        List<HouseAsset> houseAssetList = queryHouseAssetDao.queryHouseAssetByBuildingId(buildingId);
 
         HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
         List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,userAssetRecord,null,null,null,null,null);
 
-        Long uStart = System.currentTimeMillis();
         for (int i = 0; i < houseAssetList.size(); i++) {
 //            判断是否有人居住
             for (int j = 0;j<recordList.size();j++){
                 if (recordList.get(j).getAssetId().equals(houseAssetList.get(i).getId())){
                     houseAssetList.get(i).setExistUser(true);
+
+                      /*
+                是否是最终确认
+                 */
+                    System.out.println(recordList.get(j));
+                    System.out.println(houseAssetList.get(i));
+                    System.out.println(recordList.get(j).getFinalFlag());
+                    if (recordList.get(j).getFinalFlag()!=null && recordList.get(j).getFinalFlag().equals(HouseUserAsset.FINAL_FLAG_CONFIRM)){
+                        houseAssetList.get(i).setFinalFlag(HouseUserAsset.FINAL_FLAG_CONFIRM);
+                    }else {
+                        houseAssetList.get(i).setFinalFlag(HouseUserAsset.FINAL_FLAG_NOT_CONFIRM);
+                    }
+
+                     /*
+                是否是自己的
+                 */
+                    if (recordList.get(j).getUserId().equals(JWTKit.getUserId())){
+                        houseAssetList.get(i).setMyselfAsset(true);
+                    }
                 }
-                if (recordList.get(j).getUserId().equals(JWTKit.getUserId())){
-                    houseAssetList.get(i).setMyselfAsset(true);
-                }
+
+
             }
         }
-        Long endTime = System.currentTimeMillis();
-//        Page<HouseAsset> page = new Page<>();
-//        page.setRecords(houseAssetList);
+
         return SuccessTip.create(houseAssetList);
     }
 
@@ -175,8 +211,9 @@ public class UserHouseAssetEndpoint {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
-        Long start = System.currentTimeMillis();
-        List<HouseAsset> houseAssetList = queryHouseAssetDao.queryHouseAssetByBuildingId(buildingId);
+        HouseAssetRecord houseAssetRecord = new HouseAssetRecord();
+        houseAssetRecord.setBuildingId(buildingId);
+        List<HouseAssetRecord>  houseAssetList  = queryHouseAssetDao.findHouseAssetPage(null,houseAssetRecord,null,null,null,null,null);
 
         HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
         List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,userAssetRecord,null,null,null,null,null);
@@ -207,11 +244,7 @@ public class UserHouseAssetEndpoint {
                 }
             }
         }
-        Long endTime = System.currentTimeMillis();
-        System.out.println((endTime-start));
-        System.out.println((endTime-uStart));
-//        Page<HouseAsset> page = new Page<>();
-//        page.setRecords(houseAssetList);
+
         return SuccessTip.create(houseAssetList);
     }
 
@@ -222,10 +255,7 @@ public class UserHouseAssetEndpoint {
         return SuccessTip.create(queryHouseAssetDao.queryHouseAssetDetails(assetId));
     }
 
-
-
 //    获取用户房子信息
-    @ApiOperation(value = "获取用户的unit", response = QueryHouseAssetDao.class)
     @GetMapping("/user/userAsset")
     public Tip getUserUnite() {
         if (JWTKit.getUserId() == null) {
@@ -236,6 +266,10 @@ public class UserHouseAssetEndpoint {
         userAssetRecord.setUserId(JWTKit.getUserId());
         List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null,userAssetRecord,null,null,null,null,null);
 
+        HouseRentAssetRecord houseRentAssetRecord = new HouseRentAssetRecord();
+        List<HouseRentAssetRecord> houseRentAssetRecordList = queryHouseRentAssetDao.findHouseRentAssetPage(null,houseRentAssetRecord,null,null,null,null,null);
+
+
         for (int i=0;i<houseUserAssets.size();i++){
             //        连接地址信息
             String address = houseUserAssets.get(i).getAddress();
@@ -243,13 +277,18 @@ public class UserHouseAssetEndpoint {
             String number = houseUserAssets.get(i).getRoomNumber();
             houseUserAssets.get(i).setAddressDetail("".concat(address).concat(" ").concat(buildingCode).concat(" ").concat(number));
 
-//            设置 出租 托管 装修 团购状态 是否有置换
-            if (houseUserAssets.get(i).getTrust()>0){
+//            设置 出租 托管 是否有置换
+            if (houseUserAssets.get(i).getTrust()!=null && houseUserAssets.get(i).getTrust()>0){
                 houseUserAssets.get(i).setExistTrust(true);
             }
-            if (houseUserAssets.get(i).getRentStatus()>0){
-                houseUserAssets.get(i).setExistRent(true);
+
+//            出租状态
+            for (HouseRentAssetRecord record:houseRentAssetRecordList){
+                if (record.getAssetId().equals(houseUserAssets.get(i).getAssetId())){
+                    houseUserAssets.get(i).setExistRent(true);
+                }
             }
+
 
             HouseUserDecoratePlanRecord userDecoratePlanRecord = new HouseUserDecoratePlanRecord();
             userDecoratePlanRecord.setUserId(JWTKit.getUserId());
@@ -276,8 +315,13 @@ public class UserHouseAssetEndpoint {
             }
 
         }
-//        logger.info("userId:{},size:{}",userId,houseUserAssets.size());
-        return SuccessTip.create(houseUserAssets);
+
+        /*
+        只留当前小区数据
+         */
+        List<HouseUserAssetRecord> houseAssetRecordList = userCommunityAsset.getCommunityAsset(JWTKit.getUserId(),houseUserAssets);
+
+        return SuccessTip.create(houseAssetRecordList);
     }
 
 //    用户asset 详情信息
@@ -304,22 +348,71 @@ public class UserHouseAssetEndpoint {
     }
 
 
-    //    添加房屋位置
-    @BusinessLog(name = "HousePropertyUserUnit", value = "create HousePropertyUserUnit")
+    //    添加房子
     @PostMapping("/user/userAsset")
-    @ApiOperation(value = "新建 HousePropertyUserUnit", response = QueryHouseUserAssetDao.class)
     public Tip createHousePropertyUserUnit(@RequestBody HouseUserAsset entity) {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
-        entity.setUserId(JWTKit.getUserId());
-        Integer affected = 0;
-        try {
-            affected = houseUserAssetService.createMaster(entity);
-        } catch (DuplicateKeyException e) {
-            throw new BusinessException(BusinessCode.DuplicateKey);
+
+        if (entity.getAssetId()==null || "".equals(entity.getAssetId())){
+            throw new BusinessException(BusinessCode.BadRequest,"assetId为必填项");
         }
-        return SuccessTip.create(affected);
+        HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
+        houseUserAssetRecord.setAssetId(entity.getAssetId());
+        List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord,null,null,null,null,null);
+
+        /*
+        判断这个房子是否有人，没人直接进行增加 有人判断是否是最终用户
+         */
+
+        if (houseUserAssetRecordList==null || houseUserAssetRecordList.size()==0){
+            entity.setUserId(JWTKit.getUserId());
+            Integer affected = 0;
+            try {
+                affected = houseUserAssetService.createMaster(entity);
+            } catch (DuplicateKeyException e) {
+                throw new BusinessException(BusinessCode.DuplicateKey);
+            }
+            return SuccessTip.create(affected);
+        }else {
+            /*
+            判读房子是否是自己的
+             */
+            if (!(houseUserAssetRecordList.get(0).getUserId().equals(JWTKit.getUserId()))){
+                /*
+                判断是否是最终用户 不是可以进行修改
+                 */
+                if (!(HouseUserAsset.FINAL_FLAG_CONFIRM.equals(houseUserAssetRecordList.get(0).getFinalFlag()))){
+                    entity.setId(houseUserAssetRecordList.get(0).getId());
+                    entity.setUserId(JWTKit.getUserId());
+
+                    HouseAssetComplaint complaint = new HouseAssetComplaint();
+                    complaint.setUserId(JWTKit.getUserId());
+                    complaint.setOldUserId(houseUserAssetRecordList.get(0).getUserId());
+                    complaint.setAssetId(houseUserAssetRecordList.get(0).getAssetId());
+
+                    Integer affected = 0;
+                    affected = houseUserAssetService.updateMaster(entity);
+                    if (affected>0){
+                        /*
+                        添加产权申述
+                         */
+                        try {
+                            affected += houseAssetComplaintService.createMaster(complaint);
+                        } catch (DuplicateKeyException e) {
+                            throw new BusinessException(BusinessCode.DuplicateKey);
+                        }
+                    }
+                    return SuccessTip.create(affected);
+                }else {
+                    throw new BusinessException(BusinessCode.CodeBase,"该资产已被确认");
+                }
+
+            }
+        }
+        return SuccessTip.create();
+
     }
 
     //    修改用户的资产
@@ -344,96 +437,6 @@ public class UserHouseAssetEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
         return SuccessTip.create(houseUserAssetService.deleteMaster(id));
-    }
-
-
-//    出租或者下架出租房屋
-    @PutMapping("/user/rent/{id}")
-    public Tip updateRentStatus(@PathVariable Long id,@RequestBody HouseUserAsset entity){
-        entity.setId(id);
-        if (JWTKit.getUserId() == null) {
-            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
-        }
-        entity.setUserId(JWTKit.getUserId());
-        entity.setRentTime(new Date());
-        return SuccessTip.create(queryHouseUserAssetDao.updateUserAssetByUserIdAndAsset(JWTKit.getUserId(),id,entity));
-    }
-
-//    出租列表
-    @GetMapping("/user/rent/list")
-    public Tip getRentList(Page<HouseUserAssetRecord> page,
-                           @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                           @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize){
-        HouseUserAssetRecord record = new HouseUserAssetRecord();
-        page.setCurrent(pageNum);
-        page.setSize(pageSize);
-        record.setRentStatus(1);
-
-        List<HouseUserAssetRecord> houseUserAssetPage = queryHouseUserAssetDao.findHouseUserAssetPage(page, record, null, null, null, null, null);
-        for (int i=0;i<houseUserAssetPage.size();i++){
-            Long id = houseUserAssetPage.get(i).getId();
-            HouseUserAssetModel houseAssetRecord = houseUserAssetService.queryMasterModel(queryHouseUserAssetDao, id);
-            houseUserAssetPage.get(i).setExtra(houseAssetRecord.getExtra());
-        }
-        page.setRecords(houseUserAssetPage);
-
-        return SuccessTip.create(page);
-    }
-
-//    用户出租详情
-    @GetMapping("/user/rent/details/{id}")
-    public Tip getALlRentAsset(@PathVariable("id") Long id) {
-        HouseUserAssetModel houseAssetRecord = houseUserAssetService.queryMasterModel(queryHouseUserAssetDao, id);
-        if (houseAssetRecord!=null){
-            HousePropertyBuildingUnit housePropertyBuildingUnit =  queryHousePropertyBuildingUnitDao.queryMasterModel(houseAssetRecord.getUnitId());
-            List<Product> productList= queryHouseDecoratePlanDao.queryProductListByDesignModel(housePropertyBuildingUnit.getDesignModelId());
-            if (productList!=null){
-                houseAssetRecord.setProductList(productList);
-            }
-        }
-        return SuccessTip.create(houseAssetRecord);
-    }
-
-
-//    出租标签列表
-    @GetMapping("/user/rent/tags")
-    @ApiOperation("Tag List")
-    public Tip queryStockTags(Page<StockTagRecord> page, @RequestParam(name = "pageNum",required = false,defaultValue = "1") Integer pageNum, @RequestParam(name = "pageSize",required = false,defaultValue = "10") Integer pageSize, @RequestParam(name = "id",required = false) Long id, @RequestParam(name = "tagName",required = false) String tagName, @RequestParam(name = "tagType",required = false) String tagType, @RequestParam(name = "isPrimary",required = false) Integer isPrimary, @RequestParam(name = "stockId",required = false) Long stockId, @RequestParam(name = "stockType",required = false) String stockType, @RequestParam(name = "orderBy",required = false) String orderBy, @RequestParam(name = "sort",required = false) String sort) {
-        if (orderBy != null && orderBy.length() > 0) {
-            if (sort != null && sort.length() > 0) {
-                String pattern = "(ASC|DESC|asc|desc)";
-                if (!sort.matches(pattern)) {
-                    throw new BusinessException(BusinessCode.BadRequest.getCode(), "sort must be ASC or DESC");
-                }
-            } else {
-                sort = "ASC";
-            }
-
-            orderBy = "`" + orderBy + "` " + sort;
-        }
-
-        page.setCurrent((long)pageNum);
-        page.setSize((long)pageSize);
-        StockTagRecord record = new StockTagRecord();
-        record.setId(id);
-        record.setTagName(tagName);
-        record.setTagType(tagType);
-        record.setIsPrimary(isPrimary);
-        record.setStockId(stockId);
-        record.setStockType(stockType);
-        page.setRecords(this.queryStockTagDao.findStockTagPage(page, record, orderBy));
-        return SuccessTip.create(page);
-    }
-
-//    添加冲突信息
-    @PutMapping("/clash/{assetId}")
-    public Tip updateClashInfo(@PathVariable("assetId") Long assetId,@RequestBody HouseUserAsset entity){
-        if (JWTKit.getUserId() == null) {
-            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
-        }
-        entity.setClashUserId(JWTKit.getUserId());
-        Integer effect =  queryHouseUserAssetDao.updateClashAssetByAssetId(assetId,entity);
-        return SuccessTip.create(effect);
     }
 
 

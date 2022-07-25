@@ -26,8 +26,8 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
       @TableId(value = "id", type = IdType.AUTO)
       private Long id;
 
-      @ApiModelProperty(value = "租户数据隔离")
-      private Long orgId;
+//      @ApiModelProperty(value = "租户数据隔离")
+//      private Long orgId;
 
       @ApiModelProperty(value = "社区id")
       private Long communityId;
@@ -92,14 +92,14 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
           return this;
       }
     
-    public Long getOrgId() {
-        return orgId;
-    }
-
-      public HousePropertyBuilding setOrgId(Long orgId) {
-          this.orgId = orgId;
-          return this;
-      }
+//    public Long getOrgId() {
+//        return orgId;
+//    }
+//
+//      public HousePropertyBuilding setOrgId(Long orgId) {
+//          this.orgId = orgId;
+//          return this;
+//      }
     
     public Long getCommunityId() {
         return communityId;
@@ -177,7 +177,6 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
     public String toString() {
         return "HousePropertyBuilding{" +
                 "id=" + id +
-                ", orgId=" + orgId +
                 ", communityId=" + communityId +
                 ", area='" + area + '\'' +
                 ", code='" + code + '\'' +

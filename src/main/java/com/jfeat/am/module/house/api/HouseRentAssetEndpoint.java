@@ -201,7 +201,7 @@ public class HouseRentAssetEndpoint {
         record.setTitle(title);
         record.setPrice(price);
         record.setSlide(slide);
-        record.setDescribe(describe);
+        record.setRentDescribe(describe);
         record.setRentStatus(rentStatus);
         record.setNote(note);
         record.setRentTime(rentTime);

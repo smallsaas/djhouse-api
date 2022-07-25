@@ -12,6 +12,12 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
  *  * modelpack : $modelpack
  */
 public class HouseAssetModel extends HouseAsset{
+
+    /*
+    房子朝向
+     */
+    private String direction;
+
     private Integer exchangeNumber;
 
     public Integer getExchangeNumber() {
@@ -20,5 +26,13 @@ public class HouseAssetModel extends HouseAsset{
 
     public void setExchangeNumber(Integer exchangeNumber) {
         this.exchangeNumber = exchangeNumber;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 }

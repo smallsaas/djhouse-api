@@ -40,6 +40,6 @@ public interface QueryHousePropertyBuildingUnitDao extends QueryMasterDao<HouseP
 
     HousePropertyBuildingUnit queryExtraHouseBuildingUnitByEntity(@Param("entity") HousePropertyBuildingUnit entity);
 
-
+    int insertUnits(@Param("unitList") List<HousePropertyBuildingUnit> unitList);
 
 }

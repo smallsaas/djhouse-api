@@ -155,7 +155,7 @@
             AND t_end_user.is_register LIKE CONCAT('%',#{record.isRegister},'%')
         </if>
         <if test="record.type != null and record.type>0 ">
-            AND t_end_user.type LIKE CONCAT('%',#{record.type},'%')
+            AND t_end_user.type &amp; #{record.type}
         </if>
 
 

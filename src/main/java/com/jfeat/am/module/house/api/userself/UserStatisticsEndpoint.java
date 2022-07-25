@@ -101,6 +101,7 @@ public class UserStatisticsEndpoint {
         HousePropertyBuildingRecord buildingRecord = new HousePropertyBuildingRecord();
         buildingRecord.setCommunityId(communityId);
         List<HousePropertyBuildingRecord> buildingRecordList = queryHousePropertyBuildingDao.findHousePropertyBuildingPage(null,buildingRecord,null,null,null,null,null);
+
         buildingNumber = buildingRecordList.size();
 
         for(int i=0;i<buildingRecordList.size();i++){
@@ -156,11 +157,13 @@ public class UserStatisticsEndpoint {
             }
 
         }
+
+
         HouseEquityDemandSupplyRecord houseEquityDemandSupplyRecord = new HouseEquityDemandSupplyRecord();
         HouseAssetExchangeRequestRecord houseAssetExchangeRequestRecord = new HouseAssetExchangeRequestRecord();
-
         List<HouseEquityDemandSupplyRecord> equityDemandSupplyRecordList = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(null,houseEquityDemandSupplyRecord,null,null,null,null,null,null,null);
         List<HouseAssetExchangeRequestRecord> exchangeRequestRecordList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null,houseAssetExchangeRequestRecord,null,null,null,null,null);
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("buildingNumber",buildingNumber);
         jsonObject.put("multipleNumber",multipleNumber);
@@ -364,6 +367,7 @@ public class UserStatisticsEndpoint {
 
                         jsonObject.put("unitCode",buildingUnitRecord.getUnitCode());
                         jsonObject.put("houseTypeId",designModelRecord.getId());
+                        jsonObject.put("houseType",designModelRecord.getHouseType());
                         String json =  JSON.toJSONString(jsonObject, SerializerFeature.DisableCircularReferenceDetect);
 
                         areaSet.add(area.doubleValue());

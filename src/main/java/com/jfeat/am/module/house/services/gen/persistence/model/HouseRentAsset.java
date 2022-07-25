@@ -67,7 +67,7 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     private String slide;
 
     @ApiModelProperty(value = "描述信息")
-    private String describe;
+    private String rentDescribe;
 
     @ApiModelProperty(value = "1-出租未上架 2-出租上架")
     private Integer rentStatus;
@@ -81,8 +81,12 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     @ApiModelProperty(value = "上架时间时间")
     private Date shelvesTime;
 
+    @ApiModelProperty(value = "评分 0-10")
+    private Integer rate;
+
     @TableField(exist = false)
     private String extra;
+
 
     public String getExtra() {
         return extra;
@@ -201,13 +205,12 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
         return this;
     }
 
-    public String getDescribe() {
-        return describe;
+    public String getRentDescribe() {
+        return rentDescribe;
     }
 
-    public HouseRentAsset setDescribe(String describe) {
-        this.describe = describe;
-        return this;
+    public void setRentDescribe(String rentDescribe) {
+        this.rentDescribe = rentDescribe;
     }
 
     public Integer getRentStatus() {
@@ -246,6 +249,14 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
         return this;
     }
 
+    public Integer getRate() {
+        return rate;
+    }
+
+    public void setRate(Integer rate) {
+        this.rate = rate;
+    }
+
     public static final String ID = "id";
 
     public static final String ASSET_ID = "asset_id";
@@ -280,6 +291,10 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
 
     public static final String SHELVES_TIME = "shelves_time";
 
+    public static final Integer RENT_STATUS_SHELVES = 2;
+
+    public static final Integer RENT_STATUS_SOLD_OUT = 1;
+
     @Override
     protected Serializable pkVal() {
         return this.id;
@@ -300,7 +315,7 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
                 ", title=" + title +
                 ", price=" + price +
                 ", slide=" + slide +
-                ", describe=" + describe +
+                ", describe=" + rentDescribe +
                 ", rentStatus=" + rentStatus +
                 ", note=" + note +
                 ", rentTime=" + rentTime +

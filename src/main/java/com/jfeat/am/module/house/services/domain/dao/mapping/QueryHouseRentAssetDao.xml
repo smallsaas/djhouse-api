@@ -1,115 +1,130 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <sql id="Base_Column_List">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        t_house_rent_asset.id, t_house_rent_asset.asset_id AS assetId, t_house_rent_asset.community_id AS communityId, t_house_rent_asset.house_type_id AS houseTypeId, t_house_rent_asset.landlord_id AS landlordId, t_house_rent_asset.area, t_house_rent_asset.introduce_picture AS introducePicture, t_house_rent_asset.server_id AS serverId, t_house_rent_asset.cover, t_house_rent_asset.title, t_house_rent_asset.price, t_house_rent_asset.slide, t_house_rent_asset.describe, t_house_rent_asset.rent_status AS rentStatus, t_house_rent_asset.note, t_house_rent_asset.rent_time AS rentTime, t_house_rent_asset.shelves_time AS shelvesTime
+    <sql id="Base_Column_List">
+        t_house_rent_asset.id,
+t_house_rent_asset.asset_id AS assetId,
+t_house_rent_asset.community_id AS communityId,
+t_house_rent_asset.house_type_id AS houseTypeId,
+t_house_rent_asset.landlord_id AS landlordId,
+t_house_rent_asset.area,
+t_house_rent_asset.introduce_picture AS introducePicture,
+t_house_rent_asset.server_id AS serverId,
+t_house_rent_asset.cover,
+t_house_rent_asset.title,
+t_house_rent_asset.price,
+t_house_rent_asset.slide,
+t_house_rent_asset.rent_describe,
+t_house_rent_asset.rent_status AS rentStatus,
+t_house_rent_asset.note,
+t_house_rent_asset.rent_time AS rentTime,
+t_house_rent_asset.shelves_time AS shelvesTime,
+t_house_rent_asset.rate
     </sql>
 
-    
-    
+
     <select id="queryMasterModel" resultType="HouseRentAssetModel">
-       SELECT t_house_rent_asset.*
-       FROM t_house_rent_asset
-       WHERE t_house_rent_asset.id=#{id}
-       GROUP BY t_house_rent_asset.id
+        SELECT t_house_rent_asset.*
+        FROM t_house_rent_asset
+        WHERE t_house_rent_asset.id = #{id}
+        GROUP BY t_house_rent_asset.id
     </select>
 
 
-
-                                                                    
     <select id="findHouseRentAssetPage" resultType="HouseRentAssetRecord" parameterType="HouseRentAssetRecord">
-            SELECT <include refid="Base_Column_List"/>
+        SELECT
+        <include refid="Base_Column_List"/>
 
-        
 
         FROM t_house_rent_asset
 
-        
-        
+
         WHERE 1=1
-        
 
-        
-                                                                            <if test="record.id != null and record.id>0 ">
-                                    AND t_house_rent_asset.id LIKE CONCAT('%',#{record.id},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.assetId != null and record.assetId>0 ">
-                                    AND t_house_rent_asset.asset_id LIKE CONCAT('%',#{record.assetId},'%')
-                            </if>
-                                                                    
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_rent_asset.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
 
-                                                                                        <if test="record.communityId != null and record.communityId>0 ">
-                                    AND t_house_rent_asset.community_id LIKE CONCAT('%',#{record.communityId},'%')
-                            </if>
-                                                                    
 
-                                                                                                        <if test="record.houseTypeId != null and record.houseTypeId>0 ">
-                                    AND t_house_rent_asset.house_type_id LIKE CONCAT('%',#{record.houseTypeId},'%')
-                            </if>
-                                                                    
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_rent_asset.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+        </if>
 
-                                                                                        <if test="record.landlordId != null and record.landlordId>0 ">
-                                    AND t_house_rent_asset.landlord_id LIKE CONCAT('%',#{record.landlordId},'%')
-                            </if>
-                                                                    <if test="record.area != null and record.area>0 ">
-                                    AND t_house_rent_asset.area LIKE CONCAT('%',#{record.area},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.introducePicture != null and record.introducePicture!= ''">
-                                    AND t_house_rent_asset.introduce_picture LIKE CONCAT('%',#{record.introducePicture},'%')
-                            </if>
-                                                                    
+        <if test="record.communityId != null and record.communityId>0 ">
+            AND t_house_rent_asset.community_id LIKE CONCAT('%',#{record.communityId},'%')
+        </if>
 
-                                                                                        <if test="record.serverId != null and record.serverId>0 ">
-                                    AND t_house_rent_asset.server_id LIKE CONCAT('%',#{record.serverId},'%')
-                            </if>
-                                                                    <if test="record.cover != null and record.cover!= ''">
-                                    AND t_house_rent_asset.cover LIKE CONCAT('%',#{record.cover},'%')
-                            </if>
-                                                                    <if test="record.title != null and record.title!= ''">
-                                    AND t_house_rent_asset.title LIKE CONCAT('%',#{record.title},'%')
-                            </if>
-                                                                    <if test="record.price != null and record.price>0 ">
-                                    AND t_house_rent_asset.price LIKE CONCAT('%',#{record.price},'%')
-                            </if>
-                                                                    <if test="record.slide != null and record.slide!= ''">
-                                    AND t_house_rent_asset.slide LIKE CONCAT('%',#{record.slide},'%')
-                            </if>
-                                                                    <if test="record.describe != null and record.describe!= ''">
-                                    AND t_house_rent_asset.describe LIKE CONCAT('%',#{record.describe},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.rentStatus != null and record.rentStatus>0 ">
-                                    AND t_house_rent_asset.rent_status LIKE CONCAT('%',#{record.rentStatus},'%')
-                            </if>
-                                                                    <if test="record.note != null and record.note!= ''">
-                                    AND t_house_rent_asset.note LIKE CONCAT('%',#{record.note},'%')
-                            </if>
-                                                                    
+        <if test="record.houseTypeId != null and record.houseTypeId>0 ">
+            AND t_house_rent_asset.house_type_id LIKE CONCAT('%',#{record.houseTypeId},'%')
+        </if>
 
-                                                                                        <if test="record.rentTime != null and record.rentTime>0 ">
-                                    AND t_house_rent_asset.rent_time LIKE CONCAT('%',#{record.rentTime},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.shelvesTime != null and record.shelvesTime>0 ">
-                                    AND t_house_rent_asset.shelves_time LIKE CONCAT('%',#{record.shelvesTime},'%')
-                            </if>
-        
+        <if test="record.landlordId != null and record.landlordId>0 ">
+            AND t_house_rent_asset.landlord_id LIKE CONCAT('%',#{record.landlordId},'%')
+        </if>
+        <if test="record.area != null and record.area>0 ">
+            AND t_house_rent_asset.area LIKE CONCAT('%',#{record.area},'%')
+        </if>
+        <if test="record.rate != null and record.rate>=0 ">
+            AND t_house_rent_asset.rate LIKE CONCAT('%',#{record.rate},'%')
+        </if>
+
+
+        <if test="record.introducePicture != null and record.introducePicture!= ''">
+            AND t_house_rent_asset.introduce_picture LIKE CONCAT('%',#{record.introducePicture},'%')
+        </if>
+
+
+        <if test="record.serverId != null and record.serverId>0 ">
+            AND t_house_rent_asset.server_id LIKE CONCAT('%',#{record.serverId},'%')
+        </if>
+        <if test="record.cover != null and record.cover!= ''">
+            AND t_house_rent_asset.cover LIKE CONCAT('%',#{record.cover},'%')
+        </if>
+        <if test="record.title != null and record.title!= ''">
+            AND t_house_rent_asset.title LIKE CONCAT('%',#{record.title},'%')
+        </if>
+        <if test="record.price != null and record.price>0 ">
+            AND t_house_rent_asset.price LIKE CONCAT('%',#{record.price},'%')
+        </if>
+        <if test="record.slide != null and record.slide!= ''">
+            AND t_house_rent_asset.slide LIKE CONCAT('%',#{record.slide},'%')
+        </if>
+        <if test="record.rentDescribe != null and record.rentDescribe!= ''">
+            AND t_house_rent_asset.rent_describe LIKE CONCAT('%',#{record.rentDescribe},'%')
+        </if>
+
+
+        <if test="record.rentStatus != null and record.rentStatus>0 ">
+            AND t_house_rent_asset.rent_status LIKE CONCAT('%',#{record.rentStatus},'%')
+        </if>
+        <if test="record.note != null and record.note!= ''">
+            AND t_house_rent_asset.note LIKE CONCAT('%',#{record.note},'%')
+        </if>
+
+
+        <if test="record.rentTime != null and record.rentTime>0 ">
+            AND t_house_rent_asset.rent_time LIKE CONCAT('%',#{record.rentTime},'%')
+        </if>
+
+
+        <if test="record.shelvesTime != null and record.shelvesTime>0 ">
+            AND t_house_rent_asset.shelves_time LIKE CONCAT('%',#{record.shelvesTime},'%')
+        </if>
+
         <if test="startTime != null">
             <![CDATA[AND t_house_rent_asset.start_time >= DATE(#{startTime})]]>
         </if>
         <if test="endTime != null">
             <![CDATA[AND t_house_rent_asset.end_time <= DATE(#{endTime}]]>
         </if>
-            <!--
-        <if test="search != null and search != ''">
-            OR t_house_rent_asset.name LIKE CONCAT('%',#{search},'%')
-        </if>
-        -->
-                                    </select>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_rent_asset.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
 </mapper>

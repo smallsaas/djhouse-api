@@ -1,0 +1,113 @@
+@endpoint=http://localhost:8080
+# @endpoint=http://app1.console.smallsaas.cn:8001
+
+@token =Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6MzAsInVzZXJJZCI6Mjk4LCJhY2NvdW50IjoiNTc0ZTY2N2VlODEyNDI1OTlhMzZkOWU3YzJmMGJlYWEiLCJkb21haW5Vc2VySWQiOiIiLCJpYXQiOjE2NTgzOTczNTEsImp0aSI6IjI5OCIsInN1YiI6IjU3NGU2NjdlZTgxMjQyNTk5YTM2ZDllN2MyZjBiZWFhIiwiZXhwIjoxNjU4NjU2NTUxfQ.u6kMRY6hVh99w8NmbpnkJowpIuAWd1Sse-4DFksLWY0RaSz1zMAtU-cUDR5TItTknlaoObCuI2XUouGg0p1FyQ
+
+@adminToken=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjUzNzA2MDA1LCJqdGkiOiIxIiwic3ViIjoiYWRtaW4iLCJleHAiOjE2NTYyOTgwMDV9.nH3W8nkLMzrBp_VybRJ-ZnNjCG96RqD5a6-HikifXV9hQ618btKd8MGxoPf2XIroEzDc4Gj4JoVKk7dSBoB0zA
+
+
+@othertoekn = Bearer eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6MzAsInVzZXJJZCI6MzE5LCJhY2NvdW50IjoiYzViZDdjNTJlNTU0NDI0NGI2OTg3NzhhMTM1YmVjZjYiLCJkb21haW5Vc2VySWQiOiIiLCJpYXQiOjE2NTgxOTIwNjcsImp0aSI6IjMxOSIsInN1YiI6ImM1YmQ3YzUyZTU1NDQyNDRiNjk4Nzc4YTEzNWJlY2Y2IiwiZXhwIjoxNjU4NDUxMjY3fQ.XcTbs3tjQDVs-4CZNSpvqYYsOHBqvcyODJS-84cWNXGw2yPe-FRcJ4tQczkPj2oZWGhOusLycgk9rpKhsrNbhQ
+
+# 出租房子测试用例
+
+
+
+###用户出租
+
+
+GET {{endpoint}}/api/u/asset/user/userAsset
+Authorization:{{token}}
+
+### 房东出租房子
+### 用户出租自己的房子 填写照片 价格 描述信息
+POST {{endpoint}}/api/u/house/rent/userRentAsset/userRentAsset
+Authorization:{{token}}
+{
+    "assetId":339,
+     "extra":{
+        "tags":"[{id:1},{id:2},{id:3}]"
+    },
+    "introducePicture":"https://img0.baidu.com/it/u=282262975,2495783424&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800",
+    "price":7777,
+    "rentDescribe":"房子光线好"
+}
+
+# 出租详情
+GET {{endpoint}}/api/u/house/rent/userRentAsset/userRentAssetDetails/331
+Authorization:{{token}}
+
+
+# 中介端
+
+### 用户出租列表
+GET {{endpoint}}/api/u/house/rent/agentRentManage/getUserRentAsset
+Authorization:{{token}}
+
+### 查询标签列表
+GET {{endpoint}}/api/stock/tags
+Authorization:{{adminToken}}
+
+### 添加标签
+POST {{endpoint}}/api/stock/tags
+Authorization:{{adminToken}}
+{
+        "isPrimary": 0,
+        "sortOrder": 1,
+        "tagName": "近地铁",
+        "tagType": "房源标签"
+}
+
+### 修改标签
+PUT {{endpoint}}/api/stock/tags/2
+Authorization:{{adminToken}}
+{
+    "isPrimary": 0,
+    "sortOrder": 1,
+    "tagName": "光线好",
+    "tagType": "房源标签"
+}
+
+
+### 中介补充信息
+PUT {{endpoint}}/api/u/house/rent/agentRentManage/agentModifyRentInfo/1
+Authorization:{{othertoekn}}
+{
+       "area": 115,
+    "assetId": "1969",
+    "communityId": "1",
+    "cover": null,
+    "extra": "{\"items\":[],\"tags\":[{\"id\":1,\"tagName\":\"近地铁\"},{\"id\":2,\"tagName\":\"光线好\"},{\"id\":3,\"tagName\":\"家居齐全\"}]}",
+    "houseTypeId": "4",
+    "id": "1",
+    "introducePicture": "https://img0.baidu.com/it/u=282262975,2495783424&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800",
+    "landlordId": "298",
+    "note": null,
+    "price": 1500,
+    "rentDescribe": "房子光线好",
+    "rentStatus": 1,
+    "rentTime": "2022-07-19 10:50:05",
+    "serverId": null,
+    "shelvesTime": null,
+    "slide": null,
+    "title": null
+}
+
+###上架或者下架
+# 1 - 下架
+# 2-上架
+PUT {{endpoint}}/api/u/house/rent/agentRentManage/modifyRentStatus
+Authorization:{{othertoekn}}
+{
+    "id":3,
+    "rentStatus":2
+}
+
+### 出租详情
+GET  {{endpoint}}/api/u/house/rent/agentRentManage/userRentDetails/1
+
+
+###用户看到已经上架的出租产品
+GET {{endpoint}}/api/u/house/rent/rentCommon/getUserRentAsset
+
+### 出租详情
+GET {{endpoint}}/api/u/house/rent/rentCommon/userRentAssetDetails/2

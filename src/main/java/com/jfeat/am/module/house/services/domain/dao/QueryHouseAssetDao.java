@@ -36,11 +36,22 @@ public interface QueryHouseAssetDao extends QueryMasterDao<HouseAsset> {
 
     int deleteHouseRoomByBuildingId(@Param("buildingId") Long buildingId);
 
-    List<HouseAsset> queryHouseAssetByBuildingId(@Param("buildingId") Long buildingId);
-
     HouseAssetRecord queryHouseAssetDetails(@Param("assetId") Long assetId);
 
     List<HouseAssetRecord> queryUserAssetRent(@Param("status") Integer status,@Param("username")String username,@Param("search") String search);
 
-    HouseAssetRecord queryHouseAssetDetails1(@Param("assetId") Long assetId);
+    /*
+    批量插入房子
+     */
+    int insertAssets(@Param("houseAssetList") List<HouseAsset> houseAssetList);
+
+    /*
+    更改楼栋 删除多余的
+     */
+    int deleteHouseAssetByBuildingIdAndFloors(@Param("buildingId") Long buildingId,@Param("floor") Integer floor);
+
+    /*
+    批量删除房子
+     */
+    int deleteHouseAssets(@Param("houseAssetList") List<Long> houseAssetList);
 }

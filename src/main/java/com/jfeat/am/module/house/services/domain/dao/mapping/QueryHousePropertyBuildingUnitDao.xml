@@ -102,4 +102,17 @@ t_house_property_building_unit.direction AS direction
         GROUP BY t_house_property_building_unit.id
     </select>
 
+
+    <!--
+       批量添加单元
+   -->
+    <insert id="insertUnits" parameterType="java.util.List">
+        INSERT INTO t_house_property_building_unit
+        (building_id,unit_code)
+        values
+        <foreach collection="unitList" item="assetItem" separator=",">
+            (#{assetItem.buildingId},#{assetItem.unitCode})
+        </foreach>
+    </insert>
+
 </mapper>

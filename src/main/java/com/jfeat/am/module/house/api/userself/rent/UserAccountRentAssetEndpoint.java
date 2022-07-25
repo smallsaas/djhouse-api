@@ -22,6 +22,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -73,25 +74,43 @@ public class UserAccountRentAssetEndpoint {
         /*
         设置出租的 小区  户型 面积 房东
          */
+
         HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(entity.getAssetId());
         entity.setArea(houseAssetModel.getArea());
         entity.setCommunityId(houseAssetModel.getCommunityId());
         entity.setHouseTypeId(houseAssetModel.getDesignModelId());
         entity.setLandlordId(JWTKit.getUserId());
 
-        Integer affected = 0;
-        try {
-            affected = houseRentAssetService.createMaster(entity);
-        } catch (DuplicateKeyException e) {
-            throw new BusinessException(BusinessCode.DuplicateKey);
-        }
+        /*
+        查看用户是否出租过房子 出租过就修改 没有就新增
+         */
+         HouseRentAssetRecord houseRentAssetRecord = new HouseRentAssetRecord();
+         houseRentAssetRecord.setAssetId(entity.getAssetId());
+         houseRentAssetRecord.setLandlordId(JWTKit.getUserId());
+         List<HouseRentAssetRecord> list = queryHouseRentAssetDao.findHouseRentAssetPage(null,houseRentAssetRecord,null,null,null,null,null);
+
+         Integer affected = 0;
+         if (list!=null &&list.size()>0){
+             entity.setId(list.get(0).getId());
+             entity.setRentTime(new Date());
+             return SuccessTip.create(houseRentAssetService.updateMaster(entity));
+         }else {
+             try {
+                 affected = houseRentAssetService.createMaster(entity);
+             } catch (DuplicateKeyException e) {
+                 throw new BusinessException(BusinessCode.DuplicateKey);
+             }
+         }
+
+
+
         return SuccessTip.create(affected);
     }
 
     /*
     用户出租详情
      */
-    @GetMapping("userRentAssetDetails/{assetId}")
+    @GetMapping("/userRentAssetDetails/{assetId}")
     public Tip userRentAssetDetails(@PathVariable("assetId") Long assetId){
 
         HouseRentAssetRecord houseRentAssetRecord = new HouseRentAssetRecord();
@@ -112,8 +131,41 @@ public class UserAccountRentAssetEndpoint {
            houseRentAssetRecord.setHouseAssetModel(houseAssetModel);
            houseRentAssetRecordList.add(houseRentAssetRecord);
         }else {
+            HouseRentAsset rentAsset = houseRentAssetService.queryMasterModel(queryHouseRentAssetDao, houseRentAssetRecordList.get(0).getId());
             houseRentAssetRecordList.get(0).setHouseAssetModel(houseAssetModel);
+            houseRentAssetRecordList.get(0).setExtra(rentAsset.getExtra());
+
         }
         return SuccessTip.create(houseRentAssetRecordList.get(0));
+    }
+
+    /*
+    用户下架
+     */
+    @DeleteMapping("/undercarriage/{assetId}")
+    public Tip deleteRentAsset(@PathVariable("assetId") Long assetId){
+        HouseRentAssetRecord houseRentAssetRecord = new HouseRentAssetRecord();
+        houseRentAssetRecord.setAssetId(assetId);
+        houseRentAssetRecord.setLandlordId(JWTKit.getUserId());
+        List<HouseRentAssetRecord> houseRentAssetRecordList = queryHouseRentAssetDao.findHouseRentAssetPage(null,houseRentAssetRecord
+                ,null,null,null,null,null);
+
+        HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(assetId);
+
+        /*
+        判断是否出租
+         */
+        if (houseAssetModel==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有找到房子,请重试");
+        }
+
+        /*
+        删除出租房子
+         */
+        if (houseRentAssetRecordList!=null && houseRentAssetRecordList.size()==1){
+            SuccessTip.create(houseRentAssetService.deleteMaster(houseRentAssetRecordList.get(0).getId()));
+        }
+        return SuccessTip.create();
+
     }
 }

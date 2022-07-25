@@ -3,15 +3,16 @@
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseVrPictureDao">
     <sql id="Base_Column_List">
         t_house_vr_picture.id,
-t_house_vr_picture.name,
-t_house_vr_picture.link,
-t_house_vr_picture.vr_picture AS vrPicture,
-t_house_vr_picture.snapshot,
-t_house_vr_picture.star,
-t_house_vr_picture.bedrooms,
-t_house_vr_picture.style,
-t_house_vr_picture.type_option AS typeOption,
-t_house_vr_picture.note
+        t_house_vr_picture.name,
+        t_house_vr_picture.link,
+        t_house_vr_picture.vr_picture AS vrPicture,
+        t_house_vr_picture.snapshot,
+        t_house_vr_picture.star,
+        t_house_vr_picture.bedrooms,
+        t_house_vr_picture.style,
+        t_house_vr_picture.type_option AS typeOption,
+        t_house_vr_picture.note,
+        t_house_vr_picture.status
     </sql>
 
 
@@ -71,6 +72,10 @@ t_house_vr_picture.note
         </if>
         <if test="record.note != null and record.note!= ''">
             AND t_house_vr_picture.note LIKE CONCAT('%',#{record.note},'%')
+        </if>
+
+        <if test="record.status != null and record.status>=0 ">
+            AND t_house_vr_picture.status LIKE CONCAT('%',#{record.status},'%')
         </if>
 
         <if test="startTime != null">

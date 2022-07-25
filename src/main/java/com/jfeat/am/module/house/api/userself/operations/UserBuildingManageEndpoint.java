@@ -13,6 +13,7 @@ import com.jfeat.am.module.house.services.domain.service.HousePropertyBuildingOv
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingModel;
 import com.jfeat.am.module.house.services.utility.Authentication;
+import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -26,6 +27,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -50,6 +52,11 @@ public class UserBuildingManageEndpoint {
     @Resource
     Authentication authentication;
 
+    @Resource
+    UserCommunityAsset userCommunityAsset;
+
+
+
     //    楼栋
 
     /*
@@ -68,15 +75,19 @@ public class UserBuildingManageEndpoint {
         if (!authentication.verifyOperation(JWTKit.getUserId())){
             throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
         }
+        Long userCommunityStatus =  userCommunityAsset.getUserCommunityStatus(JWTKit.getUserId());
+        if (userCommunityStatus==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有选择小区");
+        }
+        entity.setCommunityId(userCommunityStatus);
 
         Integer affected = 0;
+
         try {
 
             DefaultFilterResult filterResult = new DefaultFilterResult();
-//            entity.setOrgId(JWTKit.getTenantOrgId());
-            // int insert = housePropertyBuildingMapper.insert(entity);
             affected = housePropertyBuildingOverModelService.createMaster(entity, filterResult, null, null);
-            if (affected > 0) {
+            if (affected > 0 &&(entity.getFloors()!=null && entity.getFloors()>=0) && (entity.getUnits()!=null && entity.getUnits()>=0)) {
                 housePropertyBuildingOverModelService.initHouseProperty(entity);
                 return SuccessTip.create(filterResult.result());
             }
@@ -86,8 +97,6 @@ public class UserBuildingManageEndpoint {
 
         return SuccessTip.create(affected);
     }
-
-
 
 
 
@@ -113,20 +122,12 @@ public class UserBuildingManageEndpoint {
         int newOptions = META.UPDATE_CASCADING_DELETION_FLAG;  //default to delete not exist items
         // newOptions = FlagUtil.setFlag(newOptions, META.UPDATE_ALL_COLUMNS_FLAG);
         Integer effect = housePropertyBuildingOverModelService.updateMaster(entity, null, null, null, newOptions);
-        if (effect>0 && housePropertyBuildingModel!=null){
+        if (housePropertyBuildingModel.getUnits()==0 && housePropertyBuildingModel.getFloors()==0){
+            housePropertyBuildingOverModelService.initHouseProperty(entity);
+        }
+        if (effect>0 && housePropertyBuildingModel!=null &&(housePropertyBuildingModel.getFloors()!=null && housePropertyBuildingModel.getFloors()>0) && (housePropertyBuildingModel.getUnits()!=null && housePropertyBuildingModel.getUnits()>0)){
+            effect+=housePropertyBuildingOverModelService.modifyHouseBuilding(housePropertyBuildingModel);
 
-            if (entity.getFloors()!=null&&entity.getFloors()!=housePropertyBuildingModel.getFloors()){
-                queryHousePropertyRoomDao.deleteHouseRoomByBuildingId(id);
-                queryHousePropertyBuildingUnitDao.deleteHouseBuildingUnitByBuildingId(id);
-                housePropertyBuildingModel.setFloors(entity.getFloors());
-                housePropertyBuildingOverModelService.initHouseProperty(housePropertyBuildingModel);
-            }
-            if (entity.getUnits()!=null&&entity.getUnits()!=housePropertyBuildingModel.getUnits()){
-                queryHousePropertyRoomDao.deleteHouseRoomByBuildingId(id);
-                queryHousePropertyBuildingUnitDao.deleteHouseBuildingUnitByBuildingId(id);
-                housePropertyBuildingModel.setUnits(entity.getUnits());
-                housePropertyBuildingOverModelService.initHouseProperty(housePropertyBuildingModel);
-            }
         }
         return SuccessTip.create(effect);
     }
@@ -136,7 +137,7 @@ public class UserBuildingManageEndpoint {
     删除楼栋
      */
     @DeleteMapping("/{id}")
-    public Tip deleteHousePropertyBuilding(@PathVariable Long id) {
+    public Tip deleteHousePropertyBuilding(@PathVariable("id") Long id) {
         /*
         验证用户是否是运营身份
          */

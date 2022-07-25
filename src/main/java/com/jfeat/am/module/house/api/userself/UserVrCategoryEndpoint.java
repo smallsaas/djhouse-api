@@ -26,6 +26,7 @@ import com.jfeat.eav.services.domain.service.Impl.DataServiceServiceImpl;
 import com.jfeat.eav.services.gen.persistence.model.EavEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -156,13 +157,17 @@ public class UserVrCategoryEndpoint {
 
         HouseVrPictureRecord record = new HouseVrPictureRecord();
         record.setTypeOption(category);
-        List<HouseVrPictureRecord> houseVrPictureRecordList = queryHouseVrPictureDao.findHouseVrPicturePage(page,record,null,null,null,null,null);
+        record.setStatus(HouseVrPicture.STATUS_SHELVES);
+        List<HouseVrPictureRecord> houseVrPictureRecordList = queryHouseVrPictureDao.findHouseVrPicturePage(page, record, null, null, null, null, null);
         page.setRecords(houseVrPictureRecordList);
 
         return SuccessTip.create(page);
     }
 
 
+    /*
+    增加vr图看过人数
+     */
     @PutMapping("/addVrCount/{id}")
     public Tip vrClientCount(@PathVariable("id") Long id) {
 
@@ -180,24 +185,34 @@ public class UserVrCategoryEndpoint {
             pictureModel.setStyle(houseVrPictureModel.getStyle());
             pictureModel.setTypeOption(houseVrPictureModel.getTypeOption());
             pictureModel.setNote(houseVrPictureModel.getNote());
+            pictureModel.setStatus(houseVrPictureModel.getStatus());
         }
         return SuccessTip.create(houseVrPictureService.updateMaster(pictureModel));
     }
+
 
 
     /*
     新组件测试用api 后面删除
      */
     @GetMapping("/testImage")
-    public Tip getTestImages(){
-        List<String> images = new ArrayList<>();
-        images.add("https://img0.baidu.com/it/u=3741814049,1596806643&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500");
-        images.add("https://img1.baidu.com/it/u=742421947,2110405846&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500");
-        images.add("https://img2.baidu.com/it/u=4253479904,3449894731&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800");
-        images.add("https://img0.baidu.com/it/u=282262975,2495783424&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800");
+    public Tip getTestImages() {
+        List<Map<String, String>> images = new ArrayList<>();
+        Map<String, String> map1 = new HashMap<>();
+        map1.put("img", "https://img0.baidu.com/it/u=3741814049,1596806643&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500");
+        Map<String, String> map2 = new HashMap<>();
+        map2.put("img", "https://img1.baidu.com/it/u=742421947,2110405846&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500");
+        Map<String, String> map3 = new HashMap<>();
+        map3.put("img", "https://img2.baidu.com/it/u=4253479904,3449894731&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800");
+        Map<String, String> map4 = new HashMap<>();
+        map4.put("img", "https://img0.baidu.com/it/u=282262975,2495783424&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800");
+
+        images.add(map1);
+        images.add(map2);
+        images.add(map3);
+        images.add(map4);
         return SuccessTip.create(images);
     }
-
 
 
 }

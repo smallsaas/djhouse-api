@@ -1,8 +1,7 @@
 @endpoint=http://localhost:8080
 @service=http://app1.console.smallsaas.cn:8001
 
-@adminToken =Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjowLCJkZXZVc2VyVHlwZSI6MCwiYlVzZXJUeXBlIjoiU1lTVEVNIiwiYlVzZXJJZCI6MCwiaWF0IjoxNjUzNzA2MDA1LCJqdGkiOiIxIiwic3ViIjoiYWRtaW4iLCJleHAiOjE2NTYyOTgwMDV9.nH3W8nkLMzrBp_VybRJ-ZnNjCG96RqD5a6-HikifXV9hQ618btKd8MGxoPf2XIroEzDc4Gj4JoVKk7dSBoB0zA
-
+@adminToken =Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjEiLCJ1c2VySWQiOiIxIiwidGVuYW50T3JnSWQiOjEsImFjY291bnQiOiJhZG1pbiIsInVzZXJUeXBlIjoxMDAsImRldlVzZXJUeXBlIjowLCJiVXNlclR5cGUiOiJTWVNURU0iLCJpYXQiOjE2NTg0NjQxODAsImp0aSI6IjEiLCJzdWIiOiJhZG1pbiIsImV4cCI6MTY1ODcyMzM4MH0.boFvsGpsxBCAi6nSAz9xVvl4CvM4rIL3NVMBZbxRwloIR6vO7sJtC6PDlRHDnQe9AUC64ADXgcncsWZmpHT0MQ
 @A_1token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjE4IiwidXNlcklkIjoiNiIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0xIiwidXNlclR5cGUiOjAsImRldlVzZXJUeXBlIjowLCJiVXNlclR5cGUiOiJTWVNURU0iLCJiVXNlcklkIjowLCJpYXQiOjE2NTM3MDYxMTAsImp0aSI6IjYiLCJzdWIiOiJBLTEiLCJleHAiOjE2NTYyOTgxMTB9.YN-_CKUKkWeLVnqNgfA3QHbKlI6kfr0-SK17X7akfhx25QMx-auwO8BnIDrFIqvAkOD3rZ251nWos3HrudZtow
 
 @A_2token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJvcmdJZCI6IjE5IiwidXNlcklkIjoiNyIsInRlbmFudE9yZ0lkIjoxLCJhY2NvdW50IjoiQS0yIiwidXNlclR5cGUiOjAsImRldlVzZXJUeXBlIjowLCJiVXNlclR5cGUiOiJTWVNURU0iLCJiVXNlcklkIjowLCJpYXQiOjE2NTM3MDYxNTEsImp0aSI6IjciLCJzdWIiOiJBLTIiLCJleHAiOjE2NTYyOTgxNTF9.N_yWlEwVcqkdC6HRPskPrBYiiSW8TyL9a3uyWECmDUTVZxkUYcIXxuMUQwwgdjSdWUiIEd_Hj1Eup7LfjWs8yg
@@ -18,13 +17,13 @@ Authorization: {{adminToken}}
 
 
 ### 分页查询楼栋列表
-GET {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings?pageNum=1&pageSize=10
+GET {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings?pageNum=3&pageSize=10
 Authorization: {{adminToken}}
 
 
 
 ### 查询楼栋id为1 的详情信息
-GET s/api/crud/house/housePropertyBuilding/housePropertyBuildings/6
+GET {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/34
 Authorization: {{adminToken}}
 
 
@@ -37,22 +36,18 @@ Authorization: {{adminToken}}
 
 {
     "communityId":1,
-    "area":"",
-    "code":"B8",
-    "floors":19,
-    "units":11
+    "code":"B34"
 }
 
 
 ### 更新楼栋id为40 的信息
-PUT {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/31
+PUT {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/34
 Content-Type: application/json
 Authorization:{{adminToken}}
 {
+    "code":"B34",
     "communityId":2,
-    "area":"",
-    "code":"B5",
-    "floors":12,
+    "floors":3,
     "units":3
 }
 
@@ -78,7 +73,5 @@ Authorization:{{adminToken}}
 
 
 ### 删除楼栋信息
-DELETE {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/30
+DELETE {{endpoint}}/api/crud/house/housePropertyBuilding/housePropertyBuildings/33
 Authorization:{{adminToken}}
-
-

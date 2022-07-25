@@ -9,6 +9,7 @@ import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyCommunityDao;
+import com.jfeat.am.module.house.services.domain.model.HousePropertyBuildingRecord;
 import com.jfeat.am.module.house.services.domain.model.HousePropertyCommunityRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetService;
 import com.jfeat.am.module.house.services.domain.service.HousePropertyBuildingOverModelService;
@@ -45,6 +46,9 @@ public class UserCommunityManageEndpoint {
     QueryHousePropertyCommunityDao queryHousePropertyCommunityDao;
 
     @Resource
+    QueryHousePropertyBuildingDao queryHousePropertyBuildingDao;
+
+    @Resource
     Authentication authentication;
 
 
@@ -62,6 +66,8 @@ public class UserCommunityManageEndpoint {
         if (!authentication.verifyOperation(JWTKit.getUserId())){
             throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
         }
+        entity.setTenantId(JWTKit.getTenantOrgId());
+
 
         Integer affected = 0;
         try {
@@ -97,6 +103,7 @@ public class UserCommunityManageEndpoint {
 
 
         entity.setId(id);
+        entity.setTenantId(JWTKit.getTenantOrgId());
         // use update flags
         int newOptions = META.UPDATE_CASCADING_DELETION_FLAG;  //default to delete not exist items
         // newOptions = FlagUtil.setFlag(newOptions, META.UPDATE_ALL_COLUMNS_FLAG);
@@ -119,6 +126,15 @@ public class UserCommunityManageEndpoint {
         if (!authentication.verifyOperation(JWTKit.getUserId())){
             throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
         }
+
+        HousePropertyBuildingRecord housePropertyBuildingRecord = new HousePropertyBuildingRecord();
+        housePropertyBuildingRecord.setCommunityId(id);
+        List<HousePropertyBuildingRecord> housePropertyBuildingRecords = queryHousePropertyBuildingDao.findHousePropertyBuildingPage(null,housePropertyBuildingRecord,null,
+                null,null,null,null);
+        if (housePropertyBuildingRecords!=null && housePropertyBuildingRecords.size()>0){
+            throw new BusinessException(BusinessCode.CodeBase,"已经配置房屋，不可以删除");
+        }
+
         return SuccessTip.create(housePropertyCommunityOverModelService.deleteMaster(id));
     }
 

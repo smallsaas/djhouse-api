@@ -8,6 +8,9 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
  * Created by Code generator on 2022-07-16
  */
 public class HouseRentAssetRecord extends HouseRentAsset {
+
+
+
     private HouseAssetModel houseAssetModel;
 
     public HouseAssetModel getHouseAssetModel() {

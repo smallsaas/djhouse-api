@@ -103,12 +103,7 @@ public class HouseAsset extends Model<HouseAsset> {
 
 
 
-    @ApiModelProperty(value = "是否是自己的房产")
-    @TableField(exist = false)
-    private Boolean isMyselfAsset;
 
-    @TableField(exist = false)
-    private Boolean isExistUser;
 
     @ApiModelProperty("用户名")
     @TableField(exist = false)
@@ -146,22 +141,7 @@ public class HouseAsset extends Model<HouseAsset> {
         this.userAvatar = userAvatar;
     }
 
-    public Boolean getExistUser() {
-        return isExistUser;
-    }
 
-    public void setExistUser(Boolean existUser) {
-        isExistUser = existUser;
-    }
-
-    public Boolean getMyselfAsset() {
-        return isMyselfAsset;
-    }
-
-    public HouseAsset setMyselfAsset(Boolean myselfAsset) {
-        isMyselfAsset = myselfAsset;
-        return this;
-    }
 
     public Long getCommunityId() {
         return communityId;

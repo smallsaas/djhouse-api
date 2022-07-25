@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -157,5 +158,18 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
                 ", unitCode='" + unitCode + '\'' +
                 ", area='" + area + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HousePropertyBuildingUnit that = (HousePropertyBuildingUnit) o;
+        return Objects.equals(id, that.id) && Objects.equals(buildingId, that.buildingId) && Objects.equals(designModelId, that.designModelId) && Objects.equals(unitCode, that.unitCode) && Objects.equals(area, that.area) && Objects.equals(direction, that.direction) && Objects.equals(communityName, that.communityName) && Objects.equals(buildingCode, that.buildingCode) && Objects.equals(houseType, that.houseType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, buildingId, designModelId, unitCode, area, direction, communityName, buildingCode, houseType);
     }
 }

@@ -2,6 +2,7 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.jfeat.am.module.house.services.gen.crud.model.HouseVrPictureModel;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -175,5 +176,38 @@ public class HouseVrPictureEndpoint {
 
         return SuccessTip.create(page);
     }
+
+    /*
+上架vr图
+ */
+    @PutMapping("/shelvesVrPicture/{id}")
+    public Tip shelvesVrPicture(@PathVariable("id") Long id) {
+        HouseVrPictureModel houseVrPictureModel = queryHouseVrPictureDao.queryMasterModel(id);
+        if (houseVrPictureModel!=null){
+            houseVrPictureModel.setStatus(HouseVrPicture.STATUS_SHELVES);
+            return SuccessTip.create(houseVrPictureService.updateMaster(houseVrPictureModel));
+        }
+        return SuccessTip.create();
+    }
+
+    /*
+    下架vr图
+     */
+    @PutMapping("/unshelvesVrPicture/{id}")
+    public Tip unshelvesVrPicture(@PathVariable("id") Long id) {
+        HouseVrPictureModel houseVrPictureModel = queryHouseVrPictureDao.queryMasterModel(id);
+        if (houseVrPictureModel!=null){
+            houseVrPictureModel.setStatus(HouseVrPicture.STATUS_UNSHELVES);
+            return SuccessTip.create(houseVrPictureService.updateMaster(houseVrPictureModel));
+        }
+        return SuccessTip.create();
+    }
+
+
+
+
+
+
+
 }
 

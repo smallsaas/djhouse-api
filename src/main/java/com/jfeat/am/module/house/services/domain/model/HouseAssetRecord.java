@@ -1,6 +1,8 @@
 package com.jfeat.am.module.house.services.domain.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -10,6 +12,15 @@ import java.util.List;
  * Created by Code generator on 2022-06-11
  */
 public class HouseAssetRecord extends HouseAsset {
+
+    /*
+    是否是最终确认房子
+     */
+    private Integer finalFlag;
+
+    private Boolean isMyselfAsset;
+
+    private Boolean isExistUser;
 
     private List<Product> decoratePlanProductList;
 
@@ -48,6 +59,15 @@ public class HouseAssetRecord extends HouseAsset {
     是否是相同户型
      */
     private Boolean sameHouseType;
+
+
+    public Integer getFinalFlag() {
+        return finalFlag;
+    }
+
+    public void setFinalFlag(Integer finalFlag) {
+        this.finalFlag = finalFlag;
+    }
 
     public Date getRentTime() {
         return rentTime;
@@ -151,5 +171,21 @@ public class HouseAssetRecord extends HouseAsset {
 
     public void setSameHouseType(Boolean sameHouseType) {
         this.sameHouseType = sameHouseType;
+    }
+
+    public Boolean getMyselfAsset() {
+        return isMyselfAsset;
+    }
+
+    public void setMyselfAsset(Boolean myselfAsset) {
+        isMyselfAsset = myselfAsset;
+    }
+
+    public Boolean getExistUser() {
+        return isExistUser;
+    }
+
+    public void setExistUser(Boolean existUser) {
+        isExistUser = existUser;
     }
 }

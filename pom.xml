@@ -39,6 +39,7 @@
             <version>1.0.1</version>
         </dependency>
 
+
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>lc_low_main_page</artifactId>
@@ -112,10 +113,26 @@
             <artifactId>banner-service</artifactId>
             <version>1.2.1</version>
         </dependency>
+
+<!--        Excel导入导出-->
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>zero-io-excel</artifactId>
             <version>1.2.0</version>
+        </dependency>
+
+<!--        pdf导入导出-->
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>zero-io-pdf</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+
+<!--        统计-->
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>statistic</artifactId>
+            <version>1.3.0</version>
         </dependency>
         
         

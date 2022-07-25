@@ -5,5 +5,7 @@ import com.jfeat.am.module.house.services.gen.crud.service.CRUDHouseAssetService
 /**
  * Created by vincent on 2017/10/19.
  */
-public interface HouseAssetService extends CRUDHouseAssetService{
-    }
+public interface HouseAssetService extends CRUDHouseAssetService {
+
+
+}

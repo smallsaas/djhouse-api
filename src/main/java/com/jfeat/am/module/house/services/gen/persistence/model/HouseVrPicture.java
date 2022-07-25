@@ -54,6 +54,9 @@ public class HouseVrPicture extends Model<HouseVrPicture> {
     @ApiModelProperty(value = "备注")
     private String note;
 
+    @ApiModelProperty(value = "上架状态 0-下架 1上架")
+    private Integer status;
+
     public Long getId() {
         return id;
     }
@@ -139,6 +142,14 @@ public class HouseVrPicture extends Model<HouseVrPicture> {
         this.note = note;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     public static final String ID = "id";
 
     public static final String NAME = "name";
@@ -148,6 +159,14 @@ public class HouseVrPicture extends Model<HouseVrPicture> {
     public static final String VR_PICTURE = "vr_picture";
 
     public static final String SNAPSHOT = "snapshot";
+
+    /*
+    上架vr图
+     */
+    public static final Integer STATUS_SHELVES=1;
+
+    //下架vr图
+    public static final Integer STATUS_UNSHELVES=0;
 
     @Override
     protected Serializable pkVal() {

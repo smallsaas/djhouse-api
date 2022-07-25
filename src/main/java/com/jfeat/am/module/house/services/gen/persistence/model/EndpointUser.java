@@ -130,6 +130,10 @@ public class EndpointUser extends Model<EndpointUser> {
       @TableField(exist = false)
       private List<Product> products;
 
+      @ApiModelProperty(value = "用户类型列表")
+      @TableField(exist = false)
+      private List<Integer> typeList;
+
     
     public Long getId() {
         return id;
@@ -424,6 +428,14 @@ public class EndpointUser extends Model<EndpointUser> {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    public List<Integer> getTypeList() {
+        return typeList;
+    }
+
+    public void setTypeList(List<Integer> typeList) {
+        this.typeList = typeList;
     }
 
     public static final String ID = "id";

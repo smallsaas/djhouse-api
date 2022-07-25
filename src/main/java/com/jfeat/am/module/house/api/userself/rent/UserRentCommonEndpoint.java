@@ -2,32 +2,24 @@ package com.jfeat.am.module.house.api.userself.rent;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jfeat.am.common.annotation.Permission;
 import com.jfeat.am.core.jwt.JWTKit;
-import com.jfeat.am.module.house.api.permission.HouseRentAssetPermission;
 import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseAppointmentDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
+import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
-import com.jfeat.am.module.house.services.domain.service.HouseAssetService;
+import com.jfeat.am.module.house.services.domain.service.HouseAppointmentService;
 import com.jfeat.am.module.house.services.domain.service.HouseRentAssetService;
-import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseRentAssetModel;
+import com.jfeat.am.module.house.services.gen.persistence.model.EndpointUser;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
-import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
-import com.jfeat.users.weChatMiniprogram.constant.SecurityConstants;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import org.apache.poi.ss.formula.functions.T;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,8 +29,12 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/u/house/rent/agentRentManage")
-public class UserAgentRentManageEndpoint {
+@RequestMapping("/api/u/house/rent/rentCommon")
+public class UserRentCommonEndpoint {
+
+    /*
+   用户出租列表
+    */
 
     @Resource
     HouseRentAssetService houseRentAssetService;
@@ -47,25 +43,12 @@ public class UserAgentRentManageEndpoint {
     QueryHouseRentAssetDao queryHouseRentAssetDao;
 
     @Resource
-    HouseUserAssetService houseUserAssetService;
-
-    @Resource
-    QueryHouseUserAssetDao queryHouseUserAssetDao;
-
-    @Resource
-    HouseAssetService houseAssetService;
-
-    @Resource
     QueryHouseAssetDao queryHouseAssetDao;
 
     @Resource
     QueryEndpointUserDao queryEndpointUserDao;
 
 
-
-    /*
-    用户出租列表
-     */
 
     @GetMapping("/getUserRentAsset")
     public Tip queryHouseRentAssetPage(Page<HouseRentAssetRecord> page,
@@ -139,7 +122,7 @@ public class UserAgentRentManageEndpoint {
         record.setPrice(price);
         record.setSlide(slide);
         record.setRentDescribe(describe);
-        record.setRentStatus(rentStatus);
+        record.setRentStatus(HouseRentAsset.RENT_STATUS_SHELVES);
         record.setNote(note);
         record.setRentTime(rentTime);
         record.setShelvesTime(shelvesTime);
@@ -148,89 +131,34 @@ public class UserAgentRentManageEndpoint {
         List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPage(page, record, tag, search, orderBy, null, null);
         for (HouseRentAssetRecord houseRentAssetRecord:houseRentAssetPage){
             HouseRentAsset rentAsset = houseRentAssetService.queryMasterModel(queryHouseRentAssetDao, houseRentAssetRecord.getId());
-            if (rentAsset!=null && rentAsset.getExtra()!=null){
-                houseRentAssetRecord.setExtra(rentAsset.getExtra());
-            }
-            HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(houseRentAssetRecord.getAssetId());
-            if (houseAssetModel!=null){
-                houseRentAssetRecord.setHouseAssetModel(houseAssetModel);
-            }
-
+            houseRentAssetRecord.setExtra(rentAsset.getExtra());
         }
         page.setRecords(houseRentAssetPage);
 
         return SuccessTip.create(page);
     }
 
-
-    /*
-    中介补充 用户出租信息
-     */
-    @PutMapping("/agentModifyRentInfo/{id}")
-    public Tip AgentModifyRentInfo(@PathVariable Long id, @RequestBody HouseRentAsset entity) {
-        if (JWTKit.getUserId() == null) {
-            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
-        }
-          /*
-        判断是否是中介身份
-         */
-        EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(JWTKit.getUserId());
-        if (endpointUserModel==null || !(endpointUserModel.getType().equals(SecurityConstants.USER_TYPE_INTERMEDIARY))){
-            throw new BusinessException(BusinessCode.NoPermission,"没有权限");
-        }
-
-        entity.setId(id);
-        return SuccessTip.create(houseRentAssetService.updateMaster(entity));
-    }
-
-
-    /*
-    修改出租状态 上架或者下架
-     */
-    @PutMapping("/modifyRentStatus")
-    public Tip updateHouseRentAsset(@RequestBody HouseRentAsset entity) {
-
-        if (JWTKit.getUserId() == null) {
-            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
-        }
-
-        /*
-        判断是否是中介身份
-         */
-        EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(JWTKit.getUserId());
-        if (endpointUserModel==null || !(endpointUserModel.getType().equals(SecurityConstants.USER_TYPE_INTERMEDIARY))){
-            throw new BusinessException(BusinessCode.NoPermission,"没有权限");
-        }
-
-        if (entity.getId()==null || "".equals(entity.getId())){
-            throw new BusinessException(BusinessCode.BadRequest,"id为必填");
-        }
-        if (entity.getRentStatus()==null || "".equals(entity.getRentStatus())){
-            throw new BusinessException(BusinessCode.BadRequest,"rentStatus");
-        }
-
-        HouseRentAssetModel houseRentAssetModel = queryHouseRentAssetDao.queryMasterModel(entity.getId());
-        if (houseRentAssetModel==null){
-            throw new BusinessException(BusinessCode.BadRequest,"参数异常,请检查参数是否正确");
-        }
-        /*
-        设置中介身份和状态
-         */
-        houseRentAssetModel.setServerId(JWTKit.getUserId());
-        houseRentAssetModel.setRentStatus(entity.getRentStatus());
-        houseRentAssetModel.setShelvesTime(new Date());
-        return SuccessTip.create(houseRentAssetService.updateMaster(houseRentAssetModel));
-    }
-
     /*
     查看出租详情
      */
-    @GetMapping("/userRentDetails/{id}")
-    public Tip getHouseRentAsset(@PathVariable Long id) {
-        return SuccessTip.create(houseRentAssetService.queryMasterModel(queryHouseRentAssetDao, id));
+    @GetMapping("/userRentAssetDetails/{id}")
+    public Tip userRentAssetDetails(@PathVariable("id") Long id) {
+
+        HouseRentAssetModel houseRentAssetModel = queryHouseRentAssetDao.queryMasterModel(id);
+        if (houseRentAssetModel!=null){
+            HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(houseRentAssetModel.getAssetId());
+            if (houseAssetModel!=null){
+                houseRentAssetModel.setHouseAssetModel(houseAssetModel);
+            }
+            if (houseRentAssetModel.getServerId()!=null){
+                EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(houseRentAssetModel.getServerId());
+                if (endpointUserModel!=null){
+                    houseRentAssetModel.setServerAvatar(endpointUserModel.getAvatar());
+                    houseRentAssetModel.setServerPhone(endpointUserModel.getPhone());
+                    houseRentAssetModel.setServerName(endpointUserModel.getName());
+                }
+            }
+        }
+        return SuccessTip.create(houseRentAssetModel);
     }
-
-
-
-
 }

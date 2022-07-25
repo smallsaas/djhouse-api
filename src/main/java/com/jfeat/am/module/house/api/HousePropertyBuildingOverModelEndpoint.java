@@ -92,7 +92,7 @@ public class HousePropertyBuildingOverModelEndpoint {
 //            entity.setOrgId(JWTKit.getTenantOrgId());
             // int insert = housePropertyBuildingMapper.insert(entity);
             affected = housePropertyBuildingOverModelService.createMaster(entity, filterResult, null, null);
-            if (affected > 0) {
+            if (affected > 0 &&(entity.getFloors()!=null && entity.getFloors()>=0) && (entity.getUnits()!=null && entity.getUnits()>=0)) {
                 housePropertyBuildingOverModelService.initHouseProperty(entity);
                 return SuccessTip.create(filterResult.result());
             }
@@ -142,21 +142,14 @@ public class HousePropertyBuildingOverModelEndpoint {
         int newOptions = META.UPDATE_CASCADING_DELETION_FLAG;  //default to delete not exist items
         // newOptions = FlagUtil.setFlag(newOptions, META.UPDATE_ALL_COLUMNS_FLAG);
         Integer effect = housePropertyBuildingOverModelService.updateMaster(entity, null, null, null, newOptions);
-        if (effect>0 && housePropertyBuildingModel!=null){
-
-            if (entity.getFloors()!=null&&entity.getFloors()!=housePropertyBuildingModel.getFloors()){
-                queryHousePropertyRoomDao.deleteHouseRoomByBuildingId(id);
-                queryHousePropertyBuildingUnitDao.deleteHouseBuildingUnitByBuildingId(id);
-                housePropertyBuildingModel.setFloors(entity.getFloors());
-                housePropertyBuildingOverModelService.initHouseProperty(housePropertyBuildingModel);
-            }
-            if (entity.getUnits()!=null&&entity.getUnits()!=housePropertyBuildingModel.getUnits()){
-                queryHousePropertyRoomDao.deleteHouseRoomByBuildingId(id);
-                queryHousePropertyBuildingUnitDao.deleteHouseBuildingUnitByBuildingId(id);
-                housePropertyBuildingModel.setUnits(entity.getUnits());
-                housePropertyBuildingOverModelService.initHouseProperty(housePropertyBuildingModel);
-            }
+        if (housePropertyBuildingModel.getUnits()==0 && housePropertyBuildingModel.getFloors()==0){
+            housePropertyBuildingOverModelService.initHouseProperty(entity);
         }
+        if (effect>0 && housePropertyBuildingModel!=null &&(entity.getFloors()!=null && entity.getFloors()>0) && (entity.getUnits()!=null && entity.getUnits()>0)){
+            effect+=housePropertyBuildingOverModelService.modifyHouseBuilding(housePropertyBuildingModel);
+
+        }
+
         return SuccessTip.create(effect);
     }
 
@@ -228,9 +221,9 @@ public class HousePropertyBuildingOverModelEndpoint {
         page.setSize(pageSize);
 
         HousePropertyBuildingRecord record = new HousePropertyBuildingRecord();
-        if (META.enabledSaas()) {
-            record.setOrgId(JWTKit.getOrgId());
-        }
+//        if (META.enabledSaas()) {
+//            record.setOrgId(JWTKit.getOrgId());
+//        }
         record.setCommunityId(communityId);
         record.setArea(area);
         record.setCode(code);
