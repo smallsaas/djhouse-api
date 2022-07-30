@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 
+
 @RestController
 @RequestMapping("/api/u/house/operations/userAssetManage")
 public class UserAssetManageEndpoint {
@@ -73,7 +74,7 @@ public class UserAssetManageEndpoint {
     }
 
     /*
-    修改楼层
+    修改楼层 只修改为 平层 无效 复式
      */
     @PutMapping("/{id}")
     public Tip updateHouseAsset(@PathVariable Long id, @RequestBody HouseAsset entity) {

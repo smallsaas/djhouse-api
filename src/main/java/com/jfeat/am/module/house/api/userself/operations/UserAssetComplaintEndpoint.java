@@ -33,6 +33,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+/*
+运维 产权申诉
+ */
 
 @RestController
 @RequestMapping("/api/u/house/operations/userAssetComplaintEndpoint")
@@ -119,22 +122,9 @@ public class UserAssetComplaintEndpoint {
         record.setSolveTime(solveTime);
 
 
-        List<HouseAssetComplaintRecord> houseAssetComplaintPage = queryHouseAssetComplaintDao.findHouseAssetComplaintPage(page, record, tag, search, orderBy, null, null);
+        List<HouseAssetComplaintRecord> houseAssetComplaintPage = queryHouseAssetComplaintDao.findHouseAssetComplaintPageDetails(page, record, tag, search, orderBy, null, null);
 
-        for (HouseAssetComplaintRecord complaintRecord :houseAssetComplaintPage){
-            HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(complaintRecord.getAssetId());
-            if (houseAssetModel!=null){
-                complaintRecord.setHouseAssetModel(houseAssetModel);
-            }
 
-//            添加个人信息
-            EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(complaintRecord.getUserId());
-            if (endpointUserModel!=null){
-                complaintRecord.setUserAvatar(endpointUserModel.getAvatar());
-                complaintRecord.setUserName(endpointUserModel.getName());
-                complaintRecord.setUserPhone(endpointUserModel.getPhone());
-            }
-        }
 //        安装状态排序
         houseAssetComplaintPage.sort((a,b)->{
             if ((a.getSolveStatus() - b.getSolveStatus() ) > 0) {
@@ -169,6 +159,7 @@ public class UserAssetComplaintEndpoint {
         List<HouseAssetComplaintRecord> complaintRecord = queryHouseAssetComplaintDao.findHouseAssetComplaintPage(null,record,null,null,null
                 ,null,null);
         if (complaintRecord!=null && complaintRecord.size()==1){
+//            设置房屋信息
             HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(complaintRecord.get(0).getAssetId());
             if (houseAssetModel!=null){
                 complaintRecord.get(0).setHouseAssetModel(houseAssetModel);
@@ -225,7 +216,7 @@ public class UserAssetComplaintEndpoint {
         return SuccessTip.create();
     }
 
-//    拒绝验证
+//    拒绝产权申诉
 @PutMapping("/clash/refuse/{id}")
 public Tip refuseClashInfo(@PathVariable("id")Long id, @RequestBody HouseAssetComplaint entity) {
 
@@ -298,6 +289,7 @@ public Tip refuseClashInfo(@PathVariable("id")Long id, @RequestBody HouseAssetCo
                 if (houseUserAssetModel == null) {
                     throw new BusinessException(BusinessCode.BadRequest, "请求错误");
                 }
+//                将房子更新为申诉人的房子 且确定最终状态
                 houseUserAssetModel.setUserId(houseAssetComplaint.getUserId());
                 houseUserAssetModel.setFinalFlag(HouseUserAsset.FINAL_FLAG_CONFIRM);
                 houseUserAssetService.updateMaster(houseUserAssetModel);

@@ -112,6 +112,7 @@ public class UserAssetExchange {
         return SuccessTip.create(affected);
     }
 
+//    获取用户的换房需求，一个房子对应多个房子 返回前端
     @GetMapping("/demand")
     public Tip getHouseAssetExchangeRequest() {
         if (JWTKit.getUserId() == null) {
@@ -179,6 +180,7 @@ public class UserAssetExchange {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
+//        获取当前小区状态 用来过滤当前小区的匹配信息
         Long communityId = null;
         HouseUserCommunityStatusRecord communityStatusRecord = new HouseUserCommunityStatusRecord();
         communityStatusRecord.setUserId(JWTKit.getUserId());
@@ -190,7 +192,7 @@ public class UserAssetExchange {
             return SuccessTip.create();
         }
 
-        Long start = System.currentTimeMillis();
+
 //        获取用户全部置换记录
         HouseAssetExchangeRequestRecord record = new HouseAssetExchangeRequestRecord();
         record.setUserId(JWTKit.getUserId());
@@ -198,19 +200,11 @@ public class UserAssetExchange {
         page.setCurrent(pageNum);
         List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecordList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPageFilterCommunity(page, record,communityId);
 
-
-
-
-        Long mid = System.currentTimeMillis();
-
-
         if (houseAssetExchangeRequestRecordList!=null && houseAssetExchangeRequestRecordList.size()>0){
+//            将列表解析成对应json格式
             JSONObject jsonObject = houseUserAssetService.parseMatchAssetData(houseAssetExchangeRequestRecordList);
-            System.out.println(jsonObject);
+//            格式化返回前端
             JSONArray result = houseUserAssetService.formatAssetMatchResult(jsonObject);
-            System.out.println(result);
-            System.out.println("开始到中间"+(mid-start));
-            System.out.println("中间到结束"+(System.currentTimeMillis()-mid));
             return SuccessTip.create(result);
         }
         return SuccessTip.create();
@@ -332,7 +326,9 @@ public class UserAssetExchange {
         record.setOwnerUserId(JWTKit.getUserId());
         List<HouseAssetMatchLogRecord> houseAssetMatchLogs = queryHouseAssetMatchLogDao.findHouseAssetMatchLogPage(page, record, null, null, null, null, null);
         for (int i = 0; i < houseAssetMatchLogs.size(); i++) {
-            Map<String, Object> houseAssetMap = new HashMap<>();
+            /*
+            添加 匹配双方的房屋信息
+             */
             HouseAsset ownerHouseAsset = queryHouseAssetDao.queryMasterModel(houseAssetMatchLogs.get(i).getOwnerAssetId());
             HouseAsset matchedHouseAsset = queryHouseAssetDao.queryMasterModel(houseAssetMatchLogs.get(i).getMathchedAssetId());
             houseAssetMatchLogs.get(i).setOwner(ownerHouseAsset);
@@ -393,6 +389,9 @@ public class UserAssetExchange {
         return SuccessTip.create();
     }
 
+    /*
+    换房需求记录列表
+     */
     @GetMapping
     public Tip queryHouseAssetExchangeRequestPage(Page<HouseAssetExchangeRequestRecord> page,
                                                   @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,

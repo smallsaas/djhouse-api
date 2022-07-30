@@ -30,6 +30,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
+/*
+团购
+ */
 @RestController
 @RequestMapping("/api/u/house/houseUserBulk")
 public class UserBulkEndpoint {

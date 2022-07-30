@@ -4,8 +4,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.HouseStatisticsDao;
+import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyCommunityDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserCommunityStatusDao;
 import com.jfeat.am.module.house.services.domain.model.HouseUserCommunityStatusRecord;
+import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyCommunityModel;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyCommunity;
 import com.jfeat.am.module.house.services.utility.Authentication;
 import com.jfeat.am.module.house.services.utility.HouseStatisticsTools;
 import com.jfeat.crud.base.exception.BusinessCode;
@@ -36,6 +39,9 @@ public class UserCommunityStatistics {
     @Resource
     QueryHouseUserCommunityStatusDao queryHouseUserCommunityStatusDao;
 
+    @Resource
+    QueryHousePropertyCommunityDao queryHousePropertyCommunityDao;
+
     @GetMapping
     public Tip getCommunityStatistics(@RequestParam(value = "communityId",required = false) Long communityId){
         if (JWTKit.getUserId() == null) {
@@ -50,6 +56,7 @@ public class UserCommunityStatistics {
             throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
         }
 
+//        判读是否带了小区id 当没带小区id是 取当前用户的小区状态
         if (communityId==null || "".equals(communityId)){
             HouseUserCommunityStatusRecord communityStatusRecord = new HouseUserCommunityStatusRecord();
             communityStatusRecord.setUserId(JWTKit.getUserId());
@@ -62,16 +69,16 @@ public class UserCommunityStatistics {
             }
         }
 
+        HousePropertyCommunityModel housePropertyCommunityModel = queryHousePropertyCommunityDao.queryMasterModel(communityId);
+
         //list 0-房子数 1-无效房子数 2-平房数 3-复式数 4-楼栋数 5-单元数 6-户型数 7-换房需求数 8-换房记录数 9-停车位数 10房东数 11-供应商数
         List<Integer> houseStatistics =   houseStatisticsDao.communityStatistics(communityId);
-
-        List<Map<String,Object>> list =  houseStatisticsTools.getCommunitStatistics(communityId);
-
 
 
         JSONObject result = new JSONObject();
 
-        JSONObject jsonObject =new JSONObject();
+        result.put("communityName",housePropertyCommunityModel.getCommunity());
+
         JSONObject houseNumber = new JSONObject();
         houseNumber.put("房产数",houseStatistics.get(0));
         result.put("houseNumber",houseNumber);

@@ -1,90 +1,180 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetComplaintDao">
-                                                                                                                                                                                                                                                                                                                                                        <sql id="Base_Column_List">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                t_house_asset_complaint.id, t_house_asset_complaint.user_id AS userId, t_house_asset_complaint.old_user_id AS oldUserId, t_house_asset_complaint.asset_id AS assetId, t_house_asset_complaint.clash_certificate AS clashCertificate, t_house_asset_complaint.clash_describe AS clashDescribe, t_house_asset_complaint.solve_status AS solveStatus, t_house_asset_complaint.create_time AS createTime, t_house_asset_complaint.solve_time AS solveTime
+    <sql id="Base_Column_List">
+        t_house_asset_complaint
+        .
+        id
+        , t_house_asset_complaint.user_id AS userId, t_house_asset_complaint.old_user_id AS oldUserId, t_house_asset_complaint.asset_id AS assetId, t_house_asset_complaint.clash_certificate AS clashCertificate, t_house_asset_complaint.clash_describe AS clashDescribe, t_house_asset_complaint.solve_status AS solveStatus, t_house_asset_complaint.create_time AS createTime, t_house_asset_complaint.solve_time AS solveTime
     </sql>
 
-    
-    
+
     <select id="queryMasterModel" resultType="HouseAssetComplaintModel">
-       SELECT t_house_asset_complaint.*
-       FROM t_house_asset_complaint
-       WHERE t_house_asset_complaint.id=#{id}
-       GROUP BY t_house_asset_complaint.id
+        SELECT t_house_asset_complaint.*
+        FROM t_house_asset_complaint
+        WHERE t_house_asset_complaint.id = #{id}
+        GROUP BY t_house_asset_complaint.id
     </select>
 
 
+    <select id="findHouseAssetComplaintPage" resultType="HouseAssetComplaintRecord"
+            parameterType="HouseAssetComplaintRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
 
-                                    
-    <select id="findHouseAssetComplaintPage" resultType="HouseAssetComplaintRecord" parameterType="HouseAssetComplaintRecord">
-            SELECT <include refid="Base_Column_List"/>
-
-        
 
         FROM t_house_asset_complaint
 
-        
-        
+
         WHERE 1=1
-        
 
-        
-                                                                            <if test="record.id != null and record.id>0 ">
-                                    AND t_house_asset_complaint.id LIKE CONCAT('%',#{record.id},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.userId != null and record.userId>0 ">
-                                    AND t_house_asset_complaint.user_id LIKE CONCAT('%',#{record.userId},'%')
-                            </if>
-                                                                    
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_asset_complaint.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
 
-                                                                                                        <if test="record.oldUserId != null and record.oldUserId>0 ">
-                                    AND t_house_asset_complaint.old_user_id LIKE CONCAT('%',#{record.oldUserId},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.assetId != null and record.assetId>0 ">
-                                    AND t_house_asset_complaint.asset_id LIKE CONCAT('%',#{record.assetId},'%')
-                            </if>
-                                                                    
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_asset_complaint.user_id LIKE CONCAT('%',#{record.userId},'%')
+        </if>
 
-                                                                                        <if test="record.clashCertificate != null and record.clashCertificate!= ''">
-                                    AND t_house_asset_complaint.clash_certificate LIKE CONCAT('%',#{record.clashCertificate},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.clashDescribe != null and record.clashDescribe!= ''">
-                                    AND t_house_asset_complaint.clash_describe LIKE CONCAT('%',#{record.clashDescribe},'%')
-                            </if>
-                                                                    
+        <if test="record.oldUserId != null and record.oldUserId>0 ">
+            AND t_house_asset_complaint.old_user_id LIKE CONCAT('%',#{record.oldUserId},'%')
+        </if>
 
-                                                                                        <if test="record.solveStatus != null and record.solveStatus>0 ">
-                                    AND t_house_asset_complaint.solve_status LIKE CONCAT('%',#{record.solveStatus},'%')
-                            </if>
-                                                                                
 
-                                                                                        <if test="record.createTime != null and record.createTime>0 ">
-                                    AND t_house_asset_complaint.create_time LIKE CONCAT('%',#{record.createTime},'%')
-                            </if>
-                                                                    
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_asset_complaint.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+        </if>
 
-                                                                                        <if test="record.solveTime != null and record.solveTime>0 ">
-                                    AND t_house_asset_complaint.solve_time LIKE CONCAT('%',#{record.solveTime},'%')
-                            </if>
-        
+
+        <if test="record.clashCertificate != null and record.clashCertificate!= ''">
+            AND t_house_asset_complaint.clash_certificate LIKE CONCAT('%',#{record.clashCertificate},'%')
+        </if>
+
+
+        <if test="record.clashDescribe != null and record.clashDescribe!= ''">
+            AND t_house_asset_complaint.clash_describe LIKE CONCAT('%',#{record.clashDescribe},'%')
+        </if>
+
+
+        <if test="record.solveStatus != null and record.solveStatus>0 ">
+            AND t_house_asset_complaint.solve_status LIKE CONCAT('%',#{record.solveStatus},'%')
+        </if>
+
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_asset_complaint.create_time LIKE CONCAT('%',#{record.createTime},'%')
+        </if>
+
+
+        <if test="record.solveTime != null and record.solveTime>0 ">
+            AND t_house_asset_complaint.solve_time LIKE CONCAT('%',#{record.solveTime},'%')
+        </if>
+
         <if test="startTime != null">
             <![CDATA[AND t_house_asset_complaint.start_time >= DATE(#{startTime})]]>
         </if>
         <if test="endTime != null">
             <![CDATA[AND t_house_asset_complaint.end_time <= DATE(#{endTime}]]>
         </if>
-            <!--
-        <if test="search != null and search != ''">
-            OR t_house_asset_complaint.name LIKE CONCAT('%',#{search},'%')
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_asset_complaint.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+        ORDER BY create_time DESC
+    </select>
+
+
+    <resultMap id="HouseAssetComplaintMap" type="HouseAssetComplaintRecord">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="oldUserId" column="old_user_id"/>
+        <result property="assetId" column="asset_id"/>
+        <result property="clashCertificate" column="clash_certificate"/>
+        <result property="clashDescribe" column="clash_describe"/>
+        <result property="solveStatus" column="solve_status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="solveTime" column="solve_time"/>
+        <result property="userAvatar" column="avatar"/>
+        <result property="userPhone" column="phone"/>
+        <result property="userName" column="name"/>
+        <association property="houseAssetModel" javaType="com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel">
+            <id property="id" column="assetId"/>
+            <result property="communityName" column="community"/>
+            <result property="buildingCode" column="code"/>
+            <result property="number" column="number"/>
+        </association>
+    </resultMap>
+
+<!--    查询申诉列表详情 添加用户信息和房子信息-->
+    <select id="findHouseAssetComplaintPageDetails" resultMap="HouseAssetComplaintMap"
+            parameterType="HouseAssetComplaintRecord">
+        SELECT
+        t_house_asset_complaint.*,t_house_asset.id AS assetId,t_house_property_community.community,t_house_property_building.`code`,t_house_asset.number,t_end_user.avatar,t_end_user.phone,t_end_user.`name`
+
+        FROM t_house_asset_complaint
+        LEFT JOIN t_end_user ON t_house_asset_complaint.user_id = t_end_user.id
+        LEFT JOIN t_house_asset ON t_house_asset_complaint.asset_id = t_house_asset.id
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community ON t_house_property_building.community_id = t_house_property_community.id
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_asset_complaint.id LIKE CONCAT('%',#{record.id},'%')
         </if>
-        -->
-                                                            ORDER BY create_time DESC
-                        </select>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_asset_complaint.user_id LIKE CONCAT('%',#{record.userId},'%')
+        </if>
+
+
+        <if test="record.oldUserId != null and record.oldUserId>0 ">
+            AND t_house_asset_complaint.old_user_id LIKE CONCAT('%',#{record.oldUserId},'%')
+        </if>
+
+
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_asset_complaint.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+        </if>
+
+
+        <if test="record.clashCertificate != null and record.clashCertificate!= ''">
+            AND t_house_asset_complaint.clash_certificate LIKE CONCAT('%',#{record.clashCertificate},'%')
+        </if>
+
+
+        <if test="record.clashDescribe != null and record.clashDescribe!= ''">
+            AND t_house_asset_complaint.clash_describe LIKE CONCAT('%',#{record.clashDescribe},'%')
+        </if>
+
+
+        <if test="record.solveStatus != null and record.solveStatus>0 ">
+            AND t_house_asset_complaint.solve_status LIKE CONCAT('%',#{record.solveStatus},'%')
+        </if>
+
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_asset_complaint.create_time LIKE CONCAT('%',#{record.createTime},'%')
+        </if>
+
+
+        <if test="record.solveTime != null and record.solveTime>0 ">
+            AND t_house_asset_complaint.solve_time LIKE CONCAT('%',#{record.solveTime},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_asset_complaint.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_asset_complaint.end_time <= DATE(#{endTime}]]>
+        </if>
+
+        ORDER BY create_time DESC
+    </select>
 </mapper>

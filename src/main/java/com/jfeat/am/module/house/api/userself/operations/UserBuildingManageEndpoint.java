@@ -75,6 +75,7 @@ public class UserBuildingManageEndpoint {
         if (!authentication.verifyOperation(JWTKit.getUserId())){
             throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
         }
+//        查当前用户的的小区状态
         Long userCommunityStatus =  userCommunityAsset.getUserCommunityStatus(JWTKit.getUserId());
         if (userCommunityStatus==null){
             throw new BusinessException(BusinessCode.NoPermission,"没有选择小区");
@@ -88,6 +89,7 @@ public class UserBuildingManageEndpoint {
             DefaultFilterResult filterResult = new DefaultFilterResult();
             affected = housePropertyBuildingOverModelService.createMaster(entity, filterResult, null, null);
             if (affected > 0 &&(entity.getFloors()!=null && entity.getFloors()>=0) && (entity.getUnits()!=null && entity.getUnits()>=0)) {
+//                初始化楼栋 创建 单元 房屋等信息
                 housePropertyBuildingOverModelService.initHouseProperty(entity);
                 return SuccessTip.create(filterResult.result());
             }
@@ -122,9 +124,11 @@ public class UserBuildingManageEndpoint {
         int newOptions = META.UPDATE_CASCADING_DELETION_FLAG;  //default to delete not exist items
         // newOptions = FlagUtil.setFlag(newOptions, META.UPDATE_ALL_COLUMNS_FLAG);
         Integer effect = housePropertyBuildingOverModelService.updateMaster(entity, null, null, null, newOptions);
+//        当楼栋没有被设置时 先初始化楼栋
         if (housePropertyBuildingModel.getUnits()==0 && housePropertyBuildingModel.getFloors()==0){
             housePropertyBuildingOverModelService.initHouseProperty(entity);
         }
+//        当楼栋已经初始化后 修改楼栋信息 如单元数和房屋数
         if (effect>0 && housePropertyBuildingModel!=null &&(housePropertyBuildingModel.getFloors()!=null && housePropertyBuildingModel.getFloors()>0) && (housePropertyBuildingModel.getUnits()!=null && housePropertyBuildingModel.getUnits()>0)){
             effect+=housePropertyBuildingOverModelService.modifyHouseBuilding(housePropertyBuildingModel);
 
@@ -151,6 +155,7 @@ public class UserBuildingManageEndpoint {
 
         Integer affect = housePropertyBuildingOverModelService.deleteMaster(id);
         if (affect>0){
+//            删除房屋和单元
             queryHousePropertyRoomDao.deleteHouseRoomByBuildingId(id);
             queryHousePropertyBuildingUnitDao.deleteHouseBuildingUnitByBuildingId(id);
         }

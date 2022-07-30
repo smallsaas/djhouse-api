@@ -106,14 +106,13 @@ public class UserAccountManageEndpoint {
             userRecordList = userRecordList.subList(0, 10);
         }
 
-
-
         for (int i = 0; i < userRecordList.size(); i++) {
             if (userRecordList.get(i).getType() == null) {
                 continue;
             }
-            List<Integer> userTypeList = userAccountService.getUserTypeList(userRecordList.get(i).getType());
 
+//            将用户类型 转为list 返回个前端
+            List<Integer> userTypeList = userAccountService.getUserTypeList(userRecordList.get(i).getType());
             if (userRecordList != null && userRecordList.size() > 0) {
                 userRecordList.get(i).setTypeList(userTypeList);
             }
@@ -151,6 +150,9 @@ public class UserAccountManageEndpoint {
 
         EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(id);
         if (endpointUserModel != null) {
+            /*
+            将list的用户类型 转回int存储会数据库
+             */
             Integer userType = userAccountService.getUserTypeByList(entity.getTypeList());
             endpointUserModel.setType(userType);
             return SuccessTip.create(endpointUserMapper.updateById(endpointUserModel));

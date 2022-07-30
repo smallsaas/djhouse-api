@@ -139,6 +139,8 @@ public class UserRentCommonEndpoint {
 
 
         List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPage(page, record, tag, search, orderBy, null, null);
+
+//        添加tag标签 和房屋信息
         for (HouseRentAssetRecord houseRentAssetRecord:houseRentAssetPage){
             HouseRentAsset rentAsset = houseRentAssetService.queryMasterModel(queryHouseRentAssetDao, houseRentAssetRecord.getId());
             if (rentAsset!=null && rentAsset.getExtra()!=null){

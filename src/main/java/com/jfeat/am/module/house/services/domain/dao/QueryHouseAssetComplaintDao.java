@@ -15,13 +15,13 @@ import java.util.List;
  * Created by Code generator on 2022-07-22
  */
 public interface QueryHouseAssetComplaintDao extends QueryMasterDao<HouseAssetComplaint> {
-   /*
-    * Query entity list by page
-    */
+    /*
+     * Query entity list by page
+     */
     List<HouseAssetComplaintRecord> findHouseAssetComplaintPage(Page<HouseAssetComplaintRecord> page, @Param("record") HouseAssetComplaintRecord record,
-                                            @Param("tag") String tag,
-                                            @Param("search") String search, @Param("orderBy") String orderBy,
-                                            @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+                                                                @Param("tag") String tag,
+                                                                @Param("search") String search, @Param("orderBy") String orderBy,
+                                                                @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
     /*
      * Query entity model for details
@@ -33,4 +33,12 @@ public interface QueryHouseAssetComplaintDao extends QueryMasterDao<HouseAssetCo
      * Query entity model list for slave items
      */
     List<HouseAssetComplaintModel> queryMasterModelList(@Param("masterId") Object masterId);
+
+    /*
+    申诉列表 添加houseAssetModel类型 和添加 用户信息
+     */
+    List<HouseAssetComplaintRecord> findHouseAssetComplaintPageDetails(Page<HouseAssetComplaintRecord> page, @Param("record") HouseAssetComplaintRecord record,
+                                                                       @Param("tag") String tag,
+                                                                       @Param("search") String search, @Param("orderBy") String orderBy,
+                                                                       @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 }

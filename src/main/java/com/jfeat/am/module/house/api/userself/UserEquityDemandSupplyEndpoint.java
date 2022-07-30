@@ -29,7 +29,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 
-
+//权益需求 也叫方数买卖
 @RestController
 @Api("HouseEquityDemandSupply")
 @RequestMapping("/api/u/house/houseEquityDemandSupply/houseEquityDemandSupplyies")
@@ -41,9 +41,11 @@ public class UserEquityDemandSupplyEndpoint {
     QueryHouseEquityDemandSupplyDao queryHouseEquityDemandSupplyDao;
 
 
-    @BusinessLog(name = "HouseEquityDemandSupply", value = "create HouseEquityDemandSupply")
+    /*
+    查看表中是否已经有方数买卖信息 如果有就修改信息 没有就添加
+     */
+
     @PostMapping
-    @ApiOperation(value = "新建 HouseEquityDemandSupply", response = HouseEquityDemandSupply.class)
     public Tip createHouseEquityDemandSupply(@RequestBody HouseEquityDemandSupply entity) {
         System.out.println(JWTKit.getUserId());
         if (JWTKit.getUserId() == null) {
@@ -127,6 +129,7 @@ public class UserEquityDemandSupplyEndpoint {
 
         List<HouseEquityDemandSupplyRecord> houseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, record, tag, search, orderBy, null, null, leftRange, rightRange);
 
+//        将用户的隐私 隐藏起来
         for (HouseEquityDemandSupply houseEquityDemandSupply : houseEquityDemandSupplyPage) {
             houseEquityDemandSupply.setUserId(null);
             houseEquityDemandSupply.setUsername(null);
@@ -169,19 +172,25 @@ public class UserEquityDemandSupplyEndpoint {
 
 
         if (houseEquityDemandSupplyPage!=null && houseEquityDemandSupplyPage.size()==1){
+            //            获取当前用户的一个状态 是需求还是供给
             optionStatus = houseEquityDemandSupplyPage.get(0).getEquityOption();
-            if (optionStatus!=null && optionStatus.equals(1)){
+//            当为需求是 查找供给的 而且大于需求的人
+            if (optionStatus!=null && optionStatus.equals(HouseEquityDemandSupply.EQUITY_OPTION_DEMAND)){
                 leftRange = houseEquityDemandSupplyPage.get(0).getArea().doubleValue();
-                resultRecord.setEquityOption(2);
+                resultRecord.setEquityOption(HouseEquityDemandSupply.EQUITY_OPTION_SUPPLY);
             }
-            if (optionStatus!=null && optionStatus.equals(2)){
+//            当为供给时 查找需求 而且小于供给的的人
+            if (optionStatus!=null && optionStatus.equals(HouseEquityDemandSupply.EQUITY_OPTION_SUPPLY)){
                 rightRange= houseEquityDemandSupplyPage.get(0).getArea().doubleValue();
-                resultRecord.setEquityOption(1);
+                resultRecord.setEquityOption(HouseEquityDemandSupply.EQUITY_OPTION_DEMAND);
             }
 
             resultHouseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, resultRecord, null, search, null, null, null, leftRange, rightRange);
+
+//            将结果进行处理返回
             for (HouseEquityDemandSupply houseEquityDemandSupply : resultHouseEquityDemandSupplyPage) {
                 houseEquityDemandSupply.setUserId(null);
+//                时间格式化 返回 1秒前 1天前等等
                 if (houseEquityDemandSupply.getCreateTime()!=null){
                     houseEquityDemandSupply.setSimpleTime(DateTimeKit.toTimeline(houseEquityDemandSupply.getCreateTime()));
                 }

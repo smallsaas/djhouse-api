@@ -147,6 +147,9 @@ public class HouseEquityDemandSupply extends Model<HouseEquityDemandSupply> {
 
     public static final String AREA = "area";
 
+    public static final Integer EQUITY_OPTION_DEMAND=1;
+
+    public static final Integer EQUITY_OPTION_SUPPLY=2;
 
     @Override
     protected Serializable pkVal() {

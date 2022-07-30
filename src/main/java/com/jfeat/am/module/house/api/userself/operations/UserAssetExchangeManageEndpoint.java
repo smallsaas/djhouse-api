@@ -30,6 +30,10 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
+/*
+置换记录
+ */
+
 @RestController
 @RequestMapping("/api/u/house/operations/userAssetExchangeManage")
 public class UserAssetExchangeManageEndpoint {

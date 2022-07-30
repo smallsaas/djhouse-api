@@ -172,24 +172,12 @@ public class UserVrCategoryEndpoint {
      */
     @PutMapping("/addVrCount/{id}")
     public Tip vrClientCount(@PathVariable("id") Long id) {
-
-
-        HouseVrPictureModel pictureModel = new HouseVrPictureModel();
         HouseVrPictureModel houseVrPictureModel = houseVrPictureService.queryMasterModel(queryHouseVrPictureDao, id);
         if (houseVrPictureModel != null) {
-            pictureModel.setId(id);
-            pictureModel.setVrPicture(houseVrPictureModel.getVrPicture());
-            pictureModel.setName(houseVrPictureModel.getName());
-            pictureModel.setSnapshot(houseVrPictureModel.getSnapshot());
-            pictureModel.setLink(houseVrPictureModel.getLink());
-            pictureModel.setStar(houseVrPictureModel.getStar() + 1);
-            pictureModel.setBedrooms(houseVrPictureModel.getBedrooms());
-            pictureModel.setStyle(houseVrPictureModel.getStyle());
-            pictureModel.setTypeOption(houseVrPictureModel.getTypeOption());
-            pictureModel.setNote(houseVrPictureModel.getNote());
-            pictureModel.setStatus(houseVrPictureModel.getStatus());
+            houseVrPictureModel.setStar(houseVrPictureModel.getStar() + 1);
+
         }
-        return SuccessTip.create(houseVrPictureService.updateMaster(pictureModel));
+        return SuccessTip.create(houseVrPictureService.updateMaster(houseVrPictureModel));
     }
 
 
