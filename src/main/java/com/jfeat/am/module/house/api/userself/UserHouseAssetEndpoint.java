@@ -257,7 +257,13 @@ public class UserHouseAssetEndpoint {
     @GetMapping("/asset/details/{assetId}")
     public Tip getAssetDetails(@PathVariable("assetId") Long assetId){
 
-        return SuccessTip.create(queryHouseAssetDao.queryHouseAssetDetails(assetId));
+        HouseAssetRecord houseAssetRecord = new HouseAssetRecord();
+        houseAssetRecord.setId(assetId);
+        List<HouseAssetRecord> houseAssetRecordList = queryHouseAssetDao.findHouseAssetPage(null,houseAssetRecord,null,null,null,null,null);
+        if (houseAssetRecordList!=null && houseAssetRecordList.size()>0){
+            SuccessTip.create(houseAssetRecordList.get(0));
+        }
+        return SuccessTip.create();
     }
 
 //    获取用户房子信息
@@ -317,9 +323,6 @@ public class UserHouseAssetEndpoint {
                     houseUserAssets.get(i).setExistRent(true);
                 }
             }
-
-
-
 
 
             for (HouseUserDecoratePlanRecord decoratePlanRecord:decoratePlanRecordList){

@@ -41,28 +41,7 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @ApiModelProperty(value = "是否托管 0不托管 1托管")
     private Integer trust;
 
-    @ApiModelProperty(value = "是否出租 0不出租 1出租")
-    private Integer rentStatus;
 
-    private String rentTitle;
-
-    private String rentCover;
-
-    private Date rentTime;
-
-    private BigDecimal rentPrice;
-
-    private String rentTags;
-
-    private String rentDescribe;
-
-    private String slideshow;
-
-    private Long clashUserId;
-
-    private String clashDescribe;
-
-    private String clashCertificate;
 
     private String note;
 
@@ -157,17 +136,7 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     private String userAvatar;
 
 
-    @ApiModelProperty("冲突用户名")
-    @TableField(exist = false)
-    private String clashUserName;
 
-    @ApiModelProperty("冲突用户电话")
-    @TableField(exist = false)
-    private String clashUserPhone;
-
-    @ApiModelProperty("冲突用户头像")
-    @TableField(exist = false)
-    private String clashUserAvatar;
 
     public Integer getTrust() {
         return trust;
@@ -210,39 +179,9 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     }
 
 
-    public String getRentTitle() {
-        return rentTitle;
-    }
 
-    public void setRentTitle(String rentTitle) {
-        this.rentTitle = rentTitle;
-    }
 
-    public String getClashUserName() {
-        return clashUserName;
-    }
 
-    public HouseUserAsset setClashUserName(String clashUserName) {
-        this.clashUserName = clashUserName;
-        return this;
-    }
-
-    public String getClashUserPhone() {
-        return clashUserPhone;
-    }
-
-    public HouseUserAsset setClashUserPhone(String clashUserPhone) {
-        this.clashUserPhone = clashUserPhone;
-        return this;
-    }
-
-    public Integer getRentStatus() {
-        return rentStatus;
-    }
-
-    public void setRentStatus(Integer rentStatus) {
-        this.rentStatus = rentStatus;
-    }
 
     public Data getCreateTime() {
         return createTime;
@@ -252,14 +191,7 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
         this.createTime = createTime;
     }
 
-    public Date getRentTime() {
-        return rentTime;
-    }
 
-    public HouseUserAsset setRentTime(Date rentTime) {
-        this.rentTime = rentTime;
-        return this;
-    }
 
     public String getNote() {
         return note;
@@ -405,72 +337,6 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
         return this;
     }
 
-    public Long getClashUserId() {
-        return clashUserId;
-    }
-
-    public HouseUserAsset setClashUserId(Long clashUserId) {
-        this.clashUserId = clashUserId;
-        return this;
-    }
-
-    public String getClashDescribe() {
-        return clashDescribe;
-    }
-
-    public HouseUserAsset setClashDescribe(String clashDescribe) {
-        this.clashDescribe = clashDescribe;
-        return this;
-    }
-
-    public String getClashCertificate() {
-        return clashCertificate;
-    }
-
-    public HouseUserAsset setClashCertificate(String clashCertificate) {
-        this.clashCertificate = clashCertificate;
-        return this;
-    }
-
-    public String getClashUserAvatar() {
-        return clashUserAvatar;
-    }
-
-    public void setClashUserAvatar(String clashUserAvatar) {
-        this.clashUserAvatar = clashUserAvatar;
-    }
-
-    public BigDecimal getRentPrice() {
-        return rentPrice;
-    }
-
-    public void setRentPrice(BigDecimal rentPrice) {
-        this.rentPrice = rentPrice;
-    }
-
-    public String getRentTags() {
-        return rentTags;
-    }
-
-    public void setRentTags(String rentTags) {
-        this.rentTags = rentTags;
-    }
-
-    public String getRentDescribe() {
-        return rentDescribe;
-    }
-
-    public void setRentDescribe(String rentDescribe) {
-        this.rentDescribe = rentDescribe;
-    }
-
-    public String getSlideshow() {
-        return slideshow;
-    }
-
-    public void setSlideshow(String slideshow) {
-        this.slideshow = slideshow;
-    }
 
     public String getHouseTypePicture() {
         return houseTypePicture;
@@ -496,13 +362,7 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
         this.vrLink = vrLink;
     }
 
-    public String getRentCover() {
-        return rentCover;
-    }
 
-    public void setRentCover(String rentCover) {
-        this.rentCover = rentCover;
-    }
 
     public String getDirection() {
         return direction;

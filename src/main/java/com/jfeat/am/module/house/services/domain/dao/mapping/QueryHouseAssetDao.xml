@@ -2,7 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao">
     <sql id="Base_Column_List">
-        t_house_asset.id,
+        t_house_asset
+        .
+        id
+        ,
         t_house_asset.building_id AS buildingId,
         t_house_asset.unit_id AS unitId,
         t_house_asset.floor,
@@ -24,30 +27,30 @@
         t_house_design_model.id AS designModelId,
         t_house_design_model.house_type AS houseType,
         t_house_design_model.house_type_picture AS houseTypePicture,
-        t_house_design_model.vr_picture AS vrPicture,
-        t_house_design_model.vr_link AS vrLink,
-        t_house_design_model.vr_snapshot AS vrSnapshot,
+         t_house_vr_picture.vr_picture AS vrPicture,
+               t_house_vr_picture.link                  AS vrLink,
+               t_house_vr_picture.snapshot              AS vrSnapshot,
         t_house_design_model.area AS area
     </sql>
 
 
     <select id="queryMasterModel" resultType="HouseAssetModel">
         SELECT t_house_asset.*,
-               t_house_property_building.cad_picture AS cadPicture,
-               t_house_property_building.code       AS buildingCode,
+               t_house_property_building.cad_picture    AS cadPicture,
+               t_house_property_building.code           AS buildingCode,
                t_house_property_building_unit.direction AS direction,
 
-               t_house_property_community.id        AS communityId,
-               t_house_property_community.community AS communityName,
-               t_house_property_community.address AS address,
+               t_house_property_community.id            AS communityId,
+               t_house_property_community.community     AS communityName,
+               t_house_property_community.address       AS address,
 
-               t_house_design_model.id AS designModelId,
-               t_house_design_model.house_type AS houseType,
-               t_house_design_model.house_type_picture AS houseTypePicture,
-               t_house_design_model.vr_picture AS vrPicture,
-               t_house_design_model.vr_link AS vrLink,
-               t_house_design_model.vr_snapshot AS vrSnapshot,
-               t_house_design_model.area AS area
+               t_house_design_model.id                  AS designModelId,
+               t_house_design_model.house_type          AS houseType,
+               t_house_design_model.house_type_picture  AS houseTypePicture,
+               t_house_vr_picture.vr_picture            AS vrPicture,
+               t_house_vr_picture.link                  AS vrLink,
+               t_house_vr_picture.snapshot              AS vrSnapshot,
+               t_house_design_model.area                AS area
         FROM t_house_asset
                  JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
                  JOIN t_house_property_community
@@ -55,10 +58,11 @@
 
                  left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
 
-                 left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
-
+                 left JOIN t_house_design_model
+                           ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+                 left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
         WHERE t_house_asset.id = #{id}
-        GROUP BY  t_house_asset.id
+        GROUP BY t_house_asset.id
     </select>
 
 
@@ -73,7 +77,7 @@
         JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
         left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
         left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
-
+        left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
         WHERE 1=1
 
 
@@ -106,7 +110,6 @@
         <if test="record.assetType != null and record.assetType!= ''">
             AND t_house_asset.asset_type LIKE CONCAT('%',#{record.assetType},'%')
         </if>
-
 
 
         <if test="record.communityName != null and record.communityName!='' ">
@@ -146,79 +149,6 @@
         ORDER BY t_house_asset.id
     </select>
 
-
-    <sql id="HouseAssetDetails">
-        t_house_asset
-        .
-        id
-        ,
-        t_house_asset.building_id AS buildingId,
-        t_house_asset.unit_id AS unitId,
-        t_house_asset.floor,
-        t_house_asset.number,
-        t_house_asset.asset_slot AS assetSlot,
-        t_house_asset.asset_type AS assetType,
-
-        t_house_property_building.cad_picture AS cadPicture,
-        t_house_property_building.code       AS buildingCode,
-
-       t_house_property_community.id        AS communityId,
-       t_house_property_community.community AS communityName,
-        t_house_property_community.address AS address,
-
-        t_house_design_model.id AS designModelId,
-        t_house_design_model.house_type AS houseType,
-        t_house_design_model.house_type_picture AS houseTypePicture,
-        t_house_design_model.vr_picture AS vrPicture,
-        t_house_design_model.vr_link AS vrLink,
-        t_house_design_model.vr_snapshot AS vrSnapshot,
-        t_house_design_model.area AS area
-    </sql>
-
-
-    <select id="queryHouseAssetDetails" resultType="HouseAssetRecord">
-        SELECT
-        <include refid="HouseAssetDetails"></include>
-        FROM t_house_asset
-        JOIN t_house_property_building ON t_house_asset.building_id = t_house_property_building.id
-        JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
-        JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
-
-        JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
-        JOIN t_house_decorate_plan ON t_house_decorate_plan.design_model_id = t_house_design_model.id
-        JOIN t_house_decorate_plan_funiture ON t_house_decorate_plan.id =
-        t_house_decorate_plan_funiture.decorate_plan_id
-        WHERE t_house_asset.id=#{assetId}
-        GROUP BY t_house_asset.id
-    </select>
-
-    <!--    查询出租转态列表信息-->
-    <select id="queryUserAssetRent" resultType="HouseAssetRecord">
-        SELECT <include refid="HouseAssetDetails"></include>,t_end_user.name AS username,t_end_user.avatar AS
-        userAvatar,t_end_user.phone AS phone FROM t_house_user_asset
-        JOIN t_house_asset ON t_house_user_asset.asset_id=t_house_asset.id
-        JOIN t_house_property_building ON t_house_asset.building_id = t_house_property_building.id
-        JOIN t_house_property_community ON t_house_property_community.id = t_house_property_building.community_id
-        JOIN t_house_property_building_unit ON t_house_property_building_unit.building_id=t_house_property_building.id
-        JOIN t_end_user ON t_end_user.id = t_house_user_asset.user_id
-        LEFT JOIN t_house_design_model on t_house_design_model.id = t_house_property_building_unit.design_model_id
-        WHERE t_house_user_asset.rent_status=#{status}
-
-        <if test="search != null and search != ''">
-            and (t_house_property_community.address LIKE CONCAT('%',#{search},'%')
-            OR t_house_property_community.community LIKE CONCAT('%',#{search},'%')
-            OR t_house_property_building.code LIKE CONCAT('%',#{search},'%')
-            OR t_house_design_model.house_type LIKE CONCAT('%',#{search},'%')
-            OR t_house_asset.floor LIKE CONCAT('%',#{search},'%')
-            OR t_house_asset.number LIKE CONCAT('%',#{search},'%'))
-        </if>
-        <if test="username != null and username != ''">
-            and (t_end_user.name LIKE CONCAT('%',#{username},'%')
-            OR t_end_user.phone LIKE CONCAT('%',#{username},'%'))
-        </if>
-        GROUP BY t_house_user_asset.asset_id
-    </select>
-
     <!--
         批量添加房子
     -->
@@ -230,17 +160,20 @@
             (#{assetItem.buildingId},#{assetItem.unitId},#{assetItem.floor},#{assetItem.number})
         </foreach>
     </insert>
-    
+
     <delete id="deleteHouseAssetByBuildingIdAndFloors">
-        delete FROM t_house_asset WHERE building_id=#{buildingId} AND floor>#{floor}
+        delete
+        FROM t_house_asset
+        WHERE building_id = #{buildingId}
+          AND floor > #{floor}
     </delete>
 
     <delete id="deleteHouseAssets" parameterType="java.util.List">
         delete from t_house_asset
         where
         t_house_asset.id in
-        <foreach collection="houseAssetList" item="assetItem" separator=","  open="(" close=")">
-             #{assetItem}
+        <foreach collection="houseAssetList" item="assetItem" separator="," open="(" close=")">
+            #{assetItem}
         </foreach>
     </delete>
 

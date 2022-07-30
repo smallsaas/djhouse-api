@@ -1,17 +1,9 @@
 package com.jfeat.am.module.house.api.userself;
 
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.jfeat.am.common.annotation.Permission;
 import com.jfeat.am.core.jwt.JWTKit;
-import com.jfeat.am.module.house.api.permission.HouseUserDecorateAddressPermission;
-import com.jfeat.am.module.house.api.permission.HouseUserDecoratePlanPermission;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
-import com.jfeat.am.module.house.services.domain.service.HouseUserDecorateAddressService;
 import com.jfeat.am.module.house.services.domain.service.HouseUserDecorateFunitureService;
 import com.jfeat.am.module.house.services.domain.service.HouseUserDecoratePlanService;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
@@ -24,15 +16,10 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
-import com.jfeat.crud.plus.CRUDObject;
-import com.jfeat.am.module.house.api.permission.HouseDecoratePlanPermission;
 import com.jfeat.am.module.house.services.domain.service.HouseDecoratePlanOverModelService;
-import com.jfeat.am.module.house.services.gen.crud.model.HouseDecoratePlanModel;
-import com.jfeat.am.module.house.services.gen.crud.model.HouseUserDecoratePlanModel;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -43,7 +30,6 @@ import java.rmi.ServerException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/u/house/houseUserDecoratePlan/houseUserDecoratePlans")

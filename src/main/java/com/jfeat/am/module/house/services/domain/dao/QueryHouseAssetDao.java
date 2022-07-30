@@ -36,9 +36,7 @@ public interface QueryHouseAssetDao extends QueryMasterDao<HouseAsset> {
 
     int deleteHouseRoomByBuildingId(@Param("buildingId") Long buildingId);
 
-    HouseAssetRecord queryHouseAssetDetails(@Param("assetId") Long assetId);
 
-    List<HouseAssetRecord> queryUserAssetRent(@Param("status") Integer status,@Param("username")String username,@Param("search") String search);
 
     /*
     批量插入房子

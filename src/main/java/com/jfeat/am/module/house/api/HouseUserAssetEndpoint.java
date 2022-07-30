@@ -72,19 +72,6 @@ public class HouseUserAssetEndpoint {
     @Resource
     QueryHouseUserAssetDao queryHouseUserAssetDao;
 
-    @Resource
-    QueryHouseAssetDao queryHouseAssetDao;
-
-    @Resource
-    QueryEndpointUserDao queryEndpointUserDao;
-
-    @Resource
-    QueryHouseDecoratePlanDao queryHouseDecoratePlanDao;
-
-    @Resource
-    QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
-
-
 
     @BusinessLog(name = "HouseUserAsset", value = "create HouseUserAsset")
     @Permission(HouseUserAssetPermission.HOUSEUSERASSET_NEW)
@@ -162,28 +149,9 @@ public class HouseUserAssetEndpoint {
 
                                        @RequestParam(name = "assetId", required = false) Long assetId,
 
-                                       @RequestParam(name = "rentStatus", required = false) Integer rentStatus,
-
-                                       @RequestParam(name = "rentTitle", required = false) String rentTitle,
-
-                                       @RequestParam(name = "rentPrice", required = false) BigDecimal rentPrice,
-
-                                       @RequestParam(name = "rentDescribe", required = false) String rentDescribe,
-
-                                       @RequestParam(name = "rentTags", required = false) String rentTags,
-
-                                       @RequestParam(name = "slideshow", required = false) String slideshow,
-
-                                       @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                       @RequestParam(name = "rentTime", required = false) Date rentTime,
 
                                        @RequestParam(name = "note", required = false) String note,
 
-                                       @RequestParam(name = "clashUserId", required = false) Long clashUserId,
-
-                                       @RequestParam(name = "clashDescribe", required = false) String clashDescribe,
-
-                                       @RequestParam(name = "clashCertificate", required = false) String clashCertificate,
 
                                        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                        @RequestParam(name = "createTime", required = false) Date createTime,
@@ -207,17 +175,9 @@ public class HouseUserAssetEndpoint {
         HouseUserAssetRecord record = new HouseUserAssetRecord();
         record.setUserId(userId);
         record.setAssetId(assetId);
-        record.setRentStatus(rentStatus);
-        record.setRentTitle(rentTitle);
-        record.setRentPrice(rentPrice);
-        record.setRentDescribe(rentDescribe);
-        record.setRentTags(rentTags);
-        record.setSlideshow(slideshow);
-        record.setRentTime(rentTime);
+
         record.setNote(note);
-        record.setClashUserId(clashUserId);
-        record.setClashDescribe(clashDescribe);
-        record.setClashCertificate(clashCertificate);
+
         record.setCreateTime((Data) createTime);
 
 
@@ -228,91 +188,7 @@ public class HouseUserAssetEndpoint {
     }
 
 
-    //   获取出租转态 0为不出租 1为出租
-    @GetMapping("/rent/{status}")
-    public Tip getALlRentAsset(Page<HouseAssetRecord> page,
-                               @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                               @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                               @RequestParam(name = "username",required = false) String username,
-                               @RequestParam(name = "search",required = false) String search,
-                               @PathVariable Integer status) {
-        List<HouseAssetRecord>houseAssetRecordList =  queryHouseAssetDao.queryUserAssetRent(status,username,search);
-        for (int i=0;i<houseAssetRecordList.size();i++){
-            HouseUserAsset houseUserAsset = queryHouseUserAssetDao.queryHouseUserAssetByAssetId(houseAssetRecordList.get(i).getId());
-            houseAssetRecordList.get(i).setRentDescribe(houseUserAsset.getRentDescribe());
-            houseAssetRecordList.get(i).setRentPrice(houseUserAsset.getRentPrice());
-            houseAssetRecordList.get(i).setSlideshow(houseUserAsset.getSlideshow());
-            houseAssetRecordList.get(i).setRentTime(houseUserAsset.getRentTime());
-        }
 
-        page.setCurrent(pageNum);
-        page.setSize(pageSize);
-        page.setRecords(houseAssetRecordList);
-        return SuccessTip.create(page);
-    }
-
-
-
-    @GetMapping("/rent/details/{id}")
-    public Tip getALlRentAsset(@PathVariable("id") Long id) {
-        HouseUserAssetModel houseAssetRecord = houseUserAssetService.queryMasterModel(queryHouseUserAssetDao, id);
-        if (houseAssetRecord!=null){
-            HousePropertyBuildingUnit housePropertyBuildingUnit =  queryHousePropertyBuildingUnitDao.queryMasterModel(houseAssetRecord.getUnitId());
-            List<Product> productList= queryHouseDecoratePlanDao.queryProductListByDesignModel(housePropertyBuildingUnit.getDesignModelId());
-            if (productList!=null){
-                houseAssetRecord.setProductList(productList);
-            }
-        }
-        return SuccessTip.create(houseAssetRecord);
-    }
-
-
-    @GetMapping("/clash")
-    public Tip getALlClash(Page<HouseUserAsset> page,
-                           @RequestParam(name = "username",required = false) String username,
-                           @RequestParam(name = "search" ,required = false) String search,
-                           @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                           @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        List<HouseUserAsset> houseUserAssetList = queryHouseUserAssetDao.queryClashUserAsset(username,search);
-        for (int i = 0; i < houseUserAssetList.size(); i++) {
-            EndpointUser endpointUser = queryEndpointUserDao.queryMasterModel(houseUserAssetList.get(i).getClashUserId());
-            if (endpointUser != null) {
-                houseUserAssetList.get(i).setClashUserName(endpointUser.getName());
-                houseUserAssetList.get(i).setClashUserPhone(endpointUser.getPhone());
-                houseUserAssetList.get(i).setClashUserAvatar(endpointUser.getAvatar());
-            }
-
-        }
-        page.setCurrent(pageNum);
-        page.setSize(pageSize);
-        page.setRecords(houseUserAssetList);
-        return SuccessTip.create(page);
-    }
-
-    //    确认冲突
-    @DeleteMapping("/clash/confirm/{assetId}")
-    public Tip confirmClashInfo(@PathVariable("assetId") Long assetId) {
-        HouseUserAsset houseUserAsset = queryHouseUserAssetDao.queryBasicUserAsset(assetId);
-        HouseUserAsset newHouseUserAsset = new HouseUserAsset();
-        newHouseUserAsset.setUserId(houseUserAsset.getClashUserId());
-        newHouseUserAsset.setRentStatus(0);
-        newHouseUserAsset.setClashUserId(null);
-        newHouseUserAsset.setClashDescribe(null);
-        newHouseUserAsset.setClashCertificate(null);
-        Integer effect = queryHouseUserAssetDao.updateClashAssetByAssetId(assetId, newHouseUserAsset);
-        return SuccessTip.create(effect);
-    }
-
-    //    取消冲突
-    @DeleteMapping("/clash/cancel/{assetId}")
-    public Tip cancelClashInfo(@PathVariable("assetId") Long assetId) {
-        HouseUserAsset newHouseUserAsset = new HouseUserAsset();
-        newHouseUserAsset.setClashUserId(null);
-        newHouseUserAsset.setClashDescribe(null);
-        newHouseUserAsset.setClashCertificate(null);
-        Integer effect = queryHouseUserAssetDao.updateClashAssetByAssetId(assetId, newHouseUserAsset);
-        return SuccessTip.create(effect);
-    }
 
 
 }

@@ -1,6 +1,8 @@
 package com.jfeat.am.module.house.services.gen.persistence.model;
 
 import java.math.BigDecimal;
+
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -39,12 +41,15 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
       private Long vrId;
 
       @ApiModelProperty(value = "vr图")
+      @TableField(exist = false)
       private String vrPicture;
 
       @ApiModelProperty(value = "vr图连接")
+      @TableField(exist = false)
       private String vrLink;
 
       @ApiModelProperty(value = "vr缩略图")
+      @TableField(exist = false)
       private String vrSnapshot;
 
       @ApiModelProperty(value = "总面积")
