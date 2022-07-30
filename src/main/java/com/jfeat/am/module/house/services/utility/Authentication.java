@@ -31,7 +31,23 @@ public class Authentication {
         EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(userId);
         if (endpointUserModel!=null && endpointUserModel.getType()!=null){
             List<Integer> userTypeList = userAccountService.getUserTypeList(endpointUserModel.getType());
-            if (userTypeList.contains(SecurityConstants.USER_TYPE_OPERATION)){
+            if (userTypeList.contains(SecurityConstants.USER_TYPE_OPERATION) || userTypeList.contains(SecurityConstants.USER_TYPE_ADMIN)){
+                return true;
+            }else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /*
+   验证运维中介
+    */
+    public Boolean verifyIntermediary (Long userId){
+        EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(userId);
+        if (endpointUserModel!=null && endpointUserModel.getType()!=null){
+            List<Integer> userTypeList = userAccountService.getUserTypeList(endpointUserModel.getType());
+            if (userTypeList.contains(SecurityConstants.USER_TYPE_INTERMEDIARY)){
                 return true;
             }else {
                 return false;

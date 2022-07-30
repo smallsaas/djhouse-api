@@ -12,6 +12,8 @@ import com.jfeat.am.module.house.services.domain.service.HouseUserCommunityStatu
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseUserAssetModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyCommunityMapper;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.crud.base.annotation.BusinessLog;
@@ -62,12 +64,6 @@ public class UserHouseAssetEndpoint {
     HouseUserAssetService houseUserAssetService;
 
     @Resource
-    QueryStockTagDao queryStockTagDao;
-
-    @Resource
-    QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
-
-    @Resource
     QueryHouseDecoratePlanDao queryHouseDecoratePlanDao;
 
     @Resource
@@ -79,11 +75,6 @@ public class UserHouseAssetEndpoint {
     @Resource
     QueryHouseAssetExchangeRequestDao queryHouseAssetExchangeRequestDao;
 
-    @Resource
-    QueryHouseDesignModelDao queryHouseDesignModelDao;
-
-    @Resource
-    QueryHousePropertyBuildingDao queryHousePropertyBuildingDao;
 
     @Resource
     UserCommunityAsset userCommunityAsset;
@@ -95,17 +86,31 @@ public class UserHouseAssetEndpoint {
     HouseAssetComplaintService houseAssetComplaintService;
 
     @Resource
-    QueryHouseAssetComplaintDao queryHouseAssetComplaintDao;
+    HouseUserAssetMapper houseUserAssetMapper;
+
+
+
 
 
 
 //    获取小区
     @GetMapping("/community")
     public Tip getHousePropertyCommunityByTenantId() {
+        if (JWTKit.getOrgId()==null){
+            throw new BusinessException(BusinessCode.CodeBase,"没有社区");
+        }
         Long tenantId = JWTKit.getOrgId();
-        System.out.println(tenantId);
         return SuccessTip.create(queryHousePropertyCommunityDao.queryHouseCommunityByTenantId(tenantId));
     }
+
+    //    全部获取小区 不需要社区验证
+    @GetMapping("/common/community")
+    public Tip getCommonCommunity(){
+        HousePropertyCommunityRecord record = new HousePropertyCommunityRecord();
+        List<HousePropertyCommunityRecord> communityRecordList = queryHousePropertyCommunityDao.findHousePropertyCommunityPage(null,record,null,null,null,null,null);
+        return SuccessTip.create(communityRecordList);
+    }
+
 
 //    修改用户小区状态
     @PostMapping("/community/userCommunityStatus")
@@ -169,7 +174,7 @@ public class UserHouseAssetEndpoint {
 //        List<HouseAsset> houseAssetList = queryHouseAssetDao.queryHouseAssetByBuildingId(buildingId);
 
         HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
-        List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,userAssetRecord,null,null,null,null,null);
+        List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,userAssetRecord,null,null,null,null,null,null);
 
         for (int i = 0; i < houseAssetList.size(); i++) {
 //            判断是否有人居住
@@ -216,7 +221,7 @@ public class UserHouseAssetEndpoint {
         List<HouseAssetRecord>  houseAssetList  = queryHouseAssetDao.findHouseAssetPage(null,houseAssetRecord,null,null,null,null,null);
 
         HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
-        List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,userAssetRecord,null,null,null,null,null);
+        List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,userAssetRecord,null,null,null,null,null,null);
 
         Long uStart = System.currentTimeMillis();
         for (int i = 0; i < houseAssetList.size(); i++) {
@@ -262,13 +267,37 @@ public class UserHouseAssetEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
+        Long star = System.currentTimeMillis();
+
+        Long communityId = null;
+        HouseUserCommunityStatusRecord communityStatusRecord = new HouseUserCommunityStatusRecord();
+        communityStatusRecord.setUserId(JWTKit.getUserId());
+        List<HouseUserCommunityStatusRecord> communityStatusRecordList = queryHouseUserCommunityStatusDao.findHouseUserCommunityStatusPage(null,communityStatusRecord,null,null,null,null,null);
+        if (communityStatusRecordList!=null && communityStatusRecordList.size()==1){
+            communityId = communityStatusRecordList.get(0).getCommunityId();
+        }
+        if (communityId==null){
+            return SuccessTip.create();
+        }
+
         HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
         userAssetRecord.setUserId(JWTKit.getUserId());
-        List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null,userAssetRecord,null,null,null,null,null);
+        List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null,userAssetRecord,communityId,null,null,null,null,null);
 
         HouseRentAssetRecord houseRentAssetRecord = new HouseRentAssetRecord();
         List<HouseRentAssetRecord> houseRentAssetRecordList = queryHouseRentAssetDao.findHouseRentAssetPage(null,houseRentAssetRecord,null,null,null,null,null);
 
+
+        HouseUserDecoratePlanRecord userDecoratePlanRecord = new HouseUserDecoratePlanRecord();
+        userDecoratePlanRecord.setUserId(JWTKit.getUserId());
+        List<HouseUserDecoratePlanRecord> decoratePlanRecordList = queryHouseUserDecoratePlanDao.findHouseUserDecoratePlanPage(null,userDecoratePlanRecord,null,null,null,null,null);
+
+        //            是否存在置换房屋
+        HouseAssetExchangeRequestRecord exchangeRequestRecord = new HouseAssetExchangeRequestRecord();
+        exchangeRequestRecord.setUserId(JWTKit.getUserId());
+        List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null,exchangeRequestRecord,null,null,null,null,null);
+
+        Long mid = System.currentTimeMillis();
 
         for (int i=0;i<houseUserAssets.size();i++){
             //        连接地址信息
@@ -290,38 +319,35 @@ public class UserHouseAssetEndpoint {
             }
 
 
-            HouseUserDecoratePlanRecord userDecoratePlanRecord = new HouseUserDecoratePlanRecord();
-            userDecoratePlanRecord.setUserId(JWTKit.getUserId());
-            userDecoratePlanRecord.setAssetId(houseUserAssets.get(i).getAssetId());
 
-            List<HouseUserDecoratePlanRecord> decoratePlanRecordList = queryHouseUserDecoratePlanDao.findHouseUserDecoratePlanPage(null,userDecoratePlanRecord,null,null,null,null,null);
+
+
             for (HouseUserDecoratePlanRecord decoratePlanRecord:decoratePlanRecordList){
-//                是否有装修方案
-                if (decoratePlanRecord.getOptionType().equals(HouseUserDecoratePlan.DECORATE_TYPE)){
-                    houseUserAssets.get(i).setExistDecorate(true);
+                if (decoratePlanRecord.getAssetId().equals(houseUserAssets.get(i).getAssetId())){
+                    //                是否有装修方案
+                    if (decoratePlanRecord.getOptionType().equals(HouseUserDecoratePlan.DECORATE_TYPE)){
+                        houseUserAssets.get(i).setExistDecorate(true);
 //                    是否有团购
-                }else if (decoratePlanRecord.getOptionType().equals(HouseUserDecoratePlan.BULK_TYPE)){
-                    houseUserAssets.get(i).setExistBulk(true);
+                    }else if (decoratePlanRecord.getOptionType().equals(HouseUserDecoratePlan.BULK_TYPE)){
+                        houseUserAssets.get(i).setExistBulk(true);
+                    }
+                }
+
+            }
+
+
+            for (HouseAssetExchangeRequest houseAssetExchangeRequest:houseAssetExchangeRequestList){
+                if (houseUserAssets.get(i).getAssetId().equals(houseAssetExchangeRequest.getAssetId())){
+                    houseUserAssets.get(i).setExistExchange(true);
                 }
             }
 
-//            是否存在置换房屋
-            HouseAssetExchangeRequestRecord exchangeRequestRecord = new HouseAssetExchangeRequestRecord();
-            exchangeRequestRecord.setAssetId(houseUserAssets.get(i).getAssetId());
-            exchangeRequestRecord.setUserId(JWTKit.getUserId());
-            List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null,exchangeRequestRecord,null,null,null,null,null);
-            if (houseAssetExchangeRequestList.size()>0){
-                houseUserAssets.get(i).setExistExchange(true);
-            }
 
         }
+        System.out.println("开始到中间=="+(mid-star));
+        System.out.println("中间到结束=="+(System.currentTimeMillis()-mid));
 
-        /*
-        只留当前小区数据
-         */
-        List<HouseUserAssetRecord> houseAssetRecordList = userCommunityAsset.getCommunityAsset(JWTKit.getUserId(),houseUserAssets);
-
-        return SuccessTip.create(houseAssetRecordList);
+        return SuccessTip.create(houseUserAssets);
     }
 
 //    用户asset 详情信息
@@ -360,7 +386,7 @@ public class UserHouseAssetEndpoint {
         }
         HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
         houseUserAssetRecord.setAssetId(entity.getAssetId());
-        List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord,null,null,null,null,null);
+        List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord,null,null,null,null,null,null);
 
         /*
         判断这个房子是否有人，没人直接进行增加 有人判断是否是最终用户
@@ -436,7 +462,12 @@ public class UserHouseAssetEndpoint {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
-        return SuccessTip.create(houseUserAssetService.deleteMaster(id));
+        HouseUserAsset houseUserAsset = houseUserAssetMapper.selectById(id);
+        if (houseUserAsset!=null && houseUserAsset.getUserId().equals(JWTKit.getUserId())){
+            return SuccessTip.create(houseUserAssetService.deleteUserAsset(JWTKit.getUserId(),houseUserAsset.getAssetId()));
+        }
+        return SuccessTip.create();
+
     }
 
 

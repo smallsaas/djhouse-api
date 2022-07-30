@@ -165,6 +165,15 @@
         <if test="record.vendor != null and record.vendor!= ''">
             AND t_end_user.vendor LIKE CONCAT('%',#{record.vendor},'%')
         </if>
+        <if test="record.appid != null and record.appid>0">
+            AND t_end_user.appid LIKE CONCAT('%',#{record.appid},'%')
+        </if>
+        <if test="record.appids != null and record.appids.size()>0">
+            AND t_end_user.appid in
+            <foreach  item="item" index="index" collection="record.appids" open="(" separator="," close=" )">
+            #{item}
+            </foreach>
+        </if>
 
         <if test="startTime != null">
             <![CDATA[AND t_end_user.start_time >= DATE(#{startTime})]]>

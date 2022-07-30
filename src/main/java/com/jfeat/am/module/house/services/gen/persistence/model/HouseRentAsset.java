@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
 
+import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -86,6 +87,50 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
 
     @TableField(exist = false)
     private String extra;
+
+    @TableField(exist = false)
+    private HouseAssetModel houseAssetModel;
+
+    @TableField(exist = false)
+    private String serverPhone;
+
+    @TableField(exist = false)
+    private String serverName;
+
+    @TableField(exist = false)
+    private String serverAvatar;
+
+    public String getServerPhone() {
+        return serverPhone;
+    }
+
+    public void setServerPhone(String serverPhone) {
+        this.serverPhone = serverPhone;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public String getServerAvatar() {
+        return serverAvatar;
+    }
+
+    public void setServerAvatar(String serverAvatar) {
+        this.serverAvatar = serverAvatar;
+    }
+
+    public HouseAssetModel getHouseAssetModel() {
+        return houseAssetModel;
+    }
+
+    public void setHouseAssetModel(HouseAssetModel houseAssetModel) {
+        this.houseAssetModel = houseAssetModel;
+    }
 
 
     public String getExtra() {

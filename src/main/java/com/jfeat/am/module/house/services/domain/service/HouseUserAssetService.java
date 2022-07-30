@@ -15,4 +15,12 @@ public interface HouseUserAssetService extends CRUDHouseUserAssetService {
     JSONObject parseMatchAssetData(List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecordList);
 
     JSONArray formatAssetMatchResult(JSONObject jsonObject);
+
+    /**
+     * 删除用户房子以及相关记录
+     * @param userId 用户id
+     * @param assetId 资产id
+     * @return 删除有效记录数
+     */
+    int deleteUserAsset(Long userId,Long assetId);
 }

@@ -126,4 +126,33 @@
                  JOIN t_house_property_building_unit ON t_house_property_building_unit.id = t_house_asset.unit_id
                  JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
     </select>
+
+
+<!--    过滤小区交换记录-->
+
+    <select id="findHouseAssetExchangeRequestPageFilterCommunity" resultType="HouseAssetExchangeRequestRecord"
+            parameterType="HouseAssetExchangeRequestRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_asset_exchange_request
+        JOIN t_house_asset on t_house_asset.id = t_house_asset_exchange_request.asset_id
+        JOIN t_house_property_building on t_house_asset.building_id=t_house_property_building.id
+        JOIN t_house_property_community on t_house_property_community.id=t_house_property_building.community_id
+        WHERE t_house_property_community.id=#{communityId}
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_asset_exchange_request.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_asset_exchange_request.user_id LIKE CONCAT('%',#{record.userId},'%')
+        </if>
+
+
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_asset_exchange_request.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+        </if>
+    </select>
 </mapper>

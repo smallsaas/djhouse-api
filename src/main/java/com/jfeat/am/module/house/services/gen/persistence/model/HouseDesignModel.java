@@ -509,6 +509,8 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
 
       public static final String HOUSE_TYPE_PICTURE = "house_type_picture";
 
+      public static final String AREA  = "area";
+
       public static final String HALL_WIDTH = "hall_width";
 
       public static final String HALL_SUB_WIDTH = "hall_sub_width";

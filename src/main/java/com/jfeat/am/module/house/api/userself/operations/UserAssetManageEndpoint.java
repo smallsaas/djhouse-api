@@ -8,7 +8,10 @@ import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetService;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetMatchLog;
 import com.jfeat.am.module.house.services.utility.Authentication;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
@@ -33,6 +36,9 @@ public class UserAssetManageEndpoint {
 
     @Resource
     QueryHouseAssetDao queryHouseAssetDao;
+
+    @Resource
+    HouseAssetMapper houseAssetMapper;
 
 
     @Resource
@@ -67,7 +73,7 @@ public class UserAssetManageEndpoint {
     }
 
     /*
-    修改房子
+    修改楼层
      */
     @PutMapping("/{id}")
     public Tip updateHouseAsset(@PathVariable Long id, @RequestBody HouseAsset entity) {
@@ -83,7 +89,12 @@ public class UserAssetManageEndpoint {
         }
 
         entity.setId(id);
-        return SuccessTip.create(houseAssetService.updateMaster(entity));
+        HouseAsset houseAssetModel = houseAssetMapper.selectById(id);
+        if (houseAssetModel!=null){
+            houseAssetModel.setAssetFlag(entity.getAssetFlag());
+            return SuccessTip.create(houseAssetService.updateMaster(houseAssetModel));
+        }
+        return SuccessTip.create();
     }
 
 
@@ -158,6 +169,10 @@ public class UserAssetManageEndpoint {
                 sort = "ASC";
             }
             orderBy = "`" + orderBy + "`" + " " + sort;
+        }
+
+        if (buildingId==null || buildingId.equals("") || buildingId<=0){
+            return SuccessTip.create();
         }
         page.setCurrent(pageNum);
         page.setSize(pageSize);

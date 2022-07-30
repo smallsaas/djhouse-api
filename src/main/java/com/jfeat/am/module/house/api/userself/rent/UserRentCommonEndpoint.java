@@ -1,20 +1,24 @@
 package com.jfeat.am.module.house.api.userself.rent;
 
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
-import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseAppointmentDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao;
+import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseDesignModelRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAppointmentService;
 import com.jfeat.am.module.house.services.domain.service.HouseRentAssetService;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseDesignModelModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseRentAssetModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseDesignModelMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.EndpointUser;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseDesignModel;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -47,6 +51,12 @@ public class UserRentCommonEndpoint {
 
     @Resource
     QueryEndpointUserDao queryEndpointUserDao;
+
+    @Resource
+    QueryHouseDesignModelDao queryHouseDesignModelDao;
+
+    @Resource
+    HouseDesignModelMapper houseDesignModelMapper;
 
 
 
@@ -131,7 +141,14 @@ public class UserRentCommonEndpoint {
         List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPage(page, record, tag, search, orderBy, null, null);
         for (HouseRentAssetRecord houseRentAssetRecord:houseRentAssetPage){
             HouseRentAsset rentAsset = houseRentAssetService.queryMasterModel(queryHouseRentAssetDao, houseRentAssetRecord.getId());
-            houseRentAssetRecord.setExtra(rentAsset.getExtra());
+            if (rentAsset!=null && rentAsset.getExtra()!=null){
+                houseRentAssetRecord.setExtra(rentAsset.getExtra());
+            }
+            HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(houseRentAssetRecord.getAssetId());
+            if (houseAssetModel!=null){
+                houseRentAssetRecord.setHouseAssetModel(houseAssetModel);
+            }
+
         }
         page.setRecords(houseRentAssetPage);
 
@@ -161,4 +178,33 @@ public class UserRentCommonEndpoint {
         }
         return SuccessTip.create(houseRentAssetModel);
     }
+
+//    获取全部面积类型
+    @GetMapping("/houseAreaTypeList")
+    public Tip getHouseAreaTypeList(){
+        QueryWrapper<HouseDesignModel> queryWrapper = new QueryWrapper<>();
+        queryWrapper.groupBy(HouseDesignModel.AREA);
+        List<HouseDesignModel> houseDesignModels = houseDesignModelMapper.selectList(queryWrapper);
+        JSONArray jsonArray = new JSONArray();
+        for (HouseDesignModel houseDesignModel:houseDesignModels){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("area",houseDesignModel.getArea());
+            jsonObject.put("areaName",houseDesignModel.getArea());
+            jsonArray.add(jsonObject);
+        }
+        return SuccessTip.create(jsonArray);
+    }
+
+
+//    列出户型种类
+    @GetMapping("/houseTypeList")
+    public Tip getHouseTypeList(){
+
+        HouseDesignModelRecord houseDesignModelRecord = new HouseDesignModelRecord();
+        List<HouseDesignModelRecord> houseDesignModelRecordList = queryHouseDesignModelDao.findHouseDesignModelPage(null,houseDesignModelRecord,null,null
+        ,null,null,null);
+        return SuccessTip.create(houseDesignModelRecordList);
+    }
+
+
 }

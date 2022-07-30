@@ -2,6 +2,7 @@ package com.jfeat.am.module.house.services.gen.persistence.model;
 
 import java.math.BigDecimal;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -77,6 +78,9 @@ public class HouseAppointment extends Model<HouseAppointment> {
     @ApiModelProperty(value = " 状态")
     private Integer status;
 
+    @TableField(exist = false)
+    private String statusStr;
+
     @ApiModelProperty(value = "费用")
     private BigDecimal fee;
 
@@ -104,6 +108,14 @@ public class HouseAppointment extends Model<HouseAppointment> {
     @ApiModelProperty(value = "保留字段---已使用，接收--DOB")
     private String fieldC;
 
+
+    public String getStatusStr() {
+        return statusStr;
+    }
+
+    public void setStatusStr(String statusStr) {
+        this.statusStr = statusStr;
+    }
 
     public Long getId() {
         return id;

@@ -9,9 +9,11 @@ import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetExchangeRequestDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetMatchLogDao;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserCommunityStatusDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetMatchLogRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseUserCommunityStatusRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetExchangeRequestService;
 import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
@@ -19,6 +21,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchangeRequest;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetMatchLog;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
+import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -29,6 +32,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.java.Log;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +60,12 @@ public class UserAssetExchange {
 
     @Resource
     HouseUserAssetService houseUserAssetService;
+
+    @Resource
+    UserCommunityAsset userCommunityAsset;
+
+    @Resource
+    QueryHouseUserCommunityStatusDao queryHouseUserCommunityStatusDao;
 
 
 //    新建或者修改资产交换记录并匹配
@@ -168,18 +178,39 @@ public class UserAssetExchange {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
+
+        Long communityId = null;
+        HouseUserCommunityStatusRecord communityStatusRecord = new HouseUserCommunityStatusRecord();
+        communityStatusRecord.setUserId(JWTKit.getUserId());
+        List<HouseUserCommunityStatusRecord> communityStatusRecordList = queryHouseUserCommunityStatusDao.findHouseUserCommunityStatusPage(null,communityStatusRecord,null,null,null,null,null);
+        if (communityStatusRecordList!=null && communityStatusRecordList.size()==1){
+            communityId = communityStatusRecordList.get(0).getCommunityId();
+        }
+        if (communityId==null){
+            return SuccessTip.create();
+        }
+
+        Long start = System.currentTimeMillis();
 //        获取用户全部置换记录
         HouseAssetExchangeRequestRecord record = new HouseAssetExchangeRequestRecord();
         record.setUserId(JWTKit.getUserId());
         page.setSize(pageSize);
         page.setCurrent(pageNum);
-        List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecordList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(page, record, null, null, null, null, null);
+        List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecordList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPageFilterCommunity(page, record,communityId);
+
+
+
+
+        Long mid = System.currentTimeMillis();
+
 
         if (houseAssetExchangeRequestRecordList!=null && houseAssetExchangeRequestRecordList.size()>0){
             JSONObject jsonObject = houseUserAssetService.parseMatchAssetData(houseAssetExchangeRequestRecordList);
             System.out.println(jsonObject);
             JSONArray result = houseUserAssetService.formatAssetMatchResult(jsonObject);
             System.out.println(result);
+            System.out.println("开始到中间"+(mid-start));
+            System.out.println("中间到结束"+(System.currentTimeMillis()-mid));
             return SuccessTip.create(result);
         }
         return SuccessTip.create();

@@ -95,7 +95,7 @@ public class EndpointUserEndpoint {
         if (endpointUser!=null){
             HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
             houseUserAssetRecord.setUserId(id);
-            List<HouseUserAssetRecord>houseUserAssetRecordList =  queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord,null,null,null,null,null);
+            List<HouseUserAssetRecord>houseUserAssetRecordList =  queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord,null,null,null,null,null,null);
             endpointUser.setHouseUserAssetRecords(houseUserAssetRecordList);
 
             HouseAssetExchangeRequestRecord houseAssetExchangeRequestRecord = new HouseAssetExchangeRequestRecord();
@@ -307,7 +307,7 @@ public class EndpointUserEndpoint {
 //            统计资产数
             HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
             houseUserAssetRecord.setUserId(id);
-            List<HouseUserAssetRecord>houseUserAssetRecordList =  queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord,null,null,null,null,null);
+            List<HouseUserAssetRecord>houseUserAssetRecordList =  queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord,null,null,null,null,null,null);
             endUserPage.get(i).setAssetCount(houseUserAssetRecordList.size());
 
 //            统计置换需求

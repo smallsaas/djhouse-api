@@ -38,4 +38,7 @@ public interface QueryHouseDecoratePlanFunitureDao extends QueryMasterDao<HouseD
     int updateDecoratePlanFuniture(@Param("id") Long id,@Param("entity") HouseDecoratePlanFuniture entity);
 
     int createDecoratePlanFuniture(@Param("entity") HouseDecoratePlanFuniture entity);
+
+
+    int insertDecoratePlanFunitures(@Param("furnitureList") List<HouseDecoratePlanFuniture> funitureList);
 }

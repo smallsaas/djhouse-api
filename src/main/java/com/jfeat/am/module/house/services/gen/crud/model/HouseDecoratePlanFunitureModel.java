@@ -6,10 +6,14 @@ package com.jfeat.am.module.house.services.gen.crud.model;
 
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseDecoratePlanFuniture;
 
+import java.math.BigDecimal;
+
 /**
  * Created by Code generator on 2022-05-27
  *  * slaves.size() : 0
  *  * modelpack : $modelpack
  */
 public class HouseDecoratePlanFunitureModel extends HouseDecoratePlanFuniture{
+
+
 }

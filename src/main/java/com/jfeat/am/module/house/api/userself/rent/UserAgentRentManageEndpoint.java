@@ -17,6 +17,7 @@ import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseRentAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
+import com.jfeat.am.module.house.services.utility.Authentication;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -60,6 +61,9 @@ public class UserAgentRentManageEndpoint {
 
     @Resource
     QueryEndpointUserDao queryEndpointUserDao;
+
+    @Resource
+    Authentication authentication;
 
 
 
@@ -174,9 +178,8 @@ public class UserAgentRentManageEndpoint {
           /*
         判断是否是中介身份
          */
-        EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(JWTKit.getUserId());
-        if (endpointUserModel==null || !(endpointUserModel.getType().equals(SecurityConstants.USER_TYPE_INTERMEDIARY))){
-            throw new BusinessException(BusinessCode.NoPermission,"没有权限");
+        if (!authentication.verifyIntermediary(JWTKit.getUserId())) {
+            throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
         }
 
         entity.setId(id);
@@ -197,9 +200,8 @@ public class UserAgentRentManageEndpoint {
         /*
         判断是否是中介身份
          */
-        EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(JWTKit.getUserId());
-        if (endpointUserModel==null || !(endpointUserModel.getType().equals(SecurityConstants.USER_TYPE_INTERMEDIARY))){
-            throw new BusinessException(BusinessCode.NoPermission,"没有权限");
+        if (!authentication.verifyIntermediary(JWTKit.getUserId())) {
+            throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
         }
 
         if (entity.getId()==null || "".equals(entity.getId())){
@@ -227,7 +229,23 @@ public class UserAgentRentManageEndpoint {
      */
     @GetMapping("/userRentDetails/{id}")
     public Tip getHouseRentAsset(@PathVariable Long id) {
-        return SuccessTip.create(houseRentAssetService.queryMasterModel(queryHouseRentAssetDao, id));
+        HouseRentAsset houseRentAssetModel = houseRentAssetService.queryMasterModel(queryHouseRentAssetDao, id);
+        if (houseRentAssetModel!=null){
+            HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(houseRentAssetModel.getAssetId());
+            if (houseAssetModel!=null){
+                houseRentAssetModel.setHouseAssetModel(houseAssetModel);
+            }
+//            添加中介信息
+            if (houseRentAssetModel.getServerId()!=null){
+                EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(houseRentAssetModel.getServerId());
+                if (endpointUserModel!=null){
+                    houseRentAssetModel.setServerAvatar(endpointUserModel.getAvatar());
+                    houseRentAssetModel.setServerPhone(endpointUserModel.getPhone());
+                    houseRentAssetModel.setServerName(endpointUserModel.getName());
+                }
+            }
+        }
+        return SuccessTip.create(houseRentAssetModel);
     }
 
 

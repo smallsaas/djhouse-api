@@ -99,7 +99,13 @@
         left JOIN t_house_property_building_unit ON t_house_property_building_unit.id = t_house_asset.unit_id
         left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id=t_house_design_model.id
         JOIN t_end_user ON t_end_user.id = t_house_user_asset.user_id
-        WHERE 1=1
+        <if test="communityId !=null and communityId>0">
+            where t_house_property_community.id = #{communityId}
+        </if>
+
+        <if test="communityId ==null">
+            WHERE 1=1
+        </if>
 
 
         <if test="record.id != null and record.id>0 ">

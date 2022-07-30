@@ -2,6 +2,14 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
+import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
+import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseUserAssetModel;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -63,6 +71,18 @@ public class HouseAssetComplaintEndpoint {
 
     @Resource
     QueryHouseAssetComplaintDao queryHouseAssetComplaintDao;
+
+    @Resource
+    QueryHouseUserAssetDao queryHouseUserAssetDao;
+
+    @Resource
+    QueryEndpointUserDao queryEndpointUserDao;
+
+    @Resource
+    HouseUserAssetService houseUserAssetService;
+
+    @Resource
+    QueryHouseAssetDao queryHouseAssetDao;
 
 
     @BusinessLog(name = "HouseAssetComplaint", value = "create HouseAssetComplaint")
@@ -178,10 +198,65 @@ public class HouseAssetComplaintEndpoint {
 
         List<HouseAssetComplaintRecord> houseAssetComplaintPage = queryHouseAssetComplaintDao.findHouseAssetComplaintPage(page, record, tag, search, orderBy, null, null);
 
+        for (HouseAssetComplaintRecord complaintRecord :houseAssetComplaintPage){
+            HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(complaintRecord.getAssetId());
+            if (houseAssetModel!=null){
+                complaintRecord.setHouseAssetModel(houseAssetModel);
+            }
+
+//            添加个人信息
+            EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(complaintRecord.getUserId());
+            if (endpointUserModel!=null){
+                complaintRecord.setUserAvatar(endpointUserModel.getAvatar());
+                complaintRecord.setUserName(endpointUserModel.getName());
+                complaintRecord.setUserPhone(endpointUserModel.getPhone());
+            }
+        }
+//        安装状态排序
+        houseAssetComplaintPage.sort((a,b)->{
+            if ((a.getSolveStatus() - b.getSolveStatus() ) > 0) {
+                return 1;
+            } else if ((a.getSolveStatus()  - b.getSolveStatus() ) < 0) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
 
         page.setRecords(houseAssetComplaintPage);
 
         return SuccessTip.create(page);
+    }
+
+    /*
+   提交申诉材料
+    */
+    @PutMapping("/commitAppealMaterials/{id}")
+    public Tip commitAppealMaterials(@PathVariable("id")Long id, @RequestBody HouseAssetComplaint entity) {
+        HouseAssetComplaint houseAssetComplaint = queryHouseAssetComplaintDao.queryMasterModel(id);
+        if (houseAssetComplaint!=null){
+            houseAssetComplaint.setClashCertificate(entity.getClashCertificate());
+            houseAssetComplaint.setClashDescribe(entity.getClashDescribe());
+            houseAssetComplaint.setSolveStatus(HouseAssetComplaint.SOLVE_STATUS_COMPLETE);
+            houseAssetComplaint.setSolveTime(new Date());
+
+            //当运维上传资料确认为最终户主
+            HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
+            houseUserAssetRecord.setAssetId(houseAssetComplaint.getAssetId());
+            houseUserAssetRecord.setUserId(houseAssetComplaint.getUserId());
+            List<HouseUserAssetRecord> houseUserAssetPage = queryHouseUserAssetDao.findHouseUserAssetPage(null, houseUserAssetRecord, null,null, null, null, null, null);
+            if (houseUserAssetPage!=null && houseUserAssetPage.size()==1){
+                HouseUserAssetModel houseUserAssetModel = queryHouseUserAssetDao.queryMasterModel(houseUserAssetPage.get(0).getId());
+                if (houseUserAssetModel == null) {
+                    throw new BusinessException(BusinessCode.BadRequest, "请求错误");
+                }
+                houseUserAssetModel.setFinalFlag(HouseUserAsset.FINAL_FLAG_CONFIRM);
+                houseUserAssetService.updateMaster(houseUserAssetModel);
+
+            }
+            return SuccessTip.create(houseAssetComplaintService.updateMaster(houseAssetComplaint));
+        }
+        return SuccessTip.create();
     }
 }
 

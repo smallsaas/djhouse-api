@@ -132,7 +132,11 @@ public class HouseUserDecorateFuniture extends Model<HouseUserDecorateFuniture> 
 
     public static final String FUNITURE_NUMBER = "funiture_number";
 
+    public static final String ASSET_ID = "asset_id";
+
     public static final String CREATE_TIME = "create_time";
+
+    public static final String ORDER_ID = "order_id";
 
     @Override
     protected Serializable pkVal() {

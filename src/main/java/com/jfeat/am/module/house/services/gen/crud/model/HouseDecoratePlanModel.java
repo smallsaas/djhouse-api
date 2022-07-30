@@ -5,6 +5,8 @@ package com.jfeat.am.module.house.services.gen.crud.model;
 
 
 import java.util.List;
+
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseDecoratePlanFuniture;
 import com.jfeat.am.module.house.services.gen.persistence.model.Product;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseDecoratePlan;
 
@@ -18,17 +20,25 @@ public class HouseDecoratePlanModel extends HouseDecoratePlan{
     // product
     // Product
     // product
-    private Long[] itemsID;
 
-    public Long[] getItemsID() {
-        return itemsID;
-    }
-
-    public void setItemsID(Long[] itemsID) {
-        this.itemsID = itemsID;
-    }
 
     private List<Product> items;
+
+    private List<HouseDecoratePlanFuniture> funitureList;
+
+    private String furnitureItem;
+
+
+
+
+    public List<HouseDecoratePlanFuniture> getFunitureList() {
+        return funitureList;
+    }
+
+    public void setFunitureList(List<HouseDecoratePlanFuniture> funitureList) {
+        this.funitureList = funitureList;
+    }
+
 
     public List<Product> getItems() {
         return this.items;
@@ -36,5 +46,13 @@ public class HouseDecoratePlanModel extends HouseDecoratePlan{
 
     public void setItems(List<Product> items) {
         this.items = items;
+    }
+
+    public String getFurnitureItem() {
+        return furnitureItem;
+    }
+
+    public void setFurnitureItem(String furnitureItem) {
+        this.furnitureItem = furnitureItem;
     }
 }

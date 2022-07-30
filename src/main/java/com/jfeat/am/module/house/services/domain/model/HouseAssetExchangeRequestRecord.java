@@ -7,4 +7,4 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchan
  */
 public class HouseAssetExchangeRequestRecord extends HouseAssetExchangeRequest{
     
-    }
+}

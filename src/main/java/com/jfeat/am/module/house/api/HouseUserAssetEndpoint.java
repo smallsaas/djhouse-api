@@ -221,13 +221,7 @@ public class HouseUserAssetEndpoint {
         record.setCreateTime((Data) createTime);
 
 
-        List<HouseUserAssetRecord> houseUserAssetPage = queryHouseUserAssetDao.findHouseUserAssetPage(page, record, tag, search, orderBy, null, null);
-        for (int i=0;i<houseUserAssetPage.size();i++){
-            Long id = houseUserAssetPage.get(i).getId();
-            HouseUserAssetModel houseAssetRecord = houseUserAssetService.queryMasterModel(queryHouseUserAssetDao, id);
-            houseUserAssetPage.get(i).setExtra(houseAssetRecord.getExtra());
-        }
-
+        List<HouseUserAssetRecord> houseUserAssetPage = queryHouseUserAssetDao.findHouseUserAssetPage(page, record, null,tag, search, orderBy, null, null);
         page.setRecords(houseUserAssetPage);
 
         return SuccessTip.create(page);

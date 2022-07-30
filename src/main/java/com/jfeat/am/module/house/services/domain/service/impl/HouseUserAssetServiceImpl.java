@@ -2,6 +2,7 @@ package com.jfeat.am.module.house.services.domain.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetMatchLogDao;
@@ -10,8 +11,10 @@ import com.jfeat.am.module.house.services.domain.model.HouseAssetMatchLogRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHouseUserAssetServiceImpl;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
+import com.jfeat.am.module.house.services.gen.persistence.dao.*;
+import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -34,6 +37,28 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
 
     @Resource
     QueryHouseAssetMatchLogDao queryHouseAssetMatchLogDao;
+
+    @Resource
+    HouseUserAssetMapper houseUserAssetMapper;
+
+    @Resource
+    HouseUserDecoratePlanMapper houseUserDecoratePlanMapper;
+
+    @Resource
+    HouseUserDecorateFunitureMapper houseUserDecorateFunitureMapper;
+
+    @Resource
+    HouseAssetComplaintMapper houseAssetComplaintMapper;
+
+    @Resource
+    HouseAssetExchangeRequestMapper houseAssetExchangeRequestMapper;
+
+    @Resource
+    HouseAssetMatchLogMapper houseAssetMatchLogMapper;
+
+    @Resource
+    HouseRentAssetMapper houseRentAssetMapper;
+
 
     @Override
     protected String entityName() {
@@ -126,6 +151,8 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                     Collections.sort(room);
                     if (room.size() == 1) {
                         JSONObject item = new JSONObject();
+                        item.put("buildingCode",houseAssetModel.getBuildingCode());
+                        item.put("assetId",houseAssetModel.getId());
                         item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getNumber()));
                         item.put("start", "".concat((String) uniteEntry.getKey()).concat("-").concat(String.valueOf(room.get(0))));
                         if (ids.contains(room.get(0))) {
@@ -143,6 +170,8 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                             if (!room.get(i).equals(room.get(i - 1) + 100)) {
                                 if (count >= 1) {
                                     JSONObject item = new JSONObject();
+                                    item.put("buildingCode",houseAssetModel.getBuildingCode());
+                                    item.put("assetId",houseAssetModel.getId());
                                     item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getNumber()));
                                     item.put("start", "".concat((String) uniteEntry.getKey()).concat("-").concat(String.valueOf(room.get(index))));
                                     item.put("end", "".concat((String) uniteEntry.getKey()).concat("-").concat(String.valueOf(room.get(i - 1))));
@@ -157,6 +186,8 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                                     index = i;
                                 } else {
                                     JSONObject item = new JSONObject();
+                                    item.put("buildingCode",houseAssetModel.getBuildingCode());
+                                    item.put("assetId",houseAssetModel.getId());
                                     item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getNumber()));
                                     item.put("start", "".concat((String) uniteEntry.getKey()).concat("-").concat(String.valueOf(room.get(index))));
                                     item.put("end", "");
@@ -176,6 +207,8 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                         if (index < room.size()) {
                             if (index >= 0 && index != room.size() - 1) {
                                 JSONObject item = new JSONObject();
+                                item.put("buildingCode",houseAssetModel.getBuildingCode());
+                                item.put("assetId",houseAssetModel.getId());
                                 item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getNumber()));
                                 item.put("start", "".concat((String) uniteEntry.getKey()).concat("-").concat(String.valueOf(room.get(index))));
                                 item.put("end", "".concat((String) uniteEntry.getKey()).concat("-").concat(String.valueOf(room.get(room.size() - 1))));
@@ -189,6 +222,8 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                                 buildingJsonArray.add(item);
                             } else {
                                 JSONObject item = new JSONObject();
+                                item.put("buildingCode",houseAssetModel.getBuildingCode());
+                                item.put("assetId",houseAssetModel.getId());
                                 item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getNumber()));
                                 item.put("start", "".concat((String) uniteEntry.getKey()).concat("-").concat(String.valueOf(room.get(index))));
                                 if (ids.contains(room.get(0))) {
@@ -211,4 +246,55 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
         return buildingJsonArray;
     }
 
+    /**
+     *
+     * @param userId 用户id
+     * @param assetId 房屋id
+     * @return 删除记录数
+     */
+    @Transactional
+    public int deleteUserAsset(Long userId,Long assetId){
+
+        Integer effect = 0;
+//        删除资产表记录
+        QueryWrapper<HouseUserAsset> userAssetQueryWrapper = new QueryWrapper<>();
+        userAssetQueryWrapper.eq(HouseUserAsset.USER_ID,userId).eq(HouseUserAsset.ASSET_ID,assetId);
+        effect += houseUserAssetMapper.delete(userAssetQueryWrapper);
+
+//        删除用户装修计划地址
+        QueryWrapper<HouseUserDecoratePlan> houseUserDecoratePlanQueryWrapper = new QueryWrapper<>();
+        houseUserDecoratePlanQueryWrapper.eq(HouseUserDecoratePlan.USER_ID,userId).eq(HouseUserDecoratePlan.ASSET_ID,assetId);
+        effect += houseUserDecoratePlanMapper.delete(houseUserDecoratePlanQueryWrapper);
+
+//        删除用户装修计划家居
+        QueryWrapper<HouseUserDecorateFuniture> houseUserDecorateFunitureQueryWrapper = new QueryWrapper<>();
+        houseUserDecorateFunitureQueryWrapper.eq(HouseUserDecorateFuniture.USER_ID,userId).eq(HouseUserDecorateFuniture.ASSET_ID,assetId);
+        effect += houseUserDecorateFunitureMapper.delete(houseUserDecorateFunitureQueryWrapper);
+
+//        删除用户申诉
+        QueryWrapper<HouseAssetComplaint> houseAssetComplaintQueryWrapper = new QueryWrapper<>();
+        houseAssetComplaintQueryWrapper.eq(HouseAssetComplaint.USER_ID,userId).eq(HouseAssetComplaint.ASSET_ID,assetId);
+        effect += houseAssetComplaintMapper.delete(houseAssetComplaintQueryWrapper);
+
+//        删除交换请求
+        QueryWrapper<HouseAssetExchangeRequest> houseAssetExchangeRequestQueryWrapper = new QueryWrapper<>();
+        houseAssetExchangeRequestQueryWrapper.eq(HouseAssetExchangeRequest.USER_ID,userId).eq(HouseAssetExchangeRequest.ASSET_ID,assetId);
+        effect += houseAssetExchangeRequestMapper.delete(houseAssetExchangeRequestQueryWrapper);
+
+//        删除匹配成功记录
+        QueryWrapper<HouseAssetMatchLog> houseAssetMatchLogQueryWrapper = new QueryWrapper<>();
+        houseAssetMatchLogQueryWrapper.eq(HouseAssetMatchLog.OWNER_USER_ID,userId).eq(HouseAssetMatchLog.OWNER_ASSET_ID,assetId);
+        effect += houseAssetMatchLogMapper.delete(houseAssetMatchLogQueryWrapper);
+
+//        删除别人匹配自己成功记录
+        QueryWrapper<HouseAssetMatchLog> matchLogQueryWrapper = new QueryWrapper<>();
+        matchLogQueryWrapper.eq(HouseAssetMatchLog.MATCHED_USER_ID,userId).eq(HouseAssetMatchLog.MATHCHED_ASSET_ID,assetId);
+        effect += houseAssetMatchLogMapper.delete(matchLogQueryWrapper);
+
+//        删除出租房子
+        QueryWrapper<HouseRentAsset> houseRentAssetQueryWrapper = new QueryWrapper<>();
+        houseRentAssetQueryWrapper.eq(HouseRentAsset.LANDLORD_ID,userId).eq(HouseRentAsset.ASSET_ID,assetId);
+        effect += houseRentAssetMapper.delete(houseRentAssetQueryWrapper);
+        return effect;
+    }
 }

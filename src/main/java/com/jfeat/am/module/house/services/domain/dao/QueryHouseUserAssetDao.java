@@ -21,6 +21,7 @@ public interface QueryHouseUserAssetDao extends QueryMasterDao<HouseUserAsset> {
      * Query entity list by page
      */
     List<HouseUserAssetRecord> findHouseUserAssetPage(Page<HouseUserAssetRecord> page, @Param("record") HouseUserAssetRecord record,
+                                                      @Param("communityId") Long communityId,
                                                       @Param("tag") String tag,
                                                       @Param("search") String search, @Param("orderBy") String orderBy,
                                                       @Param("startTime") Date startTime, @Param("endTime") Date endTime);

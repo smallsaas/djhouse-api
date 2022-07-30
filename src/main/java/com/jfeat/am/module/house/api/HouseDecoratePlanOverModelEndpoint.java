@@ -2,9 +2,16 @@
 package com.jfeat.am.module.house.api;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseDecoratePlanFunitureDao;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseDecoratePlanFunitureModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseDecoratePlanFunitureMapper;
+import com.jfeat.am.module.house.services.gen.persistence.dao.ProductMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseDecoratePlanFuniture;
+import com.jfeat.am.module.house.services.gen.persistence.model.Product;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -72,6 +79,12 @@ public class HouseDecoratePlanOverModelEndpoint {
     @Resource
     QueryHouseDecoratePlanFunitureDao queryHouseDecoratePlanFunitureDao;
 
+    @Resource
+    HouseDecoratePlanFunitureMapper houseDecoratePlanFunitureMapper;
+
+    @Resource
+    ProductMapper productMapper;
+
 
     // 要查询[从表]关联数据，取消下行注释
     // @Resource
@@ -117,16 +130,28 @@ public class HouseDecoratePlanOverModelEndpoint {
         //       GROUP BY t_plan_model.id
         //    </select>
 
+        QueryWrapper<HouseDecoratePlanFuniture> houseDecoratePlanFunitureQueryWrapper = new QueryWrapper<>();
+        houseDecoratePlanFunitureQueryWrapper.eq(HouseDecoratePlanFuniture.DECORATE_PLAN_ID,id);
+        List<HouseDecoratePlanFuniture> houseDecoratePlanFunitureList = houseDecoratePlanFunitureMapper.selectList(houseDecoratePlanFunitureQueryWrapper);
+
+
         if (entity != null) {
-            List<Long> itemsID = new ArrayList<>();
+            List<HouseDecoratePlanFuniture> funitureList = new ArrayList<>();
             JSONObject jsonObject = entity.toJSONObject();
             JSONArray jsonArray  = (JSONArray) jsonObject.get("items");
             for (int i=0;i<jsonArray.size();i++){
-                JSONObject item = (JSONObject) jsonArray.get(i);
-                Long itemId = item.getLong("id");
-                itemsID.add(itemId);
+                for (int j=0;j<houseDecoratePlanFunitureList.size();j++){
+                    JSONObject item = (JSONObject) jsonArray.get(i);
+                    Long itemId = item.getLong("id");
+                    if (houseDecoratePlanFunitureList.get(j).getFurnitureId().equals(itemId)){
+                        HouseDecoratePlanFuniture funitureModel =  houseDecoratePlanFunitureList.get(j);
+                        funitureModel.setName(item.getString("name"));
+                        funitureModel.setPrice(item.getBigDecimal("price"));
+                        funitureList.add(funitureModel);
+                    }
+                }
             }
-            jsonObject.put("itemsID",itemsID);
+            jsonObject.put("funitureList",funitureList);
             return SuccessTip.create(jsonObject);
         } else {
             return SuccessTip.create();
@@ -142,25 +167,27 @@ public class HouseDecoratePlanOverModelEndpoint {
         entity.setId(id);
         int newOptions = META.UPDATE_CASCADING_DELETION_FLAG;
         int effect = houseDecoratePlanOverModelService.updateMaster(entity, null, null, null, newOptions);
-        if (entity.getItemsID()!=null && entity.getItemsID().length>0){
-            for (int i=0;i<entity.getItemsID().length;i++){
-               HouseDecoratePlanFuniture houseDecoratePlanFuniture =  queryHouseDecoratePlanFunitureDao.queryHouseDecoratePlanFunitureExists(id,entity.getItemsID()[i]);
-               if (houseDecoratePlanFuniture!=null){
-                   HouseDecoratePlanFuniture decoratePlanFuniture = new HouseDecoratePlanFuniture();
-                   decoratePlanFuniture.setDecoratePlanId(id);
-                   decoratePlanFuniture.setFurnitureId(entity.getItemsID()[i]);
-                   effect+=queryHouseDecoratePlanFunitureDao.updateDecoratePlanFuniture(houseDecoratePlanFuniture.getId(),decoratePlanFuniture);
-               }else {
-                   HouseDecoratePlanFuniture decoratePlanFuniture = new HouseDecoratePlanFuniture();
-                   decoratePlanFuniture.setDecoratePlanId(id);
-                   decoratePlanFuniture.setFurnitureId(entity.getItemsID()[i]);
-                  effect+= queryHouseDecoratePlanFunitureDao.createDecoratePlanFuniture(decoratePlanFuniture);
-               }
+
+        QueryWrapper<HouseDecoratePlanFuniture> houseDecoratePlanFunitureQueryWrapper = new QueryWrapper<>();
+        houseDecoratePlanFunitureQueryWrapper.eq(HouseDecoratePlanFuniture.DECORATE_PLAN_ID,id);
+
+        List<HouseDecoratePlanFuniture> houseDecoratePlanFunitureList = new ArrayList<>();
+        if (entity.getFurnitureItem()!=null){
+            houseDecoratePlanFunitureMapper.delete(houseDecoratePlanFunitureQueryWrapper);
+            houseDecoratePlanFunitureList = JSONObject.parseArray(entity.getFurnitureItem(),HouseDecoratePlanFuniture.class);
+            System.out.println(houseDecoratePlanFunitureList);
+
+        }
+
+        for (int i=0;i<houseDecoratePlanFunitureList.size();i++){
+            if (houseDecoratePlanFunitureList.get(i).getDecoratePlanId()==null || "".equals(houseDecoratePlanFunitureList.get(i).getDecoratePlanId())){
+                houseDecoratePlanFunitureList.get(i).setDecoratePlanId(id);
             }
         }
-        // use update flags
-         //default to delete not exist items
-        // newOptions = FlagUtil.setFlag(newOptions, META.UPDATE_ALL_COLUMNS_FLAG);
+        if (houseDecoratePlanFunitureList!=null && houseDecoratePlanFunitureList.size()>0){
+            queryHouseDecoratePlanFunitureDao.insertDecoratePlanFunitures(houseDecoratePlanFunitureList);
+        }
+
 
         return SuccessTip.create(effect);
     }

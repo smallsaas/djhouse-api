@@ -1,18 +1,23 @@
 package com.jfeat.am.module.house.api.userself.operations;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.common.annotation.Permission;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.module.house.api.permission.HouseAssetComplaintPermission;
 import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetComplaintDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetComplaintRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetComplaintService;
 import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseUserAssetModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.EndpointUser;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetComplaint;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
@@ -21,6 +26,7 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +58,9 @@ public class UserAssetComplaintEndpoint {
 
     @Resource
     QueryHouseAssetDao queryHouseAssetDao;
+
+    @Resource
+    HouseUserAssetMapper houseUserAssetMapper;
 
     /*
     获取申诉列表
@@ -118,6 +127,7 @@ public class UserAssetComplaintEndpoint {
                 complaintRecord.setHouseAssetModel(houseAssetModel);
             }
 
+//            添加个人信息
             EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(complaintRecord.getUserId());
             if (endpointUserModel!=null){
                 complaintRecord.setUserAvatar(endpointUserModel.getAvatar());
@@ -125,15 +135,24 @@ public class UserAssetComplaintEndpoint {
                 complaintRecord.setUserPhone(endpointUserModel.getPhone());
             }
         }
-
+//        安装状态排序
+        houseAssetComplaintPage.sort((a,b)->{
+            if ((a.getSolveStatus() - b.getSolveStatus() ) > 0) {
+                return 1;
+            } else if ((a.getSolveStatus()  - b.getSolveStatus() ) < 0) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
         page.setRecords(houseAssetComplaintPage);
 
         return SuccessTip.create(page);
     }
 
-    //    确认申述
-    @PostMapping("/clash/confirm/{id}")
-    public Tip confirmClashInfo(@PathVariable("id") Long id) {
+    @GetMapping("/clash/{id}")
+    @ApiOperation(value = "查看 HouseAssetComplaint", response = HouseAssetComplaint.class)
+    public Tip getHouseAssetComplaint(@PathVariable Long id) {
          /*
         验证用户是否是运营身份
          */
@@ -145,23 +164,35 @@ public class UserAssetComplaintEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
         }
 
+        HouseAssetComplaintRecord record = new HouseAssetComplaintRecord();
+        record.setId(id);
+        List<HouseAssetComplaintRecord> complaintRecord = queryHouseAssetComplaintDao.findHouseAssetComplaintPage(null,record,null,null,null
+                ,null,null);
+        if (complaintRecord!=null && complaintRecord.size()==1){
+            HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(complaintRecord.get(0).getAssetId());
+            if (houseAssetModel!=null){
+                complaintRecord.get(0).setHouseAssetModel(houseAssetModel);
+            }
 
-        HouseUserAssetModel houseUserAssetModel = queryHouseUserAssetDao.queryMasterModel(id);
-        if (houseUserAssetModel == null) {
-            throw new BusinessException(BusinessCode.BadRequest, "请求错误");
+//            添加个人信息
+            EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(complaintRecord.get(0).getUserId());
+            if (endpointUserModel!=null){
+                complaintRecord.get(0).setUserAvatar(endpointUserModel.getAvatar());
+                complaintRecord.get(0).setUserName(endpointUserModel.getName());
+                complaintRecord.get(0).setUserPhone(endpointUserModel.getPhone());
+            }
+        }else {
+            return SuccessTip.create();
         }
-        Long confirmUserId = houseUserAssetModel.getClashUserId();
-        houseUserAssetModel.setUserId(confirmUserId);
-        houseUserAssetModel.setClashUserId(null);
-        houseUserAssetModel.setClashDescribe(null);
-        houseUserAssetModel.setClashCertificate(null);
-        houseUserAssetModel.setFinalFlag(HouseUserAsset.FINAL_FLAG_CONFIRM);
-        return SuccessTip.create(houseUserAssetService.updateMaster(houseUserAssetModel));
+
+
+        return SuccessTip.create(complaintRecord.get(0));
     }
 
-    //    驳回产权申述
-    @PostMapping("/clash/cancel/{id}")
-    public Tip cancelClashInfo(@PathVariable("id") Long id) {
+
+    //取消验证产权
+    @PutMapping("/clash/cancel/{id}")
+    public Tip cancelClashInfo(@PathVariable("id")Long id, @RequestBody HouseAssetComplaint entity) {
 
          /*
         验证用户是否是运营身份
@@ -173,21 +204,66 @@ public class UserAssetComplaintEndpoint {
         if (!authentication.verifyOperation(JWTKit.getUserId())) {
             throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
         }
+        HouseAssetComplaint houseAssetComplaint = queryHouseAssetComplaintDao.queryMasterModel(id);
+        if (houseAssetComplaint!=null){
+//            提交申诉材料
+            houseAssetComplaint.setClashCertificate(entity.getClashCertificate());
+            houseAssetComplaint.setClashDescribe(entity.getClashDescribe());
+            houseAssetComplaint.setSolveStatus(HouseAssetComplaint.SOLVE_STATUS_UNFINISHED);
+            houseAssetComplaint.setSolveTime(new Date());
 
-        HouseUserAssetModel houseUserAssetModel = queryHouseUserAssetDao.queryMasterModel(id);
-        if (houseUserAssetModel == null) {
-            throw new BusinessException(BusinessCode.BadRequest, "请求错误");
+            //否定用户为最终产权所有者
+            QueryWrapper<HouseUserAsset> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq(HouseUserAsset.USER_ID,houseAssetComplaint.getUserId()).eq(HouseUserAsset.ASSET_ID,houseAssetComplaint.getAssetId());
+            HouseUserAsset houseUserAsset = houseUserAssetMapper.selectOne(queryWrapper);
+            if (houseUserAsset!=null){
+                houseUserAsset.setFinalFlag(HouseUserAsset.FINAL_FLAG_NOT_CONFIRM);
+                houseUserAssetMapper.update(houseUserAsset,queryWrapper);
+            }
+            return SuccessTip.create(houseAssetComplaintService.updateMaster(houseAssetComplaint));
         }
-        houseUserAssetModel.setClashUserId(null);
-        houseUserAssetModel.setClashDescribe(null);
-        houseUserAssetModel.setClashCertificate(null);
-        return SuccessTip.create(houseUserAssetService.updateMaster(houseUserAssetModel));
+        return SuccessTip.create();
     }
+
+//    拒绝验证
+@PutMapping("/clash/refuse/{id}")
+public Tip refuseClashInfo(@PathVariable("id")Long id, @RequestBody HouseAssetComplaint entity) {
+
+         /*
+        验证用户是否是运营身份
+         */
+    if (JWTKit.getUserId() == null) {
+        throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+    }
+
+    if (!authentication.verifyOperation(JWTKit.getUserId())) {
+        throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
+    }
+    HouseAssetComplaint houseAssetComplaint = queryHouseAssetComplaintDao.queryMasterModel(id);
+    if (houseAssetComplaint!=null){
+//            提交申诉材料
+        houseAssetComplaint.setClashCertificate(entity.getClashCertificate());
+        houseAssetComplaint.setClashDescribe(entity.getClashDescribe());
+        houseAssetComplaint.setSolveStatus(HouseAssetComplaint.SOLVE_STATUS_refuse);
+        houseAssetComplaint.setSolveTime(new Date());
+
+        //否定用户为最终产权所有者
+        QueryWrapper<HouseUserAsset> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(HouseUserAsset.USER_ID,houseAssetComplaint.getUserId()).eq(HouseUserAsset.ASSET_ID,houseAssetComplaint.getAssetId());
+        HouseUserAsset houseUserAsset = houseUserAssetMapper.selectOne(queryWrapper);
+        if (houseUserAsset!=null){
+            houseUserAsset.setFinalFlag(HouseUserAsset.FINAL_FLAG_NOT_CONFIRM);
+            houseUserAssetMapper.update(houseUserAsset,queryWrapper);
+        }
+        return SuccessTip.create(houseAssetComplaintService.updateMaster(houseAssetComplaint));
+    }
+    return SuccessTip.create();
+}
 
     /*
-    提交申诉材料
+    提交确认信息
      */
-    @PutMapping("/commitAppealMaterials/{id}")
+    @PutMapping("/clash/confirm/{id}")
     public Tip commitAppealMaterials(@PathVariable("id")Long id, @RequestBody HouseAssetComplaint entity) {
 
          /*
@@ -201,14 +277,39 @@ public class UserAssetComplaintEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
         }
 
+        if (entity.getClashCertificate()==null || "".equals(entity.getClashCertificate())){
+            throw new BusinessException(BusinessCode.CodeBase, "证明材料需要上传");
+        }
+
         HouseAssetComplaint houseAssetComplaint = queryHouseAssetComplaintDao.queryMasterModel(id);
         if (houseAssetComplaint!=null){
+//            提交申诉材料
             houseAssetComplaint.setClashCertificate(entity.getClashCertificate());
             houseAssetComplaint.setClashDescribe(entity.getClashDescribe());
+            houseAssetComplaint.setSolveStatus(HouseAssetComplaint.SOLVE_STATUS_COMPLETE);
+            houseAssetComplaint.setSolveTime(new Date());
+
+            //当运维上传资料确认为最终户主
+            HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
+            houseUserAssetRecord.setAssetId(houseAssetComplaint.getAssetId());
+            List<HouseUserAssetRecord> houseUserAssetPage = queryHouseUserAssetDao.findHouseUserAssetPage(null, houseUserAssetRecord, null,null, null, null, null, null);
+            if (houseUserAssetPage!=null && houseUserAssetPage.size()==1){
+                HouseUserAssetModel houseUserAssetModel = queryHouseUserAssetDao.queryMasterModel(houseUserAssetPage.get(0).getId());
+                if (houseUserAssetModel == null) {
+                    throw new BusinessException(BusinessCode.BadRequest, "请求错误");
+                }
+                houseUserAssetModel.setUserId(houseAssetComplaint.getUserId());
+                houseUserAssetModel.setFinalFlag(HouseUserAsset.FINAL_FLAG_CONFIRM);
+                houseUserAssetService.updateMaster(houseUserAssetModel);
+
+            }
             return SuccessTip.create(houseAssetComplaintService.updateMaster(houseAssetComplaint));
         }
         return SuccessTip.create();
     }
+
+
+
 
 
 }

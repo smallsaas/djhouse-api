@@ -256,10 +256,18 @@ public class UserAppointmentEndpoint {
 
 //    修改预约状态
     @PutMapping
-    public Tip updateHouseAppointment(@RequestParam(value = "id",required = true) Long id,@RequestParam("status") String status) {
+    public Tip updateHouseAppointment(@RequestBody HouseAppointmentModel entity) {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
+        if (entity.getId()==null  || "".equals(entity.getId())){
+            throw new BusinessException(BusinessCode.BadRequest,"id不能为空");
+        }
+        if (entity.getStatusStr()==null  || "".equals(entity.getStatusStr())){
+            throw new BusinessException(BusinessCode.BadRequest,"statusStr不能为空");
+        }
+        String status = entity.getStatusStr();
+        Long id = entity.getId();
         HouseAppointmentModel houseAppointmentModel = queryHouseAppointmentDao.queryMasterModel(id);
         if ("notSet".equals(status)){
             houseAppointmentModel.setStatus(HouseAppointment.STATUS_NOT_SET);

@@ -15,13 +15,22 @@ import java.util.List;
  * Created by Code generator on 2022-06-11
  */
 public interface QueryHouseAssetExchangeRequestDao extends QueryMasterDao<HouseAssetExchangeRequest> {
-   /*
-    * Query entity list by page
-    */
+    /*
+     * Query entity list by page
+     */
     List<HouseAssetExchangeRequestRecord> findHouseAssetExchangeRequestPage(Page<HouseAssetExchangeRequestRecord> page, @Param("record") HouseAssetExchangeRequestRecord record,
-                                            @Param("tag") String tag,
-                                            @Param("search") String search, @Param("orderBy") String orderBy,
-                                            @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+                                                                            @Param("tag") String tag,
+                                                                            @Param("search") String search, @Param("orderBy") String orderBy,
+                                                                            @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
+
+    /**
+     * @param page
+     * @param record
+     * @param communityId 需要过滤出来的小区id
+     * @return
+     */
+    List<HouseAssetExchangeRequestRecord> findHouseAssetExchangeRequestPageFilterCommunity(Page<HouseAssetExchangeRequestRecord> page, @Param("record") HouseAssetExchangeRequestRecord record, @Param("communityId") Long communityId);
 
     /*
      * Query entity model for details
@@ -40,7 +49,8 @@ public interface QueryHouseAssetExchangeRequestDao extends QueryMasterDao<HouseA
 
     List<HouseAssetExchangeRequest> queryHouseAssetExchangeRequestByUserId(@Param("userId") Long userId);
 
-    HouseAssetExchangeRequest queryHouseAssetExchangeRequestByAssetIdAndUserId(@Param("assetId") Long assetId,@Param("userId") Long userId);
+    HouseAssetExchangeRequest queryHouseAssetExchangeRequestByAssetIdAndUserId(@Param("assetId") Long assetId, @Param("userId") Long userId);
 
     List<HouseAssetExchangeRequest> queryAllHouseAssetExchangeRequest();
+
 }

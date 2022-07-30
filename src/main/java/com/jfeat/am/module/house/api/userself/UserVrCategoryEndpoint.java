@@ -12,6 +12,7 @@ import com.jfeat.am.module.house.services.domain.model.HouseDesignModelRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseVrPictureRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseVrPictureService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseVrPictureModel;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseVrPicture;
 import com.jfeat.am.module.supplier.services.domain.dao.QuerySupplierDao;
 import com.jfeat.am.module.supplier.services.domain.model.SupplierRecord;
@@ -24,6 +25,7 @@ import com.jfeat.eav.services.domain.service.DataServiceService;
 import com.jfeat.eav.services.domain.service.EavEntityService;
 import com.jfeat.eav.services.domain.service.Impl.DataServiceServiceImpl;
 import com.jfeat.eav.services.gen.persistence.model.EavEntity;
+import com.jfeat.users.account.services.domain.model.UserTypeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.poi.ss.formula.functions.T;
@@ -212,6 +214,15 @@ public class UserVrCategoryEndpoint {
         images.add(map3);
         images.add(map4);
         return SuccessTip.create(images);
+    }
+
+    @PostMapping("/test/code/{id}")
+    @ResponseBody
+    public Tip getTestCode(@PathVariable("id")Long id, @RequestBody List<UserTypeEnum> userTypeEnums){
+        if (userTypeEnums!=null && userTypeEnums.size()>0){
+            return SuccessTip.create(userTypeEnums.size());
+        }
+        return SuccessTip.create();
     }
 
 

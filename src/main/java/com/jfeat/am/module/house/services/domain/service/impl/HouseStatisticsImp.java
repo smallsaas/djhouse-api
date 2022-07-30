@@ -20,37 +20,24 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 
-
+@Service("houseStatistics")
+@EnableScheduling
 public class HouseStatisticsImp implements HouseStatistics {
 
     @Resource
     QueryHousePropertyCommunityDao queryHousePropertyCommunityDao;
 
     @Resource
-    QueryHousePropertyBuildingDao queryHousePropertyBuildingDao;
-
-    @Resource
-    QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
-
-    @Resource
-    QueryHouseDesignModelDao queryHouseDesignModelDao;
-
-    @Resource
-    QueryHouseAssetDao queryHouseAssetDao;
-
-
-    @Resource
-    QueryHouseEquityDemandSupplyDao queryHouseEquityDemandSupplyDao;
-
-    @Resource
-    QueryHouseAssetExchangeRequestDao queryHouseAssetExchangeRequestDao;
-
+    HouseStatisticsDao houseStatisticsDao;
 
     @Resource
     StatisticsRecordMapper statisticsRecordMapper;
@@ -58,114 +45,71 @@ public class HouseStatisticsImp implements HouseStatistics {
     @Resource
     StatisticsFieldMapper statisticsFieldMapper;
 
-
-
-
-
-
-
-
-
+//    每天凌晨四点启动 更新数据
+//    @Scheduled(cron = "0 0 4 * * ?")
     public Tip getHouseOverStatistics() {
 
+        //获取一共有多少个小区
         HousePropertyCommunityRecord housePropertyCommunityRecord = new HousePropertyCommunityRecord();
-        List<HousePropertyCommunityRecord> housePropertyCommunityRecordList = queryHousePropertyCommunityDao.findHousePropertyCommunityPage(null,housePropertyCommunityRecord,null,null,null,null,null);
-        for (HousePropertyCommunityRecord communityRecord:housePropertyCommunityRecordList){
+        List<HousePropertyCommunityRecord> housePropertyCommunityRecordList = queryHousePropertyCommunityDao.findHousePropertyCommunityPage(null, housePropertyCommunityRecord, null, null, null, null, null);
+
+        //统计每一个小区数据
+        for (HousePropertyCommunityRecord communityRecord : housePropertyCommunityRecordList) {
             Long communityId = communityRecord.getId();
-            Integer buildingNumber = 0;
-            Integer multipleNumber = 0;
-            Integer unitNumber = 0;
-            Integer houseNumber = 0;
-            Integer parkingNumber = 0;
-            Double totalArea = 0.0;
-            HashMap<String, Integer> houseTypeMap = new HashMap<>();
 
+
+//            查询统计表中是否已经有改小区数据
             QueryWrapper<StatisticsField> wrapper = new QueryWrapper<>();
-//            wrapper.eq()
-
-
-//        查询小区有多少楼栋
-            HousePropertyBuildingRecord buildingRecord = new HousePropertyBuildingRecord();
-            buildingRecord.setCommunityId(communityId);
-            List<HousePropertyBuildingRecord> buildingRecordList = queryHousePropertyBuildingDao.findHousePropertyBuildingPage(null, buildingRecord, null, null, null, null, null);
-            buildingNumber = buildingRecordList.size();
-
-            for (int i = 0; i < buildingRecordList.size(); i++) {
-//        计算复式套数
-                if (buildingRecordList.get(i).getMultipleNumber() != null && buildingRecordList.get(i).getMultipleNumber() != 0) {
-                    multipleNumber += buildingRecordList.get(i).getMultipleNumber();
-                }
-
-//        计算单元数
-                HousePropertyBuildingUnitRecord unitRecord = new HousePropertyBuildingUnitRecord();
-                unitRecord.setBuildingId(buildingRecordList.get(i).getId());
-                List<HousePropertyBuildingUnitRecord> unitRecordList = queryHousePropertyBuildingUnitDao.findHousePropertyBuildingUnitPage(null, unitRecord, null, null, null, null, null);
-                unitNumber += unitRecordList.size();
-
-                for (HousePropertyBuildingUnitRecord unit : unitRecordList) {
-
-                    Double areaNumber = 0.0;
-                    Long houseTypeId = unit.getDesignModelId();
-                    if (houseTypeId != null) {
-                        //        计算户型数
-                        if (houseTypeMap.get(String.valueOf(houseTypeId)) != null) {
-                            houseTypeMap.put(String.valueOf(houseTypeId), houseTypeMap.get(String.valueOf(houseTypeId)) + 1);
-                        } else {
-                            houseTypeMap.put(String.valueOf(houseTypeId), 1);
-                        }
-
-//                    获取户型面积
-                        HouseDesignModel houseDesignModel = queryHouseDesignModelDao.queryMasterModel(houseTypeId);
-                        areaNumber = houseDesignModel.getArea().doubleValue();
-                    }
-
-//                计算房屋数
-                    HouseAssetRecord houseRecord = new HouseAssetRecord();
-                    houseRecord.setUnitId(unit.getId());
-                    houseRecord.setAssetType(1);
-                    List<HouseAssetRecord> houseRecordList = queryHouseAssetDao.findHouseAssetPage(null, houseRecord, null, null, null, null, null);
-                    if (houseRecordList != null && houseRecordList.size() > 0 && areaNumber != null && !areaNumber.equals(0)) {
-//                    添加面积
-                        totalArea += areaNumber * houseRecordList.size();
-                    }
-                    houseNumber += houseRecordList.size();
-
-                    //        计算车位
-                    houseRecord.setAssetType(2);
-                    houseRecordList = queryHouseAssetDao.findHouseAssetPage(null, houseRecord, null, null, null, null, null);
-                    if (houseRecordList != null && houseRecordList.size() > 0 && areaNumber != null && !areaNumber.equals(0)) {
-//                    添加面积
-                        totalArea += areaNumber * houseRecordList.size();
-                    }
-                    parkingNumber += houseRecordList.size();
-
-
-                }
-
+            wrapper.eq(StatisticsField.FIELD, communityRecord.getCommunity());
+            StatisticsField statisticsField = statisticsFieldMapper.selectOne(wrapper);
+//            统计表中没有该数据时 添加一条小区数据
+            if (statisticsField==null){
+                StatisticsField statisticsFieldRow = new StatisticsField();
+                statisticsFieldRow.setField(communityRecord.getCommunity());
+                statisticsFieldRow.setGroupName("小区数据统计");
+                statisticsFieldRow.setName(communityRecord.getCommunity());
+                statisticsFieldRow.setPattern("Count");
+                statisticsFieldRow.setChart("".concat(communityRecord.getCommunity()).concat("数据表统计"));
+                statisticsFieldMapper.insert(statisticsFieldRow);
             }
-            HouseEquityDemandSupplyRecord houseEquityDemandSupplyRecord = new HouseEquityDemandSupplyRecord();
-            HouseAssetExchangeRequestRecord houseAssetExchangeRequestRecord = new HouseAssetExchangeRequestRecord();
 
-            List<HouseEquityDemandSupplyRecord> equityDemandSupplyRecordList = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(null, houseEquityDemandSupplyRecord, null, null, null, null, null, null, null);
-            List<HouseAssetExchangeRequestRecord> exchangeRequestRecordList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null, houseAssetExchangeRequestRecord, null, null, null, null, null);
+            //list 0-房子数 1-无效房子数 2-平房数 3-复式数 4-楼栋数 5-单元数 6-户型数 7-换房需求数 8-换房记录数 9-停车位数
+            List<Integer> houseStatistics =   houseStatisticsDao.communityStatistics(communityId);
 
-
-
-
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("buildingNumber", buildingNumber);
-            jsonObject.put("multipleNumber", multipleNumber);
-            jsonObject.put("unitNumber", unitNumber);
-            jsonObject.put("houseNumber", houseNumber);
-            jsonObject.put("parkingNumber", parkingNumber);
-            jsonObject.put("totalArea", totalArea);
-            jsonObject.put("houseTypeNumber", houseTypeMap.size());
-            jsonObject.put("houseExchangeNumber", exchangeRequestRecordList.size());
-            jsonObject.put("equityNumber", equityDemandSupplyRecordList.size());
+//            添加记录信息
+            modifyStatisticsRecord(communityRecord.getCommunity(),"houseNumber",String.valueOf(houseStatistics.get(0)),1);
+            modifyStatisticsRecord(communityRecord.getCommunity(),"invalidHouse",String.valueOf(houseStatistics.get(1)),2);
+            modifyStatisticsRecord(communityRecord.getCommunity(),"bungalow",String.valueOf(houseStatistics.get(2)),3);
+            modifyStatisticsRecord(communityRecord.getCommunity(),"multipleNumber",String.valueOf(houseStatistics.get(3)),4);
+            modifyStatisticsRecord(communityRecord.getCommunity(),"buildingNumber",String.valueOf(houseStatistics.get(4)),5);
+            modifyStatisticsRecord(communityRecord.getCommunity(),"unitNumber",String.valueOf(houseStatistics.get(5)),6);
+            modifyStatisticsRecord(communityRecord.getCommunity(),"houseTypeNumber",String.valueOf(houseStatistics.get(6)),7);
+            modifyStatisticsRecord(communityRecord.getCommunity(),"houseExchangeNumber",String.valueOf(houseStatistics.get(7)),8);
+            modifyStatisticsRecord(communityRecord.getCommunity(),"houseExchangeMatchNumber",String.valueOf(houseStatistics.get(8)),9);
+            modifyStatisticsRecord(communityRecord.getCommunity(),"parkingNumber",String.valueOf(houseStatistics.get(9)),10);
+            System.out.println("方法执行完成=========================================");
         }
 
-
-//        return SuccessTip.create(jsonObject);
         return SuccessTip.create();
     }
+
+    private int modifyStatisticsRecord(String field,String recordName,String recodeValue,Integer seq){
+
+        QueryWrapper<StatisticsRecord> statisticsRecordQueryWrapper  = new QueryWrapper<>();
+        statisticsRecordQueryWrapper.eq(StatisticsRecord.FIELD,field).eq(StatisticsRecord.RECORD_NAME,recordName);
+        StatisticsRecord statisticsRecord =  statisticsRecordMapper.selectOne(statisticsRecordQueryWrapper);
+        if (statisticsRecord==null){
+            StatisticsRecord record = new StatisticsRecord();
+            record.setField(field);
+            record.setRecordName(recordName);
+            record.setRecordValue(recodeValue);
+            record.setSeq(seq);
+            return statisticsRecordMapper.insert(record);
+        }else {
+            statisticsRecord.setSeq(seq);
+            statisticsRecord.setRecordValue(recodeValue);
+            return statisticsRecordMapper.updateById(statisticsRecord);
+        }
+    }
+
 }

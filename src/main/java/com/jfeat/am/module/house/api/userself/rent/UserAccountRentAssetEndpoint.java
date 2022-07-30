@@ -66,7 +66,7 @@ public class UserAccountRentAssetEndpoint {
         houseUserAssetRecord.setAssetId(entity.getAssetId());
         houseUserAssetRecord.setUserId(JWTKit.getUserId());
         List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord
-        ,null,null,null,null,null);
+        ,null,null,null,null,null,null);
         if (houseUserAssetRecordList==null || houseUserAssetRecordList.size()==0){
             throw new BusinessException(BusinessCode.NoPermission,"没有找到房子,请重试");
         }

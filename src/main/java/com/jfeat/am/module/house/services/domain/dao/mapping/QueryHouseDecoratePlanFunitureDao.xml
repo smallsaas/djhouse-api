@@ -75,4 +75,13 @@ t_house_decorate_plan_funiture.number AS number
     <insert id="createDecoratePlanFuniture">
         insert into t_house_decorate_plan_funiture set t_house_decorate_plan_funiture.decorate_plan_id =#{entity.decoratePlanId},t_house_decorate_plan_funiture.furniture_id =#{entity.furnitureId}
     </insert>
+    
+<!--    批量插入-->
+    <insert id="insertDecoratePlanFunitures" parameterType="java.util.List">
+        insert into t_house_decorate_plan_funiture
+            (decorate_plan_id,furniture_id,number) values
+        <foreach collection="furnitureList" item="furnitureItem" separator=",">
+            (#{furnitureItem.decoratePlanId},#{furnitureItem.furnitureId},#{furnitureItem.number})
+        </foreach>
+    </insert>
 </mapper>
