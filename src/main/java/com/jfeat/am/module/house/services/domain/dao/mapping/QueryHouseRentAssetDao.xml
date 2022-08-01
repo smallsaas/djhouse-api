@@ -2,7 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao">
     <sql id="Base_Column_List">
-        t_house_rent_asset.id,
+        t_house_rent_asset
+        .
+        id
+        ,
 t_house_rent_asset.asset_id AS assetId,
 t_house_rent_asset.community_id AS communityId,
 t_house_rent_asset.house_type_id AS houseTypeId,
@@ -19,7 +22,7 @@ t_house_rent_asset.rent_status AS rentStatus,
 t_house_rent_asset.note,
 t_house_rent_asset.rent_time AS rentTime,
 t_house_rent_asset.shelves_time AS shelvesTime,
-t_house_rent_asset.rate
+t_house_rent_asset.rate AS rate
     </sql>
 
 
@@ -38,6 +41,191 @@ t_house_rent_asset.rate
 
         FROM t_house_rent_asset
 
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_rent_asset.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_rent_asset.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+        </if>
+
+
+        <if test="record.communityId != null and record.communityId>0 ">
+            AND t_house_rent_asset.community_id LIKE CONCAT('%',#{record.communityId},'%')
+        </if>
+
+
+        <if test="record.houseTypeId != null and record.houseTypeId>0 ">
+            AND t_house_rent_asset.house_type_id LIKE CONCAT('%',#{record.houseTypeId},'%')
+        </if>
+
+
+        <if test="record.landlordId != null and record.landlordId>0 ">
+            AND t_house_rent_asset.landlord_id LIKE CONCAT('%',#{record.landlordId},'%')
+        </if>
+        <if test="record.area != null and record.area>0 ">
+            AND t_house_rent_asset.area LIKE CONCAT('%',#{record.area},'%')
+        </if>
+        <if test="record.rate != null and record.rate>=0 ">
+            AND t_house_rent_asset.rate LIKE CONCAT('%',#{record.rate},'%')
+        </if>
+
+
+        <if test="record.introducePicture != null and record.introducePicture!= ''">
+            AND t_house_rent_asset.introduce_picture LIKE CONCAT('%',#{record.introducePicture},'%')
+        </if>
+
+
+        <if test="record.serverId != null and record.serverId>0 ">
+            AND t_house_rent_asset.server_id LIKE CONCAT('%',#{record.serverId},'%')
+        </if>
+        <if test="record.cover != null and record.cover!= ''">
+            AND t_house_rent_asset.cover LIKE CONCAT('%',#{record.cover},'%')
+        </if>
+        <if test="record.title != null and record.title!= ''">
+            AND t_house_rent_asset.title LIKE CONCAT('%',#{record.title},'%')
+        </if>
+        <if test="record.price != null and record.price>0 ">
+            AND t_house_rent_asset.price LIKE CONCAT('%',#{record.price},'%')
+        </if>
+        <if test="record.slide != null and record.slide!= ''">
+            AND t_house_rent_asset.slide LIKE CONCAT('%',#{record.slide},'%')
+        </if>
+        <if test="record.rentDescribe != null and record.rentDescribe!= ''">
+            AND t_house_rent_asset.rent_describe LIKE CONCAT('%',#{record.rentDescribe},'%')
+        </if>
+
+
+        <if test="record.rentStatus != null and record.rentStatus>0 ">
+            AND t_house_rent_asset.rent_status LIKE CONCAT('%',#{record.rentStatus},'%')
+        </if>
+        <if test="record.note != null and record.note!= ''">
+            AND t_house_rent_asset.note LIKE CONCAT('%',#{record.note},'%')
+        </if>
+
+
+        <if test="record.rentTime != null and record.rentTime>0 ">
+            AND t_house_rent_asset.rent_time LIKE CONCAT('%',#{record.rentTime},'%')
+        </if>
+
+
+        <if test="record.shelvesTime != null and record.shelvesTime>0 ">
+            AND t_house_rent_asset.shelves_time LIKE CONCAT('%',#{record.shelvesTime},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_rent_asset.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_rent_asset.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_rent_asset.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
+
+    <resultMap id="HouseRentAssetMap" type="HouseRentAssetRecord">
+        <id column="id" property="id"/>
+        <result column="asset_id" property="assetId"/>
+        <result column="community_id" property="communityId"/>
+        <result column="house_type_id" property="houseTypeId"/>
+        <result column="landlord_id" property="landlordId"/>
+        <result column="area" property="area"/>
+        <result column="introduce_picture" property="introducePicture"/>
+        <result column="server_id" property="serverId"/>
+        <result column="cover" property="cover"/>
+        <result column="title" property="title"/>
+        <result column="price" property="price"/>
+        <result column="slide" property="slide"/>
+        <result column="describe" property="describe"/>
+        <result column="rent_status" property="rentStatus"/>
+        <result column="note" property="note"/>
+        <result column="rent_time" property="rentTime"/>
+        <result column="shelves_time" property="shelvesTime"/>
+        <result column="rate" property="rate"/>
+        <association property="houseAssetModel"
+                     javaType="com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel">
+            <id column="assetId" property="id"/>
+            <result column="address" property="address"/>
+            <result column="area" property="area"/>
+            <result column="assetFlag" property="assetFlag"/>
+            <result column="assetSlot" property="assetSlot"/>
+            <result column="assetType" property="assetType"/>
+            <result column="buildingArea" property="buildingArea"/>
+            <result column="buildingCode" property="buildingCode"/>
+
+            <result column="buildingId" property="buildingId"/>
+            <result column="cadPicture" property="cadPicture"/>
+            <result column="communityId" property="communityId"/>
+            <result column="communityName" property="communityName"/>
+            <result column="designModelId" property="designModelId"/>
+            <result column="direction" property="direction"/>
+            <result column="floor" property="floor"/>
+
+            <result column="houseType" property="houseType"/>
+            <result column="houseTypeId" property="houseTypeId"/>
+            <result column="houseTypePicture" property="houseTypePicture"/>
+            <result column="number" property="number"/>
+            <result column="unitId" property="unitId"/>
+            <result column="vrLink" property="vrLink"/>
+            <result column="vrPicture" property="vrPicture"/>
+            <result column="vrSnapshot" property="vrSnapshot"/>
+        </association>
+    </resultMap>
+
+    <sql id="houseRentSql">
+        t_house_rent_asset.*,
+        t_house_asset.id AS assetId,
+        t_house_asset.building_id AS buildingId,
+        t_house_asset.unit_id AS unitId,
+        t_house_asset.floor,
+        t_house_asset.number,
+        t_house_asset.asset_slot AS assetSlot,
+        t_house_asset.asset_type AS assetType,
+        t_house_asset.asset_flag AS assetFlag,
+        t_house_asset.house_type_id AS houseTypeId,
+
+        t_house_property_building.cad_picture AS cadPicture,
+        t_house_property_building.code       AS buildingCode,
+
+        t_house_property_building_unit.direction AS direction,
+
+        t_house_property_community.id        AS communityId,
+        t_house_property_community.community AS communityName,
+        t_house_property_community.address AS address,
+
+        t_house_design_model.id AS designModelId,
+        t_house_design_model.house_type AS houseType,
+        t_house_design_model.house_type_picture AS houseTypePicture,
+        t_house_vr_picture.vr_picture AS vrPicture,
+        t_house_vr_picture.link                  AS vrLink,
+        t_house_vr_picture.snapshot              AS vrSnapshot,
+        t_house_design_model.area AS area
+    </sql>
+    <!--    添加列表详情-->
+    <select id="findHouseRentAssetPageDetails" resultMap="HouseRentAssetMap" parameterType="HouseRentAssetRecord">
+        SELECT
+        <include refid="houseRentSql"></include>
+
+
+        FROM t_house_rent_asset
+        left join t_house_asset on t_house_rent_asset.asset_id=t_house_asset.id
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community
+        ON t_house_property_community.id = t_house_property_building.community_id
+
+        left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
+
+        left JOIN t_house_design_model
+        ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+        left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
 
         WHERE 1=1
 

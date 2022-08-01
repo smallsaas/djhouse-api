@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseMenuDao">
+    <sql id="Base_Column_List">
+        t_house_menu
+        .
+        id
+        , t_house_menu.url, t_house_menu.path, t_house_menu.component, t_house_menu.name, t_house_menu.iconCls, t_house_menu.requireAuth, t_house_menu.parentId, t_house_menu.enabled
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseMenuModel">
+        SELECT t_house_menu.*
+        FROM t_house_menu
+        WHERE t_house_menu.id = #{id}
+        GROUP BY t_house_menu.id
+    </select>
+
+
+    <select id="findHouseMenuPage" resultType="HouseMenuRecord" parameterType="HouseMenuRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_menu
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_menu.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+        <if test="record.url != null and record.url!= ''">
+            AND t_house_menu.url LIKE CONCAT('%',#{record.url},'%')
+        </if>
+        <if test="record.path != null and record.path!= ''">
+            AND t_house_menu.path LIKE CONCAT('%',#{record.path},'%')
+        </if>
+        <if test="record.component != null and record.component!= ''">
+            AND t_house_menu.component LIKE CONCAT('%',#{record.component},'%')
+        </if>
+        <if test="record.name != null and record.name!= ''">
+            AND t_house_menu.name LIKE CONCAT('%',#{record.name},'%')
+        </if>
+        <if test="record.iconCls != null and record.iconCls!= ''">
+            AND t_house_menu.iconCls LIKE CONCAT('%',#{record.iconCls},'%')
+        </if>
+        <if test="record.requireAuth != null and record.requireAuth>0 ">
+            AND t_house_menu.requireAuth LIKE CONCAT('%',#{record.requireAuth},'%')
+        </if>
+        <if test="record.parentId != null and record.parentId>0 ">
+            AND t_house_menu.parentId LIKE CONCAT('%',#{record.parentId},'%')
+        </if>
+        <if test="record.enabled != null and record.enabled>0 ">
+            AND t_house_menu.enabled LIKE CONCAT('%',#{record.enabled},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_menu.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_menu.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_menu.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
+
+    <update id="updateHouseMenus">
+        update t_house_menu
+        <trim prefix="set" suffixOverrides=",">
+            <foreach collection="houseMenuList" item="record" index="index">
+                <if test="record.url != null and record.url!= ''">
+                    t_house_menu.url=#{record.url},
+                </if>
+                <if test="record.path != null and record.path!= ''">
+                    t_house_menu.path =#{record.path},
+                </if>
+                <if test="record.component != null and record.component!= ''">
+                    t_house_menu.component =#{record.component},
+                </if>
+                <if test="record.name != null and record.name!= ''">
+                    t_house_menu.name =#{record.name},
+                </if>
+                <if test="record.iconCls != null and record.iconCls!= ''">
+                    t_house_menu.iconCls=#{record.iconCls},
+                </if>
+                <if test="record.requireAuth != null and record.requireAuth>0 ">
+                    t_house_menu.requireAuth =#{record.requireAuth},
+                </if>
+                <if test="record.parentId != null and record.parentId>0 ">
+                    t_house_menu.parentId =#{record.parentId},
+                </if>
+                <if test="record.enabled != null and record.enabled>=0 ">
+                    t_house_menu.enabled =#{record.enabled},
+                </if>
+            </foreach>
+            where id = record.id
+        </trim>
+    </update>
+</mapper>

@@ -100,6 +100,8 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     @TableField(exist = false)
     private String serverAvatar;
 
+
+
     public String getServerPhone() {
         return serverPhone;
     }

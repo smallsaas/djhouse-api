@@ -33,4 +33,10 @@ public interface QueryHouseRentAssetDao extends QueryMasterDao<HouseRentAsset> {
      * Query entity model list for slave items
      */
     List<HouseRentAssetModel> queryMasterModelList(@Param("masterId") Object masterId);
+
+
+ List<HouseRentAssetRecord> findHouseRentAssetPageDetails(Page<HouseRentAssetRecord> page, @Param("record") HouseRentAssetRecord record,
+                                                   @Param("tag") String tag,
+                                                   @Param("search") String search, @Param("orderBy") String orderBy,
+                                                   @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 }

@@ -1,9 +1,19 @@
 package com.jfeat.am.module.house.api.userself.rent;
 
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.JsonObject;
 import com.jfeat.am.common.annotation.Permission;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.crud.tag.services.domain.record.StockTagRecord;
+import com.jfeat.am.crud.tag.services.domain.record.StockTagRelationRecord;
+import com.jfeat.am.crud.tag.services.persistence.dao.StockTagMapper;
+import com.jfeat.am.crud.tag.services.persistence.dao.StockTagRelationMapper;
+import com.jfeat.am.crud.tag.services.persistence.model.StockTag;
+import com.jfeat.am.crud.tag.services.persistence.model.StockTagRelation;
 import com.jfeat.am.module.house.api.permission.HouseRentAssetPermission;
 import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
@@ -64,6 +74,15 @@ public class UserAgentRentManageEndpoint {
 
     @Resource
     Authentication authentication;
+
+    @Resource
+    StockTagMapper stockTagMapper;
+
+    @Resource
+    StockTagRelationMapper stockTagRelationMapper;
+
+
+
 
 
 
@@ -148,21 +167,40 @@ public class UserAgentRentManageEndpoint {
         record.setRentTime(rentTime);
         record.setShelvesTime(shelvesTime);
 
+        Long start = System.currentTimeMillis();
+        List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPageDetails(page, record, tag, search, orderBy, null, null);
 
-        List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPage(page, record, tag, search, orderBy, null, null);
+        QueryWrapper<StockTag> stockTagQueryWrapper = new QueryWrapper<>();
+        List<StockTag> stockTags = stockTagMapper.selectList(stockTagQueryWrapper);
+
+        QueryWrapper<StockTagRelation> stockTagRelationQueryWrapper = new QueryWrapper<>();
+        stockTagRelationQueryWrapper.eq(StockTagRelation.STOCK_TYPE,houseRentAssetService.getEntityName());
+        List<StockTagRelation> stockTagRelations = stockTagRelationMapper.selectList(stockTagRelationQueryWrapper);
+
         for (HouseRentAssetRecord houseRentAssetRecord:houseRentAssetPage){
-            HouseRentAsset rentAsset = houseRentAssetService.queryMasterModel(queryHouseRentAssetDao, houseRentAssetRecord.getId());
-            if (rentAsset!=null && rentAsset.getExtra()!=null){
-                houseRentAssetRecord.setExtra(rentAsset.getExtra());
+            JSONObject resultJson = new JSONObject();
+            JSONArray jsonArray = new JSONArray();
+            for (StockTagRelation stockTagRelation:stockTagRelations){
+                if (stockTagRelation.getStockId().equals(houseRentAssetRecord.getId())){
+
+                    for (StockTag stockTag:stockTags){
+                        if (stockTag.getId().equals(stockTagRelation.getTagId())){
+                            JSONObject tagJson = new JSONObject();
+                            tagJson.put("id",stockTag.getId());
+                            tagJson.put("tagName",stockTag.getTagName());
+                            jsonArray.add(tagJson);
+                        }
+
+                    }
+                }
             }
-            HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(houseRentAssetRecord.getAssetId());
-            if (houseAssetModel!=null){
-                houseRentAssetRecord.setHouseAssetModel(houseAssetModel);
-            }
+            resultJson.put("tags",jsonArray);
+            houseRentAssetRecord.setExtra(resultJson.toJSONString());
 
         }
         page.setRecords(houseRentAssetPage);
 
+        System.out.println("统计时间"+(System.currentTimeMillis()-start));
         return SuccessTip.create(page);
     }
 

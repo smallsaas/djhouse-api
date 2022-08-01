@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAddressDao">
+                                                                                                                                                                                                                                                                                                                                                <sql id="Base_Column_List">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                t_house_user_address.id, t_house_user_address.user_id AS userId, t_house_user_address.asset_id AS assetId, t_house_user_address.community, t_house_user_address.building_code AS buildingCode, t_house_user_address.address, t_house_user_address.room_number AS roomNumber, t_house_user_address.user_name AS userName, t_house_user_address.user_phone AS userPhone
+    </sql>
+
+    
+    
+    <select id="queryMasterModel" resultType="HouseUserAddressModel">
+       SELECT t_house_user_address.*
+       FROM t_house_user_address
+       WHERE t_house_user_address.id=#{id}
+       GROUP BY t_house_user_address.id
+    </select>
+
+
+
+                                    
+    <select id="findHouseUserAddressPage" resultType="HouseUserAddressRecord" parameterType="HouseUserAddressRecord">
+            SELECT <include refid="Base_Column_List"/>
+
+        
+
+        FROM t_house_user_address
+
+        
+        
+        WHERE 1=1
+        
+
+        
+                                                                            <if test="record.id != null and record.id>0 ">
+                                    AND t_house_user_address.id LIKE CONCAT('%',#{record.id},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.userId != null and record.userId>0 ">
+                                    AND t_house_user_address.user_id LIKE CONCAT('%',#{record.userId},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.assetId != null and record.assetId>0 ">
+                                    AND t_house_user_address.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+                            </if>
+                                                                    <if test="record.community != null and record.community!= ''">
+                                    AND t_house_user_address.community LIKE CONCAT('%',#{record.community},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.buildingCode != null and record.buildingCode!= ''">
+                                    AND t_house_user_address.building_code LIKE CONCAT('%',#{record.buildingCode},'%')
+                            </if>
+                                                                    <if test="record.address != null and record.address!= ''">
+                                    AND t_house_user_address.address LIKE CONCAT('%',#{record.address},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.roomNumber != null and record.roomNumber!= ''">
+                                    AND t_house_user_address.room_number LIKE CONCAT('%',#{record.roomNumber},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.userName != null and record.userName!= ''">
+                                    AND t_house_user_address.user_name LIKE CONCAT('%',#{record.userName},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.userPhone != null and record.userPhone!= ''">
+                                    AND t_house_user_address.user_phone LIKE CONCAT('%',#{record.userPhone},'%')
+                            </if>
+        
+        <if test="startTime != null">
+            <![CDATA[AND t_house_user_address.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_user_address.end_time <= DATE(#{endTime}]]>
+        </if>
+            <!--
+        <if test="search != null and search != ''">
+            OR t_house_user_address.name LIKE CONCAT('%',#{search},'%')
+        </if>
+        -->
+                                    </select>
+</mapper>
