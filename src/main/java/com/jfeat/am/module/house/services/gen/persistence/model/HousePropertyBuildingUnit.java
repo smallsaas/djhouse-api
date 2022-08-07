@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 import io.swagger.annotations.ApiModel;
@@ -45,6 +46,12 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
     @ApiModelProperty(value = "方向")
     private String direction;
 
+    @ApiModelProperty(value = "数字单元")
+    private String unitNumber;
+
+    @TableField(exist = false)
+    private List<HouseAsset> items;
+
     @TableField(exist = false)
     private String communityName;
 
@@ -53,6 +60,22 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
 
     @TableField(exist = false)
     private String houseType;
+
+    public String getUnitNumber() {
+        return unitNumber;
+    }
+
+    public List<HouseAsset> getItems() {
+        return items;
+    }
+
+    public void setItems(List<HouseAsset> items) {
+        this.items = items;
+    }
+
+    public void setUnitNumber(String unitNumber) {
+        this.unitNumber = unitNumber;
+    }
 
     public String getCommunityName() {
         return communityName;

@@ -25,7 +25,6 @@ import com.jfeat.eav.services.domain.service.DataServiceService;
 import com.jfeat.eav.services.domain.service.EavEntityService;
 import com.jfeat.eav.services.domain.service.Impl.DataServiceServiceImpl;
 import com.jfeat.eav.services.gen.persistence.model.EavEntity;
-import com.jfeat.users.account.services.domain.model.UserTypeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.poi.ss.formula.functions.T;
@@ -204,14 +203,6 @@ public class UserVrCategoryEndpoint {
         return SuccessTip.create(images);
     }
 
-    @PostMapping("/test/code/{id}")
-    @ResponseBody
-    public Tip getTestCode(@PathVariable("id")Long id, @RequestBody List<UserTypeEnum> userTypeEnums){
-        if (userTypeEnums!=null && userTypeEnums.size()>0){
-            return SuccessTip.create(userTypeEnums.size());
-        }
-        return SuccessTip.create();
-    }
 
 
 }

@@ -103,7 +103,7 @@
         </if>
 
 
-        <if test="record.deleteFlag != null and record.deleteFlag>0 ">
+        <if test="record.deleteFlag != null and record.deleteFlag>=0 ">
             AND t_end_user.delete_flag LIKE CONCAT('%',#{record.deleteFlag},'%')
         </if>
 
@@ -181,11 +181,14 @@
         <if test="endTime != null">
             <![CDATA[AND t_end_user.end_time <= DATE(#{endTime}]]>
         </if>
-        <!--
-    <if test="search != null and search != ''">
-        OR t_end_user.name LIKE CONCAT('%',#{search},'%')
-    </if>
-    -->
+
+        <if test="search != null and search != ''">
+            AND (
+            t_end_user.name LIKE CONCAT('%',#{search},'%') OR
+            t_end_user.phone LIKE CONCAT('%',#{search},'%')
+          )
+        </if>
+
         ORDER BY create_time DESC
     </select>
 

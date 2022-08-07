@@ -226,8 +226,6 @@ public class UserStatisticsEndpoint {
             jsonArray.add(jsonObject);
 
         }
-
-
         return SuccessTip.create(jsonArray);
     }
 

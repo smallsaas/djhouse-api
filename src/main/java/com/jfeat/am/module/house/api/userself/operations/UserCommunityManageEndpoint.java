@@ -66,7 +66,7 @@ public class UserCommunityManageEndpoint {
         if (!authentication.verifyOperation(JWTKit.getUserId())){
             throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
         }
-        entity.setTenantId(JWTKit.getTenantOrgId());
+//        entity.setTenantId(JWTKit.getTenantOrgId());
 
 
         Integer affected = 0;
@@ -103,7 +103,7 @@ public class UserCommunityManageEndpoint {
 
 
         entity.setId(id);
-        entity.setTenantId(JWTKit.getTenantOrgId());
+//        entity.setTenantId(JWTKit.getTenantOrgId());
         // use update flags
         int newOptions = META.UPDATE_CASCADING_DELETION_FLAG;  //default to delete not exist items
         // newOptions = FlagUtil.setFlag(newOptions, META.UPDATE_ALL_COLUMNS_FLAG);

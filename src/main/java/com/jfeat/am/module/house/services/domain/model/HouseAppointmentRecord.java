@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.services.domain.model;
 
+import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAppointment;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 
@@ -11,13 +12,25 @@ import java.util.Date;
 public class HouseAppointmentRecord extends HouseAppointment {
     private Long appointmentTimeStamp;
 
-    private HouseAsset houseAsset;
+    private Long appointmentCreateTimeStamp;
+
+    private HouseAssetModel houseAssetModel;
 
     private String simpleTime;
+
+    private String appointmentStrTime;
 
     private String userAvatar;
 
     private String serverAvatar;
+
+    public Long getAppointmentCreateTimeStamp() {
+        return appointmentCreateTimeStamp;
+    }
+
+    public void setAppointmentCreateTimeStamp(Long appointmentCreateTimeStamp) {
+        this.appointmentCreateTimeStamp = appointmentCreateTimeStamp;
+    }
 
     public String getUserAvatar() {
         return userAvatar;
@@ -35,12 +48,12 @@ public class HouseAppointmentRecord extends HouseAppointment {
         this.serverAvatar = serverAvatar;
     }
 
-    public HouseAsset getHouseAsset() {
-        return houseAsset;
+    public HouseAssetModel getHouseAssetModel() {
+        return houseAssetModel;
     }
 
-    public void setHouseAsset(HouseAsset houseAsset) {
-        this.houseAsset = houseAsset;
+    public void setHouseAssetModel(HouseAssetModel houseAssetModel) {
+        this.houseAssetModel = houseAssetModel;
     }
 
     public Long getAppointmentTimeStamp() {
@@ -57,5 +70,13 @@ public class HouseAppointmentRecord extends HouseAppointment {
 
     public void setSimpleTime(String simpleTime) {
         this.simpleTime = simpleTime;
+    }
+
+    public String getAppointmentStrTime() {
+        return appointmentStrTime;
+    }
+
+    public void setAppointmentStrTime(String appointmentStrTime) {
+        this.appointmentStrTime = appointmentStrTime;
     }
 }

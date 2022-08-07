@@ -410,6 +410,9 @@ public class HouseAppointment extends Model<HouseAppointment> {
 //    已查看
     public static final Integer STATUS_LOOKED=5;
 
+//    暂时搁置
+    public static final Integer STATUS_PENDING=6;
+
     @Override
     protected Serializable pkVal() {
         return this.id;

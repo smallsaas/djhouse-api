@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.services.utility;
 
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.core.model.EndUserTypeSetting;
 import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.crud.base.exception.BusinessCode;
@@ -25,13 +26,13 @@ public class Authentication {
     UserAccountService userAccountService;
 
     /*
-    验证运维身份
+    验证运维和平台用户身份
      */
     public Boolean verifyOperation(Long userId){
         EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(userId);
         if (endpointUserModel!=null && endpointUserModel.getType()!=null){
             List<Integer> userTypeList = userAccountService.getUserTypeList(endpointUserModel.getType());
-            if (userTypeList.contains(SecurityConstants.USER_TYPE_OPERATION) || userTypeList.contains(SecurityConstants.USER_TYPE_ADMIN)){
+            if (userTypeList.contains(EndUserTypeSetting.USER_TYPE_OPERATION) || userTypeList.contains(EndUserTypeSetting.USER_TYPE_ADMIN)){
                 return true;
             }else {
                 return false;
@@ -41,13 +42,13 @@ public class Authentication {
     }
 
     /*
-   验证运维中介
+   验证中介
     */
     public Boolean verifyIntermediary (Long userId){
         EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(userId);
         if (endpointUserModel!=null && endpointUserModel.getType()!=null){
             List<Integer> userTypeList = userAccountService.getUserTypeList(endpointUserModel.getType());
-            if (userTypeList.contains(SecurityConstants.USER_TYPE_INTERMEDIARY)){
+            if (userTypeList.contains(EndUserTypeSetting.USER_TYPE_INTERMEDIARY)){
                 return true;
             }else {
                 return false;
@@ -55,5 +56,6 @@ public class Authentication {
         }
         return false;
     }
+
 
 }

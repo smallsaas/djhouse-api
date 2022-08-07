@@ -1,12 +1,10 @@
 package com.jfeat.am.module.house.api.userself.operations;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.common.annotation.EndUserPermission;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.core.model.EndUserTypeSetting;
 import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
-import com.jfeat.am.module.house.services.domain.model.*;
+import com.jfeat.am.module.house.services.domain.model.EndpointUserRecord;
 import com.jfeat.am.module.house.services.domain.service.EndpointUserService;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.persistence.dao.EndpointUserMapper;
@@ -16,17 +14,12 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
-import com.jfeat.crud.plus.META;
 import com.jfeat.users.account.services.domain.service.UserAccountService;
 import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
-import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
-import io.swagger.annotations.ApiImplicitParam;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /*
@@ -58,23 +51,16 @@ public class UserAccountManageEndpoint {
     返回最近注册的10个用户 提供电话查询
      */
     @GetMapping("/getRecentlyRegisteredUser/{appid}")
+    @EndUserPermission(value = {EndUserTypeSetting.USER_TYPE_OPERATION_STRING,EndUserTypeSetting.USER_TYPE_TENANT_MANAGER_STRING})
     public Tip getRecentlyRegisteredUser(
             @PathVariable("appid") String appid,
             @RequestParam(name = "phone", required = false) String phone,
-            @RequestParam(name = "type", required = false) Integer type) {
+            @RequestParam(name = "type", required = false) Integer type,
+            @RequestParam(value = "search",required = false) String search) {
 
-         /*
-        验证用户是否是运营身份
-         */
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
-
-        if (!authentication.verifyOperation(JWTKit.getUserId())) {
-            throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
-        }
-
-
 
         System.out.println("tenant" + JWTKit.getTenantOrgId());
         List<Long> appids = new ArrayList<>();
@@ -87,10 +73,11 @@ public class UserAccountManageEndpoint {
         record.setPhone(phone);
         record.setType(type);
         record.setAppids(appids);
+        record.setDeleteFlag(0);
 
 
 
-        List<EndpointUserRecord> userRecordList = queryEndpointUserDao.findEndUserPage(null, record, null, null, null, null, null);
+        List<EndpointUserRecord> userRecordList = queryEndpointUserDao.findEndUserPage(null, record, null, search, null, null, null);
 
          /*
          按照创建时间倒序排列

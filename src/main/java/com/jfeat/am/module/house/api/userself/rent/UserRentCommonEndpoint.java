@@ -14,8 +14,10 @@ import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseDesignModelRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseSurroundFacilitiesTypeRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAppointmentService;
 import com.jfeat.am.module.house.services.domain.service.HouseRentAssetService;
+import com.jfeat.am.module.house.services.domain.service.HouseSurroundFacilitiesTypeOverModelService;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseDesignModelModel;
@@ -67,6 +69,12 @@ public class UserRentCommonEndpoint {
 
     @Resource
     StockTagRelationMapper stockTagRelationMapper;
+
+    @Resource
+    QueryHouseSurroundFacilitiesTypeDao queryHouseSurroundFacilitiesTypeDao;
+
+    @Resource
+    HouseSurroundFacilitiesTypeOverModelService houseSurroundFacilitiesTypeOverModelService;
 
 
 
@@ -204,8 +212,13 @@ public class UserRentCommonEndpoint {
                     houseRentAssetModel.setServerName(endpointUserModel.getName());
                 }
             }
+            JSONObject jsonObject = (JSONObject) JSONObject.toJSON(houseRentAssetModel);
+            if (houseAssetModel.getCommunityId()!=null){
+                 jsonObject.put("facilities",houseSurroundFacilitiesTypeOverModelService.getCommunityFacilities(houseAssetModel.getCommunityId()));
+            }
+            return SuccessTip.create(jsonObject);
         }
-        return SuccessTip.create(houseRentAssetModel);
+        return SuccessTip.create();
     }
 
 //    获取全部面积类型

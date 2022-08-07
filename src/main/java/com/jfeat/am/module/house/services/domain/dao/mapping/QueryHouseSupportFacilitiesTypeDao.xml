@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseSupportFacilitiesTypeDao">
+    <sql id="Base_Column_List">
+        t_house_support_facilities_type
+        .
+        id
+        , t_house_support_facilities_type.en_name AS enName, t_house_support_facilities_type.cn_name AS cnName, t_house_support_facilities_type.icon
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseSupportFacilitiesTypeModel">
+        SELECT t_house_support_facilities_type.*
+        FROM t_house_support_facilities_type
+        WHERE t_house_support_facilities_type.id = #{id}
+        GROUP BY t_house_support_facilities_type.id
+    </select>
+
+
+    <select id="findHouseSupportFacilitiesTypePage" resultType="HouseSupportFacilitiesTypeRecord"
+            parameterType="HouseSupportFacilitiesTypeRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_support_facilities_type
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_support_facilities_type.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.enName != null and record.enName!= ''">
+            AND t_house_support_facilities_type.en_name LIKE CONCAT('%',#{record.enName},'%')
+        </if>
+
+
+        <if test="record.cnName != null and record.cnName!= ''">
+            AND t_house_support_facilities_type.cn_name LIKE CONCAT('%',#{record.cnName},'%')
+        </if>
+        <if test="record.icon != null and record.icon!= ''">
+            AND t_house_support_facilities_type.icon LIKE CONCAT('%',#{record.icon},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_support_facilities_type.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_support_facilities_type.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_support_facilities_type.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
+
+<!--    返回item列表-->
+    <sql id="HouseSupportFacilitiesTypeSql">
+        t_house_support_facilities_type.*,
+        t_house_support_facilities.id AS itemId,
+t_house_support_facilities.type_id AS typeId,
+t_house_support_facilities.title,
+t_house_support_facilities.icon AS itemIcon
+    </sql>
+
+    <resultMap id="HouseSupportFacilitiesTypeMapper" type="HouseSupportFacilitiesTypeRecord">
+        <id column="id" property="id" />
+        <result column="en_name" property="enName" />
+        <result column="cn_name" property="cnName" />
+        <result column="icon" property="icon" />
+        <collection property="items" ofType="com.jfeat.am.module.house.services.gen.persistence.model.HouseSupportFacilities">
+            <id column="itemId" property="id" />
+            <result column="typeId" property="typeId" />
+            <result column="title" property="title" />
+            <result column="itemIcon" property="icon" />
+        </collection>
+    </resultMap>
+
+    <select id="findHouseSupportFacilitiesTypeItem" resultMap="HouseSupportFacilitiesTypeMapper"
+            parameterType="HouseSupportFacilitiesTypeRecord">
+        SELECT
+        <include refid="HouseSupportFacilitiesTypeSql"/>
+
+
+        FROM t_house_support_facilities_type
+        LEFT JOIN t_house_support_facilities
+            ON t_house_support_facilities_type.id = t_house_support_facilities.type_id
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_support_facilities_type.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+        <if test="record.enName != null and record.enName!= ''">
+            AND t_house_support_facilities_type.en_name LIKE CONCAT('%',#{record.enName},'%')
+        </if>
+
+
+        <if test="record.cnName != null and record.cnName!= ''">
+            AND t_house_support_facilities_type.cn_name LIKE CONCAT('%',#{record.cnName},'%')
+        </if>
+        <if test="record.icon != null and record.icon!= ''">
+            AND t_house_support_facilities_type.icon LIKE CONCAT('%',#{record.icon},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_support_facilities_type.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_support_facilities_type.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_support_facilities_type.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
+</mapper>

@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.api.userself.rent;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.common.annotation.Permission;
 import com.jfeat.am.core.jwt.JWTKit;
@@ -14,8 +15,10 @@ import com.jfeat.am.module.house.services.domain.service.HouseAppointmentService
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAppointmentModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAppointmentMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAppointment;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
+import com.jfeat.am.module.house.services.utility.Authentication;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -33,6 +36,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -53,6 +58,12 @@ public class UserAppointmentEndpoint {
     @Resource
     QueryHouseAssetDao queryHouseAssetDao;
 
+    @Resource
+    HouseAppointmentMapper houseAppointmentMapper;
+
+    @Resource
+    Authentication authentication;
+
 
     @BusinessLog(name = "HouseAppointment", value = "create HouseAppointment")
     @PostMapping
@@ -64,7 +75,7 @@ public class UserAppointmentEndpoint {
         }
 
         entity.setUserId(JWTKit.getUserId());
-        if (entity.getStatus()==null){
+        if (entity.getStatus() == null) {
             entity.setStatus(HouseAppointment.STATUS_NOT_SET);
         }
 
@@ -72,16 +83,16 @@ public class UserAppointmentEndpoint {
         Calendar afterCalendar = Calendar.getInstance();
         afterCalendar.set(Calendar.DAY_OF_YEAR, afterCalendar.get(Calendar.DAY_OF_YEAR) + 7);
         Date today = afterCalendar.getTime();
-        if (entity.getAppointmentTime().after(today)){
-            throw new BusinessException(5500,"预约时间异常，只能提前7天预约！");
+        if (entity.getAppointmentTime().after(today)) {
+            throw new BusinessException(5500, "预约时间异常，只能提前7天预约！");
         }
 
         Calendar beforeCalendar = Calendar.getInstance();
         beforeCalendar.set(Calendar.DAY_OF_YEAR, beforeCalendar.get(Calendar.DAY_OF_YEAR));
         today = beforeCalendar.getTime();
 //        entity.getAppointmentTime()+entity.getEarliestTime()
-        if (entity.getAppointmentTime().before(today)){
-            throw new BusinessException(5500,"预约时间异常，无法对已经过去的时间进行预约！");
+        if (entity.getAppointmentTime().before(today)) {
+            throw new BusinessException(5500, "预约时间异常，无法对已经过去的时间进行预约！");
         }
 
         Integer affected = 0;
@@ -180,10 +191,10 @@ public class UserAppointmentEndpoint {
         page.setSize(pageSize);
 
         HouseAppointmentRecord record = new HouseAppointmentRecord();
-        EndpointUserModel userModel = queryEndpointUserDao.queryMasterModel(JWTKit.getUserId());
-        if (userModel.getType().equals(SecurityConstants.USER_TYPE_INTERMEDIARY)){
+//        判读是否事中介
+        if (authentication.verifyIntermediary(JWTKit.getUserId())) {
             record.setServerId(JWTKit.getUserId());
-        }else {
+        } else {
             record.setUserId(JWTKit.getUserId());
         }
 
@@ -203,16 +214,18 @@ public class UserAppointmentEndpoint {
         record.setIcon(icon);
 
 //        设置状态
-        if ("notSet".equals(status)){
+        if ("notSet".equals(status)) {
             record.setStatus(HouseAppointment.STATUS_NOT_SET);
-        }else if ("sign".equals(status)){
+        } else if ("sign".equals(status)) {
             record.setStatus(HouseAppointment.STATUS_Sign);
-        }else if ("miss".equals(status)){
+        } else if ("miss".equals(status)) {
             record.setStatus(HouseAppointment.STATUS_MISS);
-        }else if ("contact".equals(status)){
+        } else if ("contact".equals(status)) {
             record.setStatus(HouseAppointment.STATUS_CONTACT);
-        }else if ("looked".equals(status)){
+        } else if ("looked".equals(status)) {
             record.setStatus(HouseAppointment.STATUS_LOOKED);
+        } else if ("pending".equals(status)) {
+            record.setStatus(HouseAppointment.STATUS_PENDING);
         }
 
         record.setFee(fee);
@@ -226,26 +239,8 @@ public class UserAppointmentEndpoint {
         record.setFieldC(fieldC);
 
 //        填写信息电话
-        List<HouseAppointmentRecord> houseAppointmentPage = queryHouseAppointmentDao.findHouseAppointmentPage(page, record, tag, search, orderBy, null, null);
-        for (HouseAppointmentRecord houseAppointmentRecord:houseAppointmentPage){
-            EndpointUserModel user = queryEndpointUserDao.queryMasterModel(houseAppointmentRecord.getUserId());
-            if (user!=null){
-                houseAppointmentRecord.setUserPhone(user.getPhone());
-                houseAppointmentRecord.setUserName(user.getName());
-                houseAppointmentRecord.setUserAvatar(user.getAvatar());
-            }
-
-            EndpointUserModel server = queryEndpointUserDao.queryMasterModel(houseAppointmentRecord.getServerId());
-            if (server!=null){
-                houseAppointmentRecord.setServerPhone(server.getPhone());
-                houseAppointmentRecord.setServerAvatar(server.getAvatar());
-                houseAppointmentRecord.setServerName(server.getName());
-            }
-//            设置房屋地址
-            HouseAsset houseAsset = queryHouseAssetDao.queryMasterModel(houseAppointmentRecord.getAddressId());
-            if (houseAsset!=null){
-                houseAppointmentRecord.setHouseAsset(houseAsset);
-            }
+        List<HouseAppointmentRecord> houseAppointmentPage = queryHouseAppointmentDao.findHouseAppointmentPageDetail(page, record, tag, search, orderBy, null, null);
+        for (HouseAppointmentRecord houseAppointmentRecord : houseAppointmentPage) {
             houseAppointmentRecord.setSimpleTime(DateTimeKit.toTimeline(houseAppointmentRecord.getCreateTime()));
             houseAppointmentRecord.setAppointmentTimeStamp(houseAppointmentRecord.getAppointmentTime().getTime());
         }
@@ -254,31 +249,33 @@ public class UserAppointmentEndpoint {
     }
 
 
-//    修改预约状态
+    //    修改预约状态
     @PutMapping
     public Tip updateHouseAppointment(@RequestBody HouseAppointmentModel entity) {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
-        if (entity.getId()==null  || "".equals(entity.getId())){
-            throw new BusinessException(BusinessCode.BadRequest,"id不能为空");
+        if (entity.getId() == null || "".equals(entity.getId())) {
+            throw new BusinessException(BusinessCode.BadRequest, "id不能为空");
         }
-        if (entity.getStatusStr()==null  || "".equals(entity.getStatusStr())){
-            throw new BusinessException(BusinessCode.BadRequest,"statusStr不能为空");
+        if (entity.getStatusStr() == null || "".equals(entity.getStatusStr())) {
+            throw new BusinessException(BusinessCode.BadRequest, "statusStr不能为空");
         }
         String status = entity.getStatusStr();
         Long id = entity.getId();
         HouseAppointmentModel houseAppointmentModel = queryHouseAppointmentDao.queryMasterModel(id);
-        if ("notSet".equals(status)){
+        if ("notSet".equals(status)) {
             houseAppointmentModel.setStatus(HouseAppointment.STATUS_NOT_SET);
-        }else if ("sign".equals(status)){
+        } else if ("sign".equals(status)) {
             houseAppointmentModel.setStatus(HouseAppointment.STATUS_Sign);
-        }else if ("miss".equals(status)){
+        } else if ("miss".equals(status)) {
             houseAppointmentModel.setStatus(HouseAppointment.STATUS_MISS);
-        }else if ("contact".equals(status)){
+        } else if ("contact".equals(status)) {
             houseAppointmentModel.setStatus(HouseAppointment.STATUS_CONTACT);
-        }else if ("looked".equals(status)){
+        } else if ("looked".equals(status)) {
             houseAppointmentModel.setStatus(HouseAppointment.STATUS_LOOKED);
+        } else if ("pending".equals(status)) {
+            houseAppointmentModel.setStatus(HouseAppointment.STATUS_PENDING);
         }
         return SuccessTip.create(houseAppointmentService.updateMaster(houseAppointmentModel));
     }
@@ -290,6 +287,37 @@ public class UserAppointmentEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
         return SuccessTip.create(houseAppointmentService.deleteMaster(id));
+    }
+
+    //    返回当天预约数据
+    @GetMapping("/geTodayAppointment")
+    public Tip getCurrentAppointment(Page<HouseAppointmentRecord> page,
+                                     @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                     @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String current = simpleDateFormat.format(new Date());
+
+        page.setCurrent(pageNum);
+        page.setSize(pageSize);
+
+        HouseAppointmentRecord record = new HouseAppointmentRecord();
+//        判读是否事中介
+        EndpointUserModel userModel = queryEndpointUserDao.queryMasterModel(JWTKit.getUserId());
+        if (authentication.verifyIntermediary(JWTKit.getUserId())) {
+            record.setServerId(JWTKit.getUserId());
+        } else {
+            record.setUserId(JWTKit.getUserId());
+        }
+        record.setAppointmentStrTime(current);
+
+        List<HouseAppointmentRecord> houseAppointmentPage = queryHouseAppointmentDao.findHouseAppointmentPageDetail(page, record, null,null, null, null, null);
+        for (HouseAppointmentRecord houseAppointmentRecord : houseAppointmentPage) {
+            houseAppointmentRecord.setSimpleTime(DateTimeKit.toTimeline(houseAppointmentRecord.getCreateTime()));
+            houseAppointmentRecord.setAppointmentTimeStamp(houseAppointmentRecord.getAppointmentTime().getTime());
+            houseAppointmentRecord.setAppointmentCreateTimeStamp(houseAppointmentRecord.getCreateTime().getTime());
+        }
+
+        return SuccessTip.create(houseAppointmentService.formatAppointmentList(houseAppointmentPage));
     }
 
 }

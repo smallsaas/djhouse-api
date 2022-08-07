@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseSupportFacilitiesDao">
+    <sql id="Base_Column_List">
+        t_house_support_facilities.id, t_house_support_facilities.type_id AS typeId, t_house_support_facilities.title, t_house_support_facilities.icon
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseSupportFacilitiesModel">
+        SELECT t_house_support_facilities.*
+        FROM t_house_support_facilities
+        WHERE t_house_support_facilities.id = #{id}
+        GROUP BY t_house_support_facilities.id
+    </select>
+
+
+    <select id="findHouseSupportFacilitiesPage" resultType="HouseSupportFacilitiesRecord"
+            parameterType="HouseSupportFacilitiesRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_support_facilities
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_support_facilities.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.typeId != null and record.typeId>0 ">
+            AND t_house_support_facilities.type_id LIKE CONCAT('%',#{record.typeId},'%')
+        </if>
+        <if test="record.title != null and record.title!= ''">
+            AND t_house_support_facilities.title LIKE CONCAT('%',#{record.title},'%')
+        </if>
+        <if test="record.icon != null and record.icon!= ''">
+            AND t_house_support_facilities.icon LIKE CONCAT('%',#{record.icon},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_support_facilities.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_support_facilities.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_support_facilities.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
+</mapper>

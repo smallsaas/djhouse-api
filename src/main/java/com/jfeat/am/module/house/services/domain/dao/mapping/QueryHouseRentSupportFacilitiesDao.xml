@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseRentSupportFacilitiesDao">
+                                                                                                                        <sql id="Base_Column_List">
+                                                                                                                                                                                                                                                                                                                                                t_house_rent_support_facilities.id, t_house_rent_support_facilities.facilities_id AS facilitiesId, t_house_rent_support_facilities.rent_id AS rentId
+    </sql>
+
+    
+    
+    <select id="queryMasterModel" resultType="HouseRentSupportFacilitiesModel">
+       SELECT t_house_rent_support_facilities.*
+       FROM t_house_rent_support_facilities
+       WHERE t_house_rent_support_facilities.id=#{id}
+       GROUP BY t_house_rent_support_facilities.id
+    </select>
+
+
+
+            
+    <select id="findHouseRentSupportFacilitiesPage" resultType="HouseRentSupportFacilitiesRecord" parameterType="HouseRentSupportFacilitiesRecord">
+            SELECT <include refid="Base_Column_List"/>
+
+        
+
+        FROM t_house_rent_support_facilities
+
+        
+        
+        WHERE 1=1
+        
+
+        
+                                                                            <if test="record.id != null and record.id>0 ">
+                                    AND t_house_rent_support_facilities.id LIKE CONCAT('%',#{record.id},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.facilitiesId != null and record.facilitiesId>0 ">
+                                    AND t_house_rent_support_facilities.facilities_id LIKE CONCAT('%',#{record.facilitiesId},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.rentId != null and record.rentId>0 ">
+                                    AND t_house_rent_support_facilities.rent_id LIKE CONCAT('%',#{record.rentId},'%')
+                            </if>
+        
+        <if test="startTime != null">
+            <![CDATA[AND t_house_rent_support_facilities.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_rent_support_facilities.end_time <= DATE(#{endTime}]]>
+        </if>
+            <!--
+        <if test="search != null and search != ''">
+            OR t_house_rent_support_facilities.name LIKE CONCAT('%',#{search},'%')
+        </if>
+        -->
+                                    </select>
+</mapper>

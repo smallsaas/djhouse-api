@@ -7,7 +7,8 @@ t_house_property_building_unit.building_id AS buildingId,
 t_house_property_building_unit.design_model_id AS designModelId,
 t_house_property_building_unit.unit_code AS unitCode,
 t_house_property_building_unit.area as area,
-t_house_property_building_unit.direction AS direction
+t_house_property_building_unit.direction AS direction,
+t_house_property_building_unit.unit_number AS unitNumber
     </sql>
 
 
@@ -51,6 +52,10 @@ t_house_property_building_unit.direction AS direction
 
         <if test="record.direction != null and record.direction!= ''">
             AND t_house_property_building_unit.direction LIKE CONCAT('%',#{record.direction},'%')
+        </if>
+
+        <if test="record.unitNumber != null and record.unitNumber!= ''">
+            AND t_house_property_building_unit.unitNumber LIKE CONCAT('%',#{record.unitNumber},'%')
         </if>
 
         <if test="startTime != null">

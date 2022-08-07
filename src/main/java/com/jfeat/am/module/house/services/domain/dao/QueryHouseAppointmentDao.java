@@ -15,13 +15,13 @@ import java.util.List;
  * Created by Code generator on 2022-07-13
  */
 public interface QueryHouseAppointmentDao extends QueryMasterDao<HouseAppointment> {
-   /*
-    * Query entity list by page
-    */
+    /*
+     * Query entity list by page
+     */
     List<HouseAppointmentRecord> findHouseAppointmentPage(Page<HouseAppointmentRecord> page, @Param("record") HouseAppointmentRecord record,
-                                            @Param("tag") String tag,
-                                            @Param("search") String search, @Param("orderBy") String orderBy,
-                                            @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+                                                          @Param("tag") String tag,
+                                                          @Param("search") String search, @Param("orderBy") String orderBy,
+                                                          @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
     /*
      * Query entity model for details
@@ -33,4 +33,9 @@ public interface QueryHouseAppointmentDao extends QueryMasterDao<HouseAppointmen
      * Query entity model list for slave items
      */
     List<HouseAppointmentModel> queryMasterModelList(@Param("masterId") Object masterId);
+
+    List<HouseAppointmentRecord> findHouseAppointmentPageDetail(Page<HouseAppointmentRecord> page, @Param("record") HouseAppointmentRecord record,
+                                                                @Param("tag") String tag,
+                                                                @Param("search") String search, @Param("orderBy") String orderBy,
+                                                                @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 }
