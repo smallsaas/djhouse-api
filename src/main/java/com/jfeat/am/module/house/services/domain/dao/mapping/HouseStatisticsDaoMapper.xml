@@ -51,4 +51,28 @@
                 SELECT count(*) FROM (select * from t_end_user where type &amp; 4 AND appid in(1,2)) AS t
             ) AS t
     </select>
+
+    <select id="buildingStatistics" resultType="java.lang.Integer">
+        SELECT * FROM
+            (
+-- 房子数
+                SELECT count(*) AS houseNumber FROM t_house_asset WHERE t_house_asset.building_id=6
+                UNION All
+-- 	单元数
+                SELECT count(*) FROM t_house_property_building
+                                         JOIN t_house_property_building_unit ON t_house_property_building_unit.building_id = t_house_property_building.id
+                WHERE t_house_property_building.id=#{buildingId}
+                UNION ALL
+-- 	户型数
+                SELECT COUNT(*) FROM(SELECT count(*) FROM t_house_property_building
+                                                              JOIN t_house_property_building_unit ON t_house_property_building_unit.building_id = t_house_property_building.id
+                                     WHERE t_house_property_building.id=#{buildingId}
+                                     GROUP BY t_house_property_building_unit.design_model_id) as t
+                UNION ALL
+-- 以回迁数
+                SELECT count(*) FROM t_house_asset JOIN t_house_user_asset ON t_house_asset.id=t_house_user_asset.asset_id
+                WHERE t_house_asset.building_id=#{buildingId}
+            ) AS t
+    </select>
+
 </mapper>

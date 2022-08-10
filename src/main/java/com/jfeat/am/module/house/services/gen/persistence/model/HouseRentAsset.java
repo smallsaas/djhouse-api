@@ -12,7 +12,9 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
+import java.util.List;
 
+import com.jfeat.am.module.house.services.domain.model.HouseRentSupportFacilitiesRecord;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -100,7 +102,17 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     @TableField(exist = false)
     private String serverAvatar;
 
+    @ApiModelProperty(value = "出租家居列表清单")
+    @TableField(exist = false)
+    private List<HouseRentSupportFacilitiesRecord> supportFacilitiesList;
 
+    public List<HouseRentSupportFacilitiesRecord> getSupportFacilitiesList() {
+        return supportFacilitiesList;
+    }
+
+    public void setSupportFacilitiesList(List<HouseRentSupportFacilitiesRecord> supportFacilitiesList) {
+        this.supportFacilitiesList = supportFacilitiesList;
+    }
 
     public String getServerPhone() {
         return serverPhone;

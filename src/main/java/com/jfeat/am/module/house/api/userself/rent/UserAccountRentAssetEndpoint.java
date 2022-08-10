@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.api.userself.rent;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao;
@@ -8,9 +9,7 @@ import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
-import com.jfeat.am.module.house.services.domain.service.HouseAssetService;
-import com.jfeat.am.module.house.services.domain.service.HouseRentAssetService;
-import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
+import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
@@ -47,6 +46,17 @@ public class UserAccountRentAssetEndpoint {
     @Resource
     QueryHouseAssetDao queryHouseAssetDao;
 
+
+    @Resource
+    HouseSupportFacilitiesTypeOverModelService houseSupportFacilitiesTypeOverModelService;
+
+    @Resource
+    HouseSupportFacilitiesService houseSupportFacilitiesService;
+
+
+    @Resource
+    HouseSurroundFacilitiesTypeOverModelService houseSurroundFacilitiesTypeOverModelService;
+
     /*
     用户出租自己的房子 填写照片 价格 描述信息
      */
@@ -59,52 +69,7 @@ public class UserAccountRentAssetEndpoint {
         if (entity.getAssetId()==null){
             throw new BusinessException(BusinessCode.EmptyNotAllowed,"assetId不能为空");
         }
-        /*
-        验证房子是否是用户的
-         */
-        HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
-        houseUserAssetRecord.setAssetId(entity.getAssetId());
-        houseUserAssetRecord.setUserId(JWTKit.getUserId());
-        List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord
-        ,null,null,null,null,null,null);
-        if (houseUserAssetRecordList==null || houseUserAssetRecordList.size()==0){
-            throw new BusinessException(BusinessCode.NoPermission,"没有找到房子,请重试");
-        }
-
-        /*
-        设置出租的 小区  户型 面积 房东
-         */
-
-        HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(entity.getAssetId());
-        entity.setArea(houseAssetModel.getArea());
-        entity.setCommunityId(houseAssetModel.getCommunityId());
-        entity.setHouseTypeId(houseAssetModel.getDesignModelId());
-        entity.setLandlordId(JWTKit.getUserId());
-
-        /*
-        查看用户是否出租过房子 出租过就修改 没有就新增
-         */
-         HouseRentAssetRecord houseRentAssetRecord = new HouseRentAssetRecord();
-         houseRentAssetRecord.setAssetId(entity.getAssetId());
-         houseRentAssetRecord.setLandlordId(JWTKit.getUserId());
-         List<HouseRentAssetRecord> list = queryHouseRentAssetDao.findHouseRentAssetPage(null,houseRentAssetRecord,null,null,null,null,null);
-
-         Integer affected = 0;
-         if (list!=null &&list.size()>0){
-             entity.setId(list.get(0).getId());
-             entity.setRentTime(new Date());
-             return SuccessTip.create(houseRentAssetService.updateMaster(entity));
-         }else {
-             try {
-                 affected = houseRentAssetService.createMaster(entity);
-             } catch (DuplicateKeyException e) {
-                 throw new BusinessException(BusinessCode.DuplicateKey);
-             }
-         }
-
-
-
-        return SuccessTip.create(affected);
+        return SuccessTip.create(houseRentAssetService.createUserRentAsset(entity));
     }
 
     /*
@@ -134,6 +99,12 @@ public class UserAccountRentAssetEndpoint {
             HouseRentAsset rentAsset = houseRentAssetService.queryMasterModel(queryHouseRentAssetDao, houseRentAssetRecordList.get(0).getId());
             houseRentAssetRecordList.get(0).setHouseAssetModel(houseAssetModel);
             houseRentAssetRecordList.get(0).setExtra(rentAsset.getExtra());
+            JSONObject jsonObject = (JSONObject) JSONObject.toJSON(houseRentAssetRecordList.get(0));
+            if (houseAssetModel.getCommunityId()!=null){
+                jsonObject.put("facilities",houseSurroundFacilitiesTypeOverModelService.getCommunityFacilities(houseAssetModel.getCommunityId()));
+            }
+            jsonObject.put("supportFacilities",houseSupportFacilitiesService.getRentHouseSupportFacilitiesStatus(houseRentAssetRecordList.get(0).getAssetId(),houseSupportFacilitiesTypeOverModelService.getHouseSupportFacilitiesTypeItem()));
+            return SuccessTip.create(jsonObject);
 
         }
         return SuccessTip.create(houseRentAssetRecordList.get(0));

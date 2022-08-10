@@ -2,10 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetExchangeRequestDao">
     <sql id="Base_Column_List">
-        t_house_asset_exchange_request
-        .
-        id
-        , t_house_asset_exchange_request.user_id AS userId, t_house_asset_exchange_request.asset_id AS assetId, t_house_asset_exchange_request.target_asset_range AS targetAssetRange, t_house_asset_exchange_request.target_asset_range_limit AS targetAssetRangeLimit
+        t_house_asset_exchange_request.id,
+        t_house_asset_exchange_request.user_id AS userId,
+        t_house_asset_exchange_request.asset_id AS assetId,
+        t_house_asset_exchange_request.target_asset_range AS targetAssetRange,
+        t_house_asset_exchange_request.target_asset_range_limit AS targetAssetRangeLimit,
+
+            t_house_property_community.address   AS address,
+               t_house_property_community.id        AS communityId,
+               t_house_property_community.community As communityName,
+
+               t_house_property_building.id         As buildingId,
+               t_house_property_building.code       AS buildingCode,
+               t_house_property_building_unit.id    AS unitId,
+
+               t_house_design_model.id AS designModelId,
+               t_house_design_model.house_type AS houseType,
+               t_house_design_model.house_type_picture AS houseTypePicture,
+               t_house_design_model.area AS area,
+
+                t_house_vr_picture.vr_picture            AS vrPicture,
+               t_house_vr_picture.link                  AS vrLink,
+               t_house_vr_picture.snapshot              AS vrSnapshot,
+
+               t_house_asset.number                 AS number,
+               t_house_asset.floor AS floor,
+
+               t_end_user.name                      AS userName,
+               t_end_user.phone                     AS userPhone,
+               t_end_user.avatar                    AS userAvatar
     </sql>
 
 
@@ -24,6 +49,13 @@
 
 
         FROM t_house_asset_exchange_request
+        JOIN t_end_user ON t_house_asset_exchange_request.user_id=t_end_user.id
+        JOIN t_house_asset ON t_house_asset_exchange_request.asset_id=t_house_asset.id
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community on t_house_property_building.community_id =t_house_property_community.id
+        JOIN t_house_property_building_unit ON t_house_property_building_unit.id = t_house_asset.unit_id
+        left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+        left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
 
 
         WHERE 1=1
@@ -124,16 +156,23 @@
                  JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
                  JOIN t_house_property_community on t_house_property_building.community_id =t_house_property_community.id
                  JOIN t_house_property_building_unit ON t_house_property_building_unit.id = t_house_asset.unit_id
-                 JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+                 left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
     </select>
 
 
 <!--    过滤小区交换记录-->
+    <sql id="Bass_Column_Sql">
+        t_house_asset_exchange_request.id,
+        t_house_asset_exchange_request.user_id AS userId,
+        t_house_asset_exchange_request.asset_id AS assetId,
+        t_house_asset_exchange_request.target_asset_range AS targetAssetRange,
+        t_house_asset_exchange_request.target_asset_range_limit AS targetAssetRangeLimit
+    </sql>
 
     <select id="findHouseAssetExchangeRequestPageFilterCommunity" resultType="HouseAssetExchangeRequestRecord"
             parameterType="HouseAssetExchangeRequestRecord">
         SELECT
-        <include refid="Base_Column_List"/>
+        <include refid="Bass_Column_Sql"/>
 
 
         FROM t_house_asset_exchange_request
@@ -142,17 +181,17 @@
         JOIN t_house_property_community on t_house_property_community.id=t_house_property_building.community_id
         WHERE t_house_property_community.id=#{communityId}
         <if test="record.id != null and record.id>0 ">
-            AND t_house_asset_exchange_request.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_asset_exchange_request.id LIKE CONCAT#{record.id})
         </if>
 
 
         <if test="record.userId != null and record.userId>0 ">
-            AND t_house_asset_exchange_request.user_id LIKE CONCAT('%',#{record.userId},'%')
+            AND t_house_asset_exchange_request.user_id LIKE CONCAT(#{record.userId})
         </if>
 
 
         <if test="record.assetId != null and record.assetId>0 ">
-            AND t_house_asset_exchange_request.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+            AND t_house_asset_exchange_request.asset_id LIKE CONCAT(#{record.assetId})
         </if>
     </select>
 </mapper>

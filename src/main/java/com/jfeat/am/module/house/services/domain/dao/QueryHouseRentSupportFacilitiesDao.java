@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by Code generator on 2022-08-05
+ * Created by Code generator on 2022-08-08
  */
 public interface QueryHouseRentSupportFacilitiesDao extends QueryMasterDao<HouseRentSupportFacilities> {
    /*
@@ -33,4 +33,7 @@ public interface QueryHouseRentSupportFacilitiesDao extends QueryMasterDao<House
      * Query entity model list for slave items
      */
     List<HouseRentSupportFacilitiesModel> queryMasterModelList(@Param("masterId") Object masterId);
+
+//    批量添加出租房屋设施家居
+     int batchInsertHouseRentSupportFacilities(@Param("rentSupportFacilities") List<HouseRentSupportFacilitiesRecord> rentSupportFacilities);
 }

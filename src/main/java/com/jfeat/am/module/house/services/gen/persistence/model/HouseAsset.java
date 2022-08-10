@@ -53,6 +53,8 @@ public class HouseAsset extends Model<HouseAsset> {
     @ApiModelProperty("当为复式时有户型id")
     private Long houseTypeId;
 
+    @ApiModelProperty(value = "门牌编号")
+    private String houseNumber;
 
 
     @ApiModelProperty(value = "社区Id")
@@ -74,7 +76,6 @@ public class HouseAsset extends Model<HouseAsset> {
     @ApiModelProperty(value = "地址")
     @TableField(exist = false)
     private String address;
-
 
 
     @TableField(exist = false)
@@ -102,9 +103,6 @@ public class HouseAsset extends Model<HouseAsset> {
     private BigDecimal area;
 
 
-
-
-
     @ApiModelProperty("用户名")
     @TableField(exist = false)
     private String username;
@@ -116,6 +114,14 @@ public class HouseAsset extends Model<HouseAsset> {
     @ApiModelProperty("用户头像")
     @TableField(exist = false)
     private String userAvatar;
+
+    public String getHouseNumber() {
+        return houseNumber;
+    }
+
+    public void setHouseNumber(String houseNumber) {
+        this.houseNumber = houseNumber;
+    }
 
     public String getUsername() {
         return username;
@@ -140,7 +146,6 @@ public class HouseAsset extends Model<HouseAsset> {
     public void setUserAvatar(String userAvatar) {
         this.userAvatar = userAvatar;
     }
-
 
 
     public Long getCommunityId() {
@@ -301,7 +306,6 @@ public class HouseAsset extends Model<HouseAsset> {
     }
 
 
-
     public String getVrSnapshot() {
         return vrSnapshot;
     }
@@ -348,30 +352,31 @@ public class HouseAsset extends Model<HouseAsset> {
 
     public static final String ASSET_TYPE = "asset_type";
 
+    public static final String HOUSE_NUMBER = "house_number";
     /*
     房子类型
      */
-    public static final Integer ASSET_Type_HOUSE=1;
+    public static final Integer ASSET_Type_HOUSE = 1;
 
     /*
     车位类型
      */
-    public static final Integer ASSET_TYPE_PARKING=2;
+    public static final Integer ASSET_TYPE_PARKING = 2;
 
     /*
     无效房子
      */
-    public static final Integer ASSET_FLAG_INVALID=0;
+    public static final Integer ASSET_FLAG_INVALID = 0;
 
     /*
     平房
      */
-    public static final Integer ASSET_FLAG_BUNGALOW=1;
+    public static final Integer ASSET_FLAG_BUNGALOW = 1;
 
     /*
     复式
      */
-    public static final Integer ASSET_FLAG_MULTIPLE=2;
+    public static final Integer ASSET_FLAG_MULTIPLE = 2;
 
     @Override
     protected Serializable pkVal() {

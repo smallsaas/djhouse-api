@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.api.userself.operations;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.common.annotation.Permission;
 import com.jfeat.am.core.jwt.JWTKit;
@@ -12,6 +13,8 @@ import com.jfeat.am.module.house.services.domain.model.HousePropertyBuildingReco
 import com.jfeat.am.module.house.services.domain.service.HousePropertyBuildingOverModelService;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMapper;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.utility.Authentication;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.crud.base.annotation.BusinessLog;
@@ -55,6 +58,9 @@ public class UserBuildingManageEndpoint {
     @Resource
     UserCommunityAsset userCommunityAsset;
 
+    @Resource
+    HouseAssetMapper houseAssetMapper;
+
 
 
     //    楼栋
@@ -75,12 +81,12 @@ public class UserBuildingManageEndpoint {
         if (!authentication.verifyOperation(JWTKit.getUserId())){
             throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
         }
-//        查当前用户的的小区状态
-        Long userCommunityStatus =  userCommunityAsset.getUserCommunityStatus(JWTKit.getUserId());
-        if (userCommunityStatus==null){
-            throw new BusinessException(BusinessCode.NoPermission,"没有选择小区");
-        }
-        entity.setCommunityId(userCommunityStatus);
+////        查当前用户的的小区状态
+//        Long userCommunityStatus =  userCommunityAsset.getUserCommunityStatus(JWTKit.getUserId());
+//        if (userCommunityStatus==null){
+//            throw new BusinessException(BusinessCode.NoPermission,"没有选择小区");
+//        }
+//        entity.setCommunityId(userCommunityStatus);
 
         Integer affected = 0;
 
@@ -118,7 +124,13 @@ public class UserBuildingManageEndpoint {
             throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
         }
 
+        if (entity.getFloors()==null || entity.getUnits()==null || entity.getFloors()<0 || entity.getUnits()<0){
+            throw new BusinessException(BusinessCode.BadRequest,"楼陈数或者单元数设置有误");
+        }
+
+
         entity.setId(id);
+        entity.setItems(null);
         HousePropertyBuildingModel housePropertyBuildingModel =  queryHousePropertyBuildingDao.queryMasterModel(id);
         // use update flags
         int newOptions = META.UPDATE_CASCADING_DELETION_FLAG;  //default to delete not exist items
@@ -151,6 +163,13 @@ public class UserBuildingManageEndpoint {
 
         if (!authentication.verifyOperation(JWTKit.getUserId())){
             throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
+        }
+
+        QueryWrapper<HouseAsset> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(HouseAsset.BUILDING_ID,id);
+        List<HouseAsset> houseAssetList = houseAssetMapper.selectList(queryWrapper);
+        if (houseAssetList!=null && houseAssetList.size()>0){
+            throw new BusinessException(BusinessCode.DeleteNotEmptyOne,"该楼栋下有房屋,不能删除");
         }
 
         Integer affect = housePropertyBuildingOverModelService.deleteMaster(id);

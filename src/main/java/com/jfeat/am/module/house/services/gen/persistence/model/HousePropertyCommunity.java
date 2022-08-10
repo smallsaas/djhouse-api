@@ -46,6 +46,9 @@ public class HousePropertyCommunity extends Model<HousePropertyCommunity> {
     @ApiModelProperty(value = "邮码")
     private String postcode;
 
+    @ApiModelProperty(value = "停车位")
+    private Integer parkingNumber;
+
     @ApiModelProperty(value = "社区名")
     @TableField(exist = false)
     private String tenant;
@@ -123,11 +126,23 @@ public class HousePropertyCommunity extends Model<HousePropertyCommunity> {
         return this;
     }
 
+    public Integer getParkingNumber() {
+        return parkingNumber;
+    }
+
+    public void setParkingNumber(Integer parkingNumber) {
+        this.parkingNumber = parkingNumber;
+    }
+
     public static final String ID = "id";
 
     public static final String COMMUNITY = "community";
 
     public static final String COMMUNITY_CODE = "community_code";
+
+    public static final String TENANT_ID =  "tenant_Id";
+
+    public static final String PARKING_NUMBER= "parking_number";
 
     @Override
     protected Serializable pkVal() {

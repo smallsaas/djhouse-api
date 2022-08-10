@@ -21,6 +21,16 @@ public class HouseUserAssetRecord extends HouseUserAsset {
 
     private Boolean isExistExchange;
 
+    private List<HouseAssetExchangeRequestRecord> exchangeRequestRecordList;
+
+    public List<HouseAssetExchangeRequestRecord> getExchangeRequestRecordList() {
+        return exchangeRequestRecordList;
+    }
+
+    public void setExchangeRequestRecordList(List<HouseAssetExchangeRequestRecord> exchangeRequestRecordList) {
+        this.exchangeRequestRecordList = exchangeRequestRecordList;
+    }
+
     public Boolean getExistExchange() {
         return isExistExchange;
     }

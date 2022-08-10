@@ -7,7 +7,7 @@ package com.jfeat.am.module.house.services.gen.crud.model;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentSupportFacilities;
 
 /**
- * Created by Code generator on 2022-08-05
+ * Created by Code generator on 2022-08-08
  *  * slaves.size() : 0
  *  * modelpack : $modelpack
  */

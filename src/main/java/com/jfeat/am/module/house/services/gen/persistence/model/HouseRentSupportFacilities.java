@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
  * </p>
  *
  * @author Code generator
- * @since 2022-08-05
+ * @since 2022-08-08
  */
 @TableName("t_house_rent_support_facilities")
 @ApiModel(value="HouseRentSupportFacilities对象", description="")
@@ -28,8 +28,8 @@ public class HouseRentSupportFacilities extends Model<HouseRentSupportFacilities
       @ApiModelProperty(value = "设施id")
       private Long facilitiesId;
 
-      @ApiModelProperty(value = "出租id")
-      private Long rentId;
+      @ApiModelProperty(value = "房屋id")
+      private Long assetId;
 
     
     public Long getId() {
@@ -50,12 +50,12 @@ public class HouseRentSupportFacilities extends Model<HouseRentSupportFacilities
           return this;
       }
     
-    public Long getRentId() {
-        return rentId;
+    public Long getAssetId() {
+        return assetId;
     }
 
-      public HouseRentSupportFacilities setRentId(Long rentId) {
-          this.rentId = rentId;
+      public HouseRentSupportFacilities setAssetId(Long assetId) {
+          this.assetId = assetId;
           return this;
       }
 
@@ -63,7 +63,7 @@ public class HouseRentSupportFacilities extends Model<HouseRentSupportFacilities
 
       public static final String FACILITIES_ID = "facilities_id";
 
-      public static final String RENT_ID = "rent_id";
+      public static final String ASSET_ID = "asset_id";
 
       @Override
     protected Serializable pkVal() {
@@ -75,7 +75,7 @@ public class HouseRentSupportFacilities extends Model<HouseRentSupportFacilities
         return "HouseRentSupportFacilities{" +
               "id=" + id +
                   ", facilitiesId=" + facilitiesId +
-                  ", rentId=" + rentId +
+                  ", assetId=" + assetId +
               "}";
     }
 }

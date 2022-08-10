@@ -9,6 +9,8 @@ import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuild
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
+import com.jfeat.crud.base.exception.BusinessCode;
+import com.jfeat.crud.base.exception.BusinessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,12 +55,19 @@ public class HousePropertyBuildingUnitServiceImpl extends CRUDHousePropertyBuild
         HousePropertyBuildingUnit housePropertyBuildingUnit = housePropertyBuildingUnitMapper.selectById(unitId);
 
         HousePropertyBuilding housePropertyBuilding = housePropertyBuildingMapper.selectById(housePropertyBuildingUnit.getBuildingId());
+//        验证楼层数是否正确
+        if (housePropertyBuilding ==null){
+            throw new BusinessException(BusinessCode.CodeBase,"楼栋出错，未找到");
+        }
+        if (unit.getStartFloors()<=0 || unit.getStartFloors()>unit.getEndFloors() || unit.getEndFloors()>housePropertyBuilding.getFloors()){
+            throw new BusinessException(BusinessCode.CodeBase,"楼层范围设置有误");
+        }
 
         QueryWrapper<HouseAsset> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(HouseAsset.UNIT_ID,unitId);
+        queryWrapper.eq(HouseAsset.UNIT_ID,unitId).between(HouseAsset.FLOOR,unit.getStartFloors(),unit.getEndFloors());
         List<HouseAsset> houseAssetList = houseAssetMapper.selectList(queryWrapper);
         for (HouseAsset houseAsset:houseAssetList){
-            houseAsset.setNumber("".concat(String.valueOf(houseAsset.getFloor())).concat(unit.getUnitNumber()));
+            houseAsset.setHouseNumber("".concat(String.valueOf(houseAsset.getFloor())).concat(unit.getUnitNumber()));
             effect+= houseAssetMapper.updateById(houseAsset);
         }
         return effect;

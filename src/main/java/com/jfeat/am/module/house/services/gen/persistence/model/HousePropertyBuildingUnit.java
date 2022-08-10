@@ -50,6 +50,16 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
     private String unitNumber;
 
     @TableField(exist = false)
+    private Integer floorsCount;
+
+    @TableField(exist = false)
+    private Integer startFloors;
+
+    @TableField(exist = false)
+    private Integer endFloors;
+
+
+    @TableField(exist = false)
     private List<HouseAsset> items;
 
     @TableField(exist = false)
@@ -60,6 +70,30 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
 
     @TableField(exist = false)
     private String houseType;
+
+    public Integer getFloorsCount() {
+        return floorsCount;
+    }
+
+    public void setFloorsCount(Integer floorsCount) {
+        this.floorsCount = floorsCount;
+    }
+
+    public Integer getStartFloors() {
+        return startFloors;
+    }
+
+    public void setStartFloors(Integer startFloors) {
+        this.startFloors = startFloors;
+    }
+
+    public Integer getEndFloors() {
+        return endFloors;
+    }
+
+    public void setEndFloors(Integer endFloors) {
+        this.endFloors = endFloors;
+    }
 
     public String getUnitNumber() {
         return unitNumber;

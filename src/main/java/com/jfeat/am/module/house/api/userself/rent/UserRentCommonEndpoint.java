@@ -11,13 +11,8 @@ import com.jfeat.am.crud.tag.services.persistence.dao.StockTagRelationMapper;
 import com.jfeat.am.crud.tag.services.persistence.model.StockTag;
 import com.jfeat.am.crud.tag.services.persistence.model.StockTagRelation;
 import com.jfeat.am.module.house.services.domain.dao.*;
-import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
-import com.jfeat.am.module.house.services.domain.model.HouseDesignModelRecord;
-import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
-import com.jfeat.am.module.house.services.domain.model.HouseSurroundFacilitiesTypeRecord;
-import com.jfeat.am.module.house.services.domain.service.HouseAppointmentService;
-import com.jfeat.am.module.house.services.domain.service.HouseRentAssetService;
-import com.jfeat.am.module.house.services.domain.service.HouseSurroundFacilitiesTypeOverModelService;
+import com.jfeat.am.module.house.services.domain.model.*;
+import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseDesignModelModel;
@@ -75,6 +70,12 @@ public class UserRentCommonEndpoint {
 
     @Resource
     HouseSurroundFacilitiesTypeOverModelService houseSurroundFacilitiesTypeOverModelService;
+
+    @Resource
+    HouseSupportFacilitiesTypeOverModelService houseSupportFacilitiesTypeOverModelService;
+
+    @Resource
+    HouseSupportFacilitiesService houseSupportFacilitiesService;
 
 
 
@@ -213,9 +214,10 @@ public class UserRentCommonEndpoint {
                 }
             }
             JSONObject jsonObject = (JSONObject) JSONObject.toJSON(houseRentAssetModel);
-            if (houseAssetModel.getCommunityId()!=null){
+            if (houseAssetModel!=null && houseAssetModel.getCommunityId()!=null){
                  jsonObject.put("facilities",houseSurroundFacilitiesTypeOverModelService.getCommunityFacilities(houseAssetModel.getCommunityId()));
             }
+            jsonObject.put("supportFacilities",houseSupportFacilitiesService.getRentHouseSupportFacilitiesStatus(houseRentAssetModel.getAssetId(),houseSupportFacilitiesTypeOverModelService.getHouseSupportFacilitiesTypeItem()));
             return SuccessTip.create(jsonObject);
         }
         return SuccessTip.create();

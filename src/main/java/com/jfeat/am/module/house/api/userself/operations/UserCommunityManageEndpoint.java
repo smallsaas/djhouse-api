@@ -1,22 +1,25 @@
 package com.jfeat.am.module.house.api.userself.operations;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.common.annotation.Permission;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.api.permission.HousePropertyCommunityPermission;
-import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyCommunityDao;
+import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.HousePropertyBuildingRecord;
 import com.jfeat.am.module.house.services.domain.model.HousePropertyCommunityRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseUserCommunityStatusRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetService;
 import com.jfeat.am.module.house.services.domain.service.HousePropertyBuildingOverModelService;
 import com.jfeat.am.module.house.services.domain.service.HousePropertyCommunityOverModelService;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyCommunityModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyCommunityMapper;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyCommunity;
 import com.jfeat.am.module.house.services.utility.Authentication;
+import com.jfeat.am.uaas.tenant.services.gen.persistence.dao.TenantMapper;
+import com.jfeat.am.uaas.tenant.services.gen.persistence.model.Tenant;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -29,6 +32,8 @@ import com.jfeat.users.weChatMiniprogram.constant.SecurityConstants;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,6 +56,15 @@ public class UserCommunityManageEndpoint {
     @Resource
     Authentication authentication;
 
+    @Resource
+    QueryHouseUserCommunityStatusDao queryHouseUserCommunityStatusDao;
+
+    @Resource
+    HousePropertyCommunityMapper housePropertyCommunityMapper;
+
+    @Resource
+    TenantMapper tenantMapper;
+
 
 //    小区
     /*
@@ -63,24 +77,11 @@ public class UserCommunityManageEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
-        if (!authentication.verifyOperation(JWTKit.getUserId())){
-            throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
+        if (!authentication.verifyOperation(JWTKit.getUserId())) {
+            throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
         }
-//        entity.setTenantId(JWTKit.getTenantOrgId());
-
-
-        Integer affected = 0;
-        try {
-            DefaultFilterResult filterResult = new DefaultFilterResult();
-            affected = housePropertyCommunityOverModelService.createMaster(entity, filterResult, null, null);
-            if (affected > 0) {
-                return SuccessTip.create(filterResult.result());
-            }
-        } catch (DuplicateKeyException e) {
-            throw new BusinessException(BusinessCode.DuplicateKey);
-        }
-
-        return SuccessTip.create(affected);
+        entity.setTenantId(JWTKit.getTenantOrgId());
+        return SuccessTip.create(housePropertyCommunityOverModelService.createCommunity(entity));
     }
 
 
@@ -97,8 +98,8 @@ public class UserCommunityManageEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
-        if (!authentication.verifyOperation(JWTKit.getUserId())){
-            throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
+        if (!authentication.verifyOperation(JWTKit.getUserId())) {
+            throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
         }
 
 
@@ -123,19 +124,11 @@ public class UserCommunityManageEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
-        if (!authentication.verifyOperation(JWTKit.getUserId())){
-            throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
+        if (!authentication.verifyOperation(JWTKit.getUserId())) {
+            throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
         }
 
-        HousePropertyBuildingRecord housePropertyBuildingRecord = new HousePropertyBuildingRecord();
-        housePropertyBuildingRecord.setCommunityId(id);
-        List<HousePropertyBuildingRecord> housePropertyBuildingRecords = queryHousePropertyBuildingDao.findHousePropertyBuildingPage(null,housePropertyBuildingRecord,null,
-                null,null,null,null);
-        if (housePropertyBuildingRecords!=null && housePropertyBuildingRecords.size()>0){
-            throw new BusinessException(BusinessCode.CodeBase,"已经配置房屋，不可以删除");
-        }
-
-        return SuccessTip.create(housePropertyCommunityOverModelService.deleteMaster(id));
+        return SuccessTip.create(housePropertyCommunityOverModelService.deleteCommunity(id));
     }
 
 
@@ -168,8 +161,8 @@ public class UserCommunityManageEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
-        if (!authentication.verifyOperation(JWTKit.getUserId())){
-            throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
+        if (!authentication.verifyOperation(JWTKit.getUserId())) {
+            throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
         }
 
         if (orderBy != null && orderBy.length() > 0) {
@@ -202,7 +195,6 @@ public class UserCommunityManageEndpoint {
     }
 
 
-
     @GetMapping("/{id}")
     public Tip getHousePropertyCommunity(@PathVariable Long id) {
          /*
@@ -212,8 +204,8 @@ public class UserCommunityManageEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
-        if (!authentication.verifyOperation(JWTKit.getUserId())){
-            throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
+        if (!authentication.verifyOperation(JWTKit.getUserId())) {
+            throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
         }
 
         CRUDObject<HousePropertyCommunityModel> entity = housePropertyCommunityOverModelService
@@ -229,5 +221,67 @@ public class UserCommunityManageEndpoint {
 
     }
 
+    //    当前小区
+    @GetMapping("/getCurrentCommunity")
+    public Tip getCurrentCoummunity() {
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        HouseUserCommunityStatusRecord communityStatusRecord = new HouseUserCommunityStatusRecord();
+        communityStatusRecord.setUserId(JWTKit.getUserId());
+        Long communityId = null;
+        List<HouseUserCommunityStatusRecord> communityStatusRecordList = queryHouseUserCommunityStatusDao.findHouseUserCommunityStatusPage(null, communityStatusRecord, null, null, null, null, null);
+        if (communityStatusRecordList != null && communityStatusRecordList.size() == 1) {
+            communityId = communityStatusRecordList.get(0).getCommunityId();
+            if (communityId != null) {
+                return SuccessTip.create(housePropertyCommunityMapper.selectById(communityId));
+            }
+        } else {
+            throw new BusinessException(BusinessCode.CodeBase, "未设置小区");
+        }
 
+        return SuccessTip.create();
+    }
+
+    //    当前社区api
+    @GetMapping("/getCurrentTenant")
+    public Tip getCurrentTenant() {
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        Long tenantId = JWTKit.getTenantOrgId();
+       if (tenantId!=null){
+           QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
+           queryWrapper.eq(Tenant.ORG_ID,tenantId);
+           return SuccessTip.create(tenantMapper.selectOne(queryWrapper));
+       }
+        return SuccessTip.create();
+    }
+
+//    小区信息配置
+    @PutMapping("/updateCommunityInfo")
+    public Tip updateCommunityInfo(@RequestBody HousePropertyCommunity entity){
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        if (entity.getParkingNumber()==null || entity.getParkingNumber()<0){
+            throw new BusinessException(BusinessCode.CodeBase,"停车位不能为空或者小于0");
+        }
+
+        HouseUserCommunityStatusRecord communityStatusRecord = new HouseUserCommunityStatusRecord();
+        communityStatusRecord.setUserId(JWTKit.getUserId());
+        Long communityId = null;
+        List<HouseUserCommunityStatusRecord> communityStatusRecordList = queryHouseUserCommunityStatusDao.findHouseUserCommunityStatusPage(null, communityStatusRecord, null, null, null, null, null);
+        if (communityStatusRecordList != null && communityStatusRecordList.size() == 1) {
+            communityId = communityStatusRecordList.get(0).getCommunityId();
+            if (communityId != null) {
+                HousePropertyCommunity community =  housePropertyCommunityMapper.selectById(communityId);
+                community.setParkingNumber(entity.getParkingNumber());
+                return SuccessTip.create(housePropertyCommunityMapper.updateById(community));
+            }
+        } else {
+            throw new BusinessException(BusinessCode.CodeBase, "未设置小区");
+        }
+        return SuccessTip.create();
+    }
 }

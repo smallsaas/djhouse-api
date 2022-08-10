@@ -8,7 +8,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentSupport
  * </p>
  *
  * @author Code generator
- * @since 2022-08-05
+ * @since 2022-08-08
  * Master: serviceOnly
   * Slave : t_house_rent_support_facilities
   */

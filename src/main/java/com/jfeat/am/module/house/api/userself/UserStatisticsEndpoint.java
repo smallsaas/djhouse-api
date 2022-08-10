@@ -11,6 +11,7 @@ import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
 import com.jfeat.am.module.house.services.domain.service.EndpointUserService;
+import com.jfeat.am.module.house.services.domain.service.HouseStatistics;
 import com.jfeat.am.module.house.services.domain.service.HouseUserCommunityStatusService;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.crud.base.exception.BusinessCode;
@@ -53,13 +54,8 @@ public class UserStatisticsEndpoint {
     QueryHouseUserAssetDao queryHouseUserAssetDao;
 
     @Resource
-    QueryHouseEquityDemandSupplyDao queryHouseEquityDemandSupplyDao;
-
-    @Resource
     QueryHouseAssetExchangeRequestDao queryHouseAssetExchangeRequestDao;
 
-    @Resource
-    EndpointUserService endpointUserService;
 
     @Resource
     QueryEndpointUserDao queryEndpointUserDao;
@@ -71,10 +67,10 @@ public class UserStatisticsEndpoint {
     QueryHouseUserDecorateFunitureDao queryHouseUserDecorateFunitureDao;
 
     @Resource
-    QueryProductDao queryProductDao;
+    HouseStatisticsDao houseStatisticsDao;
 
     @Resource
-    HouseStatisticsDao houseStatisticsDao;
+    HouseStatistics houseStatistics;
 
 
     @GetMapping("/houseOverStatistics")
@@ -341,6 +337,7 @@ public class UserStatisticsEndpoint {
     }
 
 
+//    用户统计信息
     @GetMapping("/userOverStatistics")
     public Tip getUserOverStatistics(){
         if (JWTKit.getUserId() == null) {
@@ -386,6 +383,24 @@ public class UserStatisticsEndpoint {
         }
         return SuccessTip.create(endUserPage.get(0));
     }
+
+    @GetMapping("/currentCommunityBuildingStatistics")
+    public Tip getCurrentCommunityBuildingStatistics(){
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+        HouseUserCommunityStatusRecord communityStatusRecord = new HouseUserCommunityStatusRecord();
+        communityStatusRecord.setUserId(JWTKit.getUserId());
+        List<HouseUserCommunityStatusRecord> communityStatusRecordList = queryHouseUserCommunityStatusDao.findHouseUserCommunityStatusPage(null,communityStatusRecord,null,null,null,null,null);
+        if (communityStatusRecordList!=null && communityStatusRecordList.size()==1){
+            Long communityId = communityStatusRecordList.get(0).getCommunityId();
+            if (communityId!=null){
+                return SuccessTip.create(houseStatistics.getCommunityBuildingStatistics(communityId));
+            }
+        }
+        return SuccessTip.create();
+    }
+
 
 
 }

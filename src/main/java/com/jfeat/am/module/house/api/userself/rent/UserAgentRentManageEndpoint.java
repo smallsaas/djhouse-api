@@ -20,9 +20,7 @@ import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
 import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
-import com.jfeat.am.module.house.services.domain.service.HouseAssetService;
-import com.jfeat.am.module.house.services.domain.service.HouseRentAssetService;
-import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
+import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseRentAssetModel;
@@ -81,8 +79,15 @@ public class UserAgentRentManageEndpoint {
     @Resource
     StockTagRelationMapper stockTagRelationMapper;
 
+    @Resource
+    HouseSupportFacilitiesTypeOverModelService houseSupportFacilitiesTypeOverModelService;
+
+    @Resource
+    HouseSupportFacilitiesService houseSupportFacilitiesService;
 
 
+    @Resource
+    HouseSurroundFacilitiesTypeOverModelService houseSurroundFacilitiesTypeOverModelService;
 
 
 
@@ -282,6 +287,12 @@ public class UserAgentRentManageEndpoint {
                     houseRentAssetModel.setServerName(endpointUserModel.getName());
                 }
             }
+            JSONObject jsonObject = (JSONObject) JSONObject.toJSON(houseRentAssetModel);
+            if (houseAssetModel.getCommunityId()!=null){
+                jsonObject.put("facilities",houseSurroundFacilitiesTypeOverModelService.getCommunityFacilities(houseAssetModel.getCommunityId()));
+            }
+            jsonObject.put("supportFacilities",houseSupportFacilitiesService.getRentHouseSupportFacilitiesStatus(houseRentAssetModel.getAssetId(),houseSupportFacilitiesTypeOverModelService.getHouseSupportFacilitiesTypeItem()));
+            return SuccessTip.create(jsonObject);
         }
         return SuccessTip.create(houseRentAssetModel);
     }
