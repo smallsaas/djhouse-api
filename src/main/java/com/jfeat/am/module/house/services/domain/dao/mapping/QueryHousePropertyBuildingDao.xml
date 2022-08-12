@@ -68,6 +68,7 @@ t_house_property_building.multiple_number AS multipleNumber
         <if test="endTime != null">
             <![CDATA[AND t_house_property_building.end_time <= DATE(#{endTime}]]>
         </if>
+        ORDER BY mid(t_house_property_building.code,2,10)+0
         <!--
     <if test="search != null and search != ''">
         OR t_house_property_building.name LIKE CONCAT('%',#{search},'%')

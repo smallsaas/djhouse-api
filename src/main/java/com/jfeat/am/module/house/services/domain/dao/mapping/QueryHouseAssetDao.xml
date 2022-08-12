@@ -152,10 +152,10 @@
     -->
     <insert id="insertAssets" parameterType="java.util.List">
         INSERT INTO t_house_asset
-        (building_id,unit_id,floor,number)
+        (building_id,unit_id,floor,number,house_number)
         values
         <foreach collection="houseAssetList" item="assetItem" separator=",">
-            (#{assetItem.buildingId},#{assetItem.unitId},#{assetItem.floor},#{assetItem.number})
+            (#{assetItem.buildingId},#{assetItem.unitId},#{assetItem.floor},#{assetItem.number},#{assetItem.houseNumber})
         </foreach>
     </insert>
 

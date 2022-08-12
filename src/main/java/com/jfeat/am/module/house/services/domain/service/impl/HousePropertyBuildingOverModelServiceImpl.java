@@ -184,6 +184,7 @@ public class HousePropertyBuildingOverModelServiceImpl extends CRUDHouseProperty
                         housePropertyRoom.setFloor(i);
 
                         housePropertyRoom.setNumber(String.format("%d%02d", i, j));
+                        housePropertyRoom.setHouseNumber(String.format("%d%02d", i, j));
 
                         houseAssetList.add(housePropertyRoom);
                     }
@@ -256,6 +257,7 @@ public class HousePropertyBuildingOverModelServiceImpl extends CRUDHouseProperty
                         housePropertyRoom.setFloor(i);
 
                         housePropertyRoom.setNumber(String.format("%d%02d", i, j));
+                        housePropertyRoom.setHouseNumber(String.format("%d%02d", i, j));
 
                         houseAssetList.add(housePropertyRoom);
                         count++;

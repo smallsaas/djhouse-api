@@ -37,7 +37,7 @@ public class HouseSurroundFacilitiesTypeOverModelServiceImpl extends CRUDHouseSu
         }
         HouseSurroundFacilitiesTypeRecord houseSurroundFacilitiesTypeRecord = new HouseSurroundFacilitiesTypeRecord();
         houseSurroundFacilitiesTypeRecord.setCommunityId(community);
-
+        List<HouseSurroundFacilitiesTypeRecord> list =  queryHouseSurroundFacilitiesTypeDao.findHouseSurroundFacilitiesTypeItem(null,houseSurroundFacilitiesTypeRecord,null,null,null,null,null);
         return queryHouseSurroundFacilitiesTypeDao.findHouseSurroundFacilitiesTypeItem(null,houseSurroundFacilitiesTypeRecord,null,null,null,null,null);
     }
 }
