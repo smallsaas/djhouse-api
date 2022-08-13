@@ -4,75 +4,151 @@
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.HouseStatisticsDao">
 
     <select id="communityStatistics" resultType="java.lang.Integer">
-        SELECT * FROM
-            (
+        SELECT *
+        FROM (
 -- 房子数
-                SELECT count(*) FROM t_house_asset JOIN t_house_property_building on t_house_asset.building_id=t_house_property_building.id JOIN t_house_property_community on t_house_property_community.id=t_house_property_building.community_id WHERE t_house_property_community.id=#{communityId} AND t_house_asset.asset_type=1
-                UNION All
+                 SELECT count(*)
+                 FROM t_house_asset
+                          JOIN t_house_property_building on t_house_asset.building_id = t_house_property_building.id
+                          JOIN t_house_property_community
+                               on t_house_property_community.id = t_house_property_building.community_id
+                 WHERE t_house_property_community.id = #{communityId}
+                   AND t_house_asset.asset_type = 1
+                 UNION All
 
 -- 	无效房子数
-                SELECT count(*) FROM t_house_asset JOIN t_house_property_building on t_house_asset.building_id=t_house_property_building.id JOIN t_house_property_community on t_house_property_community.id=t_house_property_building.community_id WHERE t_house_property_community.id=#{communityId} AND t_house_asset.asset_type=1 AND t_house_asset.asset_flag=0
-                UNION All
+                 SELECT count(*)
+                 FROM t_house_asset
+                          JOIN t_house_property_building on t_house_asset.building_id = t_house_property_building.id
+                          JOIN t_house_property_community
+                               on t_house_property_community.id = t_house_property_building.community_id
+                 WHERE t_house_property_community.id = #{communityId}
+                   AND t_house_asset.asset_type = 1
+                   AND t_house_asset.asset_flag = 0
+                 UNION All
 -- 	平房数
-                SELECT count(*) FROM t_house_asset JOIN t_house_property_building on t_house_asset.building_id=t_house_property_building.id JOIN t_house_property_community on t_house_property_community.id=t_house_property_building.community_id WHERE t_house_property_community.id=#{communityId} AND t_house_asset.asset_type=1 AND t_house_asset.asset_flag=1
-                UNION All
+                 SELECT count(*)
+                 FROM t_house_asset
+                          JOIN t_house_property_building on t_house_asset.building_id = t_house_property_building.id
+                          JOIN t_house_property_community
+                               on t_house_property_community.id = t_house_property_building.community_id
+                 WHERE t_house_property_community.id = #{communityId}
+                   AND t_house_asset.asset_type = 1
+                   AND t_house_asset.asset_flag = 1
+                 UNION All
 -- 	复式数
-                SELECT count(*) FROM t_house_asset JOIN t_house_property_building on t_house_asset.building_id=t_house_property_building.id JOIN t_house_property_community on t_house_property_community.id=t_house_property_building.community_id WHERE t_house_property_community.id=#{communityId} AND t_house_asset.asset_type=1 AND t_house_asset.asset_flag=2
-                UNION All
+                 SELECT count(*)
+                 FROM t_house_asset
+                          JOIN t_house_property_building on t_house_asset.building_id = t_house_property_building.id
+                          JOIN t_house_property_community
+                               on t_house_property_community.id = t_house_property_building.community_id
+                 WHERE t_house_property_community.id = #{communityId}
+                   AND t_house_asset.asset_type = 1
+                   AND t_house_asset.asset_flag = 2
+                 UNION All
 -- 	楼栋数
-                SELECT count(*) FROM t_house_property_building WHERE t_house_property_building.community_id=#{communityId}
-                UNION ALL
+                 SELECT count(*)
+                 FROM t_house_property_building
+                 WHERE t_house_property_building.community_id = #{communityId}
+                 UNION ALL
 -- 	单元数
-                SELECT count(*) FROM t_house_property_community JOIN
-                                     t_house_property_building ON t_house_property_community.id=t_house_property_building.community_id
-                                                                JOIN t_house_property_building_unit ON t_house_property_building_unit.building_id = t_house_property_building.id
-                WHERE t_house_property_community.id=#{communityId}
-                UNION ALL
+                 SELECT count(*)
+                 FROM t_house_property_community
+                          JOIN
+                      t_house_property_building
+                      ON t_house_property_community.id = t_house_property_building.community_id
+                          JOIN t_house_property_building_unit
+                               ON t_house_property_building_unit.building_id = t_house_property_building.id
+                 WHERE t_house_property_community.id = #{communityId}
+                 UNION ALL
 -- 	户型数
-                SELECT COUNT(*) FROM(SELECT count(*) FROM t_house_property_community JOIN
-                                                          t_house_property_building ON t_house_property_community.id=t_house_property_building.community_id
-                                                                                     JOIN t_house_property_building_unit ON t_house_property_building_unit.building_id = t_house_property_building.id
-                                     WHERE t_house_property_community.id=#{communityId}
-                                     GROUP BY t_house_property_building_unit.design_model_id) as t
-                UNION ALL
+                 SELECT COUNT(*)
+                 FROM (SELECT count(*)
+                       FROM t_house_property_community
+                                JOIN
+                            t_house_property_building
+                            ON t_house_property_community.id = t_house_property_building.community_id
+                                JOIN t_house_property_building_unit
+                                     ON t_house_property_building_unit.building_id = t_house_property_building.id
+                       WHERE t_house_property_community.id = #{communityId}
+                       GROUP BY t_house_property_building_unit.design_model_id) as t
+                 UNION ALL
 -- 换房需求数
-                SELECT COUNT(*) FROM t_house_asset_exchange_request WHERE t_house_asset_exchange_request.asset_id IN(SELECT t_house_asset.id FROM t_house_asset JOIN t_house_property_building on t_house_asset.building_id=t_house_property_building.id JOIN t_house_property_community on t_house_property_community.id=t_house_property_building.community_id WHERE t_house_property_community.id=#{communityId})
-                UNION ALL
+                 SELECT COUNT(*)
+                 FROM t_house_asset_exchange_request
+                 WHERE t_house_asset_exchange_request.asset_id IN (SELECT t_house_asset.id
+                                                                   FROM t_house_asset
+                                                                            JOIN t_house_property_building
+                                                                                 on t_house_asset.building_id = t_house_property_building.id
+                                                                            JOIN t_house_property_community
+                                                                                 on t_house_property_community.id = t_house_property_building.community_id
+                                                                   WHERE t_house_property_community.id = #{communityId})
+                 UNION ALL
 -- 	换房记录数
-                SELECT COUNT(*) FROM t_house_asset_match_log WHERE t_house_asset_match_log.owner_asset_id IN(SELECT t_house_asset.id FROM t_house_asset JOIN t_house_property_building on t_house_asset.building_id=t_house_property_building.id JOIN t_house_property_community on t_house_property_community.id=t_house_property_building.community_id WHERE t_house_property_community.id=#{communityId})
-                UNION All
+                 SELECT COUNT(*)
+                 FROM t_house_asset_match_log
+                 WHERE t_house_asset_match_log.owner_asset_id IN (SELECT t_house_asset.id
+                                                                  FROM t_house_asset
+                                                                           JOIN t_house_property_building
+                                                                                on t_house_asset.building_id = t_house_property_building.id
+                                                                           JOIN t_house_property_community
+                                                                                on t_house_property_community.id = t_house_property_building.community_id
+                                                                  WHERE t_house_property_community.id = #{communityId})
+                 UNION All
 -- 	停车位数
-                SELECT count(*) FROM t_house_asset JOIN t_house_property_building on t_house_asset.building_id=t_house_property_building.id JOIN t_house_property_community on t_house_property_community.id=t_house_property_building.community_id WHERE t_house_property_community.id=#{communityId} AND t_house_asset.asset_type=2
-                UNION ALL
-                -- 房东数
-                SELECT count(*) FROM (select * from t_end_user where type &amp; 16 AND appid in(1,2)) AS t
-                UNION all
+                 SELECT count(*)
+                 FROM t_house_asset
+                          JOIN t_house_property_building on t_house_asset.building_id = t_house_property_building.id
+                          JOIN t_house_property_community
+                               on t_house_property_community.id = t_house_property_building.community_id
+                 WHERE t_house_property_community.id = #{communityId}
+                   AND t_house_asset.asset_type = 2
+                 UNION ALL
+                 -- 房东数
+                 SELECT count(*)
+                 FROM (select * from t_end_user where type &amp; 16 AND appid in(1,2)) AS t
+                 UNION all
 -- 供应商数
-                SELECT count(*) FROM (select * from t_end_user where type &amp; 4 AND appid in(1,2)) AS t
-            ) AS t
+                 SELECT count(*)
+                 FROM (select * from t_end_user where type &amp; 4 AND appid in(1,2)) AS t
+             ) AS t
     </select>
 
     <select id="buildingStatistics" resultType="java.lang.Integer">
-        SELECT * FROM
-            (
+        SELECT *
+        FROM (
 -- 房子数
-                SELECT count(*) AS houseNumber FROM t_house_asset WHERE t_house_asset.building_id=6
-                UNION All
+                 SELECT count(*) AS houseNumber
+                 FROM t_house_asset
+                 WHERE t_house_asset.building_id = #{buildingId}
+                 UNION All
 -- 	单元数
-                SELECT count(*) FROM t_house_property_building
-                                         JOIN t_house_property_building_unit ON t_house_property_building_unit.building_id = t_house_property_building.id
-                WHERE t_house_property_building.id=#{buildingId}
-                UNION ALL
+                 SELECT count(*)
+                 FROM t_house_property_building
+                          JOIN t_house_property_building_unit
+                               ON t_house_property_building_unit.building_id = t_house_property_building.id
+                 WHERE t_house_property_building.id = #{buildingId}
+                 UNION ALL
 -- 	户型数
-                SELECT COUNT(*) FROM(SELECT count(*) FROM t_house_property_building
-                                                              JOIN t_house_property_building_unit ON t_house_property_building_unit.building_id = t_house_property_building.id
-                                     WHERE t_house_property_building.id=#{buildingId}
-                                     GROUP BY t_house_property_building_unit.design_model_id) as t
-                UNION ALL
+                 SELECT COUNT(*)
+                 FROM (SELECT count(*)
+                       FROM t_house_property_building
+                                JOIN t_house_property_building_unit
+                                     ON t_house_property_building_unit.building_id = t_house_property_building.id
+                       WHERE t_house_property_building.id = #{buildingId} AND t_house_property_building_unit.design_model_id IS NOT NULL
+                       GROUP BY t_house_property_building_unit.design_model_id) as t
+                 UNION ALL
 -- 以回迁数
-                SELECT count(*) FROM t_house_asset JOIN t_house_user_asset ON t_house_asset.id=t_house_user_asset.asset_id
-                WHERE t_house_asset.building_id=#{buildingId}
-            ) AS t
+                 SELECT count(*)
+                 FROM t_house_asset
+                          JOIN t_house_user_asset ON t_house_asset.id = t_house_user_asset.asset_id
+                 WHERE t_house_asset.building_id = #{buildingId}
+                 UNION ALL
+-- 复式数
+                     SELECT count(*)
+                 FROM t_house_asset
+                 WHERE t_house_asset.building_id=#{buildingId} AND t_house_asset.asset_flag=2
+             ) AS t
     </select>
 
 </mapper>

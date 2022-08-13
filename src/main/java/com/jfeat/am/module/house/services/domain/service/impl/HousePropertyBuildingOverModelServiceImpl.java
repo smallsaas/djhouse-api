@@ -84,6 +84,7 @@ public class HousePropertyBuildingOverModelServiceImpl extends CRUDHouseProperty
 
 //            单元编号为B1-1
             housePropertyBuildingUnit.setUnitCode("".concat(entity.getCode()).concat("-").concat(String.valueOf(i)));
+            housePropertyBuildingUnit.setUnitNumber("".concat(String.valueOf(i)));
             unitList.add(housePropertyBuildingUnit);
 
         }
@@ -221,6 +222,7 @@ public class HousePropertyBuildingOverModelServiceImpl extends CRUDHouseProperty
 
 //            单元编号为B1-1
                     housePropertyBuildingUnit.setUnitCode("".concat(newBuilding.getCode()).concat("-").concat(String.valueOf(i)));
+                    housePropertyBuildingUnit.setUnitNumber("".concat(String.valueOf(i)));
                     unitList.add(housePropertyBuildingUnit);
                 }
                 /*

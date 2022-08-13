@@ -30,6 +30,7 @@ public class UserFunctionManageEndpoint {
 
     @Resource
     HouseMenuMapper houseMenuMapper;
+
     @Resource
     Authentication authentication;
 

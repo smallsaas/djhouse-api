@@ -162,6 +162,9 @@ public class HousePropertyBuildingUnitEndpoint {
 
         for (int i=0;i<housePropertyBuildingUnitPage.size();i++){
             HousePropertyBuildingUnit housePropertyBuildingUnit = queryHousePropertyBuildingUnitDao.queryExtraHouseBuildingUnitByEntity(housePropertyBuildingUnitPage.get(i));
+            if (housePropertyBuildingUnit==null){
+                continue;
+            }
             housePropertyBuildingUnitPage.get(i).setCommunityName(housePropertyBuildingUnit.getCommunityName());
             housePropertyBuildingUnitPage.get(i).setBuildingCode(housePropertyBuildingUnit.getBuildingCode());
             housePropertyBuildingUnitPage.get(i).setHouseType(housePropertyBuildingUnit.getHouseType());

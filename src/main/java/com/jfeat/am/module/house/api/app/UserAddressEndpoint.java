@@ -66,7 +66,7 @@ public class UserAddressEndpoint {
             try {
                 affected = houseUserAddressService.createMaster(houseUserAddress);
             } catch (DuplicateKeyException e) {
-                throw new BusinessException(BusinessCode.DuplicateKey);
+                throw new BusinessException(BusinessCode.DuplicateKey,"改地址已存在");
             }
 
             return SuccessTip.create(affected);

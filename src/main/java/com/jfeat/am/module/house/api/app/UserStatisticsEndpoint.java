@@ -5,11 +5,16 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
 import com.jfeat.am.module.house.services.domain.service.HouseStatistics;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMapper;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingMapper;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingUnitMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
+import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
@@ -45,24 +50,24 @@ public class UserStatisticsEndpoint {
     @Resource
     QueryHouseUserAssetDao queryHouseUserAssetDao;
 
-    @Resource
-    QueryHouseAssetExchangeRequestDao queryHouseAssetExchangeRequestDao;
-
-
-    @Resource
-    QueryEndpointUserDao queryEndpointUserDao;
-
-    @Resource
-    QueryHouseUserDecoratePlanDao queryHouseUserDecoratePlanDao;
-
-    @Resource
-    QueryHouseUserDecorateFunitureDao queryHouseUserDecorateFunitureDao;
 
     @Resource
     HouseStatisticsDao houseStatisticsDao;
 
     @Resource
     HouseStatistics houseStatistics;
+
+    @Resource
+    UserCommunityAsset userCommunityAsset;
+
+    @Resource
+    HousePropertyBuildingMapper housePropertyBuildingMapper;
+
+    @Resource
+    HouseAssetMapper houseAssetMapper;
+
+    @Resource
+    HousePropertyBuildingUnitMapper housePropertyBuildingUnitMapper;
 
 
     @GetMapping("/houseOverStatistics")
@@ -335,45 +340,59 @@ public class UserStatisticsEndpoint {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
-        Long id = JWTKit.getUserId();
-        EndpointUserRecord record = new EndpointUserRecord();
-        record.setId(JWTKit.getUserId());
-        List<EndpointUserRecord> endUserPage = queryEndpointUserDao.findEndUserPage(null, record, null, null, null, null, null);
-        if (endUserPage.size()==1){
-            //            统计资产数
-            HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
-            houseUserAssetRecord.setUserId(id);
-            List<HouseUserAssetRecord>houseUserAssetRecordList =  queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord,null,null,null,null,null,null);
-            endUserPage.get(0).setAssetCount(houseUserAssetRecordList.size());
-
-//            统计户型数
-            Set<String> houseTypeCount = new HashSet<>();
-            for (HouseUserAssetRecord assetRecord:houseUserAssetRecordList){
-                houseTypeCount.add(assetRecord.getHouseType());
-            }
-            endUserPage.get(0).setHouseTypeCount(houseTypeCount.size());
-
-//            统计置换需求
-            HouseAssetExchangeRequestRecord houseAssetExchangeRequestRecord = new HouseAssetExchangeRequestRecord();
-            houseAssetExchangeRequestRecord.setUserId(id);
-            List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecords = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null,houseAssetExchangeRequestRecord,null,null,null,null,null);
-            endUserPage.get(0).setExchangeCount(houseAssetExchangeRequestRecords.size());
-
-            HouseUserDecoratePlanRecord houseUserDecoratePlanRecord = new HouseUserDecoratePlanRecord();
-            houseUserDecoratePlanRecord.setUserId(id);
-            houseUserDecoratePlanRecord.setOptionType(2);
-            int bulkCount=0;
-            List<HouseUserDecoratePlanRecord> houseUserDecoratePlanRecordList = queryHouseUserDecoratePlanDao.findHouseUserDecoratePlanPage(null,houseUserDecoratePlanRecord,null,null,null,null,null);
-            for (int j=0;j<houseUserDecoratePlanRecordList.size();j++){
-                HouseUserDecorateFunitureRecord houseUserDecorateFunitureRecord = new HouseUserDecorateFunitureRecord();
-                houseUserDecorateFunitureRecord.setUserId(id);
-                houseUserDecorateFunitureRecord.setDecoratePlanId(houseUserDecoratePlanRecordList.get(j).getDecoratePlanId());
-                List<HouseUserDecorateFunitureRecord> houseUserDecorateFunitureRecordList = queryHouseUserDecorateFunitureDao.findHouseUserDecorateFuniturePage(null,houseUserDecorateFunitureRecord,null,null,null,null,null);
-                bulkCount+=houseUserDecorateFunitureRecordList.size();
-            }
-            endUserPage.get(0).setBulkCount(bulkCount);
+        Long communityId =  userCommunityAsset.getUserCommunityStatus(JWTKit.getUserId());
+        if (communityId==null){
+            throw new BusinessException(BusinessCode.CodeBase,"小区未找到");
         }
-        return SuccessTip.create(endUserPage.get(0));
+
+        QueryWrapper<HousePropertyBuilding> buildingQueryWrapper = new QueryWrapper<>();
+        buildingQueryWrapper.eq(HousePropertyBuilding.COMMUNITY_ID,communityId);
+        List<HousePropertyBuilding> buildingList = housePropertyBuildingMapper.selectList(buildingQueryWrapper);
+
+        List<Long> buildingIds = new ArrayList<>();
+        for (HousePropertyBuilding building:buildingList){
+            buildingIds.add(building.getId());
+        }
+        //        我的回迁数
+        List<HouseAsset> houseAssetList = new ArrayList<>();
+        if (buildingIds!=null && buildingIds.size()>0){
+            String sql = "SELECT t_house_user_asset.asset_id FROM t_house_user_asset WHERE t_house_user_asset.user_id=".concat(String.valueOf(JWTKit.getUserId()));
+            QueryWrapper<HouseAsset> houseAssetQueryWrapper = new QueryWrapper<>();
+            houseAssetQueryWrapper.in(HouseAsset.BUILDING_ID,buildingIds).inSql(HouseAsset.ID,sql);
+            houseAssetList =  houseAssetMapper.selectList(houseAssetQueryWrapper);
+        }
+
+
+        List<Long> unitIds = new ArrayList<>();
+        for (HouseAsset houseAsset:houseAssetList){
+            if (houseAsset.getUnitId()!=null && !unitIds.contains(houseAsset.getUnitId())){
+                unitIds.add(houseAsset.getUnitId());
+            }
+        }
+
+//        单元统计
+        List<HousePropertyBuildingUnit> unitList=new ArrayList<>();
+        if (unitIds!=null && unitIds.size()>0){
+            QueryWrapper<HousePropertyBuildingUnit> unitQueryWrapper = new QueryWrapper<>();
+            unitQueryWrapper.in(HousePropertyBuildingUnit.ID,unitIds);
+            unitList = housePropertyBuildingUnitMapper.selectList(unitQueryWrapper);
+
+        }
+
+
+//        户型统计
+        List<Long> houseTypeIds = new ArrayList<>();
+        for (HousePropertyBuildingUnit unit:unitList){
+            if (unit.getDesignModelId()!=null && !houseTypeIds.contains(unit.getDesignModelId())){
+                houseTypeIds.add(unit.getDesignModelId());
+            }
+        }
+        JSONObject resultJson = new JSONObject();
+        resultJson.put("assetCount",houseAssetList.size());
+        resultJson.put("houseTypeCount",houseTypeIds.size());
+        resultJson.put("bulkCount",0);
+
+        return SuccessTip.create(resultJson);
     }
 
     @GetMapping("/currentCommunityBuildingStatistics")

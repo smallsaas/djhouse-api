@@ -17,7 +17,7 @@ public interface HouseStatisticsDao {
     /**
      *
      * @param buildingId 楼栋id
-     * @return 返回list 0-房子数 1-单元数 2-户型数 3-以回迁数
+     * @return 返回list 0-房子数 1-单元数 2-户型数 3-以回迁数 4-复式数
      *      * 如果后面需要继续添加统计信息 请在后面加 不要在已有的查询语句中加
      */
     List<Integer> buildingStatistics(@Param("buildingId") Long buildingId);
