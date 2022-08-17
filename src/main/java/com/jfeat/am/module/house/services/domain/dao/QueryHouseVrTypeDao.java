@@ -33,4 +33,9 @@ public interface QueryHouseVrTypeDao extends QueryMasterDao<HouseVrType> {
      * Query entity model list for slave items
      */
     List<HouseVrTypeModel> queryMasterModelList(@Param("masterId") Object masterId);
+
+    List<HouseVrType> queryHouseVrTypeListWithItem(Page<HouseVrType> page,@Param("record") HouseVrType record,@Param("tag") String tag,
+                                                   @Param("search") String search, @Param("orderBy") String orderBy,
+                                                   @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
 }

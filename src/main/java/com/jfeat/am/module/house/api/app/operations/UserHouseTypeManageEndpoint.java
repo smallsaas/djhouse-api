@@ -4,8 +4,10 @@ package com.jfeat.am.module.house.api.app.operations;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseDesignModelMapper;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingUnitMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseVrPictureMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseDesignModel;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseVrPicture;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.crud.base.exception.BusinessCode;
@@ -31,6 +33,9 @@ public class UserHouseTypeManageEndpoint {
 
     @Resource
     HouseVrPictureMapper houseVrPictureMapper;
+
+    @Resource
+    HousePropertyBuildingUnitMapper housePropertyBuildingUnitMapper;
 
     /**
      * 获取小区户型 当小区id为空时 获取当前小区信息
@@ -76,6 +81,7 @@ public class UserHouseTypeManageEndpoint {
         if (communityId==null){
             throw new BusinessException(BusinessCode.CodeBase,"没有找到当前小区信息");
         }
+        entity.setId(id);
         entity.setCommunityId(communityId);
 
         return SuccessTip.create(houseDesignModelMapper.updateById(entity));
@@ -109,6 +115,12 @@ public class UserHouseTypeManageEndpoint {
     public Tip deleteHouseType(@PathVariable("id") Long id){
         if (JWTKit.getUserId()==null){
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+        QueryWrapper<HousePropertyBuildingUnit> unitQueryWrapper = new QueryWrapper<>();
+        unitQueryWrapper.eq(HousePropertyBuildingUnit.DESIGN_MODEL_ID,id);
+        List<HousePropertyBuildingUnit> unitList = housePropertyBuildingUnitMapper.selectList(unitQueryWrapper);
+        if (unitList!=null && unitList.size()>0){
+            throw new BusinessException(BusinessCode.CodeBase,"已有单元绑定该户型,不能删除");
         }
         return SuccessTip.create(houseDesignModelMapper.deleteById(id));
     }

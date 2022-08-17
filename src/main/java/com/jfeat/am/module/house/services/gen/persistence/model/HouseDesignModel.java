@@ -593,6 +593,8 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
 
     public static final String COMMUNITY_ID = "community_id";
 
+    public static final String VR_ID = "vr_id";
+
     @Override
     protected Serializable pkVal() {
         return this.id;

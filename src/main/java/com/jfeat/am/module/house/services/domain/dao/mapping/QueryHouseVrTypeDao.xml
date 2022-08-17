@@ -72,4 +72,89 @@
     </if>
     -->
     </select>
+
+
+    <sql id="House_Vr_Type_Details_Sql">
+        t_house_vr_type.*,
+        t_house_vr_picture.id AS itemId,
+        t_house_vr_picture.name AS itemName,
+        t_house_vr_picture.link,
+        t_house_vr_picture.vr_picture AS vrPicture,
+        t_house_vr_picture.snapshot,
+        t_house_vr_picture.star,
+        t_house_vr_picture.bedrooms,
+        t_house_vr_picture.style,
+        t_house_vr_picture.type_option AS typeOption,
+        t_house_vr_picture.note,
+        t_house_vr_picture.status
+    </sql>
+
+    <resultMap id="HouseVrTypeMap" type="HouseVrTypeRecord">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="org_id" property="orgId" />
+        <collection property="items" ofType="com.jfeat.am.module.house.services.gen.persistence.model.HouseVrPicture">
+            <id column="itemId" property="id" />
+            <result column="itemName" property="name" />
+            <result column="link" property="link" />
+            <result column="vr_picture" property="vrPicture" />
+            <result column="snapshot" property="snapshot" />
+            <result column="star" property="star" />
+            <result column="bedrooms" property="bedrooms" />
+            <result column="style" property="style" />
+            <result column="type_option" property="typeOption" />
+            <result column="note" property="note" />
+            <result column="status" property="status" />
+        </collection>
+    </resultMap>
+
+
+
+
+    <select id="queryHouseVrTypeListWithItem" resultMap="HouseVrTypeMap" parameterType="HouseVrType">
+        SELECT
+        <include refid="House_Vr_Type_Details_Sql"/>
+
+
+        FROM t_house_vr_type
+        LEFT JOIN t_house_vr_picture ON t_house_vr_type.id=t_house_vr_picture.type_id
+
+
+        <if test="record.orgId > 0">
+            ,(<include refid="QueryOwnedOrgIds"></include>) AS ownedOrgIds
+        </if>
+
+        WHERE 1=1
+        <if test="record.orgId > 0">
+            AND t_house_vr_type.org_id = ownedOrgIds.id
+        </if>
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_vr_type.id = #{record.id}
+        </if>
+        <if test="record.communityId != null and record.communityId>0 ">
+            AND t_house_vr_type.community_id = #{record.communityId}
+        </if>
+        <if test="record.name != null and record.name!= ''">
+            AND t_house_vr_type.name LIKE CONCAT('%',#{record.name},'%')
+        </if>
+
+
+        <if test="record.orgId != null and record.orgId>0 ">
+            AND t_house_vr_type.org_id IN (<include refid="QueryOwnedOrgIds"/>)
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_vr_type.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_vr_type.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_vr_type.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
 </mapper>

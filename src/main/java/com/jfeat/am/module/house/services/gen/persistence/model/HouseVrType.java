@@ -1,11 +1,13 @@
 package com.jfeat.am.module.house.services.gen.persistence.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
+import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -35,6 +37,9 @@ public class HouseVrType extends Model<HouseVrType> {
 
     @ApiModelProperty(value = "小区id")
     private Long communityId;
+
+    @TableField(exist = false)
+    private List<HouseVrPicture> items;
 
 
     public Long getId() {
@@ -70,6 +75,14 @@ public class HouseVrType extends Model<HouseVrType> {
 
     public void setCommunityId(Long communityId) {
         this.communityId = communityId;
+    }
+
+    public List<HouseVrPicture> getItems() {
+        return items;
+    }
+
+    public void setItems(List<HouseVrPicture> items) {
+        this.items = items;
     }
 
     public static final String ID = "id";

@@ -13,8 +13,10 @@ import com.jfeat.am.module.house.services.domain.model.HouseVrTypeRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseVrPictureService;
 import com.jfeat.am.module.house.services.domain.service.HouseVrTypeService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseVrPictureModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseDesignModelMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseVrPictureMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseVrTypeMapper;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseDesignModel;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseVrPicture;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseVrType;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
@@ -58,6 +60,9 @@ public class UserVrManageEndpoint {
     @Resource
     HouseVrTypeMapper houseVrTypeMapper;
 
+    @Resource
+    HouseDesignModelMapper houseDesignModelMapper;
+
 
 
     @PostMapping("/vrCategory")
@@ -100,6 +105,12 @@ public class UserVrManageEndpoint {
     public Tip deleteHouseVrType(@PathVariable Long id) {
         if (JWTKit.getUserId()==null){
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+        QueryWrapper<HouseVrPicture> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(HouseVrPicture.TYPE_ID,id);
+        List<HouseVrPicture> houseVrPictureList = houseVrPictureMapper.selectList(queryWrapper);
+        if (houseVrPictureList!=null && houseVrPictureList.size()>0){
+            throw new BusinessException(BusinessCode.CodeBase,"该类型已有VR图不可删除");
         }
         return SuccessTip.create(houseVrTypeService.deleteMaster(id));
     }
@@ -147,6 +158,19 @@ public class UserVrManageEndpoint {
         page.setRecords(houseVrTypePage);
 
         return SuccessTip.create(page);
+    }
+
+    @GetMapping("/getHouseVrTypeListItem")
+    public Tip getHouseVrTypeListItem(@RequestParam(name = "communityId",required = true) Long communityId){
+
+        HouseVrType record = new HouseVrType();
+        record.setCommunityId(communityId);
+        List<HouseVrType> houseVrTypePage = queryHouseVrTypeDao.queryHouseVrTypeListWithItem(null, record, null, null, null, null, null);
+
+
+
+        return SuccessTip.create(houseVrTypePage);
+
     }
 
     @GetMapping("/vrCategory/getCurrentCommunity")
@@ -197,8 +221,6 @@ public class UserVrManageEndpoint {
                                        @RequestParam(name = "search", required = false) String search,
 
                                        @RequestParam(name = "name", required = false) String name,
-
-                                       @RequestParam(name = "communityId",required = false) Long communityId,
 
                                        @RequestParam(name = "typeId",required = false) Long typeId,
 
@@ -252,6 +274,8 @@ public class UserVrManageEndpoint {
 
 
 
+
+
     @GetMapping("/vrPicture/{id}")
     public Tip getHouseVrPicture(@PathVariable Long id) {
         return SuccessTip.create(houseVrPictureService.queryMasterModel(queryHouseVrPictureDao, id));
@@ -267,6 +291,14 @@ public class UserVrManageEndpoint {
 
     @DeleteMapping("/vrPicture/{id}")
     public Tip deleteHouseVrPicture(@PathVariable Long id) {
+
+        QueryWrapper<HouseDesignModel> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(HouseDesignModel.VR_ID,id);
+        List<HouseDesignModel> houseDesignModelList = houseDesignModelMapper.selectList(queryWrapper);
+        if (houseDesignModelList!=null && houseDesignModelList.size()>0){
+            throw new BusinessException(BusinessCode.CodeBase,"已有户型绑定改VR,不可删除");
+        }
+
         return SuccessTip.create(houseVrPictureService.deleteMaster(id));
     }
 

@@ -131,7 +131,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
             for (HouseAssetMatchLogRecord houseAssetMatchLogRecord:houseAssetMatchLogPage){
                 HouseAssetModel matchHouseAsset = queryHouseAssetDao.queryMasterModel(houseAssetMatchLogRecord.getMathchedAssetId());
                 if (matchHouseAsset!=null){
-                    ids.add(Integer.valueOf(matchHouseAsset.getNumber()));
+                    ids.add(Integer.valueOf(matchHouseAsset.getHouseNumber()));
                 }
             }
 

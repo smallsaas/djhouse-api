@@ -19,9 +19,11 @@ import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingModel;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingMapper;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchangeRequest;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -64,6 +66,9 @@ public class UserAssetExchange {
 
     @Resource
     HousePropertyBuildingMapper housePropertyBuildingMapper;
+
+    @Resource
+    HouseUserAssetMapper houseUserAssetMapper;
 
 
 //    新建或者修改资产交换记录并匹配
@@ -237,6 +242,14 @@ public class UserAssetExchange {
                 null,null);
 
         HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(assetId);
+        QueryWrapper<HouseUserAsset> houseAssetQueryWrapper = new QueryWrapper<>();
+        houseAssetQueryWrapper.eq(HouseUserAsset.USER_ID,JWTKit.getUserId());
+
+        List<HouseUserAsset> houseUserAssetList = houseUserAssetMapper.selectList(houseAssetQueryWrapper);
+        List<Long> userAssetIds = new ArrayList<>();
+        for (HouseUserAsset userAsset:houseUserAssetList){
+            userAssetIds.add(userAsset.getAssetId());
+        }
         /*
         查询匹配需求记录
          */
@@ -272,7 +285,7 @@ public class UserAssetExchange {
             /*
             是否是自己的
              */
-            if (houseAssetRecordList.get(i).getId().equals(houseAssetModel.getId())){
+            if (userAssetIds.contains(houseAssetRecordList.get(i).getId())){
                 houseAssetRecordList.get(i).setSelf(true);
             }else {
                 houseAssetRecordList.get(i).setSelf(false);
