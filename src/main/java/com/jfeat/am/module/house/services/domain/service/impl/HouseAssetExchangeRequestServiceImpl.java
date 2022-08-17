@@ -1,4 +1,5 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
+import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetExchangeRequestDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetMatchLogDao;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetExchangeRequestService;
@@ -87,6 +88,7 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
                 houseAssetMatchLog.setMathchedAssetId(houseAssetExchangeRequest.getAssetId());
                 houseAssetMatchLog.setMatchedUserId(houseAssetExchangeRequest.getUserId());
                 houseAssetMatchLog.setCreateTime(new Date());
+                houseAssetMatchLog.setOrgId(JWTKit.getOrgId());
                 houseAssetMatchLogService.createMaster(houseAssetMatchLog);
 
                 HouseAssetMatchLog houseAssetMatchLog1 = new HouseAssetMatchLog();
@@ -95,6 +97,7 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
                 houseAssetMatchLog1.setMathchedAssetId(assetExchangeRequest.getAssetId());
                 houseAssetMatchLog1.setMatchedUserId(assetExchangeRequest.getUserId());
                 houseAssetMatchLog1.setCreateTime(new Date());
+                houseAssetMatchLog.setOrgId(JWTKit.getOrgId());
                 houseAssetMatchLogService.createMaster(houseAssetMatchLog1);
             }
         }

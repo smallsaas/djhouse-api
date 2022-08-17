@@ -96,22 +96,18 @@
                                                                   WHERE t_house_property_community.id = #{communityId})
                  UNION All
 -- 	停车位数
-                 SELECT count(*)
-                 FROM t_house_asset
-                          JOIN t_house_property_building on t_house_asset.building_id = t_house_property_building.id
-                          JOIN t_house_property_community
-                               on t_house_property_community.id = t_house_property_building.community_id
+                 select t_house_property_community.parking_number
+                 from t_house_property_community
                  WHERE t_house_property_community.id = #{communityId}
-                   AND t_house_asset.asset_type = 2
-                 UNION ALL
-                 -- 房东数
-                 SELECT count(*)
-                 FROM (select * from t_end_user where type &amp; 16 AND appid in(1,2)) AS t
-                 UNION all
+        UNION All
+
+-- 房东数
+        SELECT count(*)
+        FROM (select * from t_end_user where type &amp; 16 AND appid in(1,2)) AS t
+        UNION all
 -- 供应商数
-                 SELECT count(*)
-                 FROM (select * from t_end_user where type &amp; 4 AND appid in(1,2)) AS t
-             ) AS t
+        SELECT count(*)
+        FROM (select * from t_end_user where type &amp; 4 AND appid in(1,2)) AS t ) AS t
     </select>
 
     <select id="buildingStatistics" resultType="java.lang.Integer">
@@ -135,7 +131,8 @@
                        FROM t_house_property_building
                                 JOIN t_house_property_building_unit
                                      ON t_house_property_building_unit.building_id = t_house_property_building.id
-                       WHERE t_house_property_building.id = #{buildingId} AND t_house_property_building_unit.design_model_id IS NOT NULL
+                       WHERE t_house_property_building.id = #{buildingId}
+                         AND t_house_property_building_unit.design_model_id IS NOT NULL
                        GROUP BY t_house_property_building_unit.design_model_id) as t
                  UNION ALL
 -- 以回迁数
@@ -145,9 +142,10 @@
                  WHERE t_house_asset.building_id = #{buildingId}
                  UNION ALL
 -- 复式数
-                     SELECT count(*)
+                 SELECT count(*)
                  FROM t_house_asset
-                 WHERE t_house_asset.building_id=#{buildingId} AND t_house_asset.asset_flag=2
+                 WHERE t_house_asset.building_id = #{buildingId}
+                   AND t_house_asset.asset_flag = 2
              ) AS t
     </select>
 

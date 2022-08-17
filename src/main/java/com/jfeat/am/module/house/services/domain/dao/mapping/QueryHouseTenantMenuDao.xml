@@ -77,21 +77,18 @@
 
     <update id="updateTenantMenus">
         update t_house_tenant_menu
-        <trim prefix="set" suffixOverrides=",">
-            <foreach collection="houseTenantMenuList" item="record" index="index" separator=";">
-                <if test="record.orgId != null and record.orgId>0 ">
-                    t_house_tenant_menu.org_id = #{record.orgId},
-                </if>
-
-                <if test="record.menuId != null and record.menuId>0 ">
-                     t_house_tenant_menu.menu_id = #{record.menuId},
-                </if>
-                <if test="record.enabled != null and record.enabled>=0 ">
-                    t_house_tenant_menu.enabled = #{record.enabled}
-                </if>
-                where t_house_tenant_menu.id = #{record.id}
-            </foreach>
-
-        </trim>
+        <set>
+            <trim prefix="enabled =case" suffix="end,">
+                <foreach collection="houseTenantMenuList" item="record" index="index">
+                    <if test="record.enabled != null and record.enabled>=0 ">
+                       when id = #{record.id} then #{record.enabled}
+                    </if>
+                </foreach>
+            </trim>
+        </set>
+        where id in
+        <foreach collection="houseTenantMenuList" item="record" index="index" separator="," open="(" close=")">
+            #{record.id}
+        </foreach>
     </update>
 </mapper>

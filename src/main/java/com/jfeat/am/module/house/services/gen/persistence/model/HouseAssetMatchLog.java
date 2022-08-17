@@ -34,6 +34,21 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
     @ApiModelProperty(value = "物主用户id")
     private Long ownerUserId;
 
+    @ApiModelProperty(value = "物主用户的资产id")
+    private Long ownerAssetId;
+
+
+    @ApiModelProperty(value = "匹配到的用户id")
+    private Long matchedUserId;
+
+
+    @ApiModelProperty(value = "匹配到的用户资产id")
+    private Long mathchedAssetId;
+
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
+
+    private Long orgId;
 
     @ApiModelProperty(value = "物主名字")
     @TableField(exist = false)
@@ -46,9 +61,6 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
     @TableField(exist = false)
     private String ownerAvatar;
 
-    @ApiModelProperty(value = "物主用户的资产id")
-    private Long ownerAssetId;
-
     @TableField(exist = false)
     private String ownerCommunity;
 
@@ -57,10 +69,6 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
 
     @TableField(exist = false)
     private String ownerNumber;
-
-
-    @ApiModelProperty(value = "匹配到的用户id")
-    private Long matchedUserId;
 
     @ApiModelProperty(value = "物主名字")
     @TableField(exist = false)
@@ -73,9 +81,6 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
     @TableField(exist = false)
     private String matchedAvatar;
 
-    @ApiModelProperty(value = "匹配到的用户资产id")
-    private Long mathchedAssetId;
-
     @TableField(exist = false)
     private String matchedCommunity;
 
@@ -85,9 +90,14 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
     @TableField(exist = false)
     private String matchedNumber;
 
-    @ApiModelProperty(value = "创建时间")
-    private Date createTime;
 
+    public Long getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
+    }
 
     public Long getId() {
         return id;

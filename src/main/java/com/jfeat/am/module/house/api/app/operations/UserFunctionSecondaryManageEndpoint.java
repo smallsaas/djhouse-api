@@ -46,8 +46,8 @@ public class UserFunctionSecondaryManageEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
-        if (JWTKit.getOrgId()==null){
-            throw new BusinessException(BusinessCode.NoPermission,"社区不能为空");
+        if (JWTKit.getOrgId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "社区不能为空");
         }
         Long orgId = JWTKit.getOrgId();
 
@@ -60,17 +60,17 @@ public class UserFunctionSecondaryManageEndpoint {
 
 //        查询当前社区功能状态开启情况
         QueryWrapper<HouseTenantMenu> tenantMenuQueryWrapper = new QueryWrapper<>();
-        tenantMenuQueryWrapper.eq(HouseTenantMenu.ORG_ID,orgId);
+        tenantMenuQueryWrapper.eq(HouseTenantMenu.ORG_ID, orgId);
         List<HouseTenantMenu> tenantMenus = houseTenantMenuMapper.selectList(tenantMenuQueryWrapper);
 
 
-        for (HouseMenuRecord houseMenuRecord:houseMenuPage){
-            for (HouseTenantMenu houseTenantMenu:tenantMenus){
+        for (HouseMenuRecord houseMenuRecord : houseMenuPage) {
+            for (HouseTenantMenu houseTenantMenu : tenantMenus) {
 //                当二级菜单有一级菜单时，将菜单状态设置为二级菜单状态
-                if (houseMenuRecord.getId().equals(houseTenantMenu.getMenuId())){
+                if (houseMenuRecord.getId().equals(houseTenantMenu.getMenuId())) {
                     houseMenuRecord.setEnabled(houseTenantMenu.getEnabled());
                     break;
-                }else {
+                } else {
                     houseMenuRecord.setEnabled(0);
                 }
             }
@@ -80,15 +80,13 @@ public class UserFunctionSecondaryManageEndpoint {
     }
 
     @PutMapping("/updateHouseMenu")
-    public Tip updateSecondaryMenuStatus(@RequestBody HouseMenu entity){
+    public Tip updateSecondaryMenuStatus(@RequestBody HouseMenu entity) {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
         return SuccessTip.create(houseTenantMenuService.updateMenuStatus(entity));
     }
-
-
 
 
 }

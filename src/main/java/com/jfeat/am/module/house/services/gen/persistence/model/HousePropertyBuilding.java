@@ -5,56 +5,60 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author Code generator
  * @since 2022-06-11
  */
 @TableName("t_house_property_building")
-@ApiModel(value="HousePropertyBuilding对象", description="")
+@ApiModel(value = "HousePropertyBuilding对象", description = "")
 public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
-      @TableId(value = "id", type = IdType.AUTO)
-      private Long id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
 //      @ApiModelProperty(value = "租户数据隔离")
 //      private Long orgId;
 
-      @ApiModelProperty(value = "社区id")
-      private Long communityId;
+    @ApiModelProperty(value = "社区id")
+    private Long communityId;
 
-      @ApiModelProperty(value = "区域")
-      private String area;
+    @ApiModelProperty(value = "区域")
+    private String area;
 
-      @ApiModelProperty(value = "楼栋编号")
-      private String code;
+    @ApiModelProperty(value = "楼栋编号")
+    private String code;
 
-      @ApiModelProperty(value = "楼栋层数")
-      private Integer floors;
+    @ApiModelProperty(value = "楼栋层数")
+    private Integer floors;
 
-      @ApiModelProperty(value = "每层单元数")
-      private Integer units;
+    @ApiModelProperty(value = "每层单元数")
+    private Integer units;
 
-      @ApiModelProperty(value = "cad图纸")
-      private String cadPicture;
+    @ApiModelProperty(value = "cad图纸")
+    private String cadPicture;
 
-      @ApiModelProperty()
-      private Integer multipleNumber;
+    @ApiModelProperty()
+    private Integer multipleNumber;
 
-      @TableField(exist = false)
-      private Integer houseTypeNumber;
+    private String unitPicture;
 
-      @TableField(exist = false)
-      private Integer assertTotal;
+    @TableField(exist = false)
+    private Integer houseTypeNumber;
+
+    @TableField(exist = false)
+    private Integer assertTotal;
 
     public Integer getHouseTypeNumber() {
         return houseTypeNumber;
@@ -87,11 +91,11 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
         return id;
     }
 
-      public HousePropertyBuilding setId(Long id) {
-          this.id = id;
-          return this;
-      }
-    
+    public HousePropertyBuilding setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
 //    public Long getOrgId() {
 //        return orgId;
 //    }
@@ -100,51 +104,59 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
 //          this.orgId = orgId;
 //          return this;
 //      }
-    
+
     public Long getCommunityId() {
         return communityId;
     }
 
-      public HousePropertyBuilding setCommunityId(Long communityId) {
-          this.communityId = communityId;
-          return this;
-      }
-    
+    public HousePropertyBuilding setCommunityId(Long communityId) {
+        this.communityId = communityId;
+        return this;
+    }
+
     public String getArea() {
         return area;
     }
 
-      public HousePropertyBuilding setArea(String area) {
-          this.area = area;
-          return this;
-      }
-    
+    public HousePropertyBuilding setArea(String area) {
+        this.area = area;
+        return this;
+    }
+
     public String getCode() {
         return code;
     }
 
-      public HousePropertyBuilding setCode(String code) {
-          this.code = code;
-          return this;
-      }
-    
+    public HousePropertyBuilding setCode(String code) {
+        this.code = code;
+        return this;
+    }
+
     public Integer getFloors() {
         return floors;
     }
 
-      public HousePropertyBuilding setFloors(Integer floors) {
-          this.floors = floors;
-          return this;
-      }
-    
+    public HousePropertyBuilding setFloors(Integer floors) {
+        this.floors = floors;
+        return this;
+    }
+
     public Integer getUnits() {
         return units;
     }
 
-      public HousePropertyBuilding setUnits(Integer units) {
-          this.units = units;
-          return this;
-      }
+    public HousePropertyBuilding setUnits(Integer units) {
+        this.units = units;
+        return this;
+    }
+
+    public String getUnitPicture() {
+        return unitPicture;
+    }
+
+    public void setUnitPicture(String unitPicture) {
+        this.unitPicture = unitPicture;
+    }
 
     public Integer getMultipleNumber() {
         return multipleNumber;
@@ -156,22 +168,22 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
 
     public static final String ID = "id";
 
-      public static final String ORG_ID = "org_id";
+    public static final String ORG_ID = "org_id";
 
-      public static final String COMMUNITY_ID = "community_id";
+    public static final String COMMUNITY_ID = "community_id";
 
-      public static final String AREA = "area";
+    public static final String AREA = "area";
 
-      public static final String CODE = "code";
+    public static final String CODE = "code";
 
-      public static final String FLOORS = "floors";
+    public static final String FLOORS = "floors";
 
-      public static final String UNITS = "units";
+    public static final String UNITS = "units";
 
-      @Override
+    @Override
     protected Serializable pkVal() {
-          return this.id;
-      }
+        return this.id;
+    }
 
     @Override
     public String toString() {

@@ -3,21 +3,22 @@
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseDesignModelDao">
     <sql id="Base_Column_List">
         t_house_design_model.id, t_house_design_model.house_type AS houseType,
-t_house_design_model.house_type_picture AS houseTypePicture,
-t_house_design_model.note AS note,
-t_house_design_model.vr_id AS vrId,
-t_house_design_model.area AS area,
+        t_house_design_model.house_type_picture AS houseTypePicture,
+        t_house_design_model.note AS note,
+        t_house_design_model.vr_id AS vrId,
+        t_house_design_model.area AS area,
+        t_house_design_model.community_id AS communityId,
 
-t_house_vr_picture.vr_picture  AS vrPicture,
-t_house_vr_picture.link AS vrLink,
-t_house_vr_picture.snapshot AS vrSnapshot,
+        t_house_vr_picture.vr_picture  AS vrPicture,
+        t_house_vr_picture.link AS vrLink,
+        t_house_vr_picture.snapshot AS vrSnapshot,
 
-t_house_design_model.hall_width AS hallWidth,
-t_house_design_model.hall_sub_width AS hallSubWidth,
-t_house_design_model.hall_length AS hallLength,
-t_house_design_model.hall_french_window_width AS hallFrenchWindowWidth,
-t_house_design_model.hall_french_window_hight AS hallFrenchWindowHight,
-t_house_design_model.dining_room_width AS diningRoomWidth, t_house_design_model.dining_room_length AS diningRoomLength, t_house_design_model.first_room_width AS firstRoomWidth, t_house_design_model.first_room_length AS firstRoomLength, t_house_design_model.first_room_doorwall_width AS firstRoomDoorwallWidth, t_house_design_model.first_room_window_width AS firstRoomWindowWidth, t_house_design_model.first_room_window_sub_width AS firstRoomWindowSubWidth, t_house_design_model.first_room_window_hight AS firstRoomWindowHight, t_house_design_model.second_room_width AS secondRoomWidth, t_house_design_model.second_room_length AS secondRoomLength, t_house_design_model.second_room_doorwall_width AS secondRoomDoorwallWidth, t_house_design_model.second_room_window_width AS secondRoomWindowWidth, t_house_design_model.second_room_window_sub_width AS secondRoomWindowSubWidth, t_house_design_model.second_room_window_hight AS secondRoomWindowHight, t_house_design_model.third_room_width AS thirdRoomWidth, t_house_design_model.third_room_length AS thirdRoomLength, t_house_design_model.third_room_doorwall_width AS thirdRoomDoorwallWidth, t_house_design_model.third_room_window_width AS thirdRoomWindowWidth, t_house_design_model.third_room_window_sub_width AS thirdRoomWindowSubWidth, t_house_design_model.third_room_window_hight AS thirdRoomWindowHight, t_house_design_model.fourth_room_width AS fourthRoomWidth, t_house_design_model.fourth_room_length AS fourthRoomLength, t_house_design_model.fourth_room_doorwall_width AS fourthRoomDoorwallWidth, t_house_design_model.fourth_room_window_width AS fourthRoomWindowWidth, t_house_design_model.fourth_room_window_sub_width AS fourthRoomWindowSubWidth, t_house_design_model.fourth_room_window_hight AS fourthRoomWindowHight
+        t_house_design_model.hall_width AS hallWidth,
+        t_house_design_model.hall_sub_width AS hallSubWidth,
+        t_house_design_model.hall_length AS hallLength,
+        t_house_design_model.hall_french_window_width AS hallFrenchWindowWidth,
+        t_house_design_model.hall_french_window_hight AS hallFrenchWindowHight,
+        t_house_design_model.dining_room_width AS diningRoomWidth, t_house_design_model.dining_room_length AS diningRoomLength, t_house_design_model.first_room_width AS firstRoomWidth, t_house_design_model.first_room_length AS firstRoomLength, t_house_design_model.first_room_doorwall_width AS firstRoomDoorwallWidth, t_house_design_model.first_room_window_width AS firstRoomWindowWidth, t_house_design_model.first_room_window_sub_width AS firstRoomWindowSubWidth, t_house_design_model.first_room_window_hight AS firstRoomWindowHight, t_house_design_model.second_room_width AS secondRoomWidth, t_house_design_model.second_room_length AS secondRoomLength, t_house_design_model.second_room_doorwall_width AS secondRoomDoorwallWidth, t_house_design_model.second_room_window_width AS secondRoomWindowWidth, t_house_design_model.second_room_window_sub_width AS secondRoomWindowSubWidth, t_house_design_model.second_room_window_hight AS secondRoomWindowHight, t_house_design_model.third_room_width AS thirdRoomWidth, t_house_design_model.third_room_length AS thirdRoomLength, t_house_design_model.third_room_doorwall_width AS thirdRoomDoorwallWidth, t_house_design_model.third_room_window_width AS thirdRoomWindowWidth, t_house_design_model.third_room_window_sub_width AS thirdRoomWindowSubWidth, t_house_design_model.third_room_window_hight AS thirdRoomWindowHight, t_house_design_model.fourth_room_width AS fourthRoomWidth, t_house_design_model.fourth_room_length AS fourthRoomLength, t_house_design_model.fourth_room_doorwall_width AS fourthRoomDoorwallWidth, t_house_design_model.fourth_room_window_width AS fourthRoomWindowWidth, t_house_design_model.fourth_room_window_sub_width AS fourthRoomWindowSubWidth, t_house_design_model.fourth_room_window_hight AS fourthRoomWindowHight
     </sql>
 
 

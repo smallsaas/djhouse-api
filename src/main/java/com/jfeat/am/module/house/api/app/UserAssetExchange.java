@@ -3,6 +3,7 @@ package com.jfeat.am.module.house.api.app;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
@@ -16,8 +17,11 @@ import com.jfeat.am.module.house.services.domain.model.HouseUserCommunityStatusR
 import com.jfeat.am.module.house.services.domain.service.HouseAssetExchangeRequestService;
 import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
+import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchangeRequest;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -28,6 +32,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,6 +61,9 @@ public class UserAssetExchange {
 
     @Resource
     QueryHouseUserCommunityStatusDao queryHouseUserCommunityStatusDao;
+
+    @Resource
+    HousePropertyBuildingMapper housePropertyBuildingMapper;
 
 
 //    新建或者修改资产交换记录并匹配
@@ -193,6 +201,7 @@ public class UserAssetExchange {
         if (houseAssetExchangeRequestRecordList!=null && houseAssetExchangeRequestRecordList.size()>0){
 //            将列表解析成对应json格式
             JSONObject jsonObject = houseUserAssetService.parseMatchAssetData(houseAssetExchangeRequestRecordList);
+            System.out.println(jsonObject);
 //            格式化返回前端
             JSONArray result = houseUserAssetService.formatAssetMatchResult(jsonObject);
             return SuccessTip.create(result);
@@ -303,7 +312,28 @@ public class UserAssetExchange {
 
         }
 
-        return SuccessTip.create(houseAssetRecordList);
+
+        HousePropertyBuilding housePropertyBuilding = housePropertyBuildingMapper.selectById(buildingId);
+        Integer unitCount = 0;
+        if (housePropertyBuilding!=null && housePropertyBuilding.getUnits()!=null){
+            unitCount=housePropertyBuilding.getUnits();
+        }
+        List<BigDecimal> unitAreas = new ArrayList<>();
+
+        for (int i=0;i<unitCount;i++){
+            if (houseAssetRecordList.get(i).getArea()!=null){
+                unitAreas.add(houseAssetRecordList.get(i).getArea());
+            }
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("header",unitAreas);
+        jsonObject.put("data",houseAssetRecordList);
+        if (unitCount!=unitAreas.size()){
+            jsonObject.put("msg","数据有误");
+        }
+
+        return SuccessTip.create(jsonObject);
     }
 
 

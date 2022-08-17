@@ -4,6 +4,9 @@ package com.jfeat.am.module.house.api.app.operations;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingUnitDao;
+import com.jfeat.am.module.house.services.domain.model.HousePropertyBuildingUnitRecord;
 import com.jfeat.am.module.house.services.domain.service.HousePropertyBuildingUnitService;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingMapper;
@@ -12,8 +15,11 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
 import com.jfeat.am.module.house.services.utility.Authentication;
+import com.jfeat.crud.base.exception.BusinessCode;
+import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -29,9 +35,6 @@ public class UserUnitManageEndpoint {
     HouseAssetMapper houseAssetMapper;
 
     @Resource
-    Authentication authentication;
-
-    @Resource
     HousePropertyBuildingUnitMapper housePropertyBuildingUnitMapper;
 
     @Resource
@@ -39,6 +42,9 @@ public class UserUnitManageEndpoint {
 
     @Resource
     HousePropertyBuildingMapper housePropertyBuildingMapper;
+
+    @Resource
+    QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
 
 
 
@@ -73,17 +79,39 @@ public class UserUnitManageEndpoint {
         return SuccessTip.create(jsonArray);
     }
 
-////    以单元查询绑定的房屋
-//    @GetMapping("/getHouse")
-//    public Tip getHouseByUnitId(){
-//        QueryWrapper<HouseAsset> queryWrapper = new QueryWrapper<>();
-//        return SuccessTip.create(housePropertyBuildingUnitService.updateUnitInfo());
-//    }
 
 //    修改门牌号
     @PutMapping("/updateUnitBing/{id}")
     public Tip updateUnitBind(@PathVariable("id")Long id,@RequestBody HousePropertyBuildingUnit entity){
         return SuccessTip.create(housePropertyBuildingUnitService.updateUnitBind(id, entity));
+    }
+
+//    获取单元列表以小区id
+    @GetMapping("/getUnitList")
+    public Tip getUnitByCommunityId(Page<HousePropertyBuildingUnitRecord> page,
+                                    @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                    @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                    @RequestParam("communityId")Long communityId){
+        page.setCurrent(pageNum);
+        page.setSize(pageSize);
+        page.setRecords(queryHousePropertyBuildingUnitDao.queryUnitListByCommunityId(page,communityId));
+        return SuccessTip.create(page);
+    }
+
+//    修改单元绑定户型
+    @PutMapping("/modifyHouseType/{id}")
+    public Tip updateUnitBindHouseType(@PathVariable("id")Long unitId,@RequestBody HousePropertyBuildingUnit entity){
+
+        if (entity.getDesignModelId()==null){
+            throw new BusinessException(BusinessCode.BadRequest,"designModelId为比填项");
+        }
+
+        HousePropertyBuildingUnit housePropertyBuildingUnit =  housePropertyBuildingUnitMapper.selectById(unitId);
+        if (housePropertyBuildingUnit!=null && entity.getDesignModelId()!=null){
+            housePropertyBuildingUnit.setDesignModelId(entity.getDesignModelId());
+            return SuccessTip.create(housePropertyBuildingUnitMapper.updateById(housePropertyBuildingUnit));
+        }
+        return SuccessTip.create();
     }
 
 }

@@ -101,8 +101,15 @@ public class UserApplicationIntermediaryManageEndpoint {
 
 
         List<HouseApplicationIntermediaryRecord> houseApplicationIntermediaryPage = queryHouseApplicationIntermediaryDao.findHouseApplicationIntermediaryPage(page, record, tag, search, orderBy, null, null);
-
-
+        houseApplicationIntermediaryPage.sort((a,b)->{
+            if ((a.getStatus() - b.getStatus() ) > 0) {
+                return 1;
+            } else if ((a.getStatus()  - b.getStatus() ) < 0) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
         page.setRecords(houseApplicationIntermediaryPage);
 
         return SuccessTip.create(page);
@@ -117,7 +124,6 @@ public class UserApplicationIntermediaryManageEndpoint {
         }
         return SuccessTip.create(houseApplicationIntermediaryService.queryMasterModel(queryHouseApplicationIntermediaryDao, id));
     }
-
 
     //    置业顾问申请处理--通过
     @PutMapping("/status/pass/{id}")

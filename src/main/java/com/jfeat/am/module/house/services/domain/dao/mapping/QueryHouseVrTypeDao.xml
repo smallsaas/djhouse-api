@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseVrTypeDao">
+    <sql id="Base_Column_List">
+        t_house_vr_type.id,
+    t_house_vr_type.name,
+    t_house_vr_type.org_id AS orgId,
+    t_house_vr_type.community_id AS communityId
+    </sql>
+
+    <sql id="QueryOwnedOrgIds">
+        SELECT children.id
+        FROM t_sys_org,
+             t_sys_org as children
+        WHERE t_sys_org.left_num &lt;= children.left_num
+          AND t_sys_org.right_num >= children.left_num
+          and t_sys_org.id = #{record.orgId}
+        order by t_sys_org.node_level ASC
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseVrTypeModel">
+        SELECT t_house_vr_type.*
+        FROM t_house_vr_type
+        WHERE t_house_vr_type.id = #{id}
+        GROUP BY t_house_vr_type.id
+    </select>
+
+
+    <select id="findHouseVrTypePage" resultType="HouseVrTypeRecord" parameterType="HouseVrTypeRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_vr_type
+
+
+        <if test="record.orgId > 0">
+            ,(<include refid="QueryOwnedOrgIds"></include>) AS ownedOrgIds
+        </if>
+
+        WHERE 1=1
+        <if test="record.orgId > 0">
+            AND t_house_vr_type.org_id = ownedOrgIds.id
+        </if>
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_vr_type.id = #{record.id}
+        </if>
+        <if test="record.communityId != null and record.communityId>0 ">
+            AND t_house_vr_type.community_id = #{record.communityId}
+        </if>
+        <if test="record.name != null and record.name!= ''">
+            AND t_house_vr_type.name LIKE CONCAT('%',#{record.name},'%')
+        </if>
+
+
+        <if test="record.orgId != null and record.orgId>0 ">
+            AND t_house_vr_type.org_id IN (<include refid="QueryOwnedOrgIds"/>)
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_vr_type.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_vr_type.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_vr_type.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
+</mapper>

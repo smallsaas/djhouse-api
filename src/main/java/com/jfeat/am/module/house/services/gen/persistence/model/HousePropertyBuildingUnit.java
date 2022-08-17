@@ -49,6 +49,12 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
     @ApiModelProperty(value = "数字单元")
     private String unitNumber;
 
+    @ApiModelProperty(value = "x轴")
+    private BigDecimal xAxis;
+
+    @ApiModelProperty(value = "y轴")
+    private BigDecimal yAxis;
+
     @TableField(exist = false)
     private Integer floorsCount;
 
@@ -169,6 +175,22 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
     public HousePropertyBuildingUnit setUnitCode(String unitCode) {
         this.unitCode = unitCode;
         return this;
+    }
+
+    public BigDecimal getxAxis() {
+        return xAxis;
+    }
+
+    public void setxAxis(BigDecimal xAxis) {
+        this.xAxis = xAxis;
+    }
+
+    public BigDecimal getyAxis() {
+        return yAxis;
+    }
+
+    public void setyAxis(BigDecimal yAxis) {
+        this.yAxis = yAxis;
     }
 
     //    1到20英文

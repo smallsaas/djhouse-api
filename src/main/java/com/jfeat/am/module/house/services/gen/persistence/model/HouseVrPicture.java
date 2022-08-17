@@ -57,6 +57,22 @@ public class HouseVrPicture extends Model<HouseVrPicture> {
     @ApiModelProperty(value = "上架状态 0-下架 1上架")
     private Integer status;
 
+    @ApiModelProperty(value = "typeId")
+    private Long typeId;
+
+
+
+
+
+
+    public Long getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(Long typeId) {
+        this.typeId = typeId;
+    }
+
     public Long getId() {
         return id;
     }
@@ -159,6 +175,8 @@ public class HouseVrPicture extends Model<HouseVrPicture> {
     public static final String VR_PICTURE = "vr_picture";
 
     public static final String SNAPSHOT = "snapshot";
+
+    public static final String TYPE_ID = "type_id";
 
     /*
     上架vr图

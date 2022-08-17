@@ -95,7 +95,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                     }else {
                         JSONObject buildingJson = new JSONObject();
                         JSONArray unit = new JSONArray();
-                        unit.add(matchHouseAsset.getNumber());
+                        unit.add(matchHouseAsset.getHouseNumber());
                         buildingJson.put(matchHouseAsset.getUnitId().toString(),unit);
                         jsonObject.put(matchHouseAsset.getBuildingCode(),buildingJson);
                     }
@@ -153,7 +153,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                         JSONObject item = new JSONObject();
                         item.put("buildingCode",houseAssetModel.getBuildingCode());
                         item.put("assetId",houseAssetModel.getId());
-                        item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getNumber()));
+                        item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getHouseNumber()));
                         item.put("start", "".concat((String) uniteEntry.getKey()).concat("-").concat(String.valueOf(room.get(0))));
                         if (ids.contains(room.get(0))) {
                             item.put("contains", true);
@@ -172,7 +172,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                                     JSONObject item = new JSONObject();
                                     item.put("buildingCode",houseAssetModel.getBuildingCode());
                                     item.put("assetId",houseAssetModel.getId());
-                                    item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getNumber()));
+                                    item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getHouseNumber()));
                                     item.put("start", "".concat((String) uniteEntry.getKey()).concat("-").concat(String.valueOf(room.get(index))));
                                     item.put("end", "".concat((String) uniteEntry.getKey()).concat("-").concat(String.valueOf(room.get(i - 1))));
                                     List<Integer> tempList = room.subList(index, room.size());
@@ -188,7 +188,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                                     JSONObject item = new JSONObject();
                                     item.put("buildingCode",houseAssetModel.getBuildingCode());
                                     item.put("assetId",houseAssetModel.getId());
-                                    item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getNumber()));
+                                    item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getHouseNumber()));
                                     item.put("start", "".concat((String) uniteEntry.getKey()).concat("-").concat(String.valueOf(room.get(index))));
                                     item.put("end", "");
                                     if (ids.contains(room.get(0))) {
@@ -209,7 +209,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                                 JSONObject item = new JSONObject();
                                 item.put("buildingCode",houseAssetModel.getBuildingCode());
                                 item.put("assetId",houseAssetModel.getId());
-                                item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getNumber()));
+                                item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getHouseNumber()));
                                 item.put("start", "".concat((String) uniteEntry.getKey()).concat("-").concat(String.valueOf(room.get(index))));
                                 item.put("end", "".concat((String) uniteEntry.getKey()).concat("-").concat(String.valueOf(room.get(room.size() - 1))));
                                 List<Integer> tempList = room.subList(index, room.size());
@@ -224,7 +224,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                                 JSONObject item = new JSONObject();
                                 item.put("buildingCode",houseAssetModel.getBuildingCode());
                                 item.put("assetId",houseAssetModel.getId());
-                                item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getNumber()));
+                                item.put("owner",houseAssetModel.getBuildingCode().concat("-").concat(houseAssetModel.getHouseNumber()));
                                 item.put("start", "".concat((String) uniteEntry.getKey()).concat("-").concat(String.valueOf(room.get(index))));
                                 if (ids.contains(room.get(0))) {
                                     item.put("contains", true);

@@ -149,7 +149,6 @@ public class UserHouseAssetEndpoint {
         HouseAssetRecord houseAssetRecord = new HouseAssetRecord();
         houseAssetRecord.setBuildingId(buildingId);
         List<HouseAssetRecord> houseAssetList = queryHouseAssetDao.findHouseAssetPage(null, houseAssetRecord, null, null, null, null, null);
-//        List<HouseAsset> houseAssetList = queryHouseAssetDao.queryHouseAssetByBuildingId(buildingId);
 
         HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
         List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, null, null, null, null, null, null);
@@ -163,9 +162,6 @@ public class UserHouseAssetEndpoint {
                       /*
                 是否是最终确认
                  */
-                    System.out.println(recordList.get(j));
-                    System.out.println(houseAssetList.get(i));
-                    System.out.println(recordList.get(j).getFinalFlag());
                     if (recordList.get(j).getFinalFlag() != null && recordList.get(j).getFinalFlag().equals(HouseUserAsset.FINAL_FLAG_CONFIRM)) {
                         houseAssetList.get(i).setFinalFlag(HouseUserAsset.FINAL_FLAG_CONFIRM);
                     } else {

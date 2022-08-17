@@ -11,6 +11,8 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyCom
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserCommunityStatus;
 import com.jfeat.am.module.supplier.services.gen.persistence.dao.SupplierMapper;
 import com.jfeat.am.module.supplier.services.gen.persistence.model.Supplier;
+import com.jfeat.am.uaas.tenant.services.gen.persistence.dao.TenantMapper;
+import com.jfeat.am.uaas.tenant.services.gen.persistence.model.Tenant;
 import com.jfeat.users.account.services.domain.service.BusinessUserLoginInfo;
 import com.jfeat.users.account.services.domain.service.impl.ServiceStore;
 import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
@@ -33,6 +35,9 @@ public class BusinessUserLoginInfoImp implements BusinessUserLoginInfo {
 
     @Resource
     SupplierMapper supplierMapper;
+
+    @Resource
+    TenantMapper tenantMapper;
 
     @Override
     public JSONObject expandUserInfo(UserAccount userAccount) {
@@ -58,7 +63,12 @@ public class BusinessUserLoginInfoImp implements BusinessUserLoginInfo {
         if (community!=null){
             communityId = community.getId();
             communityName = community.getCommunity();
-            tenantName = community.getTenant();
+        }
+        if (userAccount.getCurrentOrgId()!=null){
+            QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq(Tenant.ORG_ID,userAccount.getCurrentOrgId());
+            Tenant tenant =  tenantMapper.selectOne(queryWrapper);
+            tenantName = tenant.getName();
         }
         jsonObject.put("communityId",communityId);
         jsonObject.put("communityName",communityName);

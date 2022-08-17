@@ -7,6 +7,7 @@ import com.jfeat.crud.plus.QueryMasterDao;
 import org.apache.ibatis.annotations.Param;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
 import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingUnitModel;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 import java.util.List;
@@ -36,10 +37,10 @@ public interface QueryHousePropertyBuildingUnitDao extends QueryMasterDao<HouseP
 
     int deleteHouseBuildingUnitByBuildingId(@Param("buildingId") Long buildingId);
 
-    List<HousePropertyBuildingUnit> queryHouseBuildingUnitByBuildingId(@Param("buildingId") Long buildingId);
-
     HousePropertyBuildingUnit queryExtraHouseBuildingUnitByEntity(@Param("entity") HousePropertyBuildingUnit entity);
 
     int insertUnits(@Param("unitList") List<HousePropertyBuildingUnit> unitList);
+
+    List<HousePropertyBuildingUnitRecord> queryUnitListByCommunityId(Page<HousePropertyBuildingUnitRecord> page,@RequestParam("communityId")Long communityId);
 
 }

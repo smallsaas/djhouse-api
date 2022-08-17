@@ -14,6 +14,7 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.crud.plus.META;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -102,6 +103,9 @@ public class UserAssetExchangeManageEndpoint {
         record.setMatchedUserId(matchedUserId);
         record.setMathchedAssetId(mathchedAssetId);
         record.setCreateTime(createTime);
+        if (META.enabledSaas()) {
+            record.setOrgId(JWTKit.getOrgId());
+        }
         List<HouseAssetMatchLogRecord> houseAssetMatchLogPage = queryHouseAssetMatchLogDao.findHouseAssetMatchLogPage(page, record, tag, search, orderBy, null, null);
 
         /*
@@ -115,11 +119,11 @@ public class UserAssetExchangeManageEndpoint {
             if (ownerHouseAsset!=null && ownerEndUser!=null && matchedHouseAsset!=null &&matchedEndUser!=null){
                 houseAssetMatchLogPage.get(i).setOwnerBuilding(ownerHouseAsset.getBuildingCode());
                 houseAssetMatchLogPage.get(i).setOwnerCommunity(ownerHouseAsset.getCommunityName());
-                houseAssetMatchLogPage.get(i).setOwnerNumber(ownerHouseAsset.getNumber());
+                houseAssetMatchLogPage.get(i).setOwnerNumber(ownerHouseAsset.getHouseNumber());
 
                 houseAssetMatchLogPage.get(i).setMatchedBuilding(matchedHouseAsset.getBuildingCode());
                 houseAssetMatchLogPage.get(i).setMatchedCommunity(matchedHouseAsset.getCommunityName());
-                houseAssetMatchLogPage.get(i).setMatchedNumber(matchedHouseAsset.getNumber());
+                houseAssetMatchLogPage.get(i).setMatchedNumber(matchedHouseAsset.getHouseNumber());
 
             }
 

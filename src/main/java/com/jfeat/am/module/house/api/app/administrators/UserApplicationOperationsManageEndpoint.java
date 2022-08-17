@@ -108,6 +108,15 @@ public class UserApplicationOperationsManageEndpoint {
 
         List<HouseApplicationOperationsRecord> houseApplicationOperationsPage = queryHouseApplicationOperationsDao.findHouseApplicationOperationsPage(page, record, tag, search, orderBy, null, null);
 
+        houseApplicationOperationsPage.sort((a,b)->{
+            if ((a.getStatus() - b.getStatus() ) > 0) {
+                return 1;
+            } else if ((a.getStatus()  - b.getStatus() ) < 0) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
 
         page.setRecords(houseApplicationOperationsPage);
 

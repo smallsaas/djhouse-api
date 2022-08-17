@@ -91,6 +91,8 @@ public class UserStatisticsEndpoint {
         //list 0-房子数 1-无效房子数 2-平房数 3-复式数 4-楼栋数 5-单元数 6-户型数 7-换房需求数 8-换房记录数 9-停车位数
         List<Integer> houseStatistics =   houseStatisticsDao.communityStatistics(communityId);
 
+
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("buildingNumber",houseStatistics.get(4));
         jsonObject.put("multipleNumber",houseStatistics.get(3));

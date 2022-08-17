@@ -17,6 +17,15 @@
         t_end_user2.phone AS matchedPhone
     </sql>
 
+    <sql id="QueryOwnedOrgIds">
+        SELECT children.id
+        FROM t_sys_org,
+             t_sys_org as children
+        WHERE t_sys_org.left_num &lt;= children.left_num
+          AND t_sys_org.right_num >= children.left_num
+          and t_sys_org.id = #{record.orgId}
+        order by t_sys_org.node_level ASC
+    </sql>
 
     <select id="queryMasterModel" resultType="HouseAssetMatchLogModel">
         SELECT t_house_asset_match_log.*
@@ -34,15 +43,25 @@
 
         FROM t_house_asset_match_log
 
+
         JOIN t_end_user As t_end_user1 ON t_house_asset_match_log.owner_user_id=t_end_user1.id
         JOIN t_end_user AS t_end_user2 ON t_house_asset_match_log.matched_user_id=t_end_user2.id
-
+        <if test="record.orgId > 0">
+            ,(<include refid="QueryOwnedOrgIds"></include>) AS ownedOrgIds
+        </if>
 
         WHERE 1=1
+        <if test="record.orgId > 0">
+            AND t_house_asset_match_log.org_id = ownedOrgIds.id
+        </if>
 
 
         <if test="record.id != null and record.id>0 ">
             AND t_house_asset_match_log.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+        <if test="record.orgId != null and record.orgId>0 ">
+            AND t_house_asset_match_log.org_id IN (<include refid="QueryOwnedOrgIds"/>)
         </if>
 
 

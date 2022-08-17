@@ -3,12 +3,14 @@
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingUnitDao">
     <sql id="Base_Column_List">
         t_house_property_building_unit.id,
-t_house_property_building_unit.building_id AS buildingId,
-t_house_property_building_unit.design_model_id AS designModelId,
-t_house_property_building_unit.unit_code AS unitCode,
-t_house_property_building_unit.area as area,
-t_house_property_building_unit.direction AS direction,
-t_house_property_building_unit.unit_number AS unitNumber
+        t_house_property_building_unit.building_id AS buildingId,
+        t_house_property_building_unit.design_model_id AS designModelId,
+        t_house_property_building_unit.unit_code AS unitCode,
+        t_house_property_building_unit.area as area,
+        t_house_property_building_unit.direction AS direction,
+        t_house_property_building_unit.unit_number AS unitNumber,
+        t_house_property_building_unit.x_axis AS xAxis,
+        t_house_property_building_unit.y_axis AS yAxis
     </sql>
 
 
@@ -76,11 +78,7 @@ t_house_property_building_unit.unit_number AS unitNumber
         WHERE t_house_property_building_unit.building_id = #{buildingId}
     </delete>
 
-    <select id="queryHouseBuildingUnitByBuildingId" resultType="HousePropertyBuildingUnit">
-        SELECT *
-        FROM t_house_property_building_unit
-        WHERE t_house_property_building_unit.building_id = #{buildingId}
-    </select>
+
 
 
     <select id="queryExtraHouseBuildingUnitByEntity" resultType="HousePropertyBuildingUnit">
@@ -119,5 +117,15 @@ t_house_property_building_unit.unit_number AS unitNumber
             (#{assetItem.buildingId},#{assetItem.unitCode},#{assetItem.unitNumber})
         </foreach>
     </insert>
+
+
+    <select id="queryUnitListByCommunityId" resultType="HousePropertyBuildingUnitRecord">
+        SELECT t_house_property_building_unit.*,t_house_design_model.area AS area,t_house_design_model.vr_link AS vrLink,t_house_design_model.vr_picture AS vrPicture FROM t_house_property_building_unit
+                          JOIN t_house_property_building ON t_house_property_building_unit.building_id=t_house_property_building.id
+                          JOIN t_house_property_community ON t_house_property_community.id = t_house_property_building.community_id
+                          LEFT JOIN t_house_design_model ON t_house_design_model.id = t_house_property_building_unit.design_model_id
+                          LEFT JOIN t_house_vr_picture ON t_house_vr_picture.id = t_house_design_model.vr_id
+        WHERE t_house_property_community.id=1
+    </select>
 
 </mapper>

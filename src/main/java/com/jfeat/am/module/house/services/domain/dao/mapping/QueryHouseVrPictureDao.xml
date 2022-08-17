@@ -36,8 +36,13 @@
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_vr_picture.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_vr_picture.id = #{record.id}
         </if>
+
+        <if test="record.typeId != null and record.typeId>0 ">
+            AND t_house_vr_picture.type_id =#{record.typeId}
+        </if>
+
         <if test="record.name != null and record.name!= ''">
             AND t_house_vr_picture.name LIKE CONCAT('%',#{record.name},'%')
         </if>
