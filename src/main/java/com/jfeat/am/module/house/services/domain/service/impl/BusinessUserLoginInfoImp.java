@@ -64,12 +64,19 @@ public class BusinessUserLoginInfoImp implements BusinessUserLoginInfo {
             communityId = community.getId();
             communityName = community.getCommunity();
         }
+
+        QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
         if (userAccount.getCurrentOrgId()!=null){
-            QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq(Tenant.ORG_ID,userAccount.getCurrentOrgId());
             Tenant tenant =  tenantMapper.selectOne(queryWrapper);
             tenantName = tenant.getName();
+        }else if(userAccount.getOrgId()!=null){
+            queryWrapper.eq(Tenant.ORG_ID,userAccount.getOrgId());
+            Tenant tenant =  tenantMapper.selectOne(queryWrapper);
+            tenantName = tenant.getName();
         }
+
+
         jsonObject.put("communityId",communityId);
         jsonObject.put("communityName",communityName);
         jsonObject.put("tenantName",tenantName);
