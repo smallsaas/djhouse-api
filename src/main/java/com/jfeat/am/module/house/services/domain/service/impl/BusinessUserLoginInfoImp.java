@@ -69,11 +69,12 @@ public class BusinessUserLoginInfoImp implements BusinessUserLoginInfo {
         if (userAccount.getCurrentOrgId()!=null){
             queryWrapper.eq(Tenant.ORG_ID,userAccount.getCurrentOrgId());
             Tenant tenant =  tenantMapper.selectOne(queryWrapper);
-            tenantName = tenant.getName();
+            tenantName = tenant == null ? null: tenant.getName();
         }else if(userAccount.getOrgId()!=null){
             queryWrapper.eq(Tenant.ORG_ID,userAccount.getOrgId());
             Tenant tenant =  tenantMapper.selectOne(queryWrapper);
-            tenantName = tenant.getName();
+
+            tenantName = tenant == null ? null: tenant.getName();
         }
 
 
