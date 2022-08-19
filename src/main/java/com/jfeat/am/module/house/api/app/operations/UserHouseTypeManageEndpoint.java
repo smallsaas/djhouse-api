@@ -61,6 +61,14 @@ public class UserHouseTypeManageEndpoint {
 
     }
 
+    @GetMapping("/{id}")
+    public Tip getHouseTypeDetails(@PathVariable("id") Long id){
+        if (JWTKit.getUserId()==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+
+        return SuccessTip.create(houseDesignModelMapper.selectById(id));
+    }
     /**
      * 修改户型 当填写的小区id为空时 填写当前用户所在小区id
      * @param id 户型id
@@ -141,9 +149,10 @@ public class UserHouseTypeManageEndpoint {
             throw new BusinessException(BusinessCode.CodeBase,"未找到改Vr数据");
         }
         HouseDesignModel houseDesignModel = houseDesignModelMapper.selectById(id);
+        houseDesignModel.setId(id);
         if (houseDesignModel!=null){
             houseDesignModel.setVrId(entity.getVrId());
-            SuccessTip.create(houseDesignModelMapper.updateById(houseDesignModel));
+            return SuccessTip.create(houseDesignModelMapper.updateById(houseDesignModel));
         }
 
         return SuccessTip.create();

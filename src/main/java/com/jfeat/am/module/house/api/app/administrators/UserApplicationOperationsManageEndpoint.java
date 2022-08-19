@@ -135,13 +135,16 @@ public class UserApplicationOperationsManageEndpoint {
 
     //    拒绝申请
     @PutMapping("/status/refuse/{id}")
-    public Tip refuseApplicationIntermediary(@PathVariable("id") Long id) {
+    public Tip refuseApplicationIntermediary(@PathVariable("id") Long id,@RequestBody HouseApplicationOperations entity) {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
         HouseApplicationOperations houseApplicationOperations =  houseApplicationOperationsMapper.selectById(id);
 
         houseApplicationOperations.setStatus(HouseApplicationOperations.STATUS_REFUSE);
+        if (entity.getNote()!=null){
+            houseApplicationOperations.setNote(entity.getNote());
+        }
 
 
         return SuccessTip.create(houseApplicationOperationsMapper.updateById(houseApplicationOperations));

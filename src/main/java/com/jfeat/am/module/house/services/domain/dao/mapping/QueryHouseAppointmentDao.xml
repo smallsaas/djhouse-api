@@ -219,13 +219,14 @@
 
     <sql id="appointmentSql">
         t_house_appointment.*,
+
         t1.name AS serverName,
         t1.phone AS serverPhone,
         t1.avatar AS serverAvatar,
 
-        t1.name AS userName,
-        t1.phone AS userPhone,
-        t1.avatar AS userAvatar,
+        t2.name AS userName,
+        t2.phone AS userPhone,
+        t2.avatar AS userAvatar,
 
         t_house_asset.id AS assetId,
         t_house_asset.building_id AS buildingId,

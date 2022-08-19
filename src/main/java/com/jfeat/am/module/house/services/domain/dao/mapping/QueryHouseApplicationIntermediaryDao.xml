@@ -1,92 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseApplicationIntermediaryDao">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <sql id="Base_Column_List">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        t_house_application_intermediary.id, t_house_application_intermediary.user_id AS userId, t_house_application_intermediary.organization, t_house_application_intermediary.name, t_house_application_intermediary.phone, t_house_application_intermediary.idcard, t_house_application_intermediary.evidence, t_house_application_intermediary.reason, t_house_application_intermediary.sign_flag AS signFlag, t_house_application_intermediary.status, t_house_application_intermediary.create_time AS createTime, t_house_application_intermediary.update_time AS updateTime
+    <sql id="Base_Column_List">
+        t_house_application_intermediary.id, t_house_application_intermediary.user_id AS userId, t_house_application_intermediary.organization, t_house_application_intermediary.name, t_house_application_intermediary.phone, t_house_application_intermediary.idcard, t_house_application_intermediary.evidence, t_house_application_intermediary.reason, t_house_application_intermediary.sign_flag AS signFlag, t_house_application_intermediary.status, t_house_application_intermediary.create_time AS createTime,
+t_house_application_intermediary.update_time AS updateTime,
+t_house_application_intermediary.note
     </sql>
 
-    
-    
+
     <select id="queryMasterModel" resultType="HouseApplicationIntermediaryModel">
-       SELECT t_house_application_intermediary.*
-       FROM t_house_application_intermediary
-       WHERE t_house_application_intermediary.id=#{id}
-       GROUP BY t_house_application_intermediary.id
+        SELECT t_house_application_intermediary.*
+        FROM t_house_application_intermediary
+        WHERE t_house_application_intermediary.id = #{id}
+        GROUP BY t_house_application_intermediary.id
     </select>
 
 
+    <select id="findHouseApplicationIntermediaryPage" resultType="HouseApplicationIntermediaryRecord"
+            parameterType="HouseApplicationIntermediaryRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
 
-                                                
-    <select id="findHouseApplicationIntermediaryPage" resultType="HouseApplicationIntermediaryRecord" parameterType="HouseApplicationIntermediaryRecord">
-            SELECT <include refid="Base_Column_List"/>
-
-        
 
         FROM t_house_application_intermediary
 
-        
-        
+
         WHERE 1=1
-        
 
-        
-                                                                            <if test="record.id != null and record.id>0 ">
-                                    AND t_house_application_intermediary.id LIKE CONCAT('%',#{record.id},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.userId != null and record.userId>0 ">
-                                    AND t_house_application_intermediary.user_id LIKE CONCAT('%',#{record.userId},'%')
-                            </if>
-                                                                    <if test="record.organization != null and record.organization!= ''">
-                                    AND t_house_application_intermediary.organization LIKE CONCAT('%',#{record.organization},'%')
-                            </if>
-                                                                    <if test="record.name != null and record.name!= ''">
-                                    AND t_house_application_intermediary.name LIKE CONCAT('%',#{record.name},'%')
-                            </if>
-                                                                    <if test="record.phone != null and record.phone!= ''">
-                                    AND t_house_application_intermediary.phone LIKE CONCAT('%',#{record.phone},'%')
-                            </if>
-                                                                    <if test="record.idcard != null and record.idcard!= ''">
-                                    AND t_house_application_intermediary.idcard LIKE CONCAT('%',#{record.idcard},'%')
-                            </if>
-                                                                    <if test="record.evidence != null and record.evidence!= ''">
-                                    AND t_house_application_intermediary.evidence LIKE CONCAT('%',#{record.evidence},'%')
-                            </if>
-                                                                    <if test="record.reason != null and record.reason!= ''">
-                                    AND t_house_application_intermediary.reason LIKE CONCAT('%',#{record.reason},'%')
-                            </if>
-                                                                    
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_application_intermediary.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
 
-                                                                                        <if test="record.signFlag != null and record.signFlag>0 ">
-                                    AND t_house_application_intermediary.sign_flag LIKE CONCAT('%',#{record.signFlag},'%')
-                            </if>
-                                                                    <if test="record.status != null and record.status>0 ">
-                                    AND t_house_application_intermediary.status LIKE CONCAT('%',#{record.status},'%')
-                            </if>
-                                                                                
 
-                                                                                        <if test="record.createTime != null and record.createTime>0 ">
-                                    AND t_house_application_intermediary.create_time LIKE CONCAT('%',#{record.createTime},'%')
-                            </if>
-                                                                                
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_application_intermediary.user_id LIKE CONCAT('%',#{record.userId},'%')
+        </if>
+        <if test="record.organization != null and record.organization!= ''">
+            AND t_house_application_intermediary.organization LIKE CONCAT('%',#{record.organization},'%')
+        </if>
+        <if test="record.name != null and record.name!= ''">
+            AND t_house_application_intermediary.name LIKE CONCAT('%',#{record.name},'%')
+        </if>
+        <if test="record.phone != null and record.phone!= ''">
+            AND t_house_application_intermediary.phone LIKE CONCAT('%',#{record.phone},'%')
+        </if>
+        <if test="record.idcard != null and record.idcard!= ''">
+            AND t_house_application_intermediary.idcard LIKE CONCAT('%',#{record.idcard},'%')
+        </if>
+        <if test="record.evidence != null and record.evidence!= ''">
+            AND t_house_application_intermediary.evidence LIKE CONCAT('%',#{record.evidence},'%')
+        </if>
+        <if test="record.reason != null and record.reason!= ''">
+            AND t_house_application_intermediary.reason LIKE CONCAT('%',#{record.reason},'%')
+        </if>
 
-                                                                                        <if test="record.updateTime != null and record.updateTime>0 ">
-                                    AND t_house_application_intermediary.update_time LIKE CONCAT('%',#{record.updateTime},'%')
-                            </if>
-        
+
+        <if test="record.signFlag != null and record.signFlag>0 ">
+            AND t_house_application_intermediary.sign_flag LIKE CONCAT('%',#{record.signFlag},'%')
+        </if>
+        <if test="record.status != null and record.status>0 ">
+            AND t_house_application_intermediary.status LIKE CONCAT('%',#{record.status},'%')
+        </if>
+
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_application_intermediary.create_time LIKE CONCAT('%',#{record.createTime},'%')
+        </if>
+
+
+        <if test="record.updateTime != null and record.updateTime>0 ">
+            AND t_house_application_intermediary.update_time LIKE CONCAT('%',#{record.updateTime},'%')
+        </if>
+
         <if test="startTime != null">
             <![CDATA[AND t_house_application_intermediary.start_time >= DATE(#{startTime})]]>
         </if>
         <if test="endTime != null">
             <![CDATA[AND t_house_application_intermediary.end_time <= DATE(#{endTime}]]>
         </if>
-            <!--
-        <if test="search != null and search != ''">
-            OR t_house_application_intermediary.name LIKE CONCAT('%',#{search},'%')
-        </if>
-        -->
-                            ORDER BY update_time DESC
-                                                    , create_time DESC
-                        </select>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_application_intermediary.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+        ORDER BY update_time DESC
+        , create_time DESC
+    </select>
 </mapper>

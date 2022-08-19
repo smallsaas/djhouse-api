@@ -221,6 +221,7 @@ public class UserBuildingEndpoint {
                     unitItem.put("direction", unit.getDirection());
                     unitItem.put("houseNumer",asset.getHouseNumber());
                     unitItem.put("number",asset.getNumber());
+                    unitItem.put("assetFlag",asset.getAssetFlag());
                     unitItem.put("xAxis",unit.getxAxis());
                     unitItem.put("yAxis",unit.getyAxis());
                     unitJson.put(unitKey, unitItem);

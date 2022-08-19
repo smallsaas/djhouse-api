@@ -136,14 +136,17 @@ public class UserApplicationIntermediaryManageEndpoint {
 
     //    置业顾问申请处理--拒绝
     @PutMapping("/status/refuse/{id}")
-    public Tip refuseApplicationIntermediary(@PathVariable("id") Long id) {
+    public Tip refuseApplicationIntermediary(@PathVariable("id") Long id,@RequestBody HouseApplicationIntermediary entity) {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
         HouseApplicationIntermediary houseApplicationIntermediary = houseApplicationIntermediaryMapper.selectById(id);
         if (houseApplicationIntermediary != null) {
             houseApplicationIntermediary.setStatus(HouseApplicationIntermediary.STATUS_REFUSE);
-            SuccessTip.create(houseApplicationIntermediaryMapper.updateById(houseApplicationIntermediary));
+            if (entity.getNote()!=null){
+                houseApplicationIntermediary.setNote(entity.getNote());
+            }
+            return SuccessTip.create(houseApplicationIntermediaryMapper.updateById(houseApplicationIntermediary));
         }
         return SuccessTip.create();
     }

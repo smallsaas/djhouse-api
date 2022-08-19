@@ -63,6 +63,9 @@ public class HouseApplicationIntermediary extends Model<HouseApplicationIntermed
     @ApiModelProperty(value = "更新时间")
     private Date updateTime;
 
+    @ApiModelProperty(value = "note")
+    private String note;
+
 
     public Long getId() {
         return id;
@@ -80,6 +83,14 @@ public class HouseApplicationIntermediary extends Model<HouseApplicationIntermed
     public HouseApplicationIntermediary setUserId(Long userId) {
         this.userId = userId;
         return this;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public String getOrganization() {
