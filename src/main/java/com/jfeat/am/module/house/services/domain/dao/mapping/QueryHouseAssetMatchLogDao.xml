@@ -12,9 +12,12 @@
         t_end_user1.name As ownerName,
         t_end_user1.avatar AS ownerAvatar,
         t_end_user1.phone AS ownerPhone,
+        t_end_user1.real_name AS ownerRealName,
+
         t_end_user2.name As matchedName,
         t_end_user2.avatar AS matchedAvatar,
-        t_end_user2.phone AS matchedPhone
+        t_end_user2.phone AS matchedPhone,
+        t_end_user2.real_name AS matchedRealName
     </sql>
 
     <sql id="QueryOwnedOrgIds">

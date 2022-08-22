@@ -80,18 +80,23 @@
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_asset.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_asset.id =#{record.id}
         </if>
 
 
         <if test="record.buildingId != null and record.buildingId>0 ">
-            AND t_house_asset.building_id LIKE CONCAT('%',#{record.buildingId},'%')
+            AND t_house_asset.building_id =#{record.buildingId}
         </if>
 
 
         <if test="record.unitId != null and record.unitId>0 ">
-            AND t_house_asset.unit_id LIKE CONCAT('%',#{record.unitId},'%')
+            AND t_house_asset.unit_id =#{record.unitId}
         </if>
+
+        <if test="record.communityId != null and record.communityId>0 ">
+            AND t_house_property_community.id = #{record.communityId}
+        </if>
+
         <if test="record.floor != null and record.floor>0 ">
             AND t_house_asset.floor LIKE CONCAT('%',#{record.floor},'%')
         </if>
@@ -107,6 +112,10 @@
 
         <if test="record.assetType != null and record.assetType!= ''">
             AND t_house_asset.asset_type LIKE CONCAT('%',#{record.assetType},'%')
+        </if>
+
+        <if test="record.assetFlag != null and record.assetFlag>=0">
+            AND t_house_asset.asset_flag =#{record.assetFlag}
         </if>
 
 
@@ -174,5 +183,86 @@
             #{assetItem}
         </foreach>
     </delete>
+
+
+    <select id="getHouseAssetPage" resultType="HouseAssetRecord" parameterType="HouseAssetRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_asset
+
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
+        left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
+        left JOIN t_house_design_model ON  t_house_asset.house_type_id= t_house_design_model.id
+        left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_asset.id =#{record.id}
+        </if>
+
+
+        <if test="record.buildingId != null and record.buildingId>0 ">
+            AND t_house_asset.building_id =#{record.buildingId}
+        </if>
+
+
+        <if test="record.unitId != null and record.unitId>0 ">
+            AND t_house_asset.unit_id =#{record.unitId}
+        </if>
+
+        <if test="record.communityId != null and record.communityId>0 ">
+            AND t_house_property_community.id = #{record.communityId}
+        </if>
+
+        <if test="record.floor != null and record.floor>0 ">
+            AND t_house_asset.floor LIKE CONCAT('%',#{record.floor},'%')
+        </if>
+        <if test="record.number != null and record.number!= ''">
+            AND t_house_asset.number LIKE CONCAT('%',#{record.number},'%')
+        </if>
+
+
+        <if test="record.assetSlot != null and record.assetSlot!= ''">
+            AND t_house_asset.asset_slot LIKE CONCAT('%',#{record.assetSlot},'%')
+        </if>
+
+
+        <if test="record.assetType != null and record.assetType!= ''">
+            AND t_house_asset.asset_type LIKE CONCAT('%',#{record.assetType},'%')
+        </if>
+
+        <if test="record.assetFlag != null and record.assetFlag>=0">
+            AND t_house_asset.asset_flag =#{record.assetFlag}
+        </if>
+
+
+        <if test="record.communityName != null and record.communityName!='' ">
+            AND t_house_property_community.community LIKE CONCAT('%',#{record.communityName},'%')
+        </if>
+
+        <if test="record.buildingCode != null and record.buildingCode!='' ">
+            AND t_house_property_building.code LIKE CONCAT('%',#{record.buildingCode},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_asset.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_asset.end_time <= DATE(#{endTime}]]>
+        </if>
+
+        ORDER BY t_house_asset.number*1 desc
+
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_asset.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
+
 
 </mapper>

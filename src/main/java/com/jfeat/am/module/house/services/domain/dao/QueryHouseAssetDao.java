@@ -52,4 +52,13 @@ public interface QueryHouseAssetDao extends QueryMasterDao<HouseAsset> {
     批量删除房子
      */
     int deleteHouseAssets(@Param("houseAssetList") List<Long> houseAssetList);
+
+
+//    户型管理资产表
+    List<HouseAssetRecord> getHouseAssetPage(Page<HouseAssetRecord> page, @Param("record") HouseAssetRecord record,
+                                              @Param("tag") String tag,
+                                              @Param("search") String search, @Param("orderBy") String orderBy,
+                                              @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
+
 }

@@ -3,16 +3,23 @@ package com.jfeat.am.module.house.api.app;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseDesignModelDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseVrPictureDao;
 import com.jfeat.am.module.house.services.domain.model.HouseDesignModelRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseVrPictureRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseVrPictureService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseVrPictureModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseVrTypeMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseVrPicture;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseVrType;
+import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.am.module.supplier.services.domain.dao.QuerySupplierDao;
 import com.jfeat.am.module.supplier.services.domain.model.SupplierRecord;
+import com.jfeat.crud.base.exception.BusinessCode;
+import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.eav.services.domain.service.DataServiceService;
@@ -34,18 +41,6 @@ import java.util.regex.Pattern;
 @RequestMapping("/api/u/vr")
 public class UserVrCategoryEndpoint {
 
-    @Resource
-    QuerySupplierDao querySupplierDao;
-
-
-    @Resource
-    QueryHouseDesignModelDao queryHouseDesignModelDao;
-
-    @Resource
-    EavEntityService eavEntityService;
-
-    @Resource
-    DataServiceService dataServiceService;
 
     @Resource
     QueryHouseVrPictureDao queryHouseVrPictureDao;
@@ -54,93 +49,36 @@ public class UserVrCategoryEndpoint {
     HouseVrPictureService houseVrPictureService;
 
     @Resource
-    com.jfeat.eav.services.domain.service.Impl.DataServiceServiceImpl DataServiceServiceImpl;
+    UserCommunityAsset userCommunityAsset;
 
-    @GetMapping("/allVrCategory")
-    public Tip getAllCategory() {
-        EavEntity entity = eavEntityService.getByEntityName("vrType");
-        //eavEntityService.getEavEntityAllValues(page, entity.getId())
-        JSONObject page = new JSONObject();
-        page.put("current", 1);
-        page.put("size", 10);
-        List<String> valueList = new ArrayList<>();
+    @Resource
+    HouseVrTypeMapper houseVrTypeMapper;
 
-        Map<String, Object> map = new HashMap<>();
-        JSONArray list = dataServiceService.getList(page, entity.getId(), DataServiceServiceImpl.KEY_ROW_ID);
 
-//        获取分类名称
-        for (int i = 0; i < list.size(); i++) {
-            JSONObject item = (JSONObject) list.get(i);
-            JSONObject extra = (JSONObject) item.get("extra");
-            JSONArray items = extra.getJSONArray("items");
-            JSONObject valueJson = (JSONObject) items.get(1);
-            String value = valueJson.getString("value");
-            valueList.add(value);
+
+
+    @GetMapping("/vrType")
+    public Tip getVrType(){
+        if (JWTKit.getUserId()==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+        Long communityId = userCommunityAsset.getUserCommunityStatus(JWTKit.getUserId());
+        if (communityId==null){
+            throw new BusinessException(BusinessCode.CodeBase,"未找到小区信息");
         }
 
+        QueryWrapper<HouseVrType> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(HouseVrType.COMMUNITY_id,communityId);
+        List<HouseVrType> vrTypes = houseVrTypeMapper.selectList(queryWrapper);
+        return SuccessTip.create(vrTypes);
 
-        for (String value : valueList) {
-            if ("supplier".equals(value)) {
-                List<SupplierRecord> supplierRecords = querySupplierDao.queryAllSupplier();
-                JSONArray jsonArray = new JSONArray();
-
-
-                for (int i = 0; i < supplierRecords.size(); i++) {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("id", supplierRecords.get(i).getId());
-                    jsonObject.put("name", supplierRecords.get(i).getName());
-                    jsonObject.put("vrUrl", supplierRecords.get(i).getLink());
-
-
-                    String snapshot = supplierRecords.get(i).getSnapshot();
-                    String pattern = "/attachments(.*)\\.jpg";
-                    Pattern r = Pattern.compile(pattern);
-                    if (snapshot != null) {
-                        Matcher m = r.matcher(snapshot);
-                        if (m.find()) {
-                            jsonObject.put("snapshotUrl", m.group(0));
-//                            supplierRecords.get(i).setSnapshotUrl();
-                        }
-                    }
-                    jsonArray.add(jsonObject);
-
-                }
-                map.put(value, jsonArray);
-            }
-            if ("houseType".equals(value)) {
-                List<HouseDesignModelRecord> houseDesignModelRecords = queryHouseDesignModelDao.queryAllHouseDesignModel();
-                JSONArray jsonArray = new JSONArray();
-                for (int i = 0; i < houseDesignModelRecords.size(); i++) {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("id", houseDesignModelRecords.get(i).getId());
-                    jsonObject.put("name", houseDesignModelRecords.get(i).getHouseType());
-                    jsonObject.put("vrUrl", houseDesignModelRecords.get(i).getVrLink());
-
-                    String snapshot = houseDesignModelRecords.get(i).getVrSnapshot();
-                    String pattern = "/attachments(.*)\\.jpg";
-
-                    Pattern r = Pattern.compile(pattern);
-                    if (snapshot != null) {
-                        Matcher m = r.matcher(snapshot);
-                        if (m.find()) {
-                            jsonObject.put("snapshotUrl", m.group(0));
-//                            houseDesignModelRecords.get(i).setSnapshotUrl(m.group(0));
-                        }
-                    }
-                    jsonArray.add(jsonObject);
-
-                }
-                map.put(value, jsonArray);
-            }
-        }
-        return SuccessTip.create(map);
     }
 
 
     @GetMapping
     public Tip queryCategory(
             Page<HouseVrPictureRecord> page,
-            @RequestParam("category") String category,
+            @RequestParam("typeId") Long typeId,
             @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
@@ -148,7 +86,7 @@ public class UserVrCategoryEndpoint {
         page.setSize(pageSize);
 
         HouseVrPictureRecord record = new HouseVrPictureRecord();
-        record.setTypeOption(category);
+        record.setTypeId(typeId);
         record.setStatus(HouseVrPicture.STATUS_SHELVES);
         List<HouseVrPictureRecord> houseVrPictureRecordList = queryHouseVrPictureDao.findHouseVrPicturePage(page, record, null, null, null, null, null);
         page.setRecords(houseVrPictureRecordList);
@@ -171,28 +109,6 @@ public class UserVrCategoryEndpoint {
     }
 
 
-
-    /*
-    新组件测试用api 后面删除
-     */
-    @GetMapping("/testImage")
-    public Tip getTestImages() {
-        List<Map<String, String>> images = new ArrayList<>();
-        Map<String, String> map1 = new HashMap<>();
-        map1.put("img", "https://img0.baidu.com/it/u=3741814049,1596806643&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500");
-        Map<String, String> map2 = new HashMap<>();
-        map2.put("img", "https://img1.baidu.com/it/u=742421947,2110405846&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500");
-        Map<String, String> map3 = new HashMap<>();
-        map3.put("img", "https://img2.baidu.com/it/u=4253479904,3449894731&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800");
-        Map<String, String> map4 = new HashMap<>();
-        map4.put("img", "https://img0.baidu.com/it/u=282262975,2495783424&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800");
-
-        images.add(map1);
-        images.add(map2);
-        images.add(map3);
-        images.add(map4);
-        return SuccessTip.create(images);
-    }
 
 
 

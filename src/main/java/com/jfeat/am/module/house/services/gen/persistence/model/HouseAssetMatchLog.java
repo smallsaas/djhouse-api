@@ -70,6 +70,9 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
     @TableField(exist = false)
     private String ownerNumber;
 
+    @TableField(exist = false)
+    private String ownerRealName;
+
     @ApiModelProperty(value = "物主名字")
     @TableField(exist = false)
     private String matchedName;
@@ -90,6 +93,24 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
     @TableField(exist = false)
     private String matchedNumber;
 
+    @TableField(exist = false)
+    private String matchedRealName;
+
+    public String getOwnerRealName() {
+        return ownerRealName;
+    }
+
+    public void setOwnerRealName(String ownerRealName) {
+        this.ownerRealName = ownerRealName;
+    }
+
+    public String getMatchedRealName() {
+        return matchedRealName;
+    }
+
+    public void setMatchedRealName(String matchedRealName) {
+        this.matchedRealName = matchedRealName;
+    }
 
     public Long getOrgId() {
         return orgId;
