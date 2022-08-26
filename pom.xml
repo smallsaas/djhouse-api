@@ -39,6 +39,12 @@
             <version>1.0.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>pom-dev-devops</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
 
         <dependency>
             <groupId>com.jfeat</groupId>
@@ -133,6 +139,12 @@
             <groupId>com.jfeat</groupId>
             <artifactId>statistic</artifactId>
             <version>1.3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>dev-logs</artifactId>
+            <version>0.0.1</version>
         </dependency>
 
 

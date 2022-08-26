@@ -54,6 +54,8 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
 
     private String unitPicture;
 
+    private Integer issue;
+
     @TableField(exist = false)
     private Integer houseTypeNumber;
 
@@ -67,6 +69,14 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
     public HousePropertyBuilding setHouseTypeNumber(Integer houseTypeNumber) {
         this.houseTypeNumber = houseTypeNumber;
         return this;
+    }
+
+    public Integer getIssue() {
+        return issue;
+    }
+
+    public void setIssue(Integer issue) {
+        this.issue = issue;
     }
 
     public Integer getAssertTotal() {
@@ -179,6 +189,8 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
     public static final String FLOORS = "floors";
 
     public static final String UNITS = "units";
+
+    public static final String ISSUE = "issue";
 
     @Override
     protected Serializable pkVal() {

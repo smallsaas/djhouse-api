@@ -15,10 +15,12 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
 import com.jfeat.am.module.house.services.utility.Authentication;
+import com.jfeat.am.module.house.services.utility.RedisScript;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import io.swagger.models.auth.In;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +47,9 @@ public class UserUnitManageEndpoint {
 
     @Resource
     QueryHousePropertyBuildingUnitDao queryHousePropertyBuildingUnitDao;
+
+    @Resource
+    RedisScript redisScript;
 
 
 
@@ -83,7 +88,16 @@ public class UserUnitManageEndpoint {
 //    修改门牌号
     @PutMapping("/updateUnitBing/{id}")
     public Tip updateUnitBind(@PathVariable("id")Long id,@RequestBody HousePropertyBuildingUnit entity){
-        return SuccessTip.create(housePropertyBuildingUnitService.updateUnitBind(id, entity));
+
+        HousePropertyBuildingUnit unit =  housePropertyBuildingUnitMapper.selectById(id);
+
+        Integer affect =  housePropertyBuildingUnitService.updateUnitBind(id, entity);
+
+        if (affect>0 && unit.getBuildingId()!=null){
+            redisScript.delRidesData("*".concat("buildingId").concat(String.valueOf(unit.getBuildingId())).concat(":*"));
+        }
+
+        return SuccessTip.create(affect);
     }
 
 //    获取单元列表以小区id
@@ -109,7 +123,15 @@ public class UserUnitManageEndpoint {
         HousePropertyBuildingUnit housePropertyBuildingUnit =  housePropertyBuildingUnitMapper.selectById(unitId);
         if (housePropertyBuildingUnit!=null && entity.getDesignModelId()!=null){
             housePropertyBuildingUnit.setDesignModelId(entity.getDesignModelId());
-            return SuccessTip.create(housePropertyBuildingUnitMapper.updateById(housePropertyBuildingUnit));
+
+            Integer affect = housePropertyBuildingUnitMapper.updateById(housePropertyBuildingUnit);
+
+//            清除redis缓存
+            HousePropertyBuildingUnit unit =  housePropertyBuildingUnitMapper.selectById(unitId);
+            if (affect>0 && unit.getBuildingId()!=null){
+                redisScript.delRidesData("*".concat("buildingId").concat(String.valueOf(unit.getBuildingId())).concat(":*"));
+            }
+            return SuccessTip.create(affect);
         }
         return SuccessTip.create();
     }

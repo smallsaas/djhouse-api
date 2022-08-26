@@ -13,6 +13,7 @@ import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuild
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
 import com.jfeat.am.module.house.services.utility.Authentication;
+import com.jfeat.am.module.house.services.utility.RedisScript;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
@@ -43,6 +44,9 @@ public class UserAssetManageEndpoint {
 
     @Resource
     HousePropertyBuildingMapper housePropertyBuildingMapper;
+
+    @Resource
+    RedisScript redisScript;
 
     //    房子
 
@@ -92,7 +96,12 @@ public class UserAssetManageEndpoint {
         HouseAsset houseAssetModel = houseAssetMapper.selectById(id);
         if (houseAssetModel!=null){
             houseAssetModel.setAssetFlag(entity.getAssetFlag());
-            return SuccessTip.create(houseAssetService.updateMaster(houseAssetModel));
+            Integer affect = houseAssetService.updateMaster(houseAssetModel);
+            if (affect>0){
+                //  清除缓存
+                redisScript.delRidesData("*".concat("buildingId").concat(String.valueOf(houseAssetModel.getBuildingId())).concat(":*"));
+            }
+            return SuccessTip.create(affect);
         }
         return SuccessTip.create();
     }

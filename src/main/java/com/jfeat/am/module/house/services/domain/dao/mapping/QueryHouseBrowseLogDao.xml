@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseBrowseLogDao">
+                                                                                                                        <sql id="Base_Column_List">
+                                                                                                                                                                                                                                                                                                                                                t_house_browse_log.id, t_house_browse_log.user_id AS userId, t_house_browse_log.browse_number AS browseNumber
+    </sql>
+
+    
+    
+    <select id="queryMasterModel" resultType="HouseBrowseLogModel">
+       SELECT t_house_browse_log.*
+       FROM t_house_browse_log
+       WHERE t_house_browse_log.id=#{id}
+       GROUP BY t_house_browse_log.id
+    </select>
+
+
+
+            
+    <select id="findHouseBrowseLogPage" resultType="HouseBrowseLogRecord" parameterType="HouseBrowseLogRecord">
+            SELECT <include refid="Base_Column_List"/>
+
+        
+
+        FROM t_house_browse_log
+
+        
+        
+        WHERE 1=1
+        
+
+        
+                                                                            <if test="record.id != null and record.id>0 ">
+                                    AND t_house_browse_log.id LIKE CONCAT('%',#{record.id},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.userId != null and record.userId>0 ">
+                                    AND t_house_browse_log.user_id LIKE CONCAT('%',#{record.userId},'%')
+                            </if>
+                                                                    
+
+                                                                                        <if test="record.browseNumber != null and record.browseNumber>0 ">
+                                    AND t_house_browse_log.browse_number LIKE CONCAT('%',#{record.browseNumber},'%')
+                            </if>
+        
+        <if test="startTime != null">
+            <![CDATA[AND t_house_browse_log.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_browse_log.end_time <= DATE(#{endTime}]]>
+        </if>
+            <!--
+        <if test="search != null and search != ''">
+            OR t_house_browse_log.name LIKE CONCAT('%',#{search},'%')
+        </if>
+        -->
+                                    </select>
+</mapper>

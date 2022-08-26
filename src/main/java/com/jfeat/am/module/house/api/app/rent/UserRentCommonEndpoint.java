@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.JsonObject;
+import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.crud.tag.services.persistence.dao.StockTagMapper;
 import com.jfeat.am.crud.tag.services.persistence.dao.StockTagRelationMapper;
 import com.jfeat.am.crud.tag.services.persistence.model.StockTag;
@@ -15,9 +17,13 @@ import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseRentAssetModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseBrowseLogMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseDesignModelMapper;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseSubscribeMapper;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseBrowseLog;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseDesignModel;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseSubscribe;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
@@ -73,6 +79,15 @@ public class UserRentCommonEndpoint {
 
     @Resource
     HouseSupportFacilitiesService houseSupportFacilitiesService;
+
+    @Resource
+    HouseSubscribeMapper houseSubscribeMapper;
+
+    @Resource
+    HouseBrowseLogService houseBrowseLogService;
+
+    @Resource
+    HouseBrowseLogMapper houseBrowseLogMapper;
 
 
 
@@ -183,8 +198,24 @@ public class UserRentCommonEndpoint {
             }
             resultJson.put("tags",jsonArray);
             houseRentAssetRecord.setExtra(resultJson.toJSONString());
-
         }
+
+//        查询用户是否有关注过房源
+        if (JWTKit.getUserId()!=null){
+            QueryWrapper<HouseSubscribe> houseSubscribeQueryWrapper = new QueryWrapper<>();
+            houseSubscribeQueryWrapper.eq(HouseSubscribe.USER_ID,JWTKit.getUserId());
+            List<HouseSubscribe> houseSubscribeList =  houseSubscribeMapper.selectList(houseSubscribeQueryWrapper);
+
+//        遍历用户关注过的房源 如果有就添加状态
+            for (HouseSubscribe houseSubscribe:houseSubscribeList){
+                for (HouseRentAssetRecord rentAssetRecord:houseRentAssetPage){
+                    if (houseSubscribe.getSubscribeId().equals(rentAssetRecord.getId())){
+                        rentAssetRecord.setSubscribeStatus(true);
+                    }
+                }
+            }
+        }
+
         page.setRecords(houseRentAssetPage);
 
         return SuccessTip.create(page);
@@ -198,6 +229,19 @@ public class UserRentCommonEndpoint {
 
         HouseRentAssetModel houseRentAssetModel = queryHouseRentAssetDao.queryMasterModel(id);
         if (houseRentAssetModel!=null){
+
+            if (JWTKit.getUserId()!=null){
+
+                houseBrowseLogService.addBroseLog(JWTKit.getUserId());
+                //            是否有关注
+                QueryWrapper<HouseSubscribe> subscribeQueryWrapper = new QueryWrapper<>();
+                subscribeQueryWrapper.eq(HouseSubscribe.USER_ID,JWTKit.getUserId()).eq(HouseSubscribe.SUBSCRIBE_ID,id);
+                HouseSubscribe houseSubscribe =  houseSubscribeMapper.selectOne(subscribeQueryWrapper);
+                if (houseSubscribe!=null){
+                    houseRentAssetModel.setSubscribeStatus(true);
+                }
+            }
+
             HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(houseRentAssetModel.getAssetId());
             if (houseAssetModel!=null){
                 houseRentAssetModel.setHouseAssetModel(houseAssetModel);
@@ -245,6 +289,42 @@ public class UserRentCommonEndpoint {
         List<HouseDesignModelRecord> houseDesignModelRecordList = queryHouseDesignModelDao.findHouseDesignModelPage(null,houseDesignModelRecord,null,null
         ,null,null,null);
         return SuccessTip.create(houseDesignModelRecordList);
+    }
+
+
+//    获取关注数 和浏览数
+    @GetMapping("/statistics")
+    public Tip getStatisticsNumber(){
+        if (JWTKit.getUserId()==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+
+//        浏览数
+        QueryWrapper<HouseBrowseLog> browseLogQueryWrapper = new QueryWrapper<>();
+        browseLogQueryWrapper.eq(HouseBrowseLog.USER_ID,JWTKit.getUserId());
+        HouseBrowseLog houseBrowseLog = houseBrowseLogMapper.selectOne(browseLogQueryWrapper);
+
+//        关注数
+        QueryWrapper<HouseSubscribe> subscribeQueryWrapper = new QueryWrapper<>();
+        subscribeQueryWrapper.eq(HouseSubscribe.USER_ID,JWTKit.getUserId());
+        List<HouseSubscribe> houseSubscribeList = houseSubscribeMapper.selectList(subscribeQueryWrapper);
+
+        JSONObject jsonObject = new JSONObject();
+
+        if (houseBrowseLog!=null){
+            jsonObject.put("browseNumber",houseBrowseLog.getBrowseNumber());
+        }else {
+            jsonObject.put("browseNumber",0);
+        }
+
+        if (houseSubscribeList!=null){
+            jsonObject.put("subscribeNumber",houseSubscribeList.size());
+        }else {
+            jsonObject.put("subscribeNumber",0);
+        }
+
+        return SuccessTip.create(jsonObject);
+
     }
 
 

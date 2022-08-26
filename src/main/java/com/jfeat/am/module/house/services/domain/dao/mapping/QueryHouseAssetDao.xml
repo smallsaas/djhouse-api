@@ -265,4 +265,23 @@
     </select>
 
 
+    <select id="getHouseAssetList" parameterType="java.lang.Long" resultType="HouseAssetRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_asset
+
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
+        left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
+        left JOIN t_house_design_model ON  t_house_asset.house_type_id= t_house_design_model.id
+        left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
+        WHERE t_house_asset.id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+
 </mapper>

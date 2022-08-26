@@ -75,6 +75,7 @@ public class UserMultipleAssetEndpoint {
                 map.put(houseAssetRecord.getBuildingCode(), 1);
                 item.add(houseAssetRecord);
                 map.put("items", item);
+                map.put("buildingCode",houseAssetRecord.getBuildingCode());
                 mapList.add(map);
             }
         }

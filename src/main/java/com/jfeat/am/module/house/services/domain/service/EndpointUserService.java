@@ -6,4 +6,4 @@ import com.jfeat.am.module.house.services.gen.crud.service.CRUDEndpointUserServi
  * Created by vincent on 2017/10/19.
  */
 public interface EndpointUserService extends CRUDEndpointUserService {
-    }
+}

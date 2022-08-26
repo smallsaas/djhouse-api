@@ -18,12 +18,10 @@ import com.jfeat.am.module.house.services.domain.service.HouseAssetExchangeReque
 import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMatchLogMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchangeRequest;
-import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
+import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -69,6 +67,9 @@ public class UserAssetExchange {
 
     @Resource
     HouseUserAssetMapper houseUserAssetMapper;
+
+    @Resource
+    HouseAssetMatchLogMapper houseAssetMatchLogMapper;
 
 
 //    新建或者修改资产交换记录并匹配
@@ -472,4 +473,36 @@ public class UserAssetExchange {
         page.setRecords(houseAssetExchangeRequestPage);
         return SuccessTip.create(page);
     }
+
+
+    /**
+     * 给定房号id 找出匹配到的房屋信息
+     * @param assetId
+     * @return
+     */
+    @GetMapping("/getAssetMatchedInfo")
+    public Tip getAssetMatchedByAssetId(@RequestParam("assetId") Long assetId){
+        if (JWTKit.getUserId()==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+
+        QueryWrapper<HouseAssetMatchLog> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(HouseAssetMatchLog.OWNER_ASSET_ID,assetId).eq(HouseAssetMatchLog.OWNER_USER_ID,JWTKit.getUserId());
+        List<HouseAssetMatchLog> logList = houseAssetMatchLogMapper.selectList(queryWrapper);
+
+        List<Long> matchedAssetIds = new ArrayList<>();
+        for (HouseAssetMatchLog houseAssetMatchLog:logList){
+            matchedAssetIds.add(houseAssetMatchLog.getMathchedAssetId());
+        }
+
+        if (matchedAssetIds!=null && matchedAssetIds.size()>0){
+            return SuccessTip.create(queryHouseAssetDao.getHouseAssetList(matchedAssetIds));
+        }
+
+        return SuccessTip.create();
+    }
+
+
+
+
 }

@@ -60,5 +60,8 @@ public interface QueryHouseAssetDao extends QueryMasterDao<HouseAsset> {
                                               @Param("search") String search, @Param("orderBy") String orderBy,
                                               @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
+//    查询多个房产地址
+
+    List<HouseAssetRecord> getHouseAssetList(@Param("ids") List<Long> ids);
 
 }

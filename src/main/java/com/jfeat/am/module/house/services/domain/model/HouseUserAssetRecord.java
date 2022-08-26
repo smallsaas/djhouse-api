@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.services.domain.model;
 
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseDecoratePlan;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.Product;
@@ -21,13 +22,13 @@ public class HouseUserAssetRecord extends HouseUserAsset {
 
     private Boolean isExistExchange;
 
-    private List<HouseAssetExchangeRequestRecord> exchangeRequestRecordList;
+    private List<HouseAssetRecord> exchangeRequestRecordList;
 
-    public List<HouseAssetExchangeRequestRecord> getExchangeRequestRecordList() {
+    public List<HouseAssetRecord> getExchangeRequestRecordList() {
         return exchangeRequestRecordList;
     }
 
-    public void setExchangeRequestRecordList(List<HouseAssetExchangeRequestRecord> exchangeRequestRecordList) {
+    public void setExchangeRequestRecordList(List<HouseAssetRecord> exchangeRequestRecordList) {
         this.exchangeRequestRecordList = exchangeRequestRecordList;
     }
 

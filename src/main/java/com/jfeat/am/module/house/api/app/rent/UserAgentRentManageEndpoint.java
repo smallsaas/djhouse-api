@@ -214,7 +214,7 @@ public class UserAgentRentManageEndpoint {
         }
 
         entity.setId(id);
-        return SuccessTip.create(houseRentAssetService.updateMaster(entity));
+        return SuccessTip.create(houseRentAssetService.updateUserRentAsset(entity));
     }
 
 

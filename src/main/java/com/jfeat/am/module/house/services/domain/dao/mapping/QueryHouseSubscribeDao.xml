@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseSubscribeDao">
+    <sql id="Base_Column_List">
+        t_house_subscribe
+        .
+        id
+        , t_house_subscribe.user_id AS userId, t_house_subscribe.subscribe_id AS subscribeId, t_house_subscribe.create_time AS createTime
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseSubscribeModel">
+        SELECT t_house_subscribe.*
+        FROM t_house_subscribe
+        WHERE t_house_subscribe.id = #{id}
+        GROUP BY t_house_subscribe.id
+    </select>
+
+
+    <select id="findHouseSubscribePage" resultType="HouseSubscribeRecord" parameterType="HouseSubscribeRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_subscribe
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_subscribe.id =#{record.id}
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_subscribe.user_id = #{record.userId}
+        </if>
+
+
+        <if test="record.subscribeId != null and record.subscribeId>0 ">
+            AND t_house_subscribe.subscribe_id =#{record.subscribeId}
+        </if>
+
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_subscribe.create_time LIKE CONCAT('%',#{record.createTime},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_subscribe.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_subscribe.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_subscribe.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+        ORDER BY create_time DESC
+    </select>
+
+
+    <resultMap id="HouseRentAssetMap" type="HouseRentAssetRecord">
+        <id column="id" property="id"/>
+        <result column="asset_id" property="assetId"/>
+        <result column="community_id" property="communityId"/>
+        <result column="house_type_id" property="houseTypeId"/>
+        <result column="landlord_id" property="landlordId"/>
+        <result column="area" property="area"/>
+        <result column="introduce_picture" property="introducePicture"/>
+        <result column="server_id" property="serverId"/>
+        <result column="cover" property="cover"/>
+        <result column="title" property="title"/>
+        <result column="price" property="price"/>
+        <result column="slide" property="slide"/>
+        <result column="describe" property="describe"/>
+        <result column="rent_status" property="rentStatus"/>
+        <result column="note" property="note"/>
+        <result column="rent_time" property="rentTime"/>
+        <result column="shelves_time" property="shelvesTime"/>
+        <result column="rate" property="rate"/>
+        <association property="houseAssetModel"
+                     javaType="com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel">
+            <id column="assetId" property="id"/>
+            <result column="address" property="address"/>
+            <result column="area" property="area"/>
+            <result column="assetFlag" property="assetFlag"/>
+            <result column="assetSlot" property="assetSlot"/>
+            <result column="assetType" property="assetType"/>
+            <result column="buildingArea" property="buildingArea"/>
+            <result column="buildingCode" property="buildingCode"/>
+
+            <result column="buildingId" property="buildingId"/>
+            <result column="cadPicture" property="cadPicture"/>
+            <result column="communityId" property="communityId"/>
+            <result column="communityName" property="communityName"/>
+            <result column="designModelId" property="designModelId"/>
+            <result column="direction" property="direction"/>
+            <result column="floor" property="floor"/>
+
+            <result column="houseType" property="houseType"/>
+            <result column="houseTypeId" property="houseTypeId"/>
+            <result column="houseTypePicture" property="houseTypePicture"/>
+            <result column="number" property="number"/>
+            <result column="unitId" property="unitId"/>
+            <result column="vrLink" property="vrLink"/>
+            <result column="vrPicture" property="vrPicture"/>
+            <result column="vrSnapshot" property="vrSnapshot"/>
+        </association>
+    </resultMap>
+
+    <sql id="houseRentSql">
+        t_house_rent_asset.*,
+        t_house_asset.id AS assetId,
+        t_house_asset.building_id AS buildingId,
+        t_house_asset.unit_id AS unitId,
+        t_house_asset.floor,
+        t_house_asset.number,
+        t_house_asset.asset_slot AS assetSlot,
+        t_house_asset.asset_type AS assetType,
+        t_house_asset.asset_flag AS assetFlag,
+        t_house_asset.house_type_id AS houseTypeId,
+
+        t_house_property_building.cad_picture AS cadPicture,
+        t_house_property_building.code       AS buildingCode,
+
+        t_house_property_building_unit.direction AS direction,
+
+        t_house_property_community.id        AS communityId,
+        t_house_property_community.community AS communityName,
+        t_house_property_community.address AS address,
+
+        t_house_design_model.id AS designModelId,
+        t_house_design_model.house_type AS houseType,
+        t_house_design_model.house_type_picture AS houseTypePicture,
+        t_house_vr_picture.vr_picture AS vrPicture,
+        t_house_vr_picture.link                  AS vrLink,
+        t_house_vr_picture.snapshot              AS vrSnapshot,
+        t_house_design_model.area AS area
+    </sql>
+    <!--    添加列表详情-->
+    <select id="userSubscribe" resultMap="HouseRentAssetMap" parameterType="HouseSubscribeRecord">
+        SELECT
+        <include refid="houseRentSql"></include>
+
+
+        FROM t_house_subscribe
+        JOIN t_house_rent_asset ON t_house_subscribe.subscribe_id=t_house_rent_asset.id
+
+        JOIN t_house_asset on t_house_rent_asset.asset_id = t_house_asset.id
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community ON t_house_property_community.id = t_house_property_building.community_id
+        left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
+        left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+        left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
+
+        WHERE 1=1
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_subscribe.id =#{record.id}
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_subscribe.user_id = #{record.userId}
+        </if>
+
+
+        <if test="record.subscribeId != null and record.subscribeId>0 ">
+            AND t_house_subscribe.subscribe_id =#{record.subscribeId}
+        </if>
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_subscribe.create_time LIKE CONCAT('%',#{record.createTime},'%')
+        </if>
+        ORDER BY t_house_subscribe.create_time DESC
+    </select>
+</mapper>

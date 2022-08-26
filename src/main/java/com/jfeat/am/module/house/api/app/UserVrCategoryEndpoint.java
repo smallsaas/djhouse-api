@@ -1,14 +1,10 @@
 package com.jfeat.am.module.house.api.app;
 
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseDesignModelDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseVrPictureDao;
-import com.jfeat.am.module.house.services.domain.model.HouseDesignModelRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseVrPictureRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseVrPictureService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseVrPictureModel;
@@ -16,28 +12,20 @@ import com.jfeat.am.module.house.services.gen.persistence.dao.HouseVrTypeMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseVrPicture;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseVrType;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
-import com.jfeat.am.module.supplier.services.domain.dao.QuerySupplierDao;
-import com.jfeat.am.module.supplier.services.domain.model.SupplierRecord;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
-import com.jfeat.eav.services.domain.service.DataServiceService;
-import com.jfeat.eav.services.domain.service.EavEntityService;
-import com.jfeat.eav.services.gen.persistence.model.EavEntity;
-import io.swagger.annotations.Api;
+import com.jfeat.crud.core.util.RedisKit;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.logging.SocketHandler;
 
 @RestController
-@Api("UserVrCategory")
 @RequestMapping("/api/u/vr")
 public class UserVrCategoryEndpoint {
 
@@ -53,6 +41,14 @@ public class UserVrCategoryEndpoint {
 
     @Resource
     HouseVrTypeMapper houseVrTypeMapper;
+
+    @Resource
+    RedisTemplate redisTemplate;
+
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
+
+
 
 
 
@@ -108,8 +104,12 @@ public class UserVrCategoryEndpoint {
         return SuccessTip.create(houseVrPictureService.updateMaster(houseVrPictureModel));
     }
 
-
-
+    @GetMapping("/getDemoTest")
+    public Tip getDemoTest(){
+        System.out.println("被调用");
+        System.out.println(RedisKit.isSanity());
+        return SuccessTip.create(stringRedisTemplate.opsForValue().get("building"));
+    }
 
 
 }

@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.api.app;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
@@ -8,6 +9,8 @@ import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.domain.service.HouseUserCommunityStatusService;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseUserAssetModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMapper;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMatchLogMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
@@ -25,7 +28,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Api("UserHouseAsset")
@@ -78,6 +83,12 @@ public class UserHouseAssetEndpoint {
 
     @Resource
     HouseUserAssetMapper houseUserAssetMapper;
+
+    @Resource
+    HouseAssetMapper houseAssetMapper;
+
+    @Resource
+    HouseAssetMatchLogMapper houseAssetMatchLogMapper;
 
 
     //    获取小区
@@ -473,22 +484,29 @@ public class UserHouseAssetEndpoint {
         userAssetRecord.setUserId(JWTKit.getUserId());
         List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, communityId, null, null, null, null, null);
 
-        //            是否存在置换房屋
-        HouseAssetExchangeRequestRecord exchangeRequestRecord = new HouseAssetExchangeRequestRecord();
-        exchangeRequestRecord.setUserId(JWTKit.getUserId());
-        List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null, exchangeRequestRecord, null, null, null, null, null);
-
+        // 查询匹配到的房屋
+        QueryWrapper<HouseAssetMatchLog> matchLogQueryWrapper = new QueryWrapper<>();
+        matchLogQueryWrapper.eq(HouseAssetMatchLog.OWNER_USER_ID, JWTKit.getUserId());
+        List<HouseAssetMatchLog> matchLogList = houseAssetMatchLogMapper.selectList(matchLogQueryWrapper);
         Long mid = System.currentTimeMillis();
 
+
         for (int i = 0; i < houseUserAssets.size(); i++) {
-            List<HouseAssetExchangeRequestRecord> list = new ArrayList<>();
-            for (HouseAssetExchangeRequestRecord houseAssetExchangeRequest : houseAssetExchangeRequestList) {
-                if (houseUserAssets.get(i).getAssetId().equals(houseAssetExchangeRequest.getAssetId())) {
-                    houseUserAssets.get(i).setExistExchange(true);
-                    list.add(houseAssetExchangeRequest);
+
+//            匹配的的房屋id列表
+            List<Long> assetIds = new ArrayList<>();
+
+            for (HouseAssetMatchLog houseAssetMatchLog : matchLogList) {
+                if (houseUserAssets.get(i).getAssetId().equals(houseAssetMatchLog.getOwnerAssetId())) {
+                    assetIds.add(houseAssetMatchLog.getMathchedAssetId());
                 }
             }
-            houseUserAssets.get(i).setExchangeRequestRecordList(list);
+
+            if (assetIds != null && assetIds.size() > 0) {
+                houseUserAssets.get(i).setExistExchange(true);
+                houseUserAssets.get(i).setExchangeRequestRecordList(queryHouseAssetDao.getHouseAssetList(assetIds));
+            }
+
         }
 
         return SuccessTip.create(houseUserAssets);

@@ -12,6 +12,7 @@ import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingMo
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.utility.Authentication;
+import com.jfeat.am.module.house.services.utility.RedisScript;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -50,6 +51,9 @@ public class UserBuildingManageEndpoint {
 
     @Resource
     HouseAssetMapper houseAssetMapper;
+
+    @Resource
+    RedisScript redisScript;
 
 
 
@@ -135,6 +139,10 @@ public class UserBuildingManageEndpoint {
             effect+=housePropertyBuildingOverModelService.modifyHouseBuilding(housePropertyBuildingModel);
 
         }
+        if (effect>0){
+            //  清除缓存
+            redisScript.delRidesData("*".concat("buildingId").concat(String.valueOf(id)).concat(":*"));
+        }
         return SuccessTip.create(effect);
     }
 
@@ -167,6 +175,9 @@ public class UserBuildingManageEndpoint {
 //            删除房屋和单元
             queryHousePropertyRoomDao.deleteHouseRoomByBuildingId(id);
             queryHousePropertyBuildingUnitDao.deleteHouseBuildingUnitByBuildingId(id);
+
+//            清除缓存
+            redisScript.delRidesData("*".concat("buildingId").concat(String.valueOf(id)).concat(":*"));
         }
         return SuccessTip.create(affect);
     }

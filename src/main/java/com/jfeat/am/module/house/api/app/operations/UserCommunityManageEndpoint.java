@@ -12,6 +12,7 @@ import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyCommunityM
 import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyCommunityMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyCommunity;
 import com.jfeat.am.module.house.services.utility.Authentication;
+import com.jfeat.am.module.house.services.utility.RedisScript;
 import com.jfeat.am.uaas.tenant.services.gen.persistence.dao.TenantMapper;
 import com.jfeat.am.uaas.tenant.services.gen.persistence.model.Tenant;
 import com.jfeat.crud.base.exception.BusinessCode;
@@ -49,6 +50,9 @@ public class UserCommunityManageEndpoint {
 
     @Resource
     TenantMapper tenantMapper;
+
+    @Resource
+    RedisScript redisScript;
 
 
 //    小区
@@ -94,7 +98,13 @@ public class UserCommunityManageEndpoint {
         int newOptions = META.UPDATE_CASCADING_DELETION_FLAG;  //default to delete not exist items
         // newOptions = FlagUtil.setFlag(newOptions, META.UPDATE_ALL_COLUMNS_FLAG);
 
-        return SuccessTip.create(housePropertyCommunityOverModelService.updateMaster(entity, null, null, null, newOptions));
+//        删除缓存
+        Integer affect  = housePropertyCommunityOverModelService.updateMaster(entity, null, null, null, newOptions);
+        if (affect>0){
+            redisScript.delRidesData("communityId".concat(String.valueOf(id).concat(":*")));
+        }
+
+        return SuccessTip.create();
     }
 
     /*
@@ -112,8 +122,11 @@ public class UserCommunityManageEndpoint {
         if (!authentication.verifyOperation(JWTKit.getUserId())) {
             throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
         }
-
-        return SuccessTip.create(housePropertyCommunityOverModelService.deleteCommunity(id));
+        Integer affect  = housePropertyCommunityOverModelService.deleteCommunity(id);
+        if (affect>0){
+            redisScript.delRidesData("communityId".concat(String.valueOf(id).concat(":*")));
+        }
+        return SuccessTip.create(affect);
     }
 
 

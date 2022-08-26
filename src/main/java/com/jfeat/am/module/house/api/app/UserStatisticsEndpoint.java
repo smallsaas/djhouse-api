@@ -76,6 +76,8 @@ public class UserStatisticsEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
+        List<String> title = Arrays.asList("第一期","第二期","第三期","第四期");
+
         Long communityId = null;
 
 //        查询用户小区状态
@@ -88,23 +90,43 @@ public class UserStatisticsEndpoint {
         if (communityId==null){
             return SuccessTip.create();
         }
-        //list 0-房子数 1-无效房子数 2-平房数 3-复式数 4-楼栋数 5-单元数 6-户型数 7-换房需求数 8-换房记录数 9-停车位数
-        List<Integer> houseStatistics =   houseStatisticsDao.communityStatistics(communityId);
 
-        Integer houseNumber = houseStatistics.get(0)-houseStatistics.get(1)-houseStatistics.get(3);
+        QueryWrapper<HousePropertyBuilding> buildingQueryWrapper = new QueryWrapper<>();
+        buildingQueryWrapper.eq(HousePropertyBuilding.COMMUNITY_ID,communityId).groupBy(HousePropertyBuilding.ISSUE);
+        List<HousePropertyBuilding> buildingList = housePropertyBuildingMapper.selectList(buildingQueryWrapper);
 
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("buildingNumber",houseStatistics.get(4));
-        jsonObject.put("multipleNumber",houseStatistics.get(3));
-        jsonObject.put("unitNumber",houseStatistics.get(5));
-        jsonObject.put("houseNumber",houseNumber);
-        jsonObject.put("parkingNumber",houseStatistics.get(9));
+        JSONArray jsonArray = new JSONArray();
+
+        for (HousePropertyBuilding building:buildingList){
+            //list 0-房子数 1-无效房子数 2-平房数 3-复式数 4-楼栋数 5-单元数 6-户型数 7-换房需求数 8-换房记录数 9-停车位数
+            List<Integer> houseStatistics =   houseStatisticsDao.communityStatistics(communityId,building.getIssue());
+
+            JSONObject item  = new JSONObject();
+            JSONObject jsonObject = new JSONObject();
+            Integer houseNumber = houseStatistics.get(0)-houseStatistics.get(1)-houseStatistics.get(3);
+            jsonObject.put("buildingNumber",houseStatistics.get(4));
+            jsonObject.put("multipleNumber",houseStatistics.get(3));
+            jsonObject.put("unitNumber",houseStatistics.get(5));
+            jsonObject.put("houseNumber",houseNumber);
+            jsonObject.put("parkingNumber",houseStatistics.get(9));
 //        jsonObject.put("totalArea",totalArea);
-        jsonObject.put("houseTypeNumber",houseStatistics.get(6));
-        jsonObject.put("houseExchangeNumber",houseStatistics.get(7));
-        jsonObject.put("equityNumber",houseStatistics.get(8));
-        return SuccessTip.create(jsonObject);
+            jsonObject.put("houseTypeNumber",houseStatistics.get(6));
+            jsonObject.put("houseExchangeNumber",houseStatistics.get(7));
+            jsonObject.put("equityNumber",houseStatistics.get(8));
+
+            String tab = "";
+            if (building.getIssue()<=title.size()){
+                tab = title.get(building.getIssue()-1);
+            }
+            item.put("tab",tab);
+            item.put("issue",building.getIssue());
+            item.put("data",jsonObject);
+            jsonArray.add(item);
+        }
+
+
+        return SuccessTip.create(jsonArray);
     }
 
 

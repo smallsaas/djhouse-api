@@ -20,7 +20,7 @@ public class HouseStatisticsTools {
         List<String> statisticsFiled = Arrays.asList("houseNumber","invalidHouse","bungalow","multipleNumber","buildingNumber","unitNumber","houseTypeNumber","houseExchangeNumber","houseExchangeMatchNumber","parkingNumber"
         ,"landlord","supplier");
         List<Map<String,Object>> result = new ArrayList<>();
-        List<Integer> houseStatistics =   houseStatisticsDao.communityStatistics(communityId);
+        List<Integer> houseStatistics =   houseStatisticsDao.communityStatistics(communityId,null);
         if (houseStatistics.size()<=statisticsFiled.size()){
             for (int i=0;i<houseStatistics.size();i++){
                 Map<String,Object> map = new HashMap<>();

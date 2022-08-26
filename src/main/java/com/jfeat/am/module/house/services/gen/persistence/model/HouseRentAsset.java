@@ -88,6 +88,9 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     private Integer rate;
 
     @TableField(exist = false)
+    private Boolean subscribeStatus;
+
+    @TableField(exist = false)
     private String extra;
 
     @TableField(exist = false)
@@ -105,6 +108,15 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     @ApiModelProperty(value = "出租家居列表清单")
     @TableField(exist = false)
     private List<HouseRentSupportFacilitiesRecord> supportFacilitiesList;
+
+
+    public Boolean getSubscribeStatus() {
+        return subscribeStatus;
+    }
+
+    public void setSubscribeStatus(Boolean subscribeStatus) {
+        this.subscribeStatus = subscribeStatus;
+    }
 
     public List<HouseRentSupportFacilitiesRecord> getSupportFacilitiesList() {
         return supportFacilitiesList;

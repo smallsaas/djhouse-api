@@ -56,7 +56,6 @@ import com.alibaba.fastjson.JSONArray;
  * @since 2022-05-27
  */
 @RestController
-@Api("Product")
 @RequestMapping("/api/crud/house/product/products")
 public class ProductEndpoint {
 

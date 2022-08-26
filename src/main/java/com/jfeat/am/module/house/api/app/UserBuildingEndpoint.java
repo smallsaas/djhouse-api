@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.api.app;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -17,25 +18,35 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseDesignModel;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
+import com.jfeat.am.module.house.services.utility.RedisScript;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.crud.core.util.RedisKit;
 import io.swagger.annotations.Api;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.formula.functions.T;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
+import redis.clients.jedis.Jedis;
 
 import javax.annotation.Resource;
 import javax.management.Query;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @Api("HouseAssetExchangeRequest")
 @RequestMapping("/api/u/house/building")
 public class UserBuildingEndpoint {
+
+    private final Log logger = LogFactory.getLog(getClass());
 
     @Resource
     HouseStatisticsDao houseStatisticsDao;
@@ -57,6 +68,13 @@ public class UserBuildingEndpoint {
 
     @Resource
     UserCommunityAsset userCommunityAsset;
+
+    @Resource
+    RedisScript redisScript;
+
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
+
 
     //    返回当前小区楼栋列表
     @GetMapping("/getCurrentCommunityBuilding")
@@ -182,6 +200,26 @@ public class UserBuildingEndpoint {
     @GetMapping("/getFloorsHouseNumber")
     public Tip getFloorsHouseNumber(@RequestParam(value = "buildingId",required = true) Long buildingId, @RequestParam(value = "floors",required = true) Integer floor) {
 
+
+        HousePropertyBuilding building = housePropertyBuildingMapper.selectById(buildingId);
+        if (building.getCommunityId()==null){
+            return null;
+        }
+        String key =  redisScript.getBuildingFloorsKey(building.getCommunityId(),buildingId,floor);
+        System.out.println(key);
+
+        if (RedisKit.isSanity() && stringRedisTemplate.hasKey(key) && stringRedisTemplate.opsForValue().getOperations().getExpire(key)>0){
+            logger.info("getFloorsHouseNumber返回缓存数据");
+            String value = (String) stringRedisTemplate.opsForValue().get(key);
+            JSON json = JSONObject.parseObject(value);
+            return SuccessTip.create(json);
+        }
+
+        logger.info("getFloorsHouseNumber没有缓存");
+
+
+
+
         QueryWrapper<HouseAsset> houseAssetQueryWrapper = new QueryWrapper<>();
         houseAssetQueryWrapper.eq(HouseAsset.BUILDING_ID, buildingId).eq(HouseAsset.FLOOR, floor);
         List<HouseAsset> assetList = houseAssetMapper.selectList(houseAssetQueryWrapper);
@@ -228,6 +266,9 @@ public class UserBuildingEndpoint {
                 }
             }
         }
+
+
+        stringRedisTemplate.opsForValue().set(key,unitJson.toJSONString(),24, TimeUnit.HOURS);
         return SuccessTip.create(unitJson);
     }
 }

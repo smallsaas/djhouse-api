@@ -18,6 +18,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentSupport
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
+import io.swagger.models.auth.In;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,6 +115,25 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
             affected+=queryHouseRentSupportFacilitiesDao.batchInsertHouseRentSupportFacilities(entity.getSupportFacilitiesList());
         }
 
+        return affected;
+    }
+
+    @Override
+    @Transactional
+    public int updateUserRentAsset(HouseRentAsset entity) {
+
+        Integer affected = 0;
+        affected =  houseRentAssetService.updateMaster(entity);
+        if (entity.getAssetId()==null){
+            return affected;
+        }
+
+        if (affected>0 && entity.getSupportFacilitiesList()!=null && entity.getSupportFacilitiesList().size()>0){
+            QueryWrapper<HouseRentSupportFacilities> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq(HouseRentSupportFacilities.ASSET_ID,entity.getAssetId());
+            affected+=houseRentSupportFacilitiesMapper.delete(queryWrapper);
+            affected+=queryHouseRentSupportFacilitiesDao.batchInsertHouseRentSupportFacilities(entity.getSupportFacilitiesList());
+        }
         return affected;
     }
 }
