@@ -54,16 +54,19 @@ public class UserSubscribeEndPoint {
      * @return
      */
     @PostMapping("/subscribeSwitch")
-    public Tip subscribeSwitch(@RequestBody HouseSubscribe entity) {
-        if (JWTKit.getUserId() == null) {
+    public Tip subscribeSwitch(@RequestBody HouseSubscribe entity,@RequestParam(value = "userId",required = false) Long userId) {
+
+        userId = JWTKit.getUserId()!=null?JWTKit.getUserId():userId;
+
+        if (userId == null) {
             throw new BusinessException(BusinessCode.NoPermission, "没有登录");
         }
         if (entity.getSubscribeId() == null || entity.getSubscribeId().equals("")) {
             throw new BusinessException(BusinessCode.BadRequest, "subscribeId为必填项");
         }
-        entity.setUserId(JWTKit.getUserId());
+        entity.setUserId(userId);
         QueryWrapper<HouseSubscribe> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(HouseSubscribe.SUBSCRIBE_ID, entity.getSubscribeId()).eq(HouseSubscribe.USER_ID, JWTKit.getUserId());
+        queryWrapper.eq(HouseSubscribe.SUBSCRIBE_ID, entity.getSubscribeId()).eq(HouseSubscribe.USER_ID, userId);
         HouseSubscribe houseSubscribe = houseSubscribeMapper.selectOne(queryWrapper);
         if (houseSubscribe == null) {
             return SuccessTip.create(houseSubscribeMapper.insert(entity));

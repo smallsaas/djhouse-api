@@ -94,15 +94,16 @@ public class UserAccountRentAssetEndpoint {
             HouseRentAsset rentAsset = houseRentAssetService.queryMasterModel(queryHouseRentAssetDao, houseRentAssetRecordList.get(0).getId());
             houseRentAssetRecordList.get(0).setHouseAssetModel(houseAssetModel);
             houseRentAssetRecordList.get(0).setExtra(rentAsset.getExtra());
-            JSONObject jsonObject = (JSONObject) JSONObject.toJSON(houseRentAssetRecordList.get(0));
-            if (houseAssetModel.getCommunityId()!=null){
-                jsonObject.put("facilities",houseSurroundFacilitiesTypeOverModelService.getCommunityFacilities(houseAssetModel.getCommunityId()));
-            }
-            jsonObject.put("supportFacilities",houseSupportFacilitiesService.getRentHouseSupportFacilitiesStatus(houseRentAssetRecordList.get(0).getAssetId(),houseSupportFacilitiesTypeOverModelService.getHouseSupportFacilitiesTypeItem()));
-            return SuccessTip.create(jsonObject);
+
+
 
         }
-        return SuccessTip.create(houseRentAssetRecordList.get(0));
+        JSONObject jsonObject = (JSONObject) JSONObject.toJSON(houseRentAssetRecordList.get(0));
+        if (houseAssetModel.getCommunityId()!=null){
+            jsonObject.put("facilities",houseSurroundFacilitiesTypeOverModelService.getCommunityFacilities(houseAssetModel.getCommunityId()));
+        }
+        jsonObject.put("supportFacilities",houseSupportFacilitiesService.getRentHouseSupportFacilitiesStatus(houseRentAssetRecordList.get(0).getAssetId(),houseSupportFacilitiesTypeOverModelService.getHouseSupportFacilitiesTypeItem()));
+        return SuccessTip.create(jsonObject);
     }
 
     /*

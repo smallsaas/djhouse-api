@@ -17,13 +17,11 @@ import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseRentAssetModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAppointmentMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseBrowseLogMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseDesignModelMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseSubscribeMapper;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseBrowseLog;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseDesignModel;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseSubscribe;
+import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
@@ -88,6 +86,9 @@ public class UserRentCommonEndpoint {
 
     @Resource
     HouseBrowseLogMapper houseBrowseLogMapper;
+
+    @Resource
+    HouseAppointmentMapper houseAppointmentMapper;
 
 
 
@@ -225,17 +226,21 @@ public class UserRentCommonEndpoint {
     查看出租详情
      */
     @GetMapping("/userRentAssetDetails/{id}")
-    public Tip userRentAssetDetails(@PathVariable("id") Long id) {
+    public Tip userRentAssetDetails(@PathVariable("id") Long id,@RequestParam(value = "userId",required = false) Long userId) {
 
         HouseRentAssetModel houseRentAssetModel = queryHouseRentAssetDao.queryMasterModel(id);
+
+        userId = JWTKit.getUserId()!=null?JWTKit.getUserId():userId;
+
+
         if (houseRentAssetModel!=null){
 
-            if (JWTKit.getUserId()!=null){
+            if (userId!=null){
 
-                houseBrowseLogService.addBroseLog(JWTKit.getUserId());
+                houseBrowseLogService.addBroseLog(userId);
                 //            是否有关注
                 QueryWrapper<HouseSubscribe> subscribeQueryWrapper = new QueryWrapper<>();
-                subscribeQueryWrapper.eq(HouseSubscribe.USER_ID,JWTKit.getUserId()).eq(HouseSubscribe.SUBSCRIBE_ID,id);
+                subscribeQueryWrapper.eq(HouseSubscribe.USER_ID,userId).eq(HouseSubscribe.SUBSCRIBE_ID,id);
                 HouseSubscribe houseSubscribe =  houseSubscribeMapper.selectOne(subscribeQueryWrapper);
                 if (houseSubscribe!=null){
                     houseRentAssetModel.setSubscribeStatus(true);
@@ -309,6 +314,11 @@ public class UserRentCommonEndpoint {
         subscribeQueryWrapper.eq(HouseSubscribe.USER_ID,JWTKit.getUserId());
         List<HouseSubscribe> houseSubscribeList = houseSubscribeMapper.selectList(subscribeQueryWrapper);
 
+//        预约数量
+        QueryWrapper<HouseAppointment> appointmentQueryWrapper = new QueryWrapper<>();
+        appointmentQueryWrapper.eq(HouseAppointment.USER_ID,JWTKit.getUserId());
+        List<HouseAppointment> houseAppointmentList =  houseAppointmentMapper.selectList(appointmentQueryWrapper);
+
         JSONObject jsonObject = new JSONObject();
 
         if (houseBrowseLog!=null){
@@ -321,6 +331,12 @@ public class UserRentCommonEndpoint {
             jsonObject.put("subscribeNumber",houseSubscribeList.size());
         }else {
             jsonObject.put("subscribeNumber",0);
+        }
+
+        if (houseAppointmentList!=null){
+            jsonObject.put("visitNumber",houseAppointmentList.size());
+        }else {
+            jsonObject.put("visitNumber",0);
         }
 
         return SuccessTip.create(jsonObject);

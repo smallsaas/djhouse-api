@@ -10,7 +10,8 @@
         t_house_property_building.floors,
         t_house_property_building.units,
 t_house_property_building.multiple_number AS multipleNumber,
-t_house_property_building.unit_picture AS unitPicture
+t_house_property_building.unit_picture AS unitPicture,
+t_house_property_building.issue
     </sql>
 
 
