@@ -3,6 +3,7 @@ package com.jfeat.am.module.house.services.domain.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonArray;
+import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.model.HouseAppointmentRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAppointmentService;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHouseAppointmentServiceImpl;
@@ -95,7 +96,8 @@ public class HouseAppointmentServiceImpl extends CRUDHouseAppointmentServiceImpl
 
         }
 
-
+        System.out.println("=========================");
+        System.out.println(JWTKit.getUserId());
         return result;
     }
 }

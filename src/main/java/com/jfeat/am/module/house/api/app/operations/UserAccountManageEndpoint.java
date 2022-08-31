@@ -140,7 +140,7 @@ public class UserAccountManageEndpoint {
         EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(id);
 
 //        前端可以修改的权限列表
-        List<Integer> modifyAble = Arrays.asList(EndUserTypeSetting.USER_TYPE_LANDLORD,EndUserTypeSetting.USER_TYPE_EXPERIENCE,EndUserTypeSetting.USER_TYPE_SUPPLIER,EndUserTypeSetting.USER_TYPE_INTERMEDIARY,EndUserTypeSetting.USER_TYPE_OPERATION);
+        List<Integer> modifyAble = Arrays.asList(EndUserTypeSetting.USER_TYPE_LANDLORD,EndUserTypeSetting.USER_TYPE_EXPERIENCE,EndUserTypeSetting.USER_TYPE_SUPPLIER,EndUserTypeSetting.USER_TYPE_INTERMEDIARY,EndUserTypeSetting.USER_TYPE_OPERATION,EndUserTypeSetting.USER_TYPE_SALES);
 
 //        用户原来拥护的所有权限
         List<Integer> userTypeList = userAccountService.getUserTypeList(endpointUserModel.getType());

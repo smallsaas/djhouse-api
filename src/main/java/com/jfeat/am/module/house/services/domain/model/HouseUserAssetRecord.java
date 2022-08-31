@@ -1,9 +1,7 @@
 package com.jfeat.am.module.house.services.domain.model;
 
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseDecoratePlan;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
-import com.jfeat.am.module.house.services.gen.persistence.model.Product;
+import com.jfeat.am.module.house.services.gen.persistence.model.*;
+import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
 
 import java.util.List;
 
@@ -23,6 +21,59 @@ public class HouseUserAssetRecord extends HouseUserAsset {
     private Boolean isExistExchange;
 
     private List<HouseAssetRecord> exchangeRequestRecordList;
+
+    private List<HouseUserAssetRecord> houseUserAssetRecordList;
+
+
+
+
+    /**
+     * 用户对象
+     */
+    private UserAccount userAccount;
+
+
+    /**
+     * 用户标签
+     */
+    private List<HouseUserTag> userTagList;
+
+
+    private List<HouseUserNote> userNoteList;
+
+
+    public List<HouseUserAssetRecord> getHouseUserAssetRecordList() {
+        return houseUserAssetRecordList;
+    }
+
+    public void setHouseUserAssetRecordList(List<HouseUserAssetRecord> houseUserAssetRecordList) {
+        this.houseUserAssetRecordList = houseUserAssetRecordList;
+    }
+
+    public List<HouseUserTag> getUserTagList() {
+        return userTagList;
+    }
+
+    public void setUserTagList(List<HouseUserTag> userTagList) {
+        this.userTagList = userTagList;
+    }
+
+    public List<HouseUserNote> getUserNoteList() {
+        return userNoteList;
+    }
+
+    public void setUserNoteList(List<HouseUserNote> userNoteList) {
+        this.userNoteList = userNoteList;
+    }
+
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
+
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
+
 
     public List<HouseAssetRecord> getExchangeRequestRecordList() {
         return exchangeRequestRecordList;

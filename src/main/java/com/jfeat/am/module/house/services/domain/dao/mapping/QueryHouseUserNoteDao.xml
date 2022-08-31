@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseUserNoteDao">
+    <sql id="Base_Column_List">
+        t_house_user_note
+        .
+        id
+        , t_house_user_note.user_id AS userId, t_house_user_note.sales_id AS salesId, t_house_user_note.note, t_house_user_note.create_time AS createTime,
+t_house_user_note.update_time AS updateTime,
+t_house_user_note.note_time AS noteTime
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseUserNoteModel">
+        SELECT t_house_user_note.*
+        FROM t_house_user_note
+        WHERE t_house_user_note.id = #{id}
+        GROUP BY t_house_user_note.id
+    </select>
+
+
+    <select id="findHouseUserNotePage" resultType="HouseUserNoteRecord" parameterType="HouseUserNoteRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_user_note
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_user_note.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_user_note.user_id LIKE CONCAT('%',#{record.userId},'%')
+        </if>
+
+
+        <if test="record.salesId != null and record.salesId>0 ">
+            AND t_house_user_note.sales_id LIKE CONCAT('%',#{record.salesId},'%')
+        </if>
+        <if test="record.note != null and record.note!= ''">
+            AND t_house_user_note.note LIKE CONCAT('%',#{record.note},'%')
+        </if>
+
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_user_note.create_time LIKE CONCAT('%',#{record.createTime},'%')
+        </if>
+
+
+        <if test="record.updateTime != null and record.updateTime>0 ">
+            AND t_house_user_note.update_time LIKE CONCAT('%',#{record.updateTime},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_user_note.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_user_note.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_user_note.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+        ORDER BY update_time DESC
+        , create_time DESC
+    </select>
+</mapper>

@@ -11,6 +11,8 @@ import com.jfeat.am.crud.tag.services.persistence.dao.StockTagMapper;
 import com.jfeat.am.crud.tag.services.persistence.dao.StockTagRelationMapper;
 import com.jfeat.am.crud.tag.services.persistence.model.StockTag;
 import com.jfeat.am.crud.tag.services.persistence.model.StockTagRelation;
+import com.jfeat.am.module.appointment.services.gen.persistence.dao.AppointmentTimeMapper;
+import com.jfeat.am.module.appointment.services.gen.persistence.model.AppointmentTime;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
 import com.jfeat.am.module.house.services.domain.service.*;
@@ -26,11 +28,16 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -89,6 +96,11 @@ public class UserRentCommonEndpoint {
 
     @Resource
     HouseAppointmentMapper houseAppointmentMapper;
+
+    protected final Log logger = LogFactory.getLog(getClass());
+
+    @Resource
+    AppointmentTimeMapper appointmentTimeMapper;
 
 
 
@@ -217,6 +229,8 @@ public class UserRentCommonEndpoint {
             }
         }
 
+
+
         page.setRecords(houseRentAssetPage);
 
         return SuccessTip.create(page);
@@ -340,6 +354,68 @@ public class UserRentCommonEndpoint {
         }
 
         return SuccessTip.create(jsonObject);
+
+    }
+
+
+
+//    查询中介时间段
+    @GetMapping("/intermediaryTime")
+    public Tip getAppointmentTimeList(
+            @RequestParam(value = "userId",required = true) Long userId,
+            @RequestParam(value = "category",required = false) String category) {
+        if (userId == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "没有登录");
+        }
+
+        QueryWrapper<AppointmentTime> appointmentTimeQueryWrapper = new QueryWrapper<>();
+        appointmentTimeQueryWrapper.eq(AppointmentTime.USER_ID, userId);
+        appointmentTimeQueryWrapper.eq(AppointmentTime.STATUS,AppointmentTime.STATUS_OPEN);
+        List<AppointmentTime> appointmentTimeList = appointmentTimeMapper.selectList(appointmentTimeQueryWrapper);
+
+
+
+        List<AppointmentTime> result = new ArrayList<>();
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+        String mid = "12:00:00";
+
+        Date midDate = null;
+        try {
+            midDate = simpleDateFormat.parse(mid);
+        } catch (ParseException e) {
+            logger.error(e);
+        }
+
+        for (AppointmentTime appointmentTime : appointmentTimeList) {
+
+            String s = simpleDateFormat.format(appointmentTime.getStartTime());
+            String endTime = simpleDateFormat.format(appointmentTime.getEndTime());
+
+
+            appointmentTime.setStartTimeStr(s);
+            appointmentTime.setEndTimeStr(endTime);
+
+            Date startTime = null;
+            try {
+                startTime = simpleDateFormat.parse(s);
+
+            } catch (ParseException e) {
+                logger.error(e);
+            }
+
+            if (startTime.before(midDate) && category!=null &&"am".equals(category)) {
+                result.add(appointmentTime);
+            } else if (startTime.after(midDate) && category!=null && "pm".equals(category)){
+                result.add(appointmentTime);
+            }
+        }
+
+        if (category==null||category.equals("")){
+            return SuccessTip.create(appointmentTimeList);
+        }
+
+        return SuccessTip.create(result);
 
     }
 

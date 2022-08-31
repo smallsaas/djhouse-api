@@ -135,8 +135,28 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private String userAvatar;
 
+    @TableField(exist = false)
+    private Long orgId;
+
+    @TableField(exist = false)
+    private Integer assetNumber;
 
 
+    public Long getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
+    }
+
+    public Integer getAssetNumber() {
+        return assetNumber;
+    }
+
+    public void setAssetNumber(Integer assetNumber) {
+        this.assetNumber = assetNumber;
+    }
 
     public Integer getTrust() {
         return trust;

@@ -4,6 +4,7 @@ import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.crud.plus.QueryMasterDao;
 import org.apache.ibatis.annotations.Param;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
@@ -53,4 +54,12 @@ public interface QueryHouseUserAssetDao extends QueryMasterDao<HouseUserAsset> {
 
 
     HouseUserAsset queryHouseUserAssetByAssetId(@Param("assetId") Long assetId);
+
+    List<HouseUserAssetRecord> queryLandlordPage(Page<HouseUserAssetRecord> page, @Param("record") HouseUserAssetRecord record,
+                                                 @Param("orgId") Long orgId,
+                                                 @Param("tag") String tag,
+                                                 @Param("search") String search, @Param("orderBy") String orderBy,
+                                                 @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
+    List<HouseUserAssetModel> queryLandlordAssetNumber(@Param("userId")Long userId,@Param("orgId") Long orgId);
 }

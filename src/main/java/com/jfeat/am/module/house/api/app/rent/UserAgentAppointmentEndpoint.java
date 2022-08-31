@@ -37,11 +37,44 @@ public class UserAgentAppointmentEndpoint {
     //    添加预约时间段
     @PostMapping
     public Tip createAppointmentTime(@RequestBody AppointmentTime entity) {
+
+        Date startDateTime = new Date();
+        Date endDateTime = new Date();
+
+        if (entity.getStartTimeStr()!=null && entity.getEndTimeStr()!=null){
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+            try {
+                Date startTime = simpleDateFormat.parse(entity.getStartTimeStr());
+                Date endTime = simpleDateFormat.parse(entity.getEndTimeStr());
+                if (startTime.after(endTime)){
+                    throw new BusinessException(BusinessCode.CodeBase,"开始时间不能大于结束时间");
+                }
+
+                startDateTime.setHours(startTime.getHours());
+                startDateTime.setSeconds(startTime.getSeconds());
+                entity.setStartTime(startDateTime);
+
+                endDateTime.setHours(endTime.getHours());
+                endDateTime.setSeconds(endTime.getSeconds());
+                entity.setEndTime(endDateTime);
+
+            }catch (ParseException e){
+                throw new BusinessException(BusinessCode.CodeBase,"解析时间失败");
+            }
+
+        }else {
+            throw new BusinessException(BusinessCode.BadRequest,"开始时间和结束时间都不能为空");
+        }
+
+
+
         Long userId = JWTKit.getUserId();
         if (userId == null) {
             throw new BusinessException(BusinessCode.NoPermission, "没有登录");
         }
+
         entity.setUserId(userId);
+
         return SuccessTip.create(appointmentTimeMapper.insert(entity));
     }
 

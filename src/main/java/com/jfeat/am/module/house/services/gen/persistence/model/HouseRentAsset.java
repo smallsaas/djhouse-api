@@ -18,6 +18,7 @@ import com.jfeat.am.module.house.services.domain.model.HouseRentSupportFacilitie
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * <p>
@@ -58,6 +59,7 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     private Long serverId;
 
     @ApiModelProperty(value = "封面")
+    @Value("/2022/image/dajiang.png")
     private String cover;
 
     @ApiModelProperty(value = "标题")

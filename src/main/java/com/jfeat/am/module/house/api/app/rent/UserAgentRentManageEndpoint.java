@@ -191,6 +191,8 @@ public class UserAgentRentManageEndpoint {
             houseRentAssetRecord.setExtra(resultJson.toJSONString());
 
         }
+
+
         page.setRecords(houseRentAssetPage);
 
         System.out.println("统计时间"+(System.currentTimeMillis()-start));

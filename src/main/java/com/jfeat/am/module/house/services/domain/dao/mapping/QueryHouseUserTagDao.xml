@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseUserTagDao">
+    <sql id="Base_Column_List">
+        t_house_user_tag
+        .
+        id
+        , t_house_user_tag.org_id AS orgId, t_house_user_tag.sales_id AS salesId, t_house_user_tag.tag_name AS tagName, t_house_user_tag.create_time AS createTime, t_house_user_tag.update_time AS updateTime
+    </sql>
+
+    <sql id="QueryOwnedOrgIds">
+        SELECT children.id
+        FROM t_sys_org,
+             t_sys_org as children
+        WHERE t_sys_org.left_num &lt;= children.left_num
+          AND t_sys_org.right_num >= children.left_num
+          and t_sys_org.id = #{record.orgId}
+        order by t_sys_org.node_level ASC
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseUserTagModel">
+        SELECT t_house_user_tag.*
+        FROM t_house_user_tag
+        WHERE t_house_user_tag.id = #{id}
+        GROUP BY t_house_user_tag.id
+    </select>
+
+
+    <select id="findHouseUserTagPage" resultType="HouseUserTagRecord" parameterType="HouseUserTagRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_user_tag
+
+
+        <if test="record.orgId > 0">
+            ,(<include refid="QueryOwnedOrgIds"></include>) AS ownedOrgIds
+        </if>
+
+        WHERE 1=1
+        <if test="record.orgId > 0">
+            AND t_house_user_tag.org_id = ownedOrgIds.id
+        </if>
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_user_tag.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.orgId != null and record.orgId>0 ">
+            AND t_house_user_tag.org_id IN (<include refid="QueryOwnedOrgIds"/>)
+        </if>
+
+
+        <if test="record.salesId != null and record.salesId>0 ">
+            AND t_house_user_tag.sales_id LIKE CONCAT('%',#{record.salesId},'%')
+        </if>
+
+
+        <if test="record.tagName != null and record.tagName!= ''">
+            AND t_house_user_tag.tag_name LIKE CONCAT('%',#{record.tagName},'%')
+        </if>
+
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_user_tag.create_time LIKE CONCAT('%',#{record.createTime},'%')
+        </if>
+
+
+        <if test="record.updateTime != null and record.updateTime>0 ">
+            AND t_house_user_tag.update_time LIKE CONCAT('%',#{record.updateTime},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_user_tag.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_user_tag.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_user_tag.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+        ORDER BY update_time DESC
+        , create_time DESC
+    </select>
+</mapper>
