@@ -5,6 +5,8 @@ import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserNote;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserTag;
 import com.jfeat.crud.plus.QueryMasterDao;
 import org.apache.ibatis.annotations.Param;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
@@ -43,14 +45,7 @@ public interface QueryHouseUserAssetDao extends QueryMasterDao<HouseUserAsset> {
     int updateUserAssetByUserIdAndAsset(@Param("userId") Long userId, @Param("assetId") Long assetId, @Param("entity") HouseUserAsset entity);
 
 
-//    更新冲突信息
-    int updateClashAssetByAssetId(@Param("assetId") Long clashUserId,@Param("entity") HouseUserAsset entity);
 
-    HouseUserAsset queryBasicUserAsset(@Param("id") Long id);
-
-//    查看所有冲突信息
-
-    List<HouseUserAsset> queryClashUserAsset(@Param("username") String username,@Param("search") String search);
 
 
     HouseUserAsset queryHouseUserAssetByAssetId(@Param("assetId") Long assetId);
@@ -62,4 +57,20 @@ public interface QueryHouseUserAssetDao extends QueryMasterDao<HouseUserAsset> {
                                                  @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
     List<HouseUserAssetModel> queryLandlordAssetNumber(@Param("userId")Long userId,@Param("orgId") Long orgId);
+
+//    子查询画像
+    List<HouseUserTag> queryHouseUserTagList(@Param("userId")Long userId);
+
+//    子查询备注
+    List<HouseUserNote> queryHouseUserNoteList(@Param("userId") Long userId);
+
+
+    List<HouseUserAssetRecord> queryHouseUserAssetAndServerName(Page<HouseUserAssetRecord> page, @Param("record") HouseUserAssetRecord record,
+                                                                @Param("search") String search);
+
+    List<HouseUserAssetRecord> queryUserAccountList(Page<HouseUserAssetRecord> page, @Param("record") HouseUserAssetRecord record,
+                                                 @Param("search") String search);
+
+
+
 }

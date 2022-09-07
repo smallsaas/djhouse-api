@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.api.app;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
@@ -11,9 +12,13 @@ import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseUserAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMatchLogMapper;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyCommunityMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
+import com.jfeat.am.module.house.services.utility.TenantUtility;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
+import com.jfeat.am.uaas.tenant.services.gen.persistence.dao.TenantMapper;
+import com.jfeat.am.uaas.tenant.services.gen.persistence.model.Tenant;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -90,6 +95,42 @@ public class UserHouseAssetEndpoint {
     @Resource
     HouseAssetMatchLogMapper houseAssetMatchLogMapper;
 
+    @Resource
+    TenantUtility tenantUtility;
+
+    @Resource
+    TenantMapper tenantMapper;
+
+    @Resource
+    HousePropertyCommunityMapper housePropertyCommunityMapper;
+
+    @GetMapping("/tenant")
+    public Tip getTenantList(Page<Tenant> page,
+                             @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                             @RequestParam("appid") String appid){
+        page.setSize(pageSize);
+        page.setCurrent(pageNum);
+
+        QueryWrapper<HousePropertyCommunity> communityQueryWrapper = new QueryWrapper<>();
+        List<HousePropertyCommunity> communityList =  housePropertyCommunityMapper.selectList(communityQueryWrapper);
+        List<Long> communityIds = communityList.stream().map(HousePropertyCommunity::getTenantId).collect(Collectors.toList());
+
+
+        QueryWrapper<Tenant> tenantQueryWrapper = new QueryWrapper<>();
+        tenantQueryWrapper.lambda().select(Tenant.class,i->!i.getColumn().equals("domain"));
+        if (communityIds!=null && communityIds.size()>0){
+            tenantQueryWrapper.in(Tenant.ORG_ID,communityIds);
+        }
+        tenantQueryWrapper.eq("appid",appid);
+        tenantMapper.selectPage(page,tenantQueryWrapper);
+
+
+
+        return SuccessTip.create(page);
+
+    }
+
 
     //    获取小区
     @GetMapping("/community")
@@ -97,7 +138,8 @@ public class UserHouseAssetEndpoint {
         if (JWTKit.getOrgId() == null) {
             throw new BusinessException(BusinessCode.CodeBase, "没有社区");
         }
-        Long tenantId = JWTKit.getOrgId();
+
+        Long tenantId = tenantUtility.getCurrentOrgId(JWTKit.getUserId());
         return SuccessTip.create(queryHousePropertyCommunityDao.queryHouseCommunityByTenantId(tenantId));
     }
 

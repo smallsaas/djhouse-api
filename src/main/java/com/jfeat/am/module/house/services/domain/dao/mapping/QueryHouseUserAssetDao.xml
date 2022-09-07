@@ -23,6 +23,7 @@
         t_house_property_building.id As buildingId,
         t_house_property_building.area AS buildingArea,
         t_house_property_building.code AS buildingCode,
+t_house_property_building.issue AS issue,
         t_house_property_building_unit.id AS unitId,
         t_house_property_building_unit.direction AS direction,
 
@@ -35,7 +36,8 @@
 
         t_end_user.name AS userName,
         t_end_user.phone AS userPhone,
-        t_end_user.avatar AS userAvatar
+        t_end_user.avatar AS userAvatar,
+        t_end_user.real_name AS realName
     </sql>
 
 
@@ -58,12 +60,13 @@
                t_house_vr_picture.link                  AS vrLink,
                t_house_vr_picture.snapshot              AS vrSnapshot,
 
-               t_house_asset.number                     AS roomNumber,
+               t_house_asset.house_number               AS roomNumber,
                t_house_asset.floor                      AS floor,
 
                t_end_user.name                          AS userName,
                t_end_user.phone                         AS userPhone,
-               t_end_user.avatar                        AS userAvatar
+               t_end_user.avatar                        AS userAvatar,
+               t_end_user.real_name                     AS realName
 
         FROM t_house_user_asset
                  JOIN t_house_asset ON t_house_asset.id = t_house_user_asset.asset_id
@@ -101,8 +104,6 @@
         <if test="communityId ==null">
             WHERE 1=1
         </if>
-
-
 
 
         <if test="record.id != null and record.id>0 ">
@@ -147,109 +148,30 @@
             <![CDATA[AND t_house_user_asset.end_time <= DATE(#{endTime}]]>
         </if>
 
+        <if test="record.buildingCode != null and record.buildingCode!='' ">
+            AND t_house_property_building.code LIKE CONCAT('%',#{record.buildingCode},'%')
+        </if>
+
+        <if test="record.roomNumber != null and record.roomNumber!='' ">
+            AND t_house_asset.house_number LIKE CONCAT('%',#{record.roomNumber},'%')
+        </if>
+
         <if test="search != null and search != ''">
 
             AND (
             t_house_property_community.community LIKE CONCAT('%',#{search},'%')
             OR t_house_property_building.code LIKE CONCAT('%',#{search},'%')
             OR t_house_design_model.house_type LIKE CONCAT('%',#{search},'%')
-            OR t_house_asset.number LIKE CONCAT('%',#{search},'%')
-            Or t_end_user.phone LIKE CONCAT('%',#{record.userPhone},'%')
-            OR t_end_user.name LIKE CONCAT('%',#{record.username},'%')
+            OR t_house_asset.house_number LIKE CONCAT('%',#{search},'%')
+            Or t_end_user.phone LIKE CONCAT('%',#{search},'%')
+            OR t_end_user.name LIKE CONCAT('%',#{search },'%')
+            OR t_end_user.real_name LIKE CONCAT('%',#{search },'%')
             )
         </if>
         ORDER BY t_house_user_asset.user_id
 
     </select>
 
-
-    <update id="updateUserAssetByUserIdAndAsset">
-        UPDATE t_house_user_asset
-        <trim prefix="set" suffixOverrides=",">
-            <if test="entity.assetId!=null">asset_id=#{entity.assetId},</if>
-            <if test="entity.userId!=null">user_id=#{entity.userId},</if>
-            <if test="entity.rentStatus!=null">rent_status=#{entity.rentStatus},</if>
-
-
-            <if test="entity.rentTitle!=null">rent_title=#{entity.rentTitle},</if>
-            <if test="entity.rentPrice!=null">rent_price=#{entity.rentPrice},</if>
-            <if test="entity.rentDescribe!=null">rent_describe=#{entity.rentDescribe},</if>
-            <if test="entity.slideshow!=null">slideshow=#{entity.slideshow},</if>
-            <if test="entity.rentTime!=null">rent_time=#{entity.rentTime},</if>
-
-
-            <if test="entity.createTime!=null">create_time=#{entity.createTime},</if>
-            <if test="entity.rentTime!=null">rent_time=#{entity.rentTime},</if>
-            <if test="entity.note!=null">note=#{entity.note},</if>
-        </trim>
-        where t_house_user_asset.asset_id=#{assetId} AND t_house_user_asset.user_id=#{userId}
-    </update>
-
-
-    <update id="updateClashAssetByAssetId">
-        UPDATE t_house_user_asset
-        <trim prefix="set" suffixOverrides=",">
-            <if test="entity.assetId!=null">asset_id=#{entity.assetId},</if>
-            <if test="entity.userId!=null">user_id=#{entity.userId},</if>
-            <if test="entity.rentStatus!=null">rent_status=#{entity.rentStatus},</if>
-            <if test="entity.createTime!=null">create_time=#{entity.createTime},</if>
-            <if test="entity.rentTime!=null">rent_time=#{entity.rentTime},</if>
-            <if test="entity.note!=null">note=#{entity.note},</if>
-
-            <if test="true">clash_user_id=#{entity.clashUserId},</if>
-            <if test="true">clash_describe=#{entity.clashDescribe},</if>
-            <if test="true">clash_certificate=#{entity.clashCertificate},</if>
-        </trim>
-        where t_house_user_asset.asset_id=#{assetId}
-    </update>
-
-
-    <select id="queryBasicUserAsset" resultType="HouseUserAsset">
-        SELECT t_house_user_asset.*
-        FROM t_house_user_asset
-        WHERE t_house_user_asset.id = #{id};
-    </select>
-
-
-    <!--    查询冲突用户信息-->
-    <select id="queryClashUserAsset" resultType="HouseUserAsset">
-        SELECT t_house_user_asset.*,
-        t_house_property_community.id AS communityId,
-        t_house_property_community.community As communityName,
-        t_house_property_building.id As buildingId,
-        t_house_property_building.area AS buildingArea,
-        t_house_property_building.code AS buildingCode,
-        t_house_property_building_unit.id AS unitId,
-        t_house_design_model.area AS unitArea,
-        t_house_design_model.house_type AS houseType,
-        t_house_asset.number AS roomNumber,
-        t_end_user.name AS userName,
-        t_end_user.phone AS userPhone,
-        t_end_user.avatar AS userAvatar,
-        t_house_property_community.address AS address
-        FROM t_house_user_asset
-        JOIN t_house_asset ON t_house_asset.id = t_house_user_asset.asset_id
-        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
-        JOIN t_house_property_community
-        ON t_house_property_community.id = t_house_property_building.community_id
-        JOIN t_house_property_building_unit ON t_house_property_building_unit.id = t_house_asset.unit_id
-        JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
-        JOIN t_end_user ON t_end_user.id = t_house_user_asset.user_id
-        WHERE t_house_user_asset.clash_user_id IS NOT null
-        <if test="search != null and search != ''">
-            and (t_house_property_community.address LIKE CONCAT('%',#{search},'%')
-            OR t_house_property_community.community LIKE CONCAT('%',#{search},'%')
-            OR t_house_property_building.code LIKE CONCAT('%',#{search},'%')
-            OR t_house_design_model.house_type LIKE CONCAT('%',#{search},'%')
-            OR t_house_asset.floor LIKE CONCAT('%',#{search},'%')
-            OR t_house_asset.number LIKE CONCAT('%',#{search},'%'))
-        </if>
-        <if test="username != null and username != ''">
-
-            and (t_end_user.name LIKE CONCAT('%',#{username},'%')
-            OR t_end_user.phone LIKE CONCAT('%',#{username},'%'))
-        </if>
-    </select>
 
 
     <select id="queryHouseUserAssetByAssetId" resultType="HouseUserAsset">
@@ -268,16 +190,7 @@
         AS userId,
         t_end_user.phone AS userPhone,
         t_end_user.avatar AS userAvatar,
-        t_end_user.`name` AS userName,
-
-        t_house_user_note.id as noteId,
-        t_house_user_note.note As userNote,
-        t_house_user_note.create_time AS createTime,
-        t_house_user_note.note_time AS noteTime,
-
-        t_house_user_tag.id As tagId,
-        t_house_user_tag.tag_name AS tagName
-
+        t_end_user.`name` AS userName
     </sql>
 
     <resultMap id="LandlordResultMap" type="HouseUserAssetRecord">
@@ -291,15 +204,15 @@
             <result column="userName" property="name"/>
         </association>
         <collection property="userTagList"
-                    ofType="com.jfeat.am.module.house.services.gen.persistence.model.HouseUserTag">
+                    ofType="com.jfeat.am.module.house.services.gen.persistence.model.HouseUserTag" select="queryHouseUserTagList" column="userId">
             <id column="tagId" property="id"/>
             <result column="tagName" property="tagName"/>
         </collection>
 
         <collection property="userNoteList"
-                    ofType="com.jfeat.am.module.house.services.gen.persistence.model.HouseUserNote">
-            <id column="noteId" property="id"/>
-            <result column="userNote" property="note"/>
+                    ofType="com.jfeat.am.module.house.services.gen.persistence.model.HouseUserNote" select="queryHouseUserNoteList" column="userId">
+            <id column="id" property="id"/>
+            <result column="note" property="note"/>
             <result column="noteTime" property="noteTime"/>
             <result column="createTime" property="createTime"/>
         </collection>
@@ -310,9 +223,6 @@
         <include refid="LandlordSql"></include>
         FROM t_end_user
         JOIN t_house_user_asset ON t_end_user.id=t_house_user_asset.user_id
-        LEFT JOIN t_house_user_tag_relate ON t_house_user_tag_relate.user_id = t_end_user.id
-        LEFT JOIN t_house_user_tag ON t_house_user_tag.id = t_house_user_tag_relate.tag_id
-        LEFT JOIN t_house_user_note ON t_house_user_note.user_id = t_end_user.id
 
         WHERE 1=1
 
@@ -347,26 +257,65 @@
             <![CDATA[AND t_house_user_asset.end_time <= DATE(#{endTime}]]>
         </if>
         <if test="orgId !=null and orgId>0">
-           and t_end_user.org_id=#{orgId}
+            and t_end_user.org_id=#{orgId}
         </if>
 
         <if test="search != null and search != ''">
 
             AND (
+            t_end_user.phone LIKE CONCAT('%',#{search},'%')
+            OR t_end_user.name LIKE CONCAT('%',#{search},'%')
+            )
+        </if>
+        group by t_house_user_asset.user_id
+    </select>
+
+
+<!--    子查询画像-->
+    <select id="queryHouseUserTagList" resultType="com.jfeat.am.module.house.services.gen.persistence.model.HouseUserTag">
+        SELECT t_house_user_tag.id ,
+               t_house_user_tag.tag_name AS tagName FROM t_house_user_tag_relate
+        JOIN t_house_user_tag ON t_house_user_tag_relate.tag_id = t_house_user_tag.id
+        WHERE t_house_user_tag_relate.user_id=#{userId}
+    </select>
+
+<!--    子查询备注-->
+    <select id="queryHouseUserNoteList" resultType="com.jfeat.am.module.house.services.gen.persistence.model.HouseUserNote">
+        SELECT
+            t_house_user_note.id,
+            t_house_user_note.note,
+            t_house_user_note.create_time AS createTime,
+            t_house_user_note.note_time AS noteTime
+        FROM t_house_user_note WHERE t_house_user_note.user_id=#{userId}
+        ORDER BY t_house_user_note.create_time desc
+    </select>
+
+<!--    查询被创建出来的房东-->
+    <select id="queryUserAccountList" resultMap="LandlordResultMap" parameterType="HouseUserAssetRecord">
+        select
+        <include refid="LandlordSql"></include>
+        FROM t_end_user
+        LEFT JOIN  t_house_user_asset ON t_house_user_asset.user_id = t_end_user.id
+        WHERE
+        t_end_user.union_id="House" AND
+        t_end_user.appid = "1"
+        AND t_end_user.org_id IS NULL
+        <if test="search != null and search != ''">
+            AND (
             t_end_user.phone LIKE CONCAT('%',#{record.userPhone},'%')
             OR t_end_user.name LIKE CONCAT('%',#{record.username},'%')
             )
         </if>
-        order by t_house_user_note.note_time desc
     </select>
+
 
     <!--    查询房东有多少房产-->
     <select id="queryLandlordAssetNumber" resultType="HouseUserAssetModel">
         SELECT t_house_user_asset.*, COUNT(*) AS assetNumber
         FROM t_house_user_asset
-                 JOIN t_house_asset ON t_house_user_asset.asset_id = t_house_asset.id
-                 JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
-                 JOIN t_house_property_community ON t_house_property_community.id = t_house_property_building.community_id
+        JOIN t_house_asset ON t_house_user_asset.asset_id = t_house_asset.id
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community ON t_house_property_community.id = t_house_property_building.community_id
         where 1=1
         <if test="userId!=null and userId>0">
             and t_house_user_asset.userId = #{userId}
@@ -377,5 +326,85 @@
         GROUP BY t_house_user_asset.user_id
     </select>
 
+
+    <sql id="HouserUserWithServerNameSql">
+        t_house_user_asset.id
+        ,
+        t_house_user_asset.user_id AS userId,
+        t_house_user_asset.asset_id AS assetId,
+        t_house_user_asset.trust AS trust,
+        t_house_user_asset.create_time AS createTime,
+        t_house_user_asset.note AS note,
+        t_house_user_asset.final_flag AS finalFlag,
+
+        t_house_asset.house_number AS roomNumber,
+        t_house_asset.floor AS floor,
+
+        t_house_property_community.id AS communityId,
+        t_house_property_community.community As communityName,
+        t_house_property_community.address AS address,
+
+        t_house_property_building.id As buildingId,
+        t_house_property_building.area AS buildingArea,
+        t_house_property_building.code AS buildingCode,
+        t_house_property_building_unit.id AS unitId,
+        t_house_property_building_unit.direction AS direction,
+
+        t_house_design_model.area AS unitArea,
+        t_house_design_model.house_type AS houseType,
+       t_house_design_model.house_type_picture AS houseTypePicture,
+
+        user1.name AS userName,
+        user1.phone AS userPhone,
+        user1.avatar AS userAvatar,
+        user1.real_name AS realName,
+
+        user2.name AS serverName
+    </sql>
+
+    <select id="queryHouseUserAssetAndServerName" resultType="HouseUserAssetRecord">
+        select
+        <include refid="HouserUserWithServerNameSql"/>
+        FROM t_house_user_asset
+        JOIN t_house_asset ON t_house_asset.id = t_house_user_asset.asset_id
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
+        left JOIN t_house_property_building_unit ON t_house_property_building_unit.id = t_house_asset.unit_id
+        left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id=t_house_design_model.id
+        JOIN t_end_user As user1 ON user1.id = t_house_user_asset.user_id
+				LEFT JOIN t_house_rent_asset ON t_house_user_asset.asset_id = t_house_rent_asset.asset_id
+				LEFT JOIN t_end_user AS user2 ON user2.id = t_house_rent_asset.server_id
+
+		where 1=1
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_user_asset.user_id = #{record.userId}
+        </if>
+        <if test="record.buildingCode != null and record.buildingCode!='' ">
+            AND t_house_property_building.code LIKE CONCAT('%',#{record.buildingCode},'%')
+        </if>
+
+        <if test="record.roomNumber != null and record.roomNumber!='' ">
+            AND t_house_asset.house_number LIKE CONCAT('%',#{record.roomNumber},'%')
+        </if>
+        <if test="search != null and search != ''">
+
+            AND (
+            t_house_property_community.community LIKE CONCAT('%',#{search},'%')
+            OR t_house_property_building.code LIKE CONCAT('%',#{search},'%')
+            OR t_house_design_model.house_type LIKE CONCAT('%',#{search},'%')
+            OR t_house_asset.house_number LIKE CONCAT('%',#{search},'%')
+            Or user1.phone LIKE CONCAT('%',#{search},'%')
+            OR user1.name LIKE CONCAT('%',#{search },'%')
+            OR user1.real_name LIKE CONCAT('%',#{search },'%')
+            OR user2.name LIKE CONCAT('%',#{search },'%')
+            )
+        </if>
+        ORDER BY IF(ISNULL(t_house_rent_asset.`status`),2,
+
+        IF(t_house_rent_asset.`status`=3,4,
+        IF(t_house_rent_asset.server_id IS NOT NULL,3,IF(t_house_rent_asset.`status`=1,1,1)
+        )))
+    </select>
 
 </mapper>

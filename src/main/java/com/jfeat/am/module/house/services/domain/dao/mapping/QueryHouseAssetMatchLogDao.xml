@@ -9,11 +9,17 @@
         t_house_asset_match_log.mathched_asset_id AS mathchedAssetId,
         t_house_asset_match_log.create_time AS createTime,
 
+        asset1.house_number AS ownerNumber,
+        building1.code AS ownerBuilding,
+        community1.community AS ownerCommunity,
         t_end_user1.name As ownerName,
         t_end_user1.avatar AS ownerAvatar,
         t_end_user1.phone AS ownerPhone,
         t_end_user1.real_name AS ownerRealName,
 
+        asset2.house_number AS matchedNumber,
+        building2.code AS matchedBuilding,
+        community2.community AS matchedCommunity,
         t_end_user2.name As matchedName,
         t_end_user2.avatar AS matchedAvatar,
         t_end_user2.phone AS matchedPhone,
@@ -45,7 +51,14 @@
 
 
         FROM t_house_asset_match_log
+        JOIN t_house_asset AS asset1 ON asset1.id = t_house_asset_match_log.owner_asset_id
+        JOIN t_house_asset AS asset2 ON asset2.id = t_house_asset_match_log.mathched_asset_id
 
+        JOIN t_house_property_building AS building1 ON asset1.building_id = building1.id
+        JOIN t_house_property_building AS building2 ON asset2.building_id = building2.id
+
+        JOIN t_house_property_community AS community1 ON community1.id = building1.community_id
+        JOIN t_house_property_community AS community2 ON community2.id = building2.community_id
 
         JOIN t_end_user As t_end_user1 ON t_house_asset_match_log.owner_user_id=t_end_user1.id
         JOIN t_end_user AS t_end_user2 ON t_house_asset_match_log.matched_user_id=t_end_user2.id
@@ -98,11 +111,30 @@
         <if test="endTime != null">
             <![CDATA[AND t_house_asset_match_log.end_time <= DATE(#{endTime}]]>
         </if>
+
+--         额外搜索
+        <if test="record.ownerBuilding!=null and record.ownerBuilding!='' and record.ownerNumber!=null and record.ownerNumber!=''">
+                OR (building1.code LIKE CONCAT('%',#{record.ownerBuilding},'%')and asset1.house_number LIKE CONCAT('%',#{record.ownerNumber},'%'))
+
+        </if>
+
+        <if test="record.matchedBuilding!=null and record.matchedBuilding!='' and record.matchedNumber!=null and record.matchedNumber!='' ">
+           OR (building2.code LIKE CONCAT('%',#{record.matchedBuilding},'%')
+            and   asset2.house_number LIKE CONCAT('%',#{record.matchedNumber},'%'))
+        </if>
+
+
         <if test="search != null and search != ''">
-            AND t_end_user1.name LIKE CONCAT('%',#{search},'%')
+            AND (
+            t_end_user1.name LIKE CONCAT('%',#{search},'%')
             OR t_end_user1.phone LIKE CONCAT('%',#{search},'%')
             OR t_end_user2.name LIKE CONCAT('%',#{search},'%')
             OR t_end_user2.phone LIKE CONCAT('%',#{search},'%')
+            OR asset1.house_number LIKE CONCAT('%',#{search},'%')
+            OR asset2.house_number LIKE CONCAT('%',#{search},'%')
+            OR building2.code LIKE CONCAT('%',#{search},'%')
+            OR building1.code LIKE CONCAT('%',#{search},'%')
+            )
         </if>
         ORDER BY t_house_asset_match_log.create_time DESC,t_house_asset_match_log.owner_user_id
     </select>

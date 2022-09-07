@@ -164,23 +164,23 @@ public class HouseAssetMatchLogEndpoint {
         record.setCreateTime(createTime);
         List<HouseAssetMatchLogRecord> houseAssetMatchLogPage = queryHouseAssetMatchLogDao.findHouseAssetMatchLogPage(page, record, tag, search, orderBy, null, null);
 
-        for (int i=0;i<houseAssetMatchLogPage.size();i++){
-            HouseAsset ownerHouseAsset=  queryHouseAssetDao.queryMasterModel(houseAssetMatchLogPage.get(i).getOwnerAssetId());
-            EndpointUser ownerEndUser = queryEndpointUserDao.queryMasterModel(houseAssetMatchLogPage.get(i).getOwnerUserId());
-            HouseAsset matchedHouseAsset = queryHouseAssetDao.queryMasterModel(houseAssetMatchLogPage.get(i).getMathchedAssetId());
-            EndpointUser matchedEndUser = queryEndpointUserDao.queryMasterModel(houseAssetMatchLogPage.get(i).getMatchedUserId());
-            if (ownerHouseAsset!=null && ownerEndUser!=null && matchedHouseAsset!=null &&matchedEndUser!=null){
-                houseAssetMatchLogPage.get(i).setOwnerBuilding(ownerHouseAsset.getBuildingCode());
-                houseAssetMatchLogPage.get(i).setOwnerCommunity(ownerHouseAsset.getCommunityName());
-                houseAssetMatchLogPage.get(i).setOwnerNumber(ownerHouseAsset.getNumber());
-
-                houseAssetMatchLogPage.get(i).setMatchedBuilding(matchedHouseAsset.getBuildingCode());
-                houseAssetMatchLogPage.get(i).setMatchedCommunity(matchedHouseAsset.getCommunityName());
-                houseAssetMatchLogPage.get(i).setMatchedNumber(matchedHouseAsset.getNumber());
-
-            }
-
-        }
+//        for (int i=0;i<houseAssetMatchLogPage.size();i++){
+//            HouseAsset ownerHouseAsset=  queryHouseAssetDao.queryMasterModel(houseAssetMatchLogPage.get(i).getOwnerAssetId());
+//            EndpointUser ownerEndUser = queryEndpointUserDao.queryMasterModel(houseAssetMatchLogPage.get(i).getOwnerUserId());
+//            HouseAsset matchedHouseAsset = queryHouseAssetDao.queryMasterModel(houseAssetMatchLogPage.get(i).getMathchedAssetId());
+//            EndpointUser matchedEndUser = queryEndpointUserDao.queryMasterModel(houseAssetMatchLogPage.get(i).getMatchedUserId());
+//            if (ownerHouseAsset!=null && ownerEndUser!=null && matchedHouseAsset!=null &&matchedEndUser!=null){
+//                houseAssetMatchLogPage.get(i).setOwnerBuilding(ownerHouseAsset.getBuildingCode());
+//                houseAssetMatchLogPage.get(i).setOwnerCommunity(ownerHouseAsset.getCommunityName());
+//                houseAssetMatchLogPage.get(i).setOwnerNumber(ownerHouseAsset.getNumber());
+//
+//                houseAssetMatchLogPage.get(i).setMatchedBuilding(matchedHouseAsset.getBuildingCode());
+//                houseAssetMatchLogPage.get(i).setMatchedCommunity(matchedHouseAsset.getCommunityName());
+//                houseAssetMatchLogPage.get(i).setMatchedNumber(matchedHouseAsset.getNumber());
+//
+//            }
+//
+//        }
 
         page.setRecords(houseAssetMatchLogPage);
 

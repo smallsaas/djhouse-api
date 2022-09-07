@@ -94,6 +94,9 @@
         <if test="record.status != null and record.status>0 ">
             AND t_house_appointment.status LIKE CONCAT('%',#{record.status},'%')
         </if>
+        <if test="record.confirmStatus != null and record.confirmStatus>=0 ">
+            AND t_house_appointment.confirm_status=#{record.confirmStatus}
+        </if>
         <if test="record.fee != null and record.fee>0 ">
             AND t_house_appointment.fee LIKE CONCAT('%',#{record.fee},'%')
         </if>
@@ -345,6 +348,9 @@
         </if>
         <if test="record.status != null and record.status>0 ">
             AND t_house_appointment.status LIKE CONCAT('%',#{record.status},'%')
+        </if>
+        <if test="record.confirmStatus != null and record.confirmStatus>=0 ">
+            AND t_house_appointment.confirm_status=#{record.confirmStatus}
         </if>
         <if test="record.fee != null and record.fee>0 ">
             AND t_house_appointment.fee LIKE CONCAT('%',#{record.fee},'%')

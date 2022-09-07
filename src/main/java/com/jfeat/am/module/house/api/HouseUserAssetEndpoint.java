@@ -178,7 +178,7 @@ public class HouseUserAssetEndpoint {
 
         record.setNote(note);
 
-        record.setCreateTime((Data) createTime);
+        record.setCreateTime(createTime);
 
 
         List<HouseUserAssetRecord> houseUserAssetPage = queryHouseUserAssetDao.findHouseUserAssetPage(page, record, null,tag, search, orderBy, null, null);

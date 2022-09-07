@@ -45,7 +45,7 @@ public class LandlordTagManageEndpoint {
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");
         }
         entity.setSalesId(JWTKit.getUserId());
-        entity.setOrgId(JWTKit.getOrgId());
+//        entity.setOrgId(JWTKit.getOrgId());
         Integer affected = 0;
         try {
             affected = houseUserTagService.createMaster(entity);
@@ -74,7 +74,7 @@ public class LandlordTagManageEndpoint {
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");
         }
         entity.setSalesId(JWTKit.getUserId());
-        entity.setOrgId(JWTKit.getOrgId());
+//        entity.setOrgId(JWTKit.getOrgId());
         entity.setId(id);
         return SuccessTip.create(houseUserTagService.updateMaster(entity));
     }
@@ -109,6 +109,8 @@ public class LandlordTagManageEndpoint {
 
                                      @RequestParam(name = "salesId", required = false) Long salesId,
 
+                                     @RequestParam(name = "userId", required = false) Long userId,
+
                                      @RequestParam(name = "tagName", required = false) String tagName,
 
                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -137,9 +139,9 @@ public class LandlordTagManageEndpoint {
         page.setSize(pageSize);
 
         HouseUserTagRecord record = new HouseUserTagRecord();
-        if (META.enabledSaas()) {
-            record.setOrgId(JWTKit.getOrgId());
-        }
+//        if (META.enabledSaas()) {
+//            record.setOrgId(JWTKit.getOrgId());
+//        }
         record.setSalesId(salesId);
         record.setTagName(tagName);
         record.setCreateTime(createTime);
@@ -148,6 +150,13 @@ public class LandlordTagManageEndpoint {
 
         List<HouseUserTagRecord> houseUserTagPage = queryHouseUserTagDao.findHouseUserTagPage(page, record, tag, search, orderBy, null, null);
 
+
+        if (userId!=null && !userId.equals("")){
+            for (HouseUserTagRecord houseUserTagRecord:houseUserTagPage){
+                houseUserTagRecord.setUserId(userId);
+                houseUserTagRecord.setStatus(true);
+            }
+        }
 
         page.setRecords(houseUserTagPage);
 

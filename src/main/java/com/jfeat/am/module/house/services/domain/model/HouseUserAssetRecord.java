@@ -20,11 +20,15 @@ public class HouseUserAssetRecord extends HouseUserAsset {
 
     private Boolean isExistExchange;
 
+    private String serverName;
+
+    private String statusStr;
+
+    private Integer status;
+
     private List<HouseAssetRecord> exchangeRequestRecordList;
 
     private List<HouseUserAssetRecord> houseUserAssetRecordList;
-
-
 
 
     /**
@@ -42,12 +46,39 @@ public class HouseUserAssetRecord extends HouseUserAsset {
     private List<HouseUserNote> userNoteList;
 
 
-    public List<HouseUserAssetRecord> getHouseUserAssetRecordList() {
-        return houseUserAssetRecordList;
+
+
+
+    public String getStatusStr() {
+        return statusStr;
     }
 
-    public void setHouseUserAssetRecordList(List<HouseUserAssetRecord> houseUserAssetRecordList) {
-        this.houseUserAssetRecordList = houseUserAssetRecordList;
+    public void setStatusStr(String statusStr) {
+        this.statusStr = statusStr;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
+
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
     }
 
     public List<HouseUserTag> getUserTagList() {
@@ -66,13 +97,15 @@ public class HouseUserAssetRecord extends HouseUserAsset {
         this.userNoteList = userNoteList;
     }
 
-    public UserAccount getUserAccount() {
-        return userAccount;
+    public List<HouseUserAssetRecord> getHouseUserAssetRecordList() {
+        return houseUserAssetRecordList;
     }
 
-    public void setUserAccount(UserAccount userAccount) {
-        this.userAccount = userAccount;
+    public void setHouseUserAssetRecordList(List<HouseUserAssetRecord> houseUserAssetRecordList) {
+        this.houseUserAssetRecordList = houseUserAssetRecordList;
     }
+
+
 
 
     public List<HouseAssetRecord> getExchangeRequestRecordList() {

@@ -15,6 +15,7 @@ import java.io.Serializable;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.bouncycastle.pqc.crypto.newhope.NHOtherInfoGenerator;
 
 /**
  * <p>
@@ -78,6 +79,9 @@ public class HouseAppointment extends Model<HouseAppointment> {
     @ApiModelProperty(value = " 状态")
     private Integer status;
 
+    @ApiModelProperty(value = "确认状态")
+    private Integer confirmStatus;
+
     @TableField(exist = false)
     private String statusStr;
 
@@ -108,6 +112,14 @@ public class HouseAppointment extends Model<HouseAppointment> {
     @ApiModelProperty(value = "保留字段---已使用，接收--DOB")
     private String fieldC;
 
+
+    public Integer getConfirmStatus() {
+        return confirmStatus;
+    }
+
+    public void setConfirmStatus(Integer confirmStatus) {
+        this.confirmStatus = confirmStatus;
+    }
 
     public String getStatusStr() {
         return statusStr;
@@ -412,6 +424,13 @@ public class HouseAppointment extends Model<HouseAppointment> {
 
 //    暂时搁置
     public static final Integer STATUS_PENDING=6;
+
+
+    public static final Integer CONFIRM_STATUS_WAIT=0;
+
+    public static final Integer CONFIRM_STATUS_CONFIRM=1;
+
+    public static final Integer CONFIRM_STATUS_REFUSE=2;
 
     @Override
     protected Serializable pkVal() {

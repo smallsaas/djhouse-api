@@ -73,6 +73,10 @@ public class HouseAsset extends Model<HouseAsset> {
     @TableField(exist = false)
     private String buildingArea;
 
+    @ApiModelProperty(value ="期数")
+    @TableField(exist = false)
+    private Integer issue;
+
     @ApiModelProperty(value = "地址")
     @TableField(exist = false)
     private String address;
@@ -114,6 +118,37 @@ public class HouseAsset extends Model<HouseAsset> {
     @ApiModelProperty("用户头像")
     @TableField(exist = false)
     private String userAvatar;
+
+    @TableField(exist = false)
+    private Boolean existRent;
+
+    @TableField(exist = false)
+    private Boolean existUser;
+
+
+    public Boolean getExistUser() {
+        return existUser;
+    }
+
+    public void setExistUser(Boolean existUser) {
+        this.existUser = existUser;
+    }
+
+    public Integer getIssue() {
+        return issue;
+    }
+
+    public void setIssue(Integer issue) {
+        this.issue = issue;
+    }
+
+    public Boolean getExistRent() {
+        return existRent;
+    }
+
+    public void setExistRent(Boolean existRent) {
+        this.existRent = existRent;
+    }
 
     public String getHouseNumber() {
         return houseNumber;

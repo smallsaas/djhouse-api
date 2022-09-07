@@ -104,7 +104,7 @@ public class UserCommunityManageEndpoint {
             redisScript.delRidesData("communityId".concat(String.valueOf(id).concat(":*")));
         }
 
-        return SuccessTip.create();
+        return SuccessTip.create(affect);
     }
 
     /*

@@ -50,6 +50,7 @@ public class HouseApplicationIntermediaryServiceImpl extends CRUDHouseApplicatio
             if (affect > 0) {
                 UserAccount userAccount =  userAccountMapper.selectById(houseApplicationIntermediary.getUserId());
                 if (userAccount!=null){
+                    userAccount.setCategoryTag(houseApplicationIntermediary.getOrganization());
                     List<Integer> userTypeList = userAccountService.getUserTypeList(userAccount.getType());
 //                    判读用户是否有中介身份，没有需要添加中介身份
                     if (!userTypeList.contains(EndUserTypeSetting.USER_TYPE_INTERMEDIARY)){

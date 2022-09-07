@@ -9,7 +9,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -45,7 +47,7 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
 
     private String note;
 
-    private Data createTime;
+    private Date createTime;
 
     private Integer finalFlag;
 
@@ -84,6 +86,10 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @ApiModelProperty(value = "区域")
     @TableField(exist = false)
     private String buildingArea;
+
+    @ApiModelProperty(value = "期数")
+    @TableField(exist = false)
+    private Integer issue;
 
     @ApiModelProperty(value = "单元Id")
     @TableField(exist = false)
@@ -135,12 +141,32 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private String userAvatar;
 
+    @ApiModelProperty("真实姓名")
+    @TableField(exist = false)
+    private String realName;
+
     @TableField(exist = false)
     private Long orgId;
 
     @TableField(exist = false)
     private Integer assetNumber;
 
+
+    public Integer getIssue() {
+        return issue;
+    }
+
+    public void setIssue(Integer issue) {
+        this.issue = issue;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
 
     public Long getOrgId() {
         return orgId;
@@ -199,19 +225,13 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     }
 
 
-
-
-
-
-    public Data getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Data createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
-
-
 
     public String getNote() {
         return note;

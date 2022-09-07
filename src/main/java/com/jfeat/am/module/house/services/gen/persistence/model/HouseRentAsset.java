@@ -77,6 +77,9 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     @ApiModelProperty(value = "1-出租未上架 2-出租上架")
     private Integer rentStatus;
 
+    @ApiModelProperty(value = "1-挂盘 2-指定中介 3-已出租")
+    private Integer status;
+
     @ApiModelProperty(value = "留空")
     private String note;
 
@@ -111,6 +114,14 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     @TableField(exist = false)
     private List<HouseRentSupportFacilitiesRecord> supportFacilitiesList;
 
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
     public Boolean getSubscribeStatus() {
         return subscribeStatus;
@@ -367,6 +378,10 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     public static final Integer RENT_STATUS_SHELVES = 2;
 
     public static final Integer RENT_STATUS_SOLD_OUT = 1;
+
+    public static final Integer STATUS_HAND_DISH=1;
+    public static final Integer STATUS_POINT=2;
+    public static final Integer STATUS_RENTED=3;
 
     @Override
     protected Serializable pkVal() {

@@ -95,8 +95,6 @@ public class UserAccountRentAssetEndpoint {
             houseRentAssetRecordList.get(0).setHouseAssetModel(houseAssetModel);
             houseRentAssetRecordList.get(0).setExtra(rentAsset.getExtra());
 
-
-
         }
         JSONObject jsonObject = (JSONObject) JSONObject.toJSON(houseRentAssetRecordList.get(0));
         if (houseAssetModel.getCommunityId()!=null){
@@ -133,6 +131,10 @@ public class UserAccountRentAssetEndpoint {
             SuccessTip.create(houseRentAssetService.deleteMaster(houseRentAssetRecordList.get(0).getId()));
         }
         return SuccessTip.create();
-
     }
+
+
+
+
+
 }

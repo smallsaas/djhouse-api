@@ -15,13 +15,13 @@ import java.util.List;
  * Created by Code generator on 2022-07-16
  */
 public interface QueryHouseRentAssetDao extends QueryMasterDao<HouseRentAsset> {
-   /*
-    * Query entity list by page
-    */
+    /*
+     * Query entity list by page
+     */
     List<HouseRentAssetRecord> findHouseRentAssetPage(Page<HouseRentAssetRecord> page, @Param("record") HouseRentAssetRecord record,
-                                            @Param("tag") String tag,
-                                            @Param("search") String search, @Param("orderBy") String orderBy,
-                                            @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+                                                      @Param("tag") String tag,
+                                                      @Param("search") String search, @Param("orderBy") String orderBy,
+                                                      @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
     /*
      * Query entity model for details
@@ -35,8 +35,10 @@ public interface QueryHouseRentAssetDao extends QueryMasterDao<HouseRentAsset> {
     List<HouseRentAssetModel> queryMasterModelList(@Param("masterId") Object masterId);
 
 
- List<HouseRentAssetRecord> findHouseRentAssetPageDetails(Page<HouseRentAssetRecord> page, @Param("record") HouseRentAssetRecord record,
-                                                   @Param("tag") String tag,
-                                                   @Param("search") String search, @Param("orderBy") String orderBy,
-                                                   @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+    List<HouseRentAssetRecord> findHouseRentAssetPageDetails(Page<HouseRentAssetRecord> page, @Param("record") HouseRentAssetRecord record,
+                                                             @Param("tag") String tag,
+                                                             @Param("search") String search, @Param("orderBy") String orderBy,
+                                                             @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
+    List<HouseRentAssetRecord> findHouseRentAssetList(List<Long> assetIds);
 }
