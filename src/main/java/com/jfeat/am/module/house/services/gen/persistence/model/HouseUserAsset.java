@@ -44,7 +44,6 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     private Integer trust;
 
 
-
     private String note;
 
     private Date createTime;
@@ -115,6 +114,10 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private BigDecimal unitArea;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "真实面积")
+    private BigDecimal realArea;
+
     @ApiModelProperty(value = "房屋编号")
     @TableField(exist = false)
     private String roomNumber;
@@ -151,6 +154,14 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private Integer assetNumber;
 
+
+    public BigDecimal getRealArea() {
+        return realArea;
+    }
+
+    public void setRealArea(BigDecimal realArea) {
+        this.realArea = realArea;
+    }
 
     public Integer getIssue() {
         return issue;
@@ -401,7 +412,6 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     public void setVrLink(String vrLink) {
         this.vrLink = vrLink;
     }
-
 
 
     public String getDirection() {

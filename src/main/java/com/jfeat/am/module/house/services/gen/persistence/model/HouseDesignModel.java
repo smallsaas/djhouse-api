@@ -30,8 +30,12 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+
     @ApiModelProperty(value = "户型名")
     private String houseType;
+
+    @ApiModelProperty(value = "简单描述")
+    private String description;
 
     @ApiModelProperty(value = "户型图")
     private String houseTypePicture;
@@ -59,6 +63,12 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
 
     @ApiModelProperty(value = "总面积")
     private BigDecimal area;
+
+    @ApiModelProperty(value = "真实面积")
+    private BigDecimal realArea;
+
+    @ApiModelProperty("tag")
+    private String tag;
 
     @ApiModelProperty(value = "客厅宽度")
     private BigDecimal hallWidth;
@@ -153,6 +163,31 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
     @ApiModelProperty(value = "房间窗高度度")
     private BigDecimal fourthRoomWindowHight;
 
+
+
+    public String getTag() {
+        return tag;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public BigDecimal getRealArea() {
+        return realArea;
+    }
+
+    public void setRealArea(BigDecimal realArea) {
+        this.realArea = realArea;
+    }
 
     public Long getCommunityId() {
         return communityId;

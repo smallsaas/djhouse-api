@@ -40,9 +40,6 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
     @ApiModelProperty(value = "单元编号")
     private String unitCode;
 
-    @ApiModelProperty(value = "面积")
-    private BigDecimal area;
-
     @ApiModelProperty(value = "方向")
     private String direction;
 
@@ -54,6 +51,18 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
 
     @ApiModelProperty(value = "y轴")
     private BigDecimal yAxis;
+
+    @ApiModelProperty(value = "面积")
+    private BigDecimal area;
+
+    @ApiModelProperty(value = "真实面积")
+    private BigDecimal realArea;
+
+    @ApiModelProperty(value = "复式权益面积")
+    private BigDecimal multiArea;
+
+    @ApiModelProperty(value = "复式真实面积")
+    private BigDecimal multiRealArea;
 
     @TableField(exist = false)
     private Integer floorsCount;
@@ -76,6 +85,30 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
 
     @TableField(exist = false)
     private String houseType;
+
+    public BigDecimal getRealArea() {
+        return realArea;
+    }
+
+    public void setRealArea(BigDecimal realArea) {
+        this.realArea = realArea;
+    }
+
+    public BigDecimal getMultiArea() {
+        return multiArea;
+    }
+
+    public void setMultiArea(BigDecimal multiArea) {
+        this.multiArea = multiArea;
+    }
+
+    public BigDecimal getMultiRealArea() {
+        return multiRealArea;
+    }
+
+    public void setMultiRealArea(BigDecimal multiRealArea) {
+        this.multiRealArea = multiRealArea;
+    }
 
     public Integer getFloorsCount() {
         return floorsCount;

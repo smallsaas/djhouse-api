@@ -91,6 +91,9 @@ public class UserHouseTypeManageEndpoint {
         }
         entity.setId(id);
         entity.setCommunityId(communityId);
+        if (entity.getRealArea()==null || entity.getRealArea().equals(0)){
+            entity.setRealArea(entity.getArea());
+        }
 
         return SuccessTip.create(houseDesignModelMapper.updateById(entity));
 
@@ -112,6 +115,10 @@ public class UserHouseTypeManageEndpoint {
             throw new BusinessException(BusinessCode.CodeBase,"没有找到当前小区信息");
         }
         entity.setCommunityId(communityId);
+
+        if (entity.getRealArea()==null || entity.getRealArea().equals(0)){
+            entity.setRealArea(entity.getArea());
+        }
 
         return SuccessTip.create(houseDesignModelMapper.insert(entity));
 

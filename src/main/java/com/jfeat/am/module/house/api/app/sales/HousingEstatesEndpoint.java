@@ -2,6 +2,7 @@ package com.jfeat.am.module.house.api.app.sales;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
 import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
@@ -10,6 +11,7 @@ import com.jfeat.am.module.house.services.gen.persistence.dao.HouseRentAssetMapp
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
+import com.jfeat.am.module.house.services.utility.TenantUtility;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
@@ -37,6 +39,9 @@ public class HousingEstatesEndpoint {
     @Resource
     QueryHouseAssetDao queryHouseAssetDao;
 
+    @Resource
+    TenantUtility tenantUtility;
+
 
     @GetMapping
     public Tip getHousingEstatesPage(Page<HouseUserAssetRecord> page,
@@ -45,6 +50,10 @@ public class HousingEstatesEndpoint {
                                      @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                      @RequestParam(name = "search", required = false) String search){
 
+        if (JWTKit.getUserId()==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+
         page.setCurrent(pageNum);
         page.setSize(pageSize);
 
@@ -52,7 +61,7 @@ public class HousingEstatesEndpoint {
 
         HouseUserAssetRecord record = new HouseUserAssetRecord();
         record.setUserId(userId);
-//        record.setOrgId(JWTKit.getOrgId());
+        record.setOrgId(tenantUtility.getCurrentOrgId(JWTKit.getUserId()));
 
         if (search!=null && search.contains("-")){
             String[] strings = search.split("-");

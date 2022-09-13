@@ -275,6 +275,8 @@ public class UserCommunityManageEndpoint {
             if (communityId != null) {
                 HousePropertyCommunity community =  housePropertyCommunityMapper.selectById(communityId);
                 community.setParkingNumber(entity.getParkingNumber());
+                community.setStartTime(entity.getStartTime());
+                community.setDeadline(entity.getDeadline());
                 return SuccessTip.create(housePropertyCommunityMapper.updateById(community));
             }
         } else {

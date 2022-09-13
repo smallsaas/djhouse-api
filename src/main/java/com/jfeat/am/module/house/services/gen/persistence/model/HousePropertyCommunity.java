@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -49,9 +50,14 @@ public class HousePropertyCommunity extends Model<HousePropertyCommunity> {
     @ApiModelProperty(value = "停车位")
     private Integer parkingNumber;
 
+    private Date startTime;
+
+    private Date deadline;
+
     @ApiModelProperty(value = "社区名")
     @TableField(exist = false)
     private String tenant;
+
 
 
     public String getTenant() {
@@ -61,6 +67,22 @@ public class HousePropertyCommunity extends Model<HousePropertyCommunity> {
     public HousePropertyCommunity setTenant(String tenant) {
         this.tenant = tenant;
         return this;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(Date deadline) {
+        this.deadline = deadline;
     }
 
     public Long getTenantId() {

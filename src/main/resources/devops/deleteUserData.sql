@@ -1,5 +1,6 @@
 DELETE FROM sys_third_party_user WHERE sys_third_party_user.user_id = #{userId};
 DELETE FROM t_end_user WHERE t_end_user.id= #{userId};
+UPDATE t_end_user SET t_end_user.invitor_id=NULL WHERE t_end_user.invitor_id=#{userId};
 DELETE FROM t_house_application_intermediary WHERE t_house_application_intermediary.user_id= #{userId};
 DELETE FROM t_house_application_operations WHERE t_house_application_operations.user_id = #{userId};
 DELETE FROM t_house_appointment WHERE t_house_appointment.user_id= #{userId};

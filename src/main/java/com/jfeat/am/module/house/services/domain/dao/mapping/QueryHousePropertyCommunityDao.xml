@@ -10,7 +10,9 @@
         t_house_property_community.address,
         t_house_property_community.picture,
         t_house_property_community.postcode,
-        t_house_property_community.parking_number AS parkingNumber
+        t_house_property_community.parking_number AS parkingNumber,
+        t_house_property_community.start_time AS startTime,
+        t_house_property_community.deadline
 
     </sql>
 

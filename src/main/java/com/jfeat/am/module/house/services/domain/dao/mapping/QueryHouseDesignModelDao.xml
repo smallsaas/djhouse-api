@@ -2,11 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseDesignModelDao">
     <sql id="Base_Column_List">
-        t_house_design_model.id, t_house_design_model.house_type AS houseType,
+        t_house_design_model.id,
+        t_house_design_model.house_type AS houseType,
+        t_house_design_model.description AS description,
         t_house_design_model.house_type_picture AS houseTypePicture,
         t_house_design_model.note AS note,
         t_house_design_model.vr_id AS vrId,
         t_house_design_model.area AS area,
+        t_house_design_model.real_area AS realArea,
+        t_house_design_model.tag,
+
         t_house_design_model.community_id AS communityId,
 
         t_house_vr_picture.vr_picture  AS vrPicture,

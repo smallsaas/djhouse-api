@@ -23,9 +23,10 @@
         t_house_property_building.id As buildingId,
         t_house_property_building.area AS buildingArea,
         t_house_property_building.code AS buildingCode,
-t_house_property_building.issue AS issue,
+        t_house_property_building.issue AS issue,
         t_house_property_building_unit.id AS unitId,
         t_house_property_building_unit.direction AS direction,
+t_house_property_building_unit.real_area AS realArea,
 
         t_house_design_model.area AS unitArea,
         t_house_design_model.house_type AS houseType,
@@ -222,9 +223,11 @@ t_house_property_building.issue AS issue,
         select
         <include refid="LandlordSql"></include>
         FROM t_end_user
-        JOIN t_house_user_asset ON t_end_user.id=t_house_user_asset.user_id
+        LEFT JOIN t_house_user_asset ON t_end_user.id=t_house_user_asset.user_id
 
         WHERE 1=1
+
+        and t_end_user.appid="1"
 
         <if test="record.id != null and record.id>0 ">
             AND t_house_user_asset.id LIKE CONCAT('%',#{record.id},'%')
@@ -267,7 +270,8 @@ t_house_property_building.issue AS issue,
             OR t_end_user.name LIKE CONCAT('%',#{search},'%')
             )
         </if>
-        group by t_house_user_asset.user_id
+        GROUP BY t_end_user.id
+        order by t_end_user.create_time desc
     </select>
 
 
@@ -379,6 +383,9 @@ t_house_property_building.issue AS issue,
 
         <if test="record.userId != null and record.userId>0 ">
             AND t_house_user_asset.user_id = #{record.userId}
+        </if>
+        <if test="record.orgId != null and record.orgId>0 ">
+            AND t_house_property_community.tenant_id = #{record.orgId}
         </if>
         <if test="record.buildingCode != null and record.buildingCode!='' ">
             AND t_house_property_building.code LIKE CONCAT('%',#{record.buildingCode},'%')

@@ -18,6 +18,7 @@ import com.jfeat.am.module.house.services.domain.service.HouseUserNoteService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseUserAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.dao.*;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
+import com.jfeat.am.module.house.services.utility.TenantUtility;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -63,6 +64,9 @@ public class LandlordManageEndpoint {
     @Resource
     HouseUserAssetMapper houseUserAssetMapper;
 
+    @Resource
+    TenantUtility tenantUtility;
+
 
 
 
@@ -72,6 +76,7 @@ public class LandlordManageEndpoint {
     //    房东列表
     @GetMapping
     public Tip getLandlordList(Page<HouseUserAssetRecord> page,
+                               @RequestParam(value = "type",required = false) Integer type,
                                @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                @RequestParam(name = "search", required = false) String search) {
@@ -86,10 +91,13 @@ public class LandlordManageEndpoint {
         HouseUserAssetRecord record = new HouseUserAssetRecord();
 
 
-        List<HouseUserAssetRecord> userAssetRecords = queryHouseUserAssetDao.queryLandlordPage(page, record,null, null, search, null, null, null);
+        List<HouseUserAssetRecord> userAssetRecords = queryHouseUserAssetDao.queryLandlordPage(page, record,tenantUtility.getCurrentOrgId(JWTKit.getUserId()), null, search, null, null, null);
 
         List<Long> userId = new ArrayList<>();
         for (HouseUserAssetRecord houseUserAssetRecord : userAssetRecords) {
+            if (type!=null&&type.equals(1)){
+                houseUserAssetRecord.setLandlordType("createLandlord");
+            }
             if (!userId.contains(houseUserAssetRecord.getId())) {
                 userId.add(houseUserAssetRecord.getId());
             }
@@ -209,48 +217,21 @@ public class LandlordManageEndpoint {
     }
 
 
-//    @GetMapping("/userAccount")
-//    public Tip getUserAccountList(Page<HouseUserAssetRecord> page,
-//                                  @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-//                                  @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-//                                  @RequestParam(name = "search", required = false) String search) {
-//        if (JWTKit.getUserId()==null){
-//            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
-//        }
-//
-//
-//        page.setCurrent(pageNum);
-//        page.setSize(pageSize);
-//
-//        HouseUserAssetRecord record = new HouseUserAssetRecord();
-//
-//
-//        List<HouseUserAssetRecord> userAssetRecords = queryHouseUserAssetDao.queryUserAccountList(page, record, search);
-//
-//
-//        List<HouseUserAssetModel> houseUserAssetModelList = queryHouseUserAssetDao.queryLandlordAssetNumber(null, null);
-//        for (HouseUserAssetRecord houseUserAssetRecord : userAssetRecords) {
-//            Boolean flag =true;
-//            for (HouseUserAssetModel houseUserAssetModel : houseUserAssetModelList) {
-//                if (houseUserAssetRecord.getId().equals(houseUserAssetModel.getUserId())) {
-//                    flag=false;
-//                    houseUserAssetRecord.setAssetNumber(houseUserAssetModel.getAssetNumber());
-//                }
-//
-//            }
-//            if (flag){
-//                houseUserAssetRecord.setAssetNumber(0);
-//            }
-//        }
-//
-//        page.setRecords(userAssetRecords);
-//        return SuccessTip.create(page);
-//    }
 
 
     @GetMapping("/allCommunity")
     public Tip getALlCommunity(){
+        Long userId = JWTKit.getUserId();
+        if (userId==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+        Long orgId =  tenantUtility.getCurrentOrgId(userId);
+        if (orgId==null){
+            throw new BusinessException(BusinessCode.NoPermission,"无社区");
+        }
         QueryWrapper<HousePropertyCommunity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(HousePropertyCommunity.TENANT_ID,orgId);
+
         return SuccessTip.create(housePropertyCommunityMapper.selectList(queryWrapper));
     }
 
@@ -272,11 +253,13 @@ public class LandlordManageEndpoint {
                             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize){
         QueryWrapper<HouseAsset> assetQueryWrapper = new QueryWrapper<>();
         assetQueryWrapper.eq(HouseAsset.BUILDING_ID,buildingId);
+        assetQueryWrapper.last("ORDER BY t_house_asset.number*1 desc");
         page.setSize(pageSize);
         page.setCurrent(pageNum);
-        page = houseAssetMapper.selectPage(page,assetQueryWrapper);
+//        page = houseAssetMapper.selectPage(page,assetQueryWrapper);
 
-        List<HouseAsset> houseAssetList = page.getRecords();
+//        List<HouseAsset> houseAssetList = page.getRecords();
+        List<HouseAsset> houseAssetList = houseAssetMapper.selectList(assetQueryWrapper);
         List<Long> assetIds = houseAssetList.stream().map(HouseAsset::getId).collect(Collectors.toList());
 
 
@@ -297,7 +280,7 @@ public class LandlordManageEndpoint {
         }
 
 
-        return SuccessTip.create(page);
+        return SuccessTip.create(houseAssetList);
     }
 
 //    房号绑定房东
@@ -323,6 +306,26 @@ public class LandlordManageEndpoint {
         }
     }
 
+//    修改用户信息
 
+    @PutMapping("/userInfo/{id}")
+    public Tip updateUserInfo(@PathVariable("id")Long id, @RequestBody UserAccount entity)
+    {
+        UserAccount userAccount =  userAccountMapper.selectById(id);
+        if (userAccount!=null){
+            userAccount.setRealName(entity.getRealName());
+            userAccount.setName(entity.getName());
+            userAccount.setProduceTeam(entity.getProduceTeam());
+            userAccount.setPhone(entity.getPhone());
+            return SuccessTip.create(userAccountMapper.updateById(userAccount));
+        }
+        return SuccessTip.create();
+    }
+
+//    获取用户信息
+    @GetMapping("/userInfo/{id}")
+    public Tip getUserInfo(@PathVariable("id") Long id){
+        return SuccessTip.create(userAccountMapper.selectById(id));
+    }
 
 }

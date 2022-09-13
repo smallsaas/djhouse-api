@@ -9,9 +9,16 @@
         t_house_property_building.code,
         t_house_property_building.floors,
         t_house_property_building.units,
-t_house_property_building.multiple_number AS multipleNumber,
-t_house_property_building.unit_picture AS unitPicture,
-t_house_property_building.issue
+        t_house_property_building.multiple_number AS multipleNumber,
+        t_house_property_building.unit_picture AS unitPicture,
+        t_house_property_building.issue,
+
+        t_house_property_building.flat_title_one AS flatTitleOne,
+        t_house_property_building.flat_picture_one AS flatPictureOne,
+        t_house_property_building.flat_title_two AS flatTitleTwo,
+        t_house_property_building.flat_picture_two AS flatPictureTwo,
+        t_house_property_building.flat_title_three AS flatTitleThree,
+        t_house_property_building.flat_picture_three AS flatPictureThree
     </sql>
 
 

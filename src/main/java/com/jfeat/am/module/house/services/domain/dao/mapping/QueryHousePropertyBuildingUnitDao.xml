@@ -6,11 +6,16 @@
         t_house_property_building_unit.building_id AS buildingId,
         t_house_property_building_unit.design_model_id AS designModelId,
         t_house_property_building_unit.unit_code AS unitCode,
-        t_house_property_building_unit.area as area,
         t_house_property_building_unit.direction AS direction,
         t_house_property_building_unit.unit_number AS unitNumber,
         t_house_property_building_unit.x_axis AS xAxis,
-        t_house_property_building_unit.y_axis AS yAxis
+        t_house_property_building_unit.y_axis AS yAxis,
+         t_house_property_building_unit.area as area,
+         t_house_property_building_unit.real_area as realArea,
+         t_house_property_building_unit.multi_area as multiArea,
+         t_house_property_building_unit.multi_real_area as multiRealArea,
+
+        t_house_design_model.house_type AS houseType
     </sql>
 
 
@@ -29,6 +34,8 @@
 
 
         FROM t_house_property_building_unit
+        LEFT JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+
 
         WHERE 1=1
 

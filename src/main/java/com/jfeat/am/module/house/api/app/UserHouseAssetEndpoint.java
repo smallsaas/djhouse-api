@@ -134,12 +134,19 @@ public class UserHouseAssetEndpoint {
 
     //    获取小区
     @GetMapping("/community")
-    public Tip getHousePropertyCommunityByTenantId() {
-        if (JWTKit.getOrgId() == null) {
+    public Tip getHousePropertyCommunityByTenantId(@RequestParam(value = "tenantId",required = false) Long tenantId) {
+
+        if (tenantId==null){
+            if (JWTKit.getUserId()==null){
+                throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+            }
+            tenantId = tenantUtility.getCurrentOrgId(JWTKit.getUserId());
+        }
+
+        if (tenantId == null) {
             throw new BusinessException(BusinessCode.CodeBase, "没有社区");
         }
 
-        Long tenantId = tenantUtility.getCurrentOrgId(JWTKit.getUserId());
         return SuccessTip.create(queryHousePropertyCommunityDao.queryHouseCommunityByTenantId(tenantId));
     }
 

@@ -438,5 +438,34 @@ public class UserStatisticsEndpoint {
     }
 
 
+//    用户方数统计
+    @GetMapping("userAreaStatistics")
+    public Tip getUserAreaStatistics(){
+        Long userId = JWTKit.getUserId();
+        if (userId==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+        Long communityId =  userCommunityAsset.getUserCommunityStatus(userId);
+        HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
+        userAssetRecord.setUserId(JWTKit.getUserId());
+        List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, communityId, null, null, null, null, null);
+
+        BigDecimal totalArea = new BigDecimal(0);
+        BigDecimal overArea = new BigDecimal(0);
+        for (HouseUserAssetRecord record:houseUserAssets){
+            BigDecimal realArea = record.getRealArea()==null?new BigDecimal(0):record.getRealArea();
+            totalArea =  totalArea.add(realArea);
+            BigDecimal area = record.getUnitArea()==null?new BigDecimal(0):record.getUnitArea();
+            overArea=overArea.add(area);
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("totalArea",totalArea);
+        jsonObject.put("overArea",totalArea.subtract(overArea));
+
+
+        return SuccessTip.create(jsonObject);
+    }
+
+
 
 }

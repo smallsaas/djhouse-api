@@ -193,6 +193,9 @@ public class UserBuildingEndpoint {
         buildingJson.put("unit", unitJson);
         buildingJson.put("houseType", houseTypeJsonArray);
 
+        buildingJson.put("buildingObject",housePropertyBuilding);
+
+
 
         return SuccessTip.create(buildingJson);
     }

@@ -26,6 +26,8 @@ public class HouseUserAssetRecord extends HouseUserAsset {
 
     private Integer status;
 
+    private String LandlordType;
+
     private List<HouseAssetRecord> exchangeRequestRecordList;
 
     private List<HouseUserAssetRecord> houseUserAssetRecordList;
@@ -46,8 +48,13 @@ public class HouseUserAssetRecord extends HouseUserAsset {
     private List<HouseUserNote> userNoteList;
 
 
+    public String getLandlordType() {
+        return LandlordType;
+    }
 
-
+    public void setLandlordType(String landlordType) {
+        LandlordType = landlordType;
+    }
 
     public String getStatusStr() {
         return statusStr;

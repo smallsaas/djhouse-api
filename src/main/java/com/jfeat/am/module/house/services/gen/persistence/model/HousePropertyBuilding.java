@@ -49,6 +49,17 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
     @ApiModelProperty(value = "cad图纸")
     private String cadPicture;
 
+    private String flatTitleOne;
+    private String flatPictureOne;
+
+
+    private String flatTitleTwo;
+    private String flatPictureTwo;
+
+    private String flatTitleThree;
+    private String flatPictureThree;
+
+
     @ApiModelProperty()
     private Integer multipleNumber;
 
@@ -114,6 +125,55 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
 //          this.orgId = orgId;
 //          return this;
 //      }
+
+
+    public String getFlatTitleOne() {
+        return flatTitleOne;
+    }
+
+    public void setFlatTitleOne(String flatTitleOne) {
+        this.flatTitleOne = flatTitleOne;
+    }
+
+    public String getFlatPictureOne() {
+        return flatPictureOne;
+    }
+
+    public void setFlatPictureOne(String flatPictureOne) {
+        this.flatPictureOne = flatPictureOne;
+    }
+
+    public String getFlatTitleTwo() {
+        return flatTitleTwo;
+    }
+
+    public void setFlatTitleTwo(String flatTitleTwo) {
+        this.flatTitleTwo = flatTitleTwo;
+    }
+
+    public String getFlatPictureTwo() {
+        return flatPictureTwo;
+    }
+
+    public void setFlatPictureTwo(String flatPictureTwo) {
+        this.flatPictureTwo = flatPictureTwo;
+    }
+
+    public String getFlatTitleThree() {
+        return flatTitleThree;
+    }
+
+    public void setFlatTitleThree(String flatTitleThree) {
+        this.flatTitleThree = flatTitleThree;
+    }
+
+    public String getFlatPictureThree() {
+        return flatPictureThree;
+    }
+
+    public void setFlatPictureThree(String flatPictureThree) {
+        this.flatPictureThree = flatPictureThree;
+    }
 
     public Long getCommunityId() {
         return communityId;

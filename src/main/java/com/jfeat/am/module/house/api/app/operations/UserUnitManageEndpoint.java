@@ -52,6 +52,22 @@ public class UserUnitManageEndpoint {
     RedisScript redisScript;
 
 
+    @GetMapping("/unit")
+    public Tip getUnitList(@RequestParam("buildingId") Long buildingId){
+
+        HousePropertyBuildingUnitRecord record = new HousePropertyBuildingUnitRecord();
+        record.setBuildingId(buildingId);
+
+        queryHousePropertyBuildingUnitDao.findHousePropertyBuildingUnitPage(null,record,null,null,null,null,null);
+
+
+        QueryWrapper<HousePropertyBuildingUnit> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(HousePropertyBuildingUnit.BUILDING_ID,buildingId);
+        List<HousePropertyBuildingUnit> unitList = housePropertyBuildingUnitMapper.selectList(queryWrapper);
+        return SuccessTip.create(queryHousePropertyBuildingUnitDao.findHousePropertyBuildingUnitPage(null,record,null,null,null,null,null)
+        );
+    }
+
 
 //    以楼栋id获取 楼栋的全部单元
     @GetMapping("/getUnit")
@@ -134,6 +150,26 @@ public class UserUnitManageEndpoint {
             return SuccessTip.create(affect);
         }
         return SuccessTip.create();
+    }
+
+//    修改单元属性
+    @PutMapping("/{id}")
+    public Tip updateUnitAttribute(@PathVariable("id")Long id,@RequestBody HousePropertyBuildingUnit entity){
+        HousePropertyBuildingUnit housePropertyBuildingUnit = housePropertyBuildingUnitMapper.selectById(id);
+        if (housePropertyBuildingUnit!=null){
+            housePropertyBuildingUnit.setArea(entity.getArea());
+            housePropertyBuildingUnit.setRealArea(entity.getRealArea());
+            housePropertyBuildingUnit.setDirection(entity.getDirection());
+            housePropertyBuildingUnit.setMultiArea(entity.getMultiArea());
+            housePropertyBuildingUnit.setMultiRealArea(entity.getMultiRealArea());
+            return SuccessTip.create(housePropertyBuildingUnitMapper.updateById(housePropertyBuildingUnit));
+        }
+        return SuccessTip.create();
+    }
+
+    @GetMapping("/{id}")
+    public Tip getUnitById(@PathVariable("id") Long id){
+        return SuccessTip.create(housePropertyBuildingUnitMapper.selectById(id));
     }
 
 }
