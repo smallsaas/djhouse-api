@@ -3,8 +3,10 @@ package com.jfeat.am.module.house.api.app;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.core.model.EndUserTypeSetting;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
+import com.jfeat.am.module.house.services.domain.service.EndpointUserService;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetComplaintService;
 import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.domain.service.HouseUserCommunityStatusService;
@@ -16,6 +18,7 @@ import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyCommu
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.am.module.house.services.utility.TenantUtility;
+import com.jfeat.am.module.house.services.utility.UserAccountUtility;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.am.uaas.tenant.services.gen.persistence.dao.TenantMapper;
 import com.jfeat.am.uaas.tenant.services.gen.persistence.model.Tenant;
@@ -24,6 +27,7 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.users.account.services.domain.service.UserAccountService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -103,6 +107,12 @@ public class UserHouseAssetEndpoint {
 
     @Resource
     HousePropertyCommunityMapper housePropertyCommunityMapper;
+
+    @Resource
+    UserAccountService userAccountService;
+
+    @Resource
+    UserAccountUtility userAccountUtility;
 
     @GetMapping("/tenant")
     public Tip getTenantList(Page<Tenant> page,
@@ -421,8 +431,29 @@ public class UserHouseAssetEndpoint {
         if (entity.getAssetId() == null || "".equals(entity.getAssetId())) {
             throw new BusinessException(BusinessCode.BadRequest, "assetId为必填项");
         }
+
+
+//        判断用户是是房东 还是二房东
+        List<Integer> typeList =  userAccountUtility.getUserTypeList(JWTKit.getUserId());
+        if (typeList==null || typeList.size()<=0){
+            throw new BusinessException(BusinessCode.NoPermission,"无权限");
+        }
+
+        Integer userType = 2;
+
+        if (typeList.contains(EndUserTypeSetting.USER_TYPE_SECOND_LANDLORD)){
+            userType = 2;
+        }else{
+            userType=1;
+        }
+
+        entity.setUserType(userType);
+
+
+
         HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
         houseUserAssetRecord.setAssetId(entity.getAssetId());
+        houseUserAssetRecord.setUserType(userType);
         List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null, houseUserAssetRecord, null, null, null, null, null, null);
 
         /*

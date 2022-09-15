@@ -50,12 +50,17 @@ public class UserAgentAppointmentEndpoint {
                     throw new BusinessException(BusinessCode.CodeBase,"开始时间不能大于结束时间");
                 }
 
+                int t =0;
+                if (startTime.getSeconds()>=30){
+                    t = 1;
+                }
+
                 startDateTime.setHours(startTime.getHours());
-                startDateTime.setSeconds(startTime.getSeconds());
+                startDateTime.setMinutes(startTime.getMinutes()-t);
                 entity.setStartTime(startDateTime);
 
                 endDateTime.setHours(endTime.getHours());
-                endDateTime.setSeconds(endTime.getSeconds());
+                endDateTime.setMinutes(endTime.getMinutes()-t);
                 entity.setEndTime(endDateTime);
 
             }catch (ParseException e){

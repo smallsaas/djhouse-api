@@ -2,8 +2,6 @@
 package com.jfeat.am.module.house.api;
 
 
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -42,12 +40,10 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchan
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
-import springfox.documentation.spring.web.json.Json;
 
 /**
  * <p>
@@ -55,7 +51,7 @@ import springfox.documentation.spring.web.json.Json;
  * </p>
  *
  * @author Code generator
- * @since 2022-06-11
+ * @since 2022-09-13
  */
 @RestController
 @Api("HouseAssetExchangeRequest")
@@ -68,9 +64,6 @@ public class HouseAssetExchangeRequestEndpoint {
     @Resource
     QueryHouseAssetExchangeRequestDao queryHouseAssetExchangeRequestDao;
 
-    @Resource
-    QueryHouseAssetDao queryHouseAssetDao;
-
 
     @BusinessLog(name = "HouseAssetExchangeRequest", value = "create HouseAssetExchangeRequest")
     @Permission(HouseAssetExchangeRequestPermission.HOUSEASSETEXCHANGEREQUEST_NEW)
@@ -80,7 +73,6 @@ public class HouseAssetExchangeRequestEndpoint {
         Integer affected = 0;
         try {
             affected = houseAssetExchangeRequestService.createMaster(entity);
-            houseAssetExchangeRequestService.assetMachResult(entity,false);
         } catch (DuplicateKeyException e) {
             throw new BusinessException(BusinessCode.DuplicateKey);
         }
@@ -93,12 +85,6 @@ public class HouseAssetExchangeRequestEndpoint {
     @ApiOperation(value = "查看 HouseAssetExchangeRequest", response = HouseAssetExchangeRequest.class)
     public Tip getHouseAssetExchangeRequest(@PathVariable Long id) {
         return SuccessTip.create(houseAssetExchangeRequestService.queryMasterModel(queryHouseAssetExchangeRequestDao, id));
-    }
-
-    @Permission(HouseAssetExchangeRequestPermission.HOUSEASSETEXCHANGEREQUEST_VIEW)
-    @PostMapping("/match")
-    public Tip matchedResult(@RequestBody HouseAssetExchangeRequest entity) {
-        return SuccessTip.create(houseAssetExchangeRequestService.assetMachResult(entity,false));
     }
 
     @BusinessLog(name = "HouseAssetExchangeRequest", value = "update HouseAssetExchangeRequest")
@@ -128,8 +114,9 @@ public class HouseAssetExchangeRequestEndpoint {
             @ApiImplicitParam(name = "id", dataType = "Long"),
             @ApiImplicitParam(name = "userId", dataType = "Long"),
             @ApiImplicitParam(name = "assetId", dataType = "Long"),
-            @ApiImplicitParam(name = "targetAssetRange", dataType = "String"),
-            @ApiImplicitParam(name = "target_assetRangeLimit", dataType = "String"),
+            @ApiImplicitParam(name = "targetAsset", dataType = "Long"),
+            @ApiImplicitParam(name = "createTime", dataType = "Date"),
+            @ApiImplicitParam(name = "updateTime", dataType = "Date"),
             @ApiImplicitParam(name = "orderBy", dataType = "String"),
             @ApiImplicitParam(name = "sort", dataType = "String")
     })
@@ -145,9 +132,13 @@ public class HouseAssetExchangeRequestEndpoint {
 
                                                   @RequestParam(name = "assetId", required = false) Long assetId,
 
-                                                  @RequestParam(name = "targetAssetRange", required = false) String targetAssetRange,
+                                                  @RequestParam(name = "targetAsset", required = false) Long targetAsset,
 
-                                                  @RequestParam(name = "targetAssetRangeLimit", required = false) String targetAssetRangeLimit,
+                                                  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                  @RequestParam(name = "createTime", required = false) Date createTime,
+
+                                                  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                  @RequestParam(name = "updateTime", required = false) Date updateTime,
                                                   @RequestParam(name = "orderBy", required = false) String orderBy,
                                                   @RequestParam(name = "sort", required = false) String sort) {
 
@@ -168,8 +159,9 @@ public class HouseAssetExchangeRequestEndpoint {
         HouseAssetExchangeRequestRecord record = new HouseAssetExchangeRequestRecord();
         record.setUserId(userId);
         record.setAssetId(assetId);
-        record.setTargetAssetRange(targetAssetRange);
-        record.setTargetAssetRangeLimit(targetAssetRangeLimit);
+        record.setTargetAsset(targetAsset);
+        record.setCreateTime(createTime);
+        record.setUpdateTime(updateTime);
 
 
         List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestPage = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(page, record, tag, search, orderBy, null, null);
@@ -177,30 +169,6 @@ public class HouseAssetExchangeRequestEndpoint {
 
         page.setRecords(houseAssetExchangeRequestPage);
 
-        return SuccessTip.create(page);
-    }
-
-    @GetMapping("/allAssetExchangeRequest")
-    public Tip getALlAssetExchangeRequest(@RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                                          @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                                          @RequestParam(name = "search", required = false) String search){
-        List<HouseAssetExchangeRequest> houseAssetExchangeRequestList = queryHouseAssetExchangeRequestDao.queryAllHouseAssetExchangeRequest();
-        for (int i=0;i<houseAssetExchangeRequestList.size();i++){
-            List<String> targetRange = Arrays.asList(houseAssetExchangeRequestList.get(i).getTargetAssetRange().split(","));
-            StringBuffer stringBuffer = new StringBuffer();
-            for (String s:targetRange){
-               HouseAsset houseAsset =  queryHouseAssetDao.queryMasterModel(Long.parseLong(s));
-               if (houseAsset!=null){
-                   String buildingCode = houseAsset.getBuildingCode();
-                   String number = houseAsset.getNumber();
-                   stringBuffer.append("".concat(buildingCode).concat("-").concat(number).concat("    "));
-               }
-
-            }
-            houseAssetExchangeRequestList.get(i).setTargetAssetRange(stringBuffer.toString());
-        }
-        Page<HouseAssetExchangeRequest> page = new Page<>();
-        page.setRecords(houseAssetExchangeRequestList);
         return SuccessTip.create(page);
     }
 }

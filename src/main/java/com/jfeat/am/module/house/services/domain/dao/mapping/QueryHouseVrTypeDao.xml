@@ -5,7 +5,8 @@
         t_house_vr_type.id,
     t_house_vr_type.name,
     t_house_vr_type.org_id AS orgId,
-    t_house_vr_type.community_id AS communityId
+    t_house_vr_type.community_id AS communityId,
+    t_house_vr_type.status
     </sql>
 
     <sql id="QueryOwnedOrgIds">

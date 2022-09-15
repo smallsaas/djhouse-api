@@ -8,7 +8,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchan
  * </p>
  *
  * @author Code generator
- * @since 2022-06-11
+ * @since 2022-09-13
  * Master: serviceOnly
   * Slave : t_house_asset_exchange_request
   */

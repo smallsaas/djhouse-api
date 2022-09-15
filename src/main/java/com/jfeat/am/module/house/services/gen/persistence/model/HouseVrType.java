@@ -11,6 +11,7 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 
 /**
  * <p>
@@ -37,6 +38,9 @@ public class HouseVrType extends Model<HouseVrType> {
 
     @ApiModelProperty(value = "小区id")
     private Long communityId;
+
+    @ApiModelProperty(value = "上架下架 0-下架 1-上架")
+    private Integer status;
 
     @TableField(exist = false)
     private List<HouseVrPicture> items;
@@ -69,6 +73,14 @@ public class HouseVrType extends Model<HouseVrType> {
         return this;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     public Long getCommunityId() {
         return communityId;
     }
@@ -92,6 +104,12 @@ public class HouseVrType extends Model<HouseVrType> {
     public static final String ORG_ID = "org_id";
 
     public static final String COMMUNITY_id = "community_id";
+
+    public static final String STATUS = "status";
+
+    public static final Integer STATUS_SHELVE = 1;
+
+    public static final Integer STATUS_UNSHELVE = 0;
 
     @Override
     protected Serializable pkVal() {

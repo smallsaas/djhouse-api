@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.services.domain.service;
 
+import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
 import com.jfeat.am.module.house.services.gen.crud.service.CRUDHouseAssetExchangeRequestService;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchangeRequest;
 
@@ -9,5 +10,14 @@ import java.util.List;
  * Created by vincent on 2017/10/19.
  */
 public interface HouseAssetExchangeRequestService extends CRUDHouseAssetExchangeRequestService {
-    List<HouseAssetExchangeRequest> assetMachResult(HouseAssetExchangeRequest assetExchangeRequest,Boolean isSameHouseType);
+
+    List<HouseAssetExchangeRequestRecord> assetMachResult(HouseAssetExchangeRequest assetExchangeRequest);
+
+//    批量添加
+    int batchAddExchangeRequest(List<HouseAssetExchangeRequest> exchangeRequestList);
+
+
+    int batchDeleteExchangeRequest(HouseAssetExchangeRequest exchangeRequest);
+
+    int addHouseAssetExchangeRequest(HouseAssetExchangeRequest entity);
 }

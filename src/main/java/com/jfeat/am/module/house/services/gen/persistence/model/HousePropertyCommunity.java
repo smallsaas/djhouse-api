@@ -54,11 +54,68 @@ public class HousePropertyCommunity extends Model<HousePropertyCommunity> {
 
     private Date deadline;
 
+    private Integer fiftyFiveNumber;
+    private Integer seventyNumber;
+    private Integer ninetyNumber;
+    private Integer oneHundredFifteenNumber;
+    private Integer oneHundredThirtyNumber;
+    private Integer oneHundredSixtyNumber;
+
+
+
+
     @ApiModelProperty(value = "社区名")
     @TableField(exist = false)
     private String tenant;
 
 
+    public Integer getFiftyFiveNumber() {
+        return fiftyFiveNumber;
+    }
+
+    public void setFiftyFiveNumber(Integer fiftyFiveNumber) {
+        this.fiftyFiveNumber = fiftyFiveNumber;
+    }
+
+    public Integer getSeventyNumber() {
+        return seventyNumber;
+    }
+
+    public void setSeventyNumber(Integer seventyNumber) {
+        this.seventyNumber = seventyNumber;
+    }
+
+    public Integer getNinetyNumber() {
+        return ninetyNumber;
+    }
+
+    public void setNinetyNumber(Integer ninetyNumber) {
+        this.ninetyNumber = ninetyNumber;
+    }
+
+    public Integer getOneHundredFifteenNumber() {
+        return oneHundredFifteenNumber;
+    }
+
+    public void setOneHundredFifteenNumber(Integer oneHundredFifteenNumber) {
+        this.oneHundredFifteenNumber = oneHundredFifteenNumber;
+    }
+
+    public Integer getOneHundredThirtyNumber() {
+        return oneHundredThirtyNumber;
+    }
+
+    public void setOneHundredThirtyNumber(Integer oneHundredThirtyNumber) {
+        this.oneHundredThirtyNumber = oneHundredThirtyNumber;
+    }
+
+    public Integer getOneHundredSixtyNumber() {
+        return oneHundredSixtyNumber;
+    }
+
+    public void setOneHundredSixtyNumber(Integer oneHundredSixtyNumber) {
+        this.oneHundredSixtyNumber = oneHundredSixtyNumber;
+    }
 
     public String getTenant() {
         return tenant;

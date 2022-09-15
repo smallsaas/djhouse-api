@@ -73,12 +73,12 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
             JSONObject matchJson = new JSONObject();
             JSONObject jsonObject = new JSONObject();
 
-            List<String> matchedAssetRange = Arrays.asList(houseAssetExchangeRequestRecordList.get(i).getTargetAssetRange().split(","));
-            List<Long> matchedAssetRangeIds = matchedAssetRange.stream().map(Long::valueOf).collect(Collectors.toList());
-            List<HouseAsset> houseAssetList = new ArrayList<>();
-            for (Long assetId : matchedAssetRangeIds) {
+            List<HouseAsset> targetList = houseAssetExchangeRequestRecordList.get(i).getTargetAssetList();
+            if (targetList==null || targetList.size()<=0){
+                continue;
+            }
+            for (HouseAsset matchHouseAsset : targetList) {
 
-                HouseAsset matchHouseAsset = queryHouseAssetDao.queryMasterModel(assetId);
                 if (matchHouseAsset != null) {
 //                    查询是否存在楼栋
                     if (jsonObject.containsKey(matchHouseAsset.getBuildingCode())){
@@ -86,10 +86,10 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                         //                    查找是否存在单元
                         if (buildingJson.containsKey(matchHouseAsset.getUnitId().toString())){
                             JSONArray unit = (JSONArray) buildingJson.get(matchHouseAsset.getUnitId().toString());
-                            unit.add(matchHouseAsset.getNumber());
+                            unit.add(matchHouseAsset.getHouseNumber());
                         }else {
                             JSONArray unit = new JSONArray();
-                            unit.add(matchHouseAsset.getNumber());
+                            unit.add(matchHouseAsset.getHouseNumber());
                             buildingJson.put(matchHouseAsset.getUnitId().toString(),unit);
                         }
                     }else {
@@ -99,7 +99,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                         buildingJson.put(matchHouseAsset.getUnitId().toString(),unit);
                         jsonObject.put(matchHouseAsset.getBuildingCode(),buildingJson);
                     }
-                    houseAssetList.add(matchHouseAsset);
+//                    houseAssetList.add(matchHouseAsset);
                 }
             }
             resultJson.put(houseAssetExchangeRequestRecordList.get(i).getAssetId().toString(),jsonObject);

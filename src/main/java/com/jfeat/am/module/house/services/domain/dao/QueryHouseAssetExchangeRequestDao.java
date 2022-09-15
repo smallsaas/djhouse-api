@@ -3,6 +3,7 @@ package com.jfeat.am.module.house.services.domain.dao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.crud.plus.QueryMasterDao;
 import org.apache.ibatis.annotations.Param;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchangeRequest;
@@ -12,25 +13,16 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by Code generator on 2022-06-11
+ * Created by Code generator on 2022-09-13
  */
 public interface QueryHouseAssetExchangeRequestDao extends QueryMasterDao<HouseAssetExchangeRequest> {
-    /*
-     * Query entity list by page
-     */
+   /*
+    * Query entity list by page
+    */
     List<HouseAssetExchangeRequestRecord> findHouseAssetExchangeRequestPage(Page<HouseAssetExchangeRequestRecord> page, @Param("record") HouseAssetExchangeRequestRecord record,
-                                                                            @Param("tag") String tag,
-                                                                            @Param("search") String search, @Param("orderBy") String orderBy,
-                                                                            @Param("startTime") Date startTime, @Param("endTime") Date endTime);
-
-
-    /**
-     * @param page
-     * @param record
-     * @param communityId 需要过滤出来的小区id
-     * @return
-     */
-    List<HouseAssetExchangeRequestRecord> findHouseAssetExchangeRequestPageFilterCommunity(Page<HouseAssetExchangeRequestRecord> page, @Param("record") HouseAssetExchangeRequestRecord record, @Param("communityId") Long communityId);
+                                            @Param("tag") String tag,
+                                            @Param("search") String search, @Param("orderBy") String orderBy,
+                                            @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
     /*
      * Query entity model for details
@@ -43,14 +35,15 @@ public interface QueryHouseAssetExchangeRequestDao extends QueryMasterDao<HouseA
      */
     List<HouseAssetExchangeRequestModel> queryMasterModelList(@Param("masterId") Object masterId);
 
-    HouseAssetExchangeRequest queryHouseAssetExchangeRequestByAssetId(@Param("assetId") Long assetId);
+//    查询匹配目标
+   List<HouseAssetExchangeRequestRecord> queryMatchTargetAssetList(Page<HouseAssetExchangeRequestRecord> page, @Param("record") HouseAssetExchangeRequestRecord record,
+                                                                   @Param("search") String search);
 
-    Long queryHouseAssetHouseType(@Param("assetId") Long assetId);
+    int batchAddExchangeRequest(@Param("exchangeRequestList") List<HouseAssetExchangeRequest> exchangeRequestList);
 
-    List<HouseAssetExchangeRequest> queryHouseAssetExchangeRequestByUserId(@Param("userId") Long userId);
+    int batchDeleteExchangeRequest(@Param("record") HouseAssetExchangeRequest exchangeRequest);
 
-    HouseAssetExchangeRequest queryHouseAssetExchangeRequestByAssetIdAndUserId(@Param("assetId") Long assetId, @Param("userId") Long userId);
+    List<HouseAsset> queryExchangeTargetList(Page<HouseAssetExchangeRequestRecord> page,@Param("record") HouseAssetExchangeRequest record);
 
-    List<HouseAssetExchangeRequest> queryAllHouseAssetExchangeRequest();
-
+    List<HouseAssetExchangeRequestRecord> queryExchangeRequestGroupByAssetId(Page<HouseAssetExchangeRequestRecord> page, @Param("record") HouseAssetExchangeRequestRecord record);
 }

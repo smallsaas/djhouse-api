@@ -13,6 +13,7 @@ import com.jfeat.am.module.house.services.domain.model.HouseVrTypeRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseVrPictureService;
 import com.jfeat.am.module.house.services.domain.service.HouseVrTypeService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseVrPictureModel;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseVrTypeModel;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseDesignModelMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseVrPictureMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseVrTypeMapper;
@@ -127,6 +128,7 @@ public class UserVrManageEndpoint {
                                     @RequestParam(name = "name", required = false) String name,
 
                                     @RequestParam(name = "communityId",required = false) Long communityId,
+                                    @RequestParam(name = "status",required = false) Integer status,
 
                                     @RequestParam(name = "orgId", required = false) Long orgId,
                                     @RequestParam(name = "orderBy", required = false) String orderBy,
@@ -149,6 +151,8 @@ public class UserVrManageEndpoint {
         HouseVrTypeRecord record = new HouseVrTypeRecord();
         record.setName(name);
         record.setCommunityId(communityId);
+        record.setStatus(status);
+
         if (META.enabledSaas()) {
             record.setOrgId(JWTKit.getOrgId());
         }
@@ -159,6 +163,10 @@ public class UserVrManageEndpoint {
 
         return SuccessTip.create(page);
     }
+
+
+
+
 
     @GetMapping("/getHouseVrTypeListItem")
     public Tip getHouseVrTypeListItem(@RequestParam(name = "communityId",required = true) Long communityId){
@@ -186,7 +194,36 @@ public class UserVrManageEndpoint {
         queryWrapper.eq(HouseVrType.COMMUNITY_id,communityId);
         return SuccessTip.create(houseVrTypeMapper.selectList(queryWrapper));
 
+
     }
+
+
+    /*
+上架vr类型
+*/
+    @PutMapping("/vrCategory/shelvesVrPicture/{id}")
+    public Tip shelvesVrCategory(@PathVariable("id") Long id) {
+        HouseVrTypeModel houseVrTypeModel = queryHouseVrTypeDao.queryMasterModel(id);
+        if (houseVrTypeModel != null) {
+            houseVrTypeModel.setStatus(HouseVrType.STATUS_SHELVE);
+            return SuccessTip.create(houseVrTypeService.updateMaster(houseVrTypeModel));
+        }
+        return SuccessTip.create();
+    }
+
+    /*
+    下架vr类型
+     */
+    @PutMapping("/vrCategory/unshelvesVrPicture/{id}")
+    public Tip unshelvesVrCategory(@PathVariable("id") Long id) {
+        HouseVrTypeModel houseVrTypeModel = queryHouseVrTypeDao.queryMasterModel(id);
+        if (houseVrTypeModel != null) {
+            houseVrTypeModel.setStatus(HouseVrType.STATUS_UNSHELVE);
+            return SuccessTip.create(houseVrTypeService.updateMaster(houseVrTypeModel));
+        }
+        return SuccessTip.create();
+    }
+
 
 
     @PostMapping("/vrPicture")
@@ -328,6 +365,7 @@ public class UserVrManageEndpoint {
         }
         return SuccessTip.create();
     }
+
 
 
 

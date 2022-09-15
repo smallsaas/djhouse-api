@@ -7,13 +7,14 @@
         <id column="id" property="id" />
         <result column="user_id" property="userId" />
         <result column="asset_id" property="assetId" />
-        <result column="target_asset_range" property="targetAssetRange" />
-        <result column="target_asset_range_limit" property="targetAssetRangeLimit" />
+        <result column="target_asset" property="targetAsset" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, asset_id, target_asset_range, target_asset_range_limit
+        id, user_id, asset_id, target_asset, create_time, update_time
     </sql>
 
 </mapper>

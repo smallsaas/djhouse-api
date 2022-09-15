@@ -4,10 +4,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -18,7 +21,7 @@ import io.swagger.annotations.ApiModelProperty;
  * </p>
  *
  * @author Code generator
- * @since 2022-06-11
+ * @since 2022-09-13
  */
 @TableName("t_house_asset_exchange_request")
 @ApiModel(value = "HouseAssetExchangeRequest对象", description = "")
@@ -35,12 +38,19 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
     @ApiModelProperty(value = "资产id")
     private Long assetId;
 
+    @ApiModelProperty(value = "目标资产id")
+    private Long targetAsset;
+
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
+
+    @ApiModelProperty(value = "更新时间")
+    private Date updateTime;
+
+
     @ApiModelProperty(value = "目标资产范围")
+    @TableField(exist = false)
     private String targetAssetRange;
-
-    @ApiModelProperty(value = "目标资产范围限制")
-    private String targetAssetRangeLimit;
-
 
     @ApiModelProperty(value = "社区Id")
     @TableField(exist = false)
@@ -104,16 +114,9 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
     @TableField(exist = false)
     private String userAvatar;
 
+
     public Long getCommunityId() {
         return communityId;
-    }
-
-    public Integer getFloor() {
-        return floor;
-    }
-
-    public void setFloor(Integer floor) {
-        this.floor = floor;
     }
 
     public void setCommunityId(Long communityId) {
@@ -134,6 +137,22 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
 
     public void setBuildingCode(String buildingCode) {
         this.buildingCode = buildingCode;
+    }
+
+    public Integer getFloor() {
+        return floor;
+    }
+
+    public void setFloor(Integer floor) {
+        this.floor = floor;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
     }
 
     public String getAddress() {
@@ -208,6 +227,14 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
         this.area = area;
     }
 
+    public String getTargetRangeStr() {
+        return targetRangeStr;
+    }
+
+    public void setTargetRangeStr(String targetRangeStr) {
+        this.targetRangeStr = targetRangeStr;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -232,20 +259,12 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
         this.userAvatar = userAvatar;
     }
 
-    public String getNumber() {
-        return number;
+    public String getTargetAssetRange() {
+        return targetAssetRange;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getTargetRangeStr() {
-        return targetRangeStr;
-    }
-
-    public void setTargetRangeStr(String targetRangeStr) {
-        this.targetRangeStr = targetRangeStr;
+    public void setTargetAssetRange(String targetAssetRange) {
+        this.targetAssetRange = targetAssetRange;
     }
 
     public Long getId() {
@@ -275,21 +294,30 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
         return this;
     }
 
-    public String getTargetAssetRange() {
-        return targetAssetRange;
+    public Long getTargetAsset() {
+        return targetAsset;
     }
 
-    public HouseAssetExchangeRequest setTargetAssetRange(String targetAssetRange) {
-        this.targetAssetRange = targetAssetRange;
+    public HouseAssetExchangeRequest setTargetAsset(Long targetAsset) {
+        this.targetAsset = targetAsset;
         return this;
     }
 
-    public String getTargetAssetRangeLimit() {
-        return targetAssetRangeLimit;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public HouseAssetExchangeRequest setTargetAssetRangeLimit(String targetAssetRangeLimit) {
-        this.targetAssetRangeLimit = targetAssetRangeLimit;
+    public HouseAssetExchangeRequest setCreateTime(Date createTime) {
+        this.createTime = createTime;
+        return this;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public HouseAssetExchangeRequest setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
         return this;
     }
 
@@ -299,9 +327,11 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
 
     public static final String ASSET_ID = "asset_id";
 
-    public static final String TARGET_ASSET_RANGE = "target_asset_range";
+    public static final String TARGET_ASSET = "target_asset";
 
-    public static final String TARGET_ASSET_RANGE_LIMIT = "target_asset_range_limit";
+    public static final String CREATE_TIME = "create_time";
+
+    public static final String UPDATE_TIME = "update_time";
 
     @Override
     protected Serializable pkVal() {
@@ -314,8 +344,9 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
                 "id=" + id +
                 ", userId=" + userId +
                 ", assetId=" + assetId +
-                ", targetAssetRange=" + targetAssetRange +
-                ", targetAssetRangeLimit=" + targetAssetRangeLimit +
+                ", targetAsset=" + targetAsset +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
                 "}";
     }
 }

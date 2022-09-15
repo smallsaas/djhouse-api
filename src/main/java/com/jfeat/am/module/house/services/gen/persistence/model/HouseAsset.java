@@ -106,6 +106,9 @@ public class HouseAsset extends Model<HouseAsset> {
     @TableField(exist = false)
     private BigDecimal area;
 
+    @ApiModelProperty("用户id")
+    @TableField(exist = false)
+    private Long userId;
 
     @ApiModelProperty("用户名")
     @TableField(exist = false)
@@ -125,6 +128,24 @@ public class HouseAsset extends Model<HouseAsset> {
     @TableField(exist = false)
     private Boolean existUser;
 
+    @TableField(exist = false)
+    private Long exchangeRequestId;
+
+    public Long getExchangeRequestId() {
+        return exchangeRequestId;
+    }
+
+    public void setExchangeRequestId(Long exchangeRequestId) {
+        this.exchangeRequestId = exchangeRequestId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public Boolean getExistUser() {
         return existUser;

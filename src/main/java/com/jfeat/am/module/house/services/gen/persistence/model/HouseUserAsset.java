@@ -43,6 +43,9 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @ApiModelProperty(value = "是否托管 0不托管 1托管")
     private Integer trust;
 
+    @ApiModelProperty(value = "房东类型 1-房东 2-二房东")
+    private Integer userType;
+
 
     private String note;
 
@@ -154,6 +157,13 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private Integer assetNumber;
 
+    public Integer getUserType() {
+        return userType;
+    }
+
+    public void setUserType(Integer userType) {
+        this.userType = userType;
+    }
 
     public BigDecimal getRealArea() {
         return realArea;
@@ -445,6 +455,10 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     后台没有确认产权 默认值
      */
     public static final Integer FINAL_FLAG_NOT_CONFIRM = 0;
+
+    public static final Integer USER_TYPE_LANDLORD=1;
+
+    public static final Integer USER_TYPE_PRINCIPAL=2;
 
 
     @Override

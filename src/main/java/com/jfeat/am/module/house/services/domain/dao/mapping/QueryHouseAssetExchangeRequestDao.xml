@@ -5,32 +5,33 @@
         t_house_asset_exchange_request.id,
         t_house_asset_exchange_request.user_id AS userId,
         t_house_asset_exchange_request.asset_id AS assetId,
-        t_house_asset_exchange_request.target_asset_range AS targetAssetRange,
-        t_house_asset_exchange_request.target_asset_range_limit AS targetAssetRangeLimit,
+        t_house_asset_exchange_request.target_asset AS targetAsset,
+        t_house_asset_exchange_request.create_time AS createTime,
+        t_house_asset_exchange_request.update_time AS updateTime,
 
-            t_house_property_community.address   AS address,
-               t_house_property_community.id        AS communityId,
-               t_house_property_community.community As communityName,
+        t_house_property_community.address   AS address,
+       t_house_property_community.id        AS communityId,
+       t_house_property_community.community As communityName,
 
-               t_house_property_building.id         As buildingId,
-               t_house_property_building.code       AS buildingCode,
-               t_house_property_building_unit.id    AS unitId,
+       t_house_property_building.id         As buildingId,
+       t_house_property_building.code       AS buildingCode,
+       t_house_property_building_unit.id    AS unitId,
 
-               t_house_design_model.id AS designModelId,
-               t_house_design_model.house_type AS houseType,
-               t_house_design_model.house_type_picture AS houseTypePicture,
-               t_house_design_model.area AS area,
+       t_house_design_model.id AS designModelId,
+       t_house_design_model.house_type AS houseType,
+       t_house_design_model.house_type_picture AS houseTypePicture,
+       t_house_design_model.area AS area,
 
-                t_house_vr_picture.vr_picture            AS vrPicture,
-               t_house_vr_picture.link                  AS vrLink,
-               t_house_vr_picture.snapshot              AS vrSnapshot,
+        t_house_vr_picture.vr_picture            AS vrPicture,
+       t_house_vr_picture.link                  AS vrLink,
+       t_house_vr_picture.snapshot              AS vrSnapshot,
 
-               t_house_asset.number                 AS number,
-               t_house_asset.floor AS floor,
+       t_house_asset.number                 AS number,
+       t_house_asset.floor AS floor,
 
-               t_end_user.name                      AS userName,
-               t_end_user.phone                     AS userPhone,
-               t_end_user.avatar                    AS userAvatar
+       t_end_user.name                      AS userName,
+       t_end_user.phone                     AS userPhone,
+       t_end_user.avatar                    AS userAvatar
     </sql>
 
 
@@ -76,15 +77,27 @@
         </if>
 
 
-        <if test="record.targetAssetRange != null and record.targetAssetRange!= ''">
-            AND t_house_asset_exchange_request.target_asset_range LIKE CONCAT('%',#{record.targetAssetRange},'%')
+        <if test="record.targetAsset != null and record.targetAsset>0 ">
+            AND t_house_asset_exchange_request.target_asset LIKE CONCAT('%',#{record.targetAsset},'%')
         </if>
 
 
-        <if test="record.targetAssetRangeLimit != null and record.targetAssetRangeLimit!= ''">
-            AND t_house_asset_exchange_request.target_asset_range_limit LIKE
-            CONCAT('%',#{record.targetAssetRangeLimit},'%')
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_asset_exchange_request.create_time LIKE CONCAT('%',#{record.createTime},'%')
         </if>
+
+
+        <if test="record.updateTime != null and record.updateTime>0 ">
+            AND t_house_asset_exchange_request.update_time LIKE CONCAT('%',#{record.updateTime},'%')
+        </if>
+
+
+
+        <if test="record.communityId != null and record.communityId >0 ">
+            AND t_house_property_community.id = #{record.communityId}
+        </if>
+
+
 
         <if test="startTime != null">
             <![CDATA[AND t_house_asset_exchange_request.start_time >= DATE(#{startTime})]]>
@@ -97,101 +110,231 @@
         OR t_house_asset_exchange_request.name LIKE CONCAT('%',#{search},'%')
     </if>
     -->
-    </select>
-
-    <select id="queryHouseAssetExchangeRequestByAssetId" resultType="HouseAssetExchangeRequest">
-        SELECT *
-        FROM t_house_asset_exchange_request
-        WHERE t_house_asset_exchange_request.asset_id = #{assetId};
-    </select>
-
-    <select id="queryHouseAssetHouseType" resultType="Long">
-        SELECT t_house_design_model.id
-        FROM t_house_asset
-                 JOIN t_house_property_building_unit ON t_house_asset.unit_id = t_house_property_building_unit.id
-                 JOIN t_house_design_model ON t_house_design_model.id = t_house_property_building_unit.design_model_id
-        WHERE t_house_asset.id = #{assetId}
-    </select>
-
-    <select id="queryHouseAssetExchangeRequestByUserId" resultType="HouseAssetExchangeRequest">
-        SELECT t_house_asset_exchange_request.* FROM t_house_asset_exchange_request
-        WHERE t_house_asset_exchange_request.user_id = #{userId};
-    </select>
-
-    <select id="queryHouseAssetExchangeRequestByAssetIdAndUserId" resultType="HouseAssetExchangeRequest">
-        SELECT *
-        FROM t_house_asset_exchange_request
-        WHERE t_house_asset_exchange_request.asset_id = #{assetId} AND t_house_asset_exchange_request.user_id=#{userId};
-    </select>
-
-    <select id="queryAllHouseAssetExchangeRequest" resultType="HouseAssetExchangeRequest">
-        SELECT t_house_asset_exchange_request.*,
-
-               t_house_property_community.address   AS address,
-               t_house_property_community.id        AS communityId,
-               t_house_property_community.community As communityName,
-
-               t_house_property_building.id         As buildingId,
-               t_house_property_building.code       AS buildingCode,
-               t_house_property_building_unit.id    AS unitId,
-
-               t_house_design_model.id AS designModelId,
-               t_house_design_model.house_type AS houseType,
-               t_house_design_model.house_type_picture AS houseTypePicture,
-               t_house_design_model.vr_picture AS vrPicture,
-               t_house_design_model.vr_link AS vrLink,
-               t_house_design_model.vr_snapshot AS vrSnapshot,
-               t_house_design_model.area AS area,
-
-               t_house_asset.number                 AS number,
-               t_house_asset.floor AS floor,
-
-               t_end_user.name                      AS userName,
-               t_end_user.phone                     AS userPhone,
-               t_end_user.avatar                    AS userAvatar
-
-        FROM t_house_asset_exchange_request
-                 JOIN t_end_user ON t_house_asset_exchange_request.user_id=t_end_user.id
-                 JOIN t_house_asset ON t_house_asset_exchange_request.asset_id=t_house_asset.id
-                 JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
-                 JOIN t_house_property_community on t_house_property_building.community_id =t_house_property_community.id
-                 JOIN t_house_property_building_unit ON t_house_property_building_unit.id = t_house_asset.unit_id
-                 left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+        ORDER BY t_house_asset_exchange_request.update_time DESC
+        , t_house_asset_exchange_request.create_time DESC
     </select>
 
 
-<!--    过滤小区交换记录-->
-    <sql id="Bass_Column_Sql">
-        t_house_asset_exchange_request.id,
-        t_house_asset_exchange_request.user_id AS userId,
-        t_house_asset_exchange_request.asset_id AS assetId,
-        t_house_asset_exchange_request.target_asset_range AS targetAssetRange,
-        t_house_asset_exchange_request.target_asset_range_limit AS targetAssetRangeLimit
+    <sql id="Extra_Column_List">
+        t1.id,
+        t1.user_id AS userId,
+        t1.asset_id AS assetId,
+        t1.target_asset AS targetAsset,
+        t1.create_time AS createTime,
+        t1.update_time AS updateTime,
+        t2.user_id AS targetUserId
+
     </sql>
 
-    <select id="findHouseAssetExchangeRequestPageFilterCommunity" resultType="HouseAssetExchangeRequestRecord"
+    <select id="queryMatchTargetAssetList" resultType="HouseAssetExchangeRequestRecord"
             parameterType="HouseAssetExchangeRequestRecord">
         SELECT
-        <include refid="Bass_Column_Sql"/>
+        <include refid="Extra_Column_List"/>
+        FROM t_house_asset_exchange_request AS t1
+        JOIN t_house_asset_exchange_request AS t2 ON t1.asset_id = t2.target_asset AND t1.target_asset=t2.asset_id
 
+        WHERE 1=1
 
-        FROM t_house_asset_exchange_request
-        JOIN t_house_asset on t_house_asset.id = t_house_asset_exchange_request.asset_id
-        JOIN t_house_property_building on t_house_asset.building_id=t_house_property_building.id
-        JOIN t_house_property_community on t_house_property_community.id=t_house_property_building.community_id
-        WHERE t_house_property_community.id=#{communityId}
         <if test="record.id != null and record.id>0 ">
-            AND t_house_asset_exchange_request.id LIKE CONCAT#{record.id})
+            AND t1.id = #{record.id}
         </if>
 
 
         <if test="record.userId != null and record.userId>0 ">
-            AND t_house_asset_exchange_request.user_id LIKE CONCAT(#{record.userId})
+            AND t1.user_id = #{record.userId}
         </if>
 
 
         <if test="record.assetId != null and record.assetId>0 ">
-            AND t_house_asset_exchange_request.asset_id LIKE CONCAT(#{record.assetId})
+            AND t1.asset_id = #{record.assetId}
+        </if>
+
+
+        <if test="record.targetAsset != null and record.targetAsset>0 ">
+            AND t1.target_asset = #{record.targetAsset}
+        </if>
+        <if test="record.targetUserId != null and record.targetUserId>0 ">
+            AND t2.user_id = #{record.targetUserId}
+        </if>
+
+        GROUP BY t1.id
+        ORDER BY t1.update_time DESC
+        ,t1.create_time DESC
+
+    </select>
+
+    <!--    批量添加匹配需求-->
+    <insert id="batchAddExchangeRequest" parameterType="java.util.List">
+        insert into t_house_asset_exchange_request
+        (user_id,asset_id,target_asset)
+        values
+        <foreach collection="exchangeRequestList" item="item" separator=",">
+            (#{item.userId}, #{item.assetId}, #{item.targetAsset})
+        </foreach>
+    </insert>
+
+    <!--    删除记录-->
+    <delete id="batchDeleteExchangeRequest">
+        delete from t_house_asset_exchange_request
+        WHERE 1=1
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_asset_exchange_request.id =#{record.id}
+        </if>
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_asset_exchange_request.user_id =#{record.userId}
+        </if>
+
+
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_asset_exchange_request.asset_id =#{record.assetId}
+        </if>
+
+        <if test="record.targetAsset != null and record.targetAsset>0 ">
+            AND t_house_asset_exchange_request.target_asset =#{record.targetAsset}
+        </if>
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_asset_exchange_request.create_time=#{record.createTime}
+        </if>
+
+        <if test="record.updateTime != null and record.updateTime>0 ">
+            AND t_house_asset_exchange_request.update_time =#{record.updateTime}
+        </if>
+    </delete>
+
+
+
+
+    <select id="queryExchangeTargetList" resultType="HouseAssetModel">
+        SELECT t_house_asset.*,
+
+        t_house_asset_exchange_request.asset_id  as exchangeRequestId,
+            t_house_property_building.cad_picture    AS cadPicture,
+                t_house_property_building.code           AS buildingCode,
+               t_house_property_building_unit.direction AS direction,
+               t_house_property_building.issue as issue,
+
+               t_house_property_community.id            AS communityId,
+               t_house_property_community.community     AS communityName,
+               t_house_property_community.address       AS address,
+
+               t_house_design_model.id                  AS designModelId,
+               t_house_design_model.house_type          AS houseType,
+               t_house_design_model.house_type_picture  AS houseTypePicture,
+               t_house_vr_picture.vr_picture            AS vrPicture,
+               t_house_vr_picture.link                  AS vrLink,
+               t_house_vr_picture.snapshot              AS vrSnapshot,
+               t_house_design_model.area                AS area
+        FROM t_house_asset_exchange_request
+                          JOIN t_house_asset ON t_house_asset_exchange_request.target_asset  = t_house_asset.id
+                          JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+                          JOIN t_house_property_community
+                               ON t_house_property_community.id = t_house_property_building.community_id
+
+                          left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
+
+                          left JOIN t_house_design_model
+                                    ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+                          left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
+        WHERE 1=1
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_asset_exchange_request.id =#{record.id}
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_asset_exchange_request.user_id =#{record.userId}
+        </if>
+
+
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_asset_exchange_request.asset_id =#{record.assetId}
+        </if>
+
+
+        <if test="record.targetAsset != null and record.targetAsset>0 ">
+            AND t_house_asset_exchange_request.target_asset=#{record.targetAsset}
+        </if>
+
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_asset_exchange_request.create_time =#{record.createTime}
+        </if>
+
+
+        <if test="record.updateTime != null and record.updateTime>0 ">
+            AND t_house_asset_exchange_request.update_time =#{record.updateTime}
+        </if>
+
+
+
+        <if test="record.communityId != null and record.communityId >0 ">
+            AND t_house_property_community.id = #{record.communityId}
         </if>
     </select>
+
+    <select id="queryExchangeRequestGroupByAssetId" resultType="HouseAssetExchangeRequestRecord"
+            parameterType="HouseAssetExchangeRequestRecord">
+        SELECT t_house_asset_exchange_request.id,
+        t_house_asset_exchange_request.user_id AS userId,
+        t_house_asset_exchange_request.asset_id AS assetId,
+        t_house_asset_exchange_request.target_asset AS targetAsset,
+        t_house_asset_exchange_request.create_time AS createTime,
+        t_house_asset_exchange_request.update_time AS updateTime,
+
+        t_house_property_community.address   AS address,
+        t_house_property_community.id        AS communityId,
+        t_house_property_community.community As communityName,
+
+        t_house_property_building.id         As buildingId,
+        t_house_property_building.code       AS buildingCode
+
+        FROM t_house_asset_exchange_request
+                 JOIN t_house_asset ON t_house_asset_exchange_request.asset_id  = t_house_asset.id
+                 JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+                 JOIN t_house_property_community
+                      ON t_house_property_community.id = t_house_property_building.community_id
+        WHERE 1=1
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_asset_exchange_request.id =#{record.id}
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_asset_exchange_request.user_id =#{record.userId}
+        </if>
+
+
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_asset_exchange_request.asset_id =#{record.assetId}
+        </if>
+
+
+        <if test="record.targetAsset != null and record.targetAsset>0 ">
+            AND t_house_asset_exchange_request.target_asset=#{record.targetAsset}
+        </if>
+
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_asset_exchange_request.create_time =#{record.createTime}
+        </if>
+
+
+        <if test="record.updateTime != null and record.updateTime>0 ">
+            AND t_house_asset_exchange_request.update_time =#{record.updateTime}
+        </if>
+
+
+
+        <if test="record.communityId != null and record.communityId >0 ">
+            AND t_house_property_community.id = #{record.communityId}
+        </if>
+
+        group by t_house_asset_exchange_request.asset_id
+    </select>
+
+
+
+
 </mapper>

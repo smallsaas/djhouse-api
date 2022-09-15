@@ -49,22 +49,18 @@ public class UserVrCategoryEndpoint {
     StringRedisTemplate stringRedisTemplate;
 
 
-
-
-
-
     @GetMapping("/vrType")
-    public Tip getVrType(){
-        if (JWTKit.getUserId()==null){
-            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+    public Tip getVrType() {
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "没有登录");
         }
         Long communityId = userCommunityAsset.getUserCommunityStatus(JWTKit.getUserId());
-        if (communityId==null){
-            throw new BusinessException(BusinessCode.CodeBase,"未找到小区信息");
+        if (communityId == null) {
+            throw new BusinessException(BusinessCode.CodeBase, "未找到小区信息");
         }
 
         QueryWrapper<HouseVrType> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(HouseVrType.COMMUNITY_id,communityId);
+        queryWrapper.eq(HouseVrType.COMMUNITY_id, communityId).eq(HouseVrType.STATUS,HouseVrType.STATUS_SHELVE);
         List<HouseVrType> vrTypes = houseVrTypeMapper.selectList(queryWrapper);
         return SuccessTip.create(vrTypes);
 
@@ -104,12 +100,7 @@ public class UserVrCategoryEndpoint {
         return SuccessTip.create(houseVrPictureService.updateMaster(houseVrPictureModel));
     }
 
-    @GetMapping("/getDemoTest")
-    public Tip getDemoTest(){
-        System.out.println("被调用");
-        System.out.println(RedisKit.isSanity());
-        return SuccessTip.create(stringRedisTemplate.opsForValue().get("building"));
-    }
+
 
 
 }

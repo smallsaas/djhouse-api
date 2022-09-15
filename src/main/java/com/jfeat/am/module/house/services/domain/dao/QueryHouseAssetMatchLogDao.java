@@ -37,4 +37,6 @@ public interface QueryHouseAssetMatchLogDao extends QueryMasterDao<HouseAssetMat
     int deleteHouseAssetMatchLogByUserIdAndAssetId(@Param("assetId") Long assetId,@Param("userId") Long userId);
 
     List<HouseAssetMatchLog> queryHouseAssetMatchLogByUserId(@Param("assetId") Long assetId,@Param("userId") Long userId);
+
+    int batchAddHouseAssetMatchLog(@Param("matchLogList") List<HouseAssetMatchLog> matchLogList);
 }

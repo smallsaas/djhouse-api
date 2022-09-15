@@ -274,10 +274,14 @@ public class UserCommunityManageEndpoint {
             communityId = communityStatusRecordList.get(0).getCommunityId();
             if (communityId != null) {
                 HousePropertyCommunity community =  housePropertyCommunityMapper.selectById(communityId);
-                community.setParkingNumber(entity.getParkingNumber());
-                community.setStartTime(entity.getStartTime());
-                community.setDeadline(entity.getDeadline());
-                return SuccessTip.create(housePropertyCommunityMapper.updateById(community));
+                entity.setId(community.getId());
+                entity.setCommunity(community.getCommunity());
+                entity.setTenantId(community.getTenantId());
+                entity.setCommunityCode(community.getCommunityCode());
+                entity.setAddress(community.getAddress());
+                entity.setPicture(community.getPicture());
+                entity.setPostcode(community.getPostcode());
+                return SuccessTip.create(housePropertyCommunityMapper.updateById(entity));
             }
         } else {
             throw new BusinessException(BusinessCode.CodeBase, "未设置小区");

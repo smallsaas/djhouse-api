@@ -1,24 +1,26 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetExchangeRequestDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetMatchLogDao;
+import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetExchangeRequestService;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetMatchLogService;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHouseAssetExchangeRequestServiceImpl;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchangeRequest;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetMatchLog;
+import com.jfeat.am.module.house.services.utility.TenantUtility;
+import io.swagger.models.auth.In;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author admin
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service("houseAssetExchangeRequestService")
 public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchangeRequestServiceImpl implements HouseAssetExchangeRequestService {
+
 
     @Resource
     QueryHouseAssetExchangeRequestDao queryHouseAssetExchangeRequestDao;
@@ -37,6 +40,10 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
     @Resource
     QueryHouseAssetMatchLogDao queryHouseAssetMatchLogDao;
 
+    @Resource
+    TenantUtility tenantUtility;
+
+
     @Override
     protected String entityName() {
         return "HouseAssetExchangeRequest";
@@ -44,63 +51,80 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
 
 
     @Override
-    public List<HouseAssetExchangeRequest> assetMachResult(HouseAssetExchangeRequest assetExchangeRequest,Boolean isSameHouseType) {
-        /*
+    public List<HouseAssetExchangeRequestRecord> assetMachResult(HouseAssetExchangeRequest assetExchangeRequest) {
+         /*
         删除原有的 已经匹配成功记录
          */
         queryHouseAssetMatchLogDao.deleteHouseAssetMatchLogByUserIdAndAssetId(assetExchangeRequest.getAssetId(),assetExchangeRequest.getUserId());
 
-        /*
-        查询交换的房子户型
-         */
-//        Long ownHouseTypeId = queryHouseAssetExchangeRequestDao.queryHouseAssetHouseType(assetExchangeRequest.getAssetId());
-        List<HouseAssetExchangeRequest> matchedAsset = new ArrayList<>();
-        List<String> targetAssetRange = Arrays.asList(assetExchangeRequest.getTargetAssetRange().split(","));
-        List<Long> targetAssetRangeIds = targetAssetRange.stream().map(Long::valueOf).collect(Collectors.toList());
+
+        HouseAssetExchangeRequestRecord record = new HouseAssetExchangeRequestRecord();
+        record.setAssetId(assetExchangeRequest.getAssetId());
+
+        List<HouseAssetExchangeRequestRecord> exchangeRequests = queryHouseAssetExchangeRequestDao.queryMatchTargetAssetList(null,record,null);
 
 
-        for (int i=0;i<targetAssetRangeIds.size();i++){
+        List<HouseAssetMatchLog> matchLogList = new ArrayList<>();
+        for (HouseAssetExchangeRequestRecord houseAssetExchangeRequestRecord:exchangeRequests){
+            HouseAssetMatchLog matchLog = new HouseAssetMatchLog();
+            matchLog.setOrgId(tenantUtility.getCurrentOrgId(assetExchangeRequest.getUserId()));
+            matchLog.setOwnerAssetId(houseAssetExchangeRequestRecord.getAssetId());
+            matchLog.setOwnerUserId(houseAssetExchangeRequestRecord.getUserId());
+            matchLog.setMatchedUserId(houseAssetExchangeRequestRecord.getTargetUserId());
+            matchLog.setMathchedAssetId(houseAssetExchangeRequestRecord.getTargetAsset());
 
-            /*
-            查询 需求房屋是否 添加到需求表中
-            没有就跳过
-             */
-            HouseAssetExchangeRequest houseAssetExchangeRequest =  queryHouseAssetExchangeRequestDao.queryHouseAssetExchangeRequestByAssetId(targetAssetRangeIds.get(i));
-            if (houseAssetExchangeRequest ==null){
-                continue;
-            }
-//            if (isSameHouseType && (ownHouseTypeId==null|| ownHouseTypeId!=queryHouseAssetExchangeRequestDao.queryHouseAssetHouseType(houseAssetExchangeRequest.getAssetId()))){
-//                continue;
-//            }
-
-            List<String>  matchedAssetRange = Arrays.asList(houseAssetExchangeRequest.getTargetAssetRange().split(","));
-            List<Long> matchedAssetRangeIds = matchedAssetRange.stream().map(Long::valueOf).collect(Collectors.toList());
-
-            /*
-            如果 匹配到的人id 不等于自己id 而且 匹配到的人的需求范围正好有自己
-            添加匹配成功表
-             */
-            if (houseAssetExchangeRequest.getUserId()!=assetExchangeRequest.getUserId() && matchedAssetRangeIds.contains(assetExchangeRequest.getAssetId())){
-                matchedAsset.add(houseAssetExchangeRequest);
-                HouseAssetMatchLog houseAssetMatchLog = new HouseAssetMatchLog();
-                houseAssetMatchLog.setOwnerAssetId(assetExchangeRequest.getAssetId());
-                houseAssetMatchLog.setOwnerUserId(assetExchangeRequest.getUserId());
-                houseAssetMatchLog.setMathchedAssetId(houseAssetExchangeRequest.getAssetId());
-                houseAssetMatchLog.setMatchedUserId(houseAssetExchangeRequest.getUserId());
-                houseAssetMatchLog.setCreateTime(new Date());
-                houseAssetMatchLog.setOrgId(JWTKit.getOrgId());
-                houseAssetMatchLogService.createMaster(houseAssetMatchLog);
-
-                HouseAssetMatchLog houseAssetMatchLog1 = new HouseAssetMatchLog();
-                houseAssetMatchLog1.setOwnerAssetId(houseAssetExchangeRequest.getAssetId());
-                houseAssetMatchLog1.setOwnerUserId(houseAssetExchangeRequest.getUserId());
-                houseAssetMatchLog1.setMathchedAssetId(assetExchangeRequest.getAssetId());
-                houseAssetMatchLog1.setMatchedUserId(assetExchangeRequest.getUserId());
-                houseAssetMatchLog1.setCreateTime(new Date());
-                houseAssetMatchLog.setOrgId(JWTKit.getOrgId());
-                houseAssetMatchLogService.createMaster(houseAssetMatchLog1);
-            }
+            matchLogList.add(matchLog);
         }
-        return matchedAsset;
+
+        if (matchLogList!=null && matchLogList.size()>0){
+            queryHouseAssetMatchLogDao.batchAddHouseAssetMatchLog(matchLogList);
+        }
+
+        return exchangeRequests;
+    }
+
+    @Override
+    public int batchAddExchangeRequest(List<HouseAssetExchangeRequest> exchangeRequestList) {
+        return queryHouseAssetExchangeRequestDao.batchAddExchangeRequest(exchangeRequestList);
+    }
+
+    @Override
+    public int batchDeleteExchangeRequest(HouseAssetExchangeRequest exchangeRequest) {
+        return queryHouseAssetExchangeRequestDao.batchDeleteExchangeRequest(exchangeRequest);
+    }
+
+    @Override
+    public int addHouseAssetExchangeRequest(HouseAssetExchangeRequest entity) {
+
+        Integer affect =0;
+
+        String[] targetAsset = entity.getTargetAssetRange().split(",");
+        List<HouseAssetExchangeRequest> assetExchangeRequestList = new ArrayList<>();
+        for (String targetAssetId:targetAsset){
+            Long targetAssetIdL = Long.parseLong(targetAssetId);
+            HouseAssetExchangeRequest houseAssetExchangeRequest = new HouseAssetExchangeRequest();
+            houseAssetExchangeRequest.setAssetId(entity.getAssetId());
+            houseAssetExchangeRequest.setUserId(entity.getUserId());
+            houseAssetExchangeRequest.setTargetAsset(targetAssetIdL);
+            assetExchangeRequestList.add(houseAssetExchangeRequest);
+        }
+
+        QueryWrapper<HouseAssetExchangeRequest> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(HouseAssetExchangeRequest.ASSET_ID,entity.getAssetId()).eq(HouseAssetExchangeRequest.USER_ID,entity.getUserId());
+        List<HouseAssetExchangeRequest> exchangeRequestList = houseAssetExchangeRequestMapper.selectList(queryWrapper);
+
+        if (exchangeRequestList!=null && exchangeRequestList.size()>0){
+            HouseAssetExchangeRequest deleteRecord = new HouseAssetExchangeRequest();
+            deleteRecord.setUserId(entity.getUserId());
+            deleteRecord.setAssetId(entity.getAssetId());
+
+            affect+=batchDeleteExchangeRequest(deleteRecord);
+        }
+
+        affect+=batchAddExchangeRequest(assetExchangeRequestList);
+
+        assetMachResult(entity);
+
+        return affect;
     }
 }

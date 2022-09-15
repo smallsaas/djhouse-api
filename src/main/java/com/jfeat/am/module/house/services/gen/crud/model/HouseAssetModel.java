@@ -20,6 +20,8 @@ public class HouseAssetModel extends HouseAsset{
 
     private Integer exchangeNumber;
 
+
+
     public Integer getExchangeNumber() {
         return exchangeNumber;
     }

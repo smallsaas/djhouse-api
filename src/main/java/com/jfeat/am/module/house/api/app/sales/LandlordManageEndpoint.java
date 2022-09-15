@@ -213,6 +213,7 @@ public class LandlordManageEndpoint {
         entity.setAppid("1");
         entity.setUnionId("House");
         entity.setType(EndUserTypeSetting.USER_TYPE_LANDLORD);
+        entity.setOrgId(JWTKit.getOrgId());
         return SuccessTip.create(userAccountMapper.insert(entity));
     }
 
@@ -273,6 +274,7 @@ public class LandlordManageEndpoint {
                 for (HouseUserAsset houseUserAsset:rentAssetList){
                     if (houseAsset.getId().equals(houseUserAsset.getAssetId())){
                         houseAsset.setExistUser(true);
+                        houseAsset.setUserId(houseUserAsset.getUserId());
                     }
 
                 }
