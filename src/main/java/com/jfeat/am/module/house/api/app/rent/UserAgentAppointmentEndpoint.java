@@ -42,12 +42,16 @@ public class UserAgentAppointmentEndpoint {
         Date endDateTime = new Date();
 
         if (entity.getStartTimeStr()!=null && entity.getEndTimeStr()!=null){
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm");
             try {
                 Date startTime = simpleDateFormat.parse(entity.getStartTimeStr());
                 Date endTime = simpleDateFormat.parse(entity.getEndTimeStr());
                 if (startTime.after(endTime)){
                     throw new BusinessException(BusinessCode.CodeBase,"开始时间不能大于结束时间");
+                }
+                int t =0;
+                if (startTime.getSeconds()>=30){
+                    t = 1;
                 }
 
                 int t =0;
@@ -137,7 +141,7 @@ public class UserAgentAppointmentEndpoint {
 
         List<AppointmentTime> result = new ArrayList<>();
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss");
         String mid = "12:00:00";
 
         Date midDate = null;
