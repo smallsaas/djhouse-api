@@ -52,7 +52,11 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
     @TableField(exist = false)
     private String targetAssetRange;
 
-    @ApiModelProperty(value = "社区Id")
+    @ApiModelProperty(value = "社区id")
+    @TableField(exist = false)
+    private Long orgId;
+
+    @ApiModelProperty(value = "小区id")
     @TableField(exist = false)
     private Long communityId;
 
@@ -114,6 +118,14 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
     @TableField(exist = false)
     private String userAvatar;
 
+
+    public Long getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
+    }
 
     public Long getCommunityId() {
         return communityId;

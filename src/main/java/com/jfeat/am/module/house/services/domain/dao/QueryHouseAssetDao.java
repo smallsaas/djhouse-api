@@ -64,4 +64,7 @@ public interface QueryHouseAssetDao extends QueryMasterDao<HouseAsset> {
 
     List<HouseAssetRecord> getHouseAssetList(@Param("ids") List<Long> ids);
 
+
+    List<HouseAssetRecord> batchQueryAsset(Page<HouseAssetRecord> page,@Param("record") HouseAssetRecord record,@Param("assetIds") List<Long> assetIds);
+
 }

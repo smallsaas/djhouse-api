@@ -134,11 +134,7 @@ public class UserHouseAssetEndpoint {
         }
         tenantQueryWrapper.eq("appid",appid);
         tenantMapper.selectPage(page,tenantQueryWrapper);
-
-
-
         return SuccessTip.create(page);
-
     }
 
 
@@ -221,7 +217,7 @@ public class UserHouseAssetEndpoint {
         List<HouseAssetRecord> houseAssetList = queryHouseAssetDao.findHouseAssetPage(null, houseAssetRecord, null, null, null, null, null);
 
         HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
-        List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, null, null, null, null, null, null);
+        List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, null, null, null, null, null);
 
         for (int i = 0; i < houseAssetList.size(); i++) {
 //            判断是否有人居住
@@ -244,6 +240,10 @@ public class UserHouseAssetEndpoint {
                     if (recordList.get(j).getUserId().equals(JWTKit.getUserId())) {
                         houseAssetList.get(i).setMyselfAsset(true);
                     }
+
+                    if (recordList.get(j).getUserType().equals(HouseUserAsset.USER_TYPE_PRINCIPAL)) {
+                        houseAssetList.get(i).setPrincipal(true);
+                    }
                 }
 
 
@@ -265,7 +265,7 @@ public class UserHouseAssetEndpoint {
         List<HouseAssetRecord> houseAssetList = queryHouseAssetDao.findHouseAssetPage(null, houseAssetRecord, null, null, null, null, null);
 
         HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
-        List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, null, null, null, null, null, null);
+        List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, null, null, null, null, null);
 
         Long uStart = System.currentTimeMillis();
         for (int i = 0; i < houseAssetList.size(); i++) {
@@ -332,7 +332,8 @@ public class UserHouseAssetEndpoint {
 
         HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
         userAssetRecord.setUserId(JWTKit.getUserId());
-        List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, communityId, null, null, null, null, null);
+        userAssetRecord.setCommunityId(communityId);
+        List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, null, null, null, null, null);
 
         HouseRentAssetRecord houseRentAssetRecord = new HouseRentAssetRecord();
         List<HouseRentAssetRecord> houseRentAssetRecordList = queryHouseRentAssetDao.findHouseRentAssetPage(null, houseRentAssetRecord, null, null, null, null, null);
@@ -454,7 +455,7 @@ public class UserHouseAssetEndpoint {
         HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
         houseUserAssetRecord.setAssetId(entity.getAssetId());
         houseUserAssetRecord.setUserType(userType);
-        List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null, houseUserAssetRecord, null, null, null, null, null, null);
+        List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null, houseUserAssetRecord, null, null, null, null, null);
 
         /*
         判断这个房子是否有人，没人直接进行增加 有人判断是否是最终用户
@@ -562,7 +563,8 @@ public class UserHouseAssetEndpoint {
 
         HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
         userAssetRecord.setUserId(JWTKit.getUserId());
-        List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, communityId, null, null, null, null, null);
+        userAssetRecord.setCommunityId(communityId);
+        List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, null, null, null, null, null);
 
         // 查询匹配到的房屋
         QueryWrapper<HouseAssetMatchLog> matchLogQueryWrapper = new QueryWrapper<>();
@@ -592,4 +594,83 @@ public class UserHouseAssetEndpoint {
         return SuccessTip.create(houseUserAssets);
     }
 
+//    锁定房子
+    @PutMapping("/locked/{id}")
+    public Tip lockedAsset(@PathVariable("id") Long assetId){
+        Integer affect =0;
+        QueryWrapper<HouseUserAsset> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(HouseUserAsset.ASSET_ID,assetId);
+        List<HouseUserAsset> houseUserAssetList =  houseUserAssetMapper.selectList(queryWrapper);
+        if (houseUserAssetList!=null && houseUserAssetList.size()>0){
+            for (HouseUserAsset houseUserAsset:houseUserAssetList){
+                houseUserAsset.setLocked(HouseUserAsset.LOCKED_STATUS_LOCKED);
+
+                affect+=houseUserAssetMapper.updateById(houseUserAsset);
+            }
+
+            return SuccessTip.create(affect);
+
+        }
+        return SuccessTip.create(affect);
+    }
+
+//    解除锁定
+    @PutMapping("/unlocked/{id}")
+    public Tip unlockedAsset(@PathVariable("id") Long assetId){
+        Integer affect =0;
+        QueryWrapper<HouseUserAsset> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(HouseUserAsset.ASSET_ID,assetId);
+        List<HouseUserAsset> houseUserAssetList =  houseUserAssetMapper.selectList(queryWrapper);
+        if (houseUserAssetList!=null && houseUserAssetList.size()>0){
+            for (HouseUserAsset houseUserAsset:houseUserAssetList){
+                houseUserAsset.setLocked(HouseUserAsset.LOCKED_STATUS_UNLOCKED);
+
+                affect+=houseUserAssetMapper.updateById(houseUserAsset);
+            }
+
+            return SuccessTip.create(affect);
+
+        }
+        return SuccessTip.create(affect);
+    }
+
+//    设置不喜欢房子
+    @PutMapping("/unlike/{id}")
+    public Tip unlikeAsset(@PathVariable("id") Long assetId){
+        Integer affect =0;
+        QueryWrapper<HouseUserAsset> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(HouseUserAsset.ASSET_ID,assetId);
+        List<HouseUserAsset> houseUserAssetList =  houseUserAssetMapper.selectList(queryWrapper);
+        if (houseUserAssetList!=null && houseUserAssetList.size()>0){
+            for (HouseUserAsset houseUserAsset:houseUserAssetList){
+                houseUserAsset.setUnlike(HouseUserAsset.UNLIKE_STATUS_UNLIKE);
+
+                affect+=houseUserAssetMapper.updateById(houseUserAsset);
+            }
+
+            return SuccessTip.create(affect);
+
+        }
+        return SuccessTip.create(affect);
+    }
+
+//    设置房子为喜欢
+    @PutMapping("/like/{id}")
+    public Tip likeAsset(@PathVariable("id") Long assetId){
+        Integer affect =0;
+        QueryWrapper<HouseUserAsset> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(HouseUserAsset.ASSET_ID,assetId);
+        List<HouseUserAsset> houseUserAssetList =  houseUserAssetMapper.selectList(queryWrapper);
+        if (houseUserAssetList!=null && houseUserAssetList.size()>0){
+            for (HouseUserAsset houseUserAsset:houseUserAssetList){
+                houseUserAsset.setUnlike(HouseUserAsset.UNLIKE_STATUS_LIKE);
+
+                affect+=houseUserAssetMapper.updateById(houseUserAsset);
+            }
+
+            return SuccessTip.create(affect);
+
+        }
+        return SuccessTip.create(affect);
+    }
 }

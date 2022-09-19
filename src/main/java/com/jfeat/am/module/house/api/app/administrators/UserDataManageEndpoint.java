@@ -8,9 +8,7 @@ import com.jfeat.am.core.model.EndUserTypeSetting;
 import com.jfeat.am.module.house.services.domain.model.HouseApplicationIntermediaryRecord;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
-import com.jfeat.dev.devops.services.services.DevopsServices;
-import com.jfeat.dev.devops.services.services.ParseRequestArgument;
-import com.jfeat.dev.devops.services.services.ParseSql;
+import com.jfeat.dev.devops.services.domain.service.DevopsServices;
 import com.jfeat.users.account.services.domain.service.BusinessUserService;
 import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
 import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
@@ -56,13 +54,8 @@ public class UserDataManageEndpoint {
         if (search != null) {
             userAccountQueryWrapper.and(e -> e.like(UserAccount.PHONE, search).or().like(UserAccount.NAME, search));
         }
-
-
         page = userAccountMapper.selectPage(page, userAccountQueryWrapper);
-
-
         return SuccessTip.create(page);
-
     }
 
 

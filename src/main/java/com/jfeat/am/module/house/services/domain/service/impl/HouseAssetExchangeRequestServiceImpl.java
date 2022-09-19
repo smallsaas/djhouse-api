@@ -55,6 +55,7 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
          /*
         删除原有的 已经匹配成功记录
          */
+        System.out.println("222========================");
         queryHouseAssetMatchLogDao.deleteHouseAssetMatchLogByUserIdAndAssetId(assetExchangeRequest.getAssetId(),assetExchangeRequest.getUserId());
 
 
@@ -73,7 +74,15 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
             matchLog.setMatchedUserId(houseAssetExchangeRequestRecord.getTargetUserId());
             matchLog.setMathchedAssetId(houseAssetExchangeRequestRecord.getTargetAsset());
 
+            HouseAssetMatchLog ortherMatchLog = new HouseAssetMatchLog();
+            ortherMatchLog.setOrgId(tenantUtility.getCurrentOrgId(assetExchangeRequest.getUserId()));
+            ortherMatchLog.setMathchedAssetId(houseAssetExchangeRequestRecord.getAssetId());
+            ortherMatchLog.setMatchedUserId(houseAssetExchangeRequestRecord.getUserId());
+            ortherMatchLog.setOwnerUserId(houseAssetExchangeRequestRecord.getTargetUserId());
+            ortherMatchLog.setOwnerAssetId(houseAssetExchangeRequestRecord.getTargetAsset());
+
             matchLogList.add(matchLog);
+            matchLogList.add(ortherMatchLog);
         }
 
         if (matchLogList!=null && matchLogList.size()>0){
@@ -117,7 +126,6 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
             HouseAssetExchangeRequest deleteRecord = new HouseAssetExchangeRequest();
             deleteRecord.setUserId(entity.getUserId());
             deleteRecord.setAssetId(entity.getAssetId());
-
             affect+=batchDeleteExchangeRequest(deleteRecord);
         }
 
@@ -125,6 +133,20 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
 
         assetMachResult(entity);
 
+        return affect;
+    }
+
+    @Override
+    public int confirmExchangeAsset(List<HouseAssetExchangeRequest> exchangeRequestList) {
+        List<HouseAssetExchangeRequest> assetExchangeRequestList = new ArrayList<>();
+        Integer affect=0;
+        if (exchangeRequestList!=null && exchangeRequestList.size()>0){
+            affect+=batchAddExchangeRequest(exchangeRequestList);
+            for (HouseAssetExchangeRequest houseAssetExchangeRequest:exchangeRequestList){
+                assetMachResult(houseAssetExchangeRequest);
+
+            }
+        }
         return affect;
     }
 }

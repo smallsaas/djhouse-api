@@ -18,6 +18,7 @@
         t_house_property_building.issue as issue,
 
         t_house_property_building_unit.direction AS direction,
+        t_house_property_building_unit.real_area AS realArea,
 
        t_house_property_community.id        AS communityId,
        t_house_property_community.community AS communityName,
@@ -143,6 +144,43 @@
         OR t_house_asset.name LIKE CONCAT('%',#{search},'%')
     </if>
     -->
+    </select>
+
+    <select id="batchQueryAsset" resultType="HouseAssetRecord">
+    SELECT
+    <include refid="Base_Column_List"/>
+
+
+    FROM t_house_asset
+
+    JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+    JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
+    left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
+    left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+    left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
+    WHERE t_house_asset.id in
+    <foreach collection="assetIds" item="item" open="(" close=")" separator=",">
+        #{item}
+    </foreach>
+
+        <if test="record.buildingId != null and record.buildingId>0 ">
+            AND t_house_asset.building_id =#{record.buildingId}
+        </if>
+
+
+        <if test="record.unitId != null and record.unitId>0 ">
+            AND t_house_asset.unit_id =#{record.unitId}
+        </if>
+
+        <if test="record.communityId != null and record.communityId>0 ">
+            AND t_house_property_community.id = #{record.communityId}
+        </if>
+
+        <if test="record.floor != null and record.floor>0 ">
+            AND t_house_asset.floor LIKE CONCAT('%',#{record.floor},'%')
+        </if>
+
+
     </select>
 
     <delete id="deleteHouseRoomByBuildingId">

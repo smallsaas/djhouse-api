@@ -20,4 +20,6 @@ public interface HouseAssetExchangeRequestService extends CRUDHouseAssetExchange
     int batchDeleteExchangeRequest(HouseAssetExchangeRequest exchangeRequest);
 
     int addHouseAssetExchangeRequest(HouseAssetExchangeRequest entity);
+
+    int confirmExchangeAsset(List<HouseAssetExchangeRequest> exchangeRequestList);
 }

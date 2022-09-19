@@ -46,4 +46,7 @@ public interface QueryHouseAssetExchangeRequestDao extends QueryMasterDao<HouseA
     List<HouseAsset> queryExchangeTargetList(Page<HouseAssetExchangeRequestRecord> page,@Param("record") HouseAssetExchangeRequest record);
 
     List<HouseAssetExchangeRequestRecord> queryExchangeRequestGroupByAssetId(Page<HouseAssetExchangeRequestRecord> page, @Param("record") HouseAssetExchangeRequestRecord record);
+
+    List<HouseAssetExchangeRequestRecord> queryOptionExchangeRequestList(Page<HouseAssetExchangeRequestRecord> page, @Param("record") HouseAssetExchangeRequestRecord record,
+                                                                         @Param("search") String search);
 }

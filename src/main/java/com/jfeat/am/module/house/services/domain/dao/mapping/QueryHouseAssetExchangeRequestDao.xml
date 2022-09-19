@@ -96,6 +96,9 @@
         <if test="record.communityId != null and record.communityId >0 ">
             AND t_house_property_community.id = #{record.communityId}
         </if>
+        <if test="record.orgId != null and record.orgId >0 ">
+            AND t_house_property_community.tenant_id = #{record.orgId}
+        </if>
 
 
 
@@ -332,6 +335,25 @@
         </if>
 
         group by t_house_asset_exchange_request.asset_id
+    </select>
+
+<!--    查询有谁想换我的房子-->
+    <select id="queryOptionExchangeRequestList" resultType="HouseAssetExchangeRequestRecord"
+            parameterType="HouseAssetExchangeRequestRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_house_asset_exchange_request
+        JOIN t_end_user ON t_house_asset_exchange_request.user_id=t_end_user.id
+        JOIN t_house_asset ON t_house_asset_exchange_request.asset_id=t_house_asset.id
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community on t_house_property_building.community_id =t_house_property_community.id
+        JOIN t_house_property_building_unit ON t_house_property_building_unit.id = t_house_asset.unit_id
+        left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+        left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
+
+        WHERE t_house_asset_exchange_request.target_asset IN (SELECT t_house_user_asset.asset_id FROM t_house_user_asset WHERE t_house_user_asset.user_id=#{record.userId})
+        AND t_house_asset_exchange_request.asset_id NOT IN (SELECT t_house_user_asset.asset_id FROM t_house_user_asset WHERE t_house_user_asset.user_id=#{record.userId})
+        AND t_house_asset_exchange_request.target_asset NOT IN (SELECT t_house_asset_match_log.owner_asset_id FROM t_house_asset_match_log WHERE t_house_asset_match_log.owner_asset_id IN(SELECT t_house_user_asset.asset_id FROM t_house_user_asset WHERE t_house_user_asset.user_id=#{record.userId}))
     </select>
 
 

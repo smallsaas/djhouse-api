@@ -151,7 +151,7 @@ public class UserStatisticsEndpoint {
 //        查询用户资产表
 
         HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
-        List<HouseUserAssetRecord> userAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,userAssetRecord,null,null,null,null,null,null);
+        List<HouseUserAssetRecord> userAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,userAssetRecord,null,null,null,null,null);
 
 //        查询小区有多少楼栋
         HousePropertyBuildingRecord buildingRecord = new HousePropertyBuildingRecord();
@@ -448,7 +448,8 @@ public class UserStatisticsEndpoint {
         Long communityId =  userCommunityAsset.getUserCommunityStatus(userId);
         HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
         userAssetRecord.setUserId(JWTKit.getUserId());
-        List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, communityId, null, null, null, null, null);
+        userAssetRecord.setCommunityId(communityId);
+        List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, null, null, null, null, null);
 
         BigDecimal totalArea = new BigDecimal(0);
         BigDecimal overArea = new BigDecimal(0);

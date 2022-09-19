@@ -53,6 +53,12 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
 
     private Integer finalFlag;
 
+    @ApiModelProperty("锁定换房 0-不锁定换房 1-锁定换房 默认为0")
+    private Integer locked;
+
+    @ApiModelProperty("不行喜欢换换试试 1-喜欢 0-不喜欢 默认为1")
+    private Integer unlike;
+
 
     @ApiModelProperty(value = "详细地址")
     @TableField(exist = false)
@@ -156,6 +162,25 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
 
     @TableField(exist = false)
     private Integer assetNumber;
+
+
+
+
+    public Integer getLocked() {
+        return locked;
+    }
+
+    public void setLocked(Integer locked) {
+        this.locked = locked;
+    }
+
+    public Integer getUnlike() {
+        return unlike;
+    }
+
+    public void setUnlike(Integer unlike) {
+        this.unlike = unlike;
+    }
 
     public Integer getUserType() {
         return userType;
@@ -445,6 +470,19 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     public static final String USER_ID = "user_id";
 
     public static final String ASSET_ID = "asset_id";
+
+    public static final String LOCKED = "locked";
+
+    public static final Integer LOCKED_STATUS_LOCKED = 1;
+
+    public static final Integer LOCKED_STATUS_UNLOCKED = 0;
+
+    public static final String UNLIKE = "unlike";
+
+    public static final Integer UNLIKE_STATUS_LIKE = 1;
+
+    public static final Integer UNLIKE_STATUS_UNLIKE = 0;
+
 
     /*
     后台最终确认 房子最终产权

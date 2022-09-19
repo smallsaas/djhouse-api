@@ -280,7 +280,7 @@ public Tip refuseClashInfo(@PathVariable("id")Long id, @RequestBody HouseAssetCo
             //当运维上传资料确认为最终户主
             HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
             houseUserAssetRecord.setAssetId(houseAssetComplaint.getAssetId());
-            List<HouseUserAssetRecord> houseUserAssetPage = queryHouseUserAssetDao.findHouseUserAssetPage(null, houseUserAssetRecord, null,null, null, null, null, null);
+            List<HouseUserAssetRecord> houseUserAssetPage = queryHouseUserAssetDao.findHouseUserAssetPage(null, houseUserAssetRecord, null,null, null, null, null);
             if (houseUserAssetPage!=null && houseUserAssetPage.size()==1){
                 HouseUserAssetModel houseUserAssetModel = queryHouseUserAssetDao.queryMasterModel(houseUserAssetPage.get(0).getId());
                 if (houseUserAssetModel == null) {

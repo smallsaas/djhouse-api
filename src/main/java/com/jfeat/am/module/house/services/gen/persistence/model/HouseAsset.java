@@ -94,6 +94,17 @@ public class HouseAsset extends Model<HouseAsset> {
     @TableField(exist = false)
     private String houseTypePicture;
 
+    @ApiModelProperty("真实面积")
+    @TableField(exist = false)
+    private BigDecimal realArea;
+
+    @ApiModelProperty("朝向")
+    @TableField(exist = false)
+    private String direction;
+
+    @TableField(exist = false)
+    private BigDecimal area;
+
     @TableField(exist = false)
     private String vrPicture;
 
@@ -103,8 +114,7 @@ public class HouseAsset extends Model<HouseAsset> {
     @TableField(exist = false)
     private String vrSnapshot;
 
-    @TableField(exist = false)
-    private BigDecimal area;
+
 
     @ApiModelProperty("用户id")
     @TableField(exist = false)
@@ -130,6 +140,24 @@ public class HouseAsset extends Model<HouseAsset> {
 
     @TableField(exist = false)
     private Long exchangeRequestId;
+
+
+
+    public BigDecimal getRealArea() {
+        return realArea;
+    }
+
+    public void setRealArea(BigDecimal realArea) {
+        this.realArea = realArea;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
 
     public Long getExchangeRequestId() {
         return exchangeRequestId;

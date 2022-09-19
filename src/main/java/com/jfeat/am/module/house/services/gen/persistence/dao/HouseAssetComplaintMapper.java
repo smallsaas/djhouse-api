@@ -12,5 +12,4 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2022-07-22
  */
 public interface HouseAssetComplaintMapper extends BaseMapper<HouseAssetComplaint> {
-
 }

@@ -60,6 +60,16 @@ public class HouseAssetRecord extends HouseAsset {
      */
     private Boolean sameHouseType;
 
+    private Boolean isPrincipal;
+
+
+    public Boolean getPrincipal() {
+        return isPrincipal;
+    }
+
+    public void setPrincipal(Boolean principal) {
+        isPrincipal = principal;
+    }
 
     public Integer getFinalFlag() {
         return finalFlag;

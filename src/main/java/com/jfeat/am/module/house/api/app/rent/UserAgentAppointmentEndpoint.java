@@ -54,11 +54,6 @@ public class UserAgentAppointmentEndpoint {
                     t = 1;
                 }
 
-                int t =0;
-                if (startTime.getSeconds()>=30){
-                    t = 1;
-                }
-
                 startDateTime.setHours(startTime.getHours());
                 startDateTime.setMinutes(startTime.getMinutes()-t);
                 entity.setStartTime(startDateTime);
@@ -141,7 +136,7 @@ public class UserAgentAppointmentEndpoint {
 
         List<AppointmentTime> result = new ArrayList<>();
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         String mid = "12:00:00";
 
         Date midDate = null;

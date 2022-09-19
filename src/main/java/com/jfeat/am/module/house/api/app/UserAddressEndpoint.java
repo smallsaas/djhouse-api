@@ -50,7 +50,7 @@ public class UserAddressEndpoint {
         HouseUserAssetRecord record = new HouseUserAssetRecord();
         record.setUserId(userId);
         record.setAssetId(entity.getAssetId());
-        List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,record,null,null,null,null,null,null);
+        List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,record,null,null,null,null,null);
 
 //        将查询到的用户房屋信息地址 添加到用户地址表中
         if (recordList!=null || recordList.size()==1){

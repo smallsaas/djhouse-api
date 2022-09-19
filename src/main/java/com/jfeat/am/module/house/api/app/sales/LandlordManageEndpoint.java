@@ -10,8 +10,10 @@ import com.jfeat.am.common.annotation.Permission;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.core.model.EndUserTypeSetting;
 import com.jfeat.am.module.house.api.permission.HouseUserNotePermission;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserNoteDao;
+import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseUserTagRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseUserNoteService;
@@ -66,6 +68,9 @@ public class LandlordManageEndpoint {
 
     @Resource
     TenantUtility tenantUtility;
+
+    @Resource
+    QueryHouseAssetDao queryHouseAssetDao;
 
 
 
@@ -156,7 +161,7 @@ public class LandlordManageEndpoint {
 
 
 //       查询房屋
-        List<HouseUserAssetRecord> assetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,record,null,null,null,null,null,null);
+        List<HouseUserAssetRecord> assetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,record,null,null,null,null,null);
 
         if (userAssetRecords!=null && userAssetRecords.size()>0){
             userAssetRecords.get(0).setHouseUserAssetRecordList(assetRecordList);
@@ -182,7 +187,7 @@ public class LandlordManageEndpoint {
         HouseUserAssetRecord record = new HouseUserAssetRecord();
         record.setUserId(userId);
 
-        List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(page,record,null,null,search,null,null,null);
+        List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(page,record,null,null,search,null,null);
         page.setRecords(houseUserAssetRecordList);
         return SuccessTip.create(page);
     }
@@ -252,16 +257,12 @@ public class LandlordManageEndpoint {
                             Page<HouseAsset> page,
                             @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize){
-        QueryWrapper<HouseAsset> assetQueryWrapper = new QueryWrapper<>();
-        assetQueryWrapper.eq(HouseAsset.BUILDING_ID,buildingId);
-        assetQueryWrapper.last("ORDER BY t_house_asset.number*1 desc");
-        page.setSize(pageSize);
-        page.setCurrent(pageNum);
-//        page = houseAssetMapper.selectPage(page,assetQueryWrapper);
 
-//        List<HouseAsset> houseAssetList = page.getRecords();
-        List<HouseAsset> houseAssetList = houseAssetMapper.selectList(assetQueryWrapper);
-        List<Long> assetIds = houseAssetList.stream().map(HouseAsset::getId).collect(Collectors.toList());
+        HouseAssetRecord record  = new HouseAssetRecord();
+        record.setBuildingId(buildingId);
+        List<HouseAssetRecord> houseAssetRecordList = queryHouseAssetDao.findHouseAssetPage(null,record,null,null,null, null,null);
+
+        List<Long> assetIds = houseAssetRecordList.stream().map(HouseAsset::getId).collect(Collectors.toList());
 
 
         if (assetIds!=null && assetIds.size()>0){
@@ -269,20 +270,19 @@ public class LandlordManageEndpoint {
             rentAssetQueryWrapper.in(HouseRentAsset.ASSET_ID,assetIds);
             List<HouseUserAsset> rentAssetList = houseUserAssetMapper.selectList(rentAssetQueryWrapper);
 
-            for (HouseAsset houseAsset:houseAssetList){
+            for (HouseAssetRecord houseAsset:houseAssetRecordList){
 
                 for (HouseUserAsset houseUserAsset:rentAssetList){
                     if (houseAsset.getId().equals(houseUserAsset.getAssetId())){
                         houseAsset.setExistUser(true);
                         houseAsset.setUserId(houseUserAsset.getUserId());
                     }
-
                 }
             }
         }
 
 
-        return SuccessTip.create(houseAssetList);
+        return SuccessTip.create(houseAssetRecordList);
     }
 
 //    房号绑定房东
