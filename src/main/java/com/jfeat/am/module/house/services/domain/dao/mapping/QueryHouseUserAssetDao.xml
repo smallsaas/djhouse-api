@@ -116,6 +116,10 @@
             AND t_house_user_asset.user_id LIKE CONCAT('%',#{record.userId},'%')
         </if>
 
+        <if test="record.notUserId != null and record.notUserId>0 ">
+            AND t_house_user_asset.user_id != #{record.notUserId}
+        </if>
+
 
         <if test="record.assetId != null and record.assetId>0 ">
             AND t_house_user_asset.asset_id LIKE CONCAT('%',#{record.assetId},'%')

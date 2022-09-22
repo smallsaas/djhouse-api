@@ -1,12 +1,15 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseMenuDao;
+import com.jfeat.am.module.house.services.domain.model.HouseMenuRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseTenantMenuService;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHouseTenantMenuServiceImpl;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseMenuMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseTenantMenuMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseMenu;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseTenantMenu;
+import com.jfeat.am.module.house.services.utility.TenantUtility;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,12 @@ public class HouseTenantMenuServiceImpl extends CRUDHouseTenantMenuServiceImpl i
 
     @Resource
     HouseMenuMapper houseMenuMapper;
+
+    @Resource
+    QueryHouseMenuDao queryHouseMenuDao;
+
+    @Resource
+    TenantUtility tenantUtility;
 
     @Override
     protected String entityName() {
@@ -68,5 +77,32 @@ public class HouseTenantMenuServiceImpl extends CRUDHouseTenantMenuServiceImpl i
             affect+=houseTenantMenuMapper.updateById(houseTenantMenu);
         }
         return affect;
+    }
+
+    @Override
+    public List<HouseMenuRecord> getSecondaryMenu(Long userId,HouseMenuRecord record) {
+
+        Long orgId = tenantUtility.getCurrentOrgId(userId);
+
+        List<HouseMenuRecord> houseMenuPage = queryHouseMenuDao.findHouseMenuPage(null, record, null, null, null, null, null);
+
+//        查询当前社区功能状态开启情况
+        QueryWrapper<HouseTenantMenu> tenantMenuQueryWrapper = new QueryWrapper<>();
+        tenantMenuQueryWrapper.eq(HouseTenantMenu.ORG_ID, orgId);
+        List<HouseTenantMenu> tenantMenus = houseTenantMenuMapper.selectList(tenantMenuQueryWrapper);
+
+
+        for (HouseMenuRecord houseMenuRecord : houseMenuPage) {
+            for (HouseTenantMenu houseTenantMenu : tenantMenus) {
+//                当二级菜单有一级菜单时，将菜单状态设置为二级菜单状态
+                if (houseMenuRecord.getId().equals(houseTenantMenu.getMenuId())) {
+                    houseMenuRecord.setEnabled(houseTenantMenu.getEnabled());
+                    break;
+                } else {
+                    houseMenuRecord.setEnabled(0);
+                }
+            }
+        }
+        return houseMenuPage;
     }
 }

@@ -58,7 +58,10 @@ public class HouseMenuServiceImpl extends CRUDHouseMenuServiceImpl implements Ho
                     tenantMenu.setEnabled(0);
                 }
 
-                affect+=queryHouseTenantMenuDao.updateTenantMenus(houseTenantMenuList);
+                if (houseTenantMenuList!=null && houseTenantMenuList.size()>0){
+                    affect+=queryHouseTenantMenuDao.updateTenantMenus(houseTenantMenuList);
+                }
+
             }
         }
         return affect;

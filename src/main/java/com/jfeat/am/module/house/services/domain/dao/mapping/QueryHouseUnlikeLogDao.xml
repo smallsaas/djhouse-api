@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseUnlikeLogDao">
+    <sql id="Base_Column_List">
+        t_house_unlike_log
+        .
+        id
+        , t_house_unlike_log.user_id AS userId, t_house_unlike_log.asset_id AS assetId, t_house_unlike_log.create_time AS createTime, t_house_unlike_log.update_time AS updateTime
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseUnlikeLogModel">
+        SELECT t_house_unlike_log.*
+        FROM t_house_unlike_log
+        WHERE t_house_unlike_log.id = #{id}
+        GROUP BY t_house_unlike_log.id
+    </select>
+
+
+    <select id="findHouseUnlikeLogPage" resultType="HouseUnlikeLogRecord" parameterType="HouseUnlikeLogRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_unlike_log
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_unlike_log.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_unlike_log.user_id LIKE CONCAT('%',#{record.userId},'%')
+        </if>
+
+
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_unlike_log.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+        </if>
+
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_unlike_log.create_time LIKE CONCAT('%',#{record.createTime},'%')
+        </if>
+
+
+        <if test="record.updateTime != null and record.updateTime>0 ">
+            AND t_house_unlike_log.update_time LIKE CONCAT('%',#{record.updateTime},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_unlike_log.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_unlike_log.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_unlike_log.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+        ORDER BY update_time DESC
+        , create_time DESC
+    </select>
+
+    <insert id="batchAddHouseUnLikeLog">
+        insert into t_house_unlike_log
+        (user_id,asset_id) values
+        <foreach collection="houseUnlikeLogList" item="item" separator=",">
+            (#{item.userId},#{item.assetId})
+        </foreach>
+    </insert>
+</mapper>

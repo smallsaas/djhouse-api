@@ -114,6 +114,12 @@
             <version>1.2.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>pom-dev-auto-render</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
 <!--        <dependency>-->
 <!--            <groupId>com.jfeat</groupId>-->
 <!--            <artifactId>banner-service</artifactId>-->
@@ -152,6 +158,12 @@
             <groupId>com.jfeat</groupId>
             <artifactId>appointment</artifactId>
             <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>saas-mall-api</artifactId>
+            <version>1.2.0</version>
         </dependency>
 
 

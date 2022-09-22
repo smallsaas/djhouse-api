@@ -37,6 +37,9 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @ApiModelProperty(value = "用户id")
     private Long userId;
 
+    @TableField(exist = false)
+    private Long notUserId;
+
     @ApiModelProperty(value = "资产id")
     private Long assetId;
 
@@ -58,6 +61,10 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
 
     @ApiModelProperty("不行喜欢换换试试 1-喜欢 0-不喜欢 默认为1")
     private Integer unlike;
+
+    @ApiModelProperty("不行状态")
+    @TableField(exist = false)
+    private Boolean unlikeStatus;
 
 
     @ApiModelProperty(value = "详细地址")
@@ -164,7 +171,21 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     private Integer assetNumber;
 
 
+    public Boolean getUnlikeStatus() {
+        return unlikeStatus;
+    }
 
+    public void setUnlikeStatus(Boolean unlikeStatus) {
+        this.unlikeStatus = unlikeStatus;
+    }
+
+    public Long getNotUserId() {
+        return notUserId;
+    }
+
+    public void setNotUserId(Long notUserId) {
+        this.notUserId = notUserId;
+    }
 
     public Integer getLocked() {
         return locked;
@@ -494,9 +515,9 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
      */
     public static final Integer FINAL_FLAG_NOT_CONFIRM = 0;
 
-    public static final Integer USER_TYPE_LANDLORD=1;
+    public static final Integer USER_TYPE_LANDLORD = 1;
 
-    public static final Integer USER_TYPE_PRINCIPAL=2;
+    public static final Integer USER_TYPE_PRINCIPAL = 2;
 
 
     @Override

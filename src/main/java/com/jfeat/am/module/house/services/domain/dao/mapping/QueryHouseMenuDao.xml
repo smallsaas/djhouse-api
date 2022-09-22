@@ -2,10 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseMenuDao">
     <sql id="Base_Column_List">
-        t_house_menu
-        .
-        id
-        , t_house_menu.url, t_house_menu.path, t_house_menu.component, t_house_menu.name, t_house_menu.iconCls, t_house_menu.requireAuth, t_house_menu.parentId, t_house_menu.enabled
+        t_house_menu.id,
+t_house_menu.url,
+t_house_menu.path,
+t_house_menu.component,
+t_house_menu.name,
+t_house_menu.iconCls,
+t_house_menu.requireAuth,
+t_house_menu.parentId,
+t_house_menu.enabled,
+t_house_menu.type
     </sql>
 
 
@@ -52,8 +58,12 @@
         <if test="record.parentId != null and record.parentId>0 ">
             AND t_house_menu.parentId LIKE CONCAT('%',#{record.parentId},'%')
         </if>
-        <if test="record.enabled != null and record.enabled>0 ">
+        <if test="record.enabled != null and record.enabled>=0 ">
             AND t_house_menu.enabled LIKE CONCAT('%',#{record.enabled},'%')
+        </if>
+
+        <if test="record.type != null and record.type!= ''">
+            AND t_house_menu.type  = #{record.type}
         </if>
 
         <if test="startTime != null">

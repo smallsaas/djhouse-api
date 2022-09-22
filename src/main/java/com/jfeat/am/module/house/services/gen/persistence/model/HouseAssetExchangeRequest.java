@@ -64,9 +64,25 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
     @TableField(exist = false)
     private String communityName;
 
+
+    @ApiModelProperty(value = "楼栋id")
+    @TableField(exist = false)
+    private Long buildingId;
+
     @ApiModelProperty(value = "楼栋编号")
     @TableField(exist = false)
     private String buildingCode;
+
+    @ApiModelProperty(value = "期数")
+    @TableField(exist = false)
+    private Integer issue;
+
+    @ApiModelProperty(value = "单元id")
+    @TableField(exist = false)
+    private Long unitId;
+
+    @TableField(exist = false)
+    private String direction;
 
     @ApiModelProperty(value = "第几楼陈")
     @TableField(exist = false)
@@ -118,6 +134,38 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
     @TableField(exist = false)
     private String userAvatar;
 
+
+    public Long getBuildingId() {
+        return buildingId;
+    }
+
+    public void setBuildingId(Long buildingId) {
+        this.buildingId = buildingId;
+    }
+
+    public Integer getIssue() {
+        return issue;
+    }
+
+    public void setIssue(Integer issue) {
+        this.issue = issue;
+    }
+
+    public Long getUnitId() {
+        return unitId;
+    }
+
+    public void setUnitId(Long unitId) {
+        this.unitId = unitId;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
 
     public Long getOrgId() {
         return orgId;

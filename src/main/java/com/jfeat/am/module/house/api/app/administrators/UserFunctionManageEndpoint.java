@@ -58,6 +58,8 @@ public class UserFunctionManageEndpoint {
 
                                   @RequestParam(name = "parentId", required = false) Long parentId,
 
+                                  @RequestParam(name = "type",required = false) String type,
+
                                   @RequestParam(name = "enabled", required = false) Integer enabled,
                                   @RequestParam(name = "orderBy", required = false) String orderBy,
                                   @RequestParam(name = "sort", required = false) String sort) {
@@ -93,6 +95,7 @@ public class UserFunctionManageEndpoint {
         record.setRequireAuth(requireAuth);
         record.setParentId(parentId);
         record.setEnabled(enabled);
+        record.setType(type);
 
 
         List<HouseMenuRecord> houseMenuPage = queryHouseMenuDao.findHouseMenuPage(page, record, tag, search, orderBy, null, null);

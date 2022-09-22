@@ -2,7 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetExchangeRequestDao">
     <sql id="Base_Column_List">
-        t_house_asset_exchange_request.id,
+        t_house_asset_exchange_request
+        .
+        id
+        ,
         t_house_asset_exchange_request.user_id AS userId,
         t_house_asset_exchange_request.asset_id AS assetId,
         t_house_asset_exchange_request.target_asset AS targetAsset,
@@ -16,6 +19,7 @@
        t_house_property_building.id         As buildingId,
        t_house_property_building.code       AS buildingCode,
        t_house_property_building_unit.id    AS unitId,
+        t_house_property_building_unit.direction    AS direction,
 
        t_house_design_model.id AS designModelId,
        t_house_design_model.house_type AS houseType,
@@ -26,12 +30,17 @@
        t_house_vr_picture.link                  AS vrLink,
        t_house_vr_picture.snapshot              AS vrSnapshot,
 
-       t_house_asset.number                 AS number,
+       t_house_asset.house_number                 AS number,
        t_house_asset.floor AS floor,
 
        t_end_user.name                      AS userName,
        t_end_user.phone                     AS userPhone,
-       t_end_user.avatar                    AS userAvatar
+       t_end_user.avatar                    AS userAvatar,
+        t_end_user.real_name                AS realName,
+
+        target_asset.house_number AS targetHouseNumber,
+        target_building.code AS targetBuildingCode
+
     </sql>
 
 
@@ -57,6 +66,9 @@
         JOIN t_house_property_building_unit ON t_house_property_building_unit.id = t_house_asset.unit_id
         left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
         left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
+
+        left JOIN t_house_asset AS target_asset on t_house_asset_exchange_request.target_asset=target_asset.id
+        left JOIN t_house_property_building AS target_building on target_asset.building_id=target_building.id
 
 
         WHERE 1=1
@@ -92,14 +104,12 @@
         </if>
 
 
-
         <if test="record.communityId != null and record.communityId >0 ">
             AND t_house_property_community.id = #{record.communityId}
         </if>
         <if test="record.orgId != null and record.orgId >0 ">
             AND t_house_property_community.tenant_id = #{record.orgId}
         </if>
-
 
 
         <if test="startTime != null">
@@ -122,10 +132,23 @@
         t1.id,
         t1.user_id AS userId,
         t1.asset_id AS assetId,
+        user_unit.id AS unitId,
+        user_building.id AS buildingId,
+        user_building.issue AS issue,
+        user_house_type.id AS designModelId,
+        user_house_type.area AS area,
+
+        t2.user_id AS targetUserId,
+
         t1.target_asset AS targetAsset,
+        target_unit.id AS targetUnitId,
+        target_building.id AS targetBuildingId,
+        target_building.issue AS targetIssue,
+        target_house_type.id AS targetHouseTypeId,
+        target_house_type.area AS targetArea,
+
         t1.create_time AS createTime,
-        t1.update_time AS updateTime,
-        t2.user_id AS targetUserId
+        t1.update_time AS updateTime
 
     </sql>
 
@@ -135,6 +158,16 @@
         <include refid="Extra_Column_List"/>
         FROM t_house_asset_exchange_request AS t1
         JOIN t_house_asset_exchange_request AS t2 ON t1.asset_id = t2.target_asset AND t1.target_asset=t2.asset_id
+
+        JOIN t_house_asset AS user_asset ON user_asset.id = t1.asset_id
+        JOIN t_house_property_building_unit AS user_unit ON user_unit.id  = user_asset.unit_id
+        JOIN t_house_property_building AS user_building ON user_building.id = user_asset.building_id
+        JOIN t_house_design_model AS user_house_type ON user_house_type.id = user_unit.design_model_id
+
+        JOIN t_house_asset AS target_asset ON target_asset.id = t1.target_asset
+        JOIN t_house_property_building_unit AS target_unit ON target_unit.id  = target_asset.unit_id
+        JOIN t_house_property_building AS target_building ON target_building.id = target_asset.building_id
+        JOIN t_house_design_model AS target_house_type ON target_house_type.id = target_unit.design_model_id
 
         WHERE 1=1
 
@@ -207,39 +240,37 @@
     </delete>
 
 
-
-
     <select id="queryExchangeTargetList" resultType="HouseAssetModel">
         SELECT t_house_asset.*,
 
-        t_house_asset_exchange_request.asset_id  as exchangeRequestId,
-            t_house_property_building.cad_picture    AS cadPicture,
-                t_house_property_building.code           AS buildingCode,
-               t_house_property_building_unit.direction AS direction,
-               t_house_property_building.issue as issue,
+        t_house_asset_exchange_request.asset_id as exchangeRequestId,
+        t_house_property_building.cad_picture AS cadPicture,
+        t_house_property_building.code AS buildingCode,
+        t_house_property_building_unit.direction AS direction,
+        t_house_property_building.issue as issue,
 
-               t_house_property_community.id            AS communityId,
-               t_house_property_community.community     AS communityName,
-               t_house_property_community.address       AS address,
+        t_house_property_community.id AS communityId,
+        t_house_property_community.community AS communityName,
+        t_house_property_community.address AS address,
 
-               t_house_design_model.id                  AS designModelId,
-               t_house_design_model.house_type          AS houseType,
-               t_house_design_model.house_type_picture  AS houseTypePicture,
-               t_house_vr_picture.vr_picture            AS vrPicture,
-               t_house_vr_picture.link                  AS vrLink,
-               t_house_vr_picture.snapshot              AS vrSnapshot,
-               t_house_design_model.area                AS area
+        t_house_design_model.id AS designModelId,
+        t_house_design_model.house_type AS houseType,
+        t_house_design_model.house_type_picture AS houseTypePicture,
+        t_house_vr_picture.vr_picture AS vrPicture,
+        t_house_vr_picture.link AS vrLink,
+        t_house_vr_picture.snapshot AS vrSnapshot,
+        t_house_design_model.area AS area
         FROM t_house_asset_exchange_request
-                          JOIN t_house_asset ON t_house_asset_exchange_request.target_asset  = t_house_asset.id
-                          JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
-                          JOIN t_house_property_community
-                               ON t_house_property_community.id = t_house_property_building.community_id
+        JOIN t_house_asset ON t_house_asset_exchange_request.target_asset = t_house_asset.id
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community
+        ON t_house_property_community.id = t_house_property_building.community_id
 
-                          left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
+        left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
 
-                          left JOIN t_house_design_model
-                                    ON t_house_property_building_unit.design_model_id = t_house_design_model.id
-                          left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
+        left JOIN t_house_design_model
+        ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+        left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
         WHERE 1=1
         <if test="record.id != null and record.id>0 ">
             AND t_house_asset_exchange_request.id =#{record.id}
@@ -269,7 +300,6 @@
         <if test="record.updateTime != null and record.updateTime>0 ">
             AND t_house_asset_exchange_request.update_time =#{record.updateTime}
         </if>
-
 
 
         <if test="record.communityId != null and record.communityId >0 ">
@@ -286,18 +316,18 @@
         t_house_asset_exchange_request.create_time AS createTime,
         t_house_asset_exchange_request.update_time AS updateTime,
 
-        t_house_property_community.address   AS address,
-        t_house_property_community.id        AS communityId,
+        t_house_property_community.address AS address,
+        t_house_property_community.id AS communityId,
         t_house_property_community.community As communityName,
 
-        t_house_property_building.id         As buildingId,
-        t_house_property_building.code       AS buildingCode
+        t_house_property_building.id As buildingId,
+        t_house_property_building.code AS buildingCode
 
         FROM t_house_asset_exchange_request
-                 JOIN t_house_asset ON t_house_asset_exchange_request.asset_id  = t_house_asset.id
-                 JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
-                 JOIN t_house_property_community
-                      ON t_house_property_community.id = t_house_property_building.community_id
+        JOIN t_house_asset ON t_house_asset_exchange_request.asset_id = t_house_asset.id
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community
+        ON t_house_property_community.id = t_house_property_building.community_id
         WHERE 1=1
         <if test="record.id != null and record.id>0 ">
             AND t_house_asset_exchange_request.id =#{record.id}
@@ -329,7 +359,6 @@
         </if>
 
 
-
         <if test="record.communityId != null and record.communityId >0 ">
             AND t_house_property_community.id = #{record.communityId}
         </if>
@@ -337,7 +366,7 @@
         group by t_house_asset_exchange_request.asset_id
     </select>
 
-<!--    查询有谁想换我的房子-->
+    <!--    查询有谁想换我的房子-->
     <select id="queryOptionExchangeRequestList" resultType="HouseAssetExchangeRequestRecord"
             parameterType="HouseAssetExchangeRequestRecord">
         SELECT
@@ -351,12 +380,17 @@
         left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
         left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
 
-        WHERE t_house_asset_exchange_request.target_asset IN (SELECT t_house_user_asset.asset_id FROM t_house_user_asset WHERE t_house_user_asset.user_id=#{record.userId})
-        AND t_house_asset_exchange_request.asset_id NOT IN (SELECT t_house_user_asset.asset_id FROM t_house_user_asset WHERE t_house_user_asset.user_id=#{record.userId})
-        AND t_house_asset_exchange_request.target_asset NOT IN (SELECT t_house_asset_match_log.owner_asset_id FROM t_house_asset_match_log WHERE t_house_asset_match_log.owner_asset_id IN(SELECT t_house_user_asset.asset_id FROM t_house_user_asset WHERE t_house_user_asset.user_id=#{record.userId}))
+        left JOIN t_house_asset AS target_asset on t_house_asset_exchange_request.target_asset=target_asset.id
+        left JOIN t_house_property_building AS target_building on target_asset.building_id=target_building.id
+
+        WHERE t_house_asset_exchange_request.target_asset IN (SELECT t_house_user_asset.asset_id FROM t_house_user_asset
+        WHERE t_house_user_asset.user_id=#{record.userId})
+        AND t_house_asset_exchange_request.asset_id NOT IN (SELECT t_house_user_asset.asset_id FROM t_house_user_asset
+        WHERE t_house_user_asset.user_id=#{record.userId})
+        AND t_house_asset_exchange_request.target_asset NOT IN (SELECT t_house_asset_match_log.owner_asset_id FROM
+        t_house_asset_match_log WHERE t_house_asset_match_log.owner_asset_id IN(SELECT t_house_user_asset.asset_id FROM
+        t_house_user_asset WHERE t_house_user_asset.user_id=#{record.userId}))
     </select>
-
-
 
 
 </mapper>

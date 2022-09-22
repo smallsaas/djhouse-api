@@ -39,8 +39,8 @@ public class UserHouseMenuEndpoint {
                                           @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                           @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                           @RequestParam(name = "search", required = false) String search,
-                                          @RequestParam(name = "enabled", required = false) Integer enabled
-    ) {
+                                          @RequestParam(name = "type",required = false) String type,
+                                          @RequestParam(name = "enabled", required = false) Integer enabled) {
 
 
         if (JWTKit.getUserId() == null) {
@@ -57,6 +57,7 @@ public class UserHouseMenuEndpoint {
 
         HouseMenuRecord record = new HouseMenuRecord();
         record.setEnabled(enabled);
+        record.setType(type);
         List<HouseMenuRecord> houseMenuPage = queryHouseMenuDao.findHouseMenuPage(page, record, null, search, null, null, null);
 
 //        查询当前社区功能状态开启情况
