@@ -24,6 +24,8 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
+import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
 import io.swagger.annotations.Api;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.dao.DuplicateKeyException;
@@ -84,6 +86,8 @@ public class UserAssetExchange {
 
     @Resource
     HouseTenantMenuService houseTenantMenuService;
+
+
 
 
     //    新建或者修改资产交换记录并匹配
@@ -203,6 +207,20 @@ public class UserAssetExchange {
         if (assetId == null || "".equals(assetId)) {
             throw new BusinessException(BusinessCode.BadRequest, "assetId为空");
         }
+
+//        获取换房功能条件
+        HouseMenuRecord record1 = new HouseMenuRecord();
+        record1.setType("exchangeAsset");
+        List<HouseMenuRecord> secondaryMenu = houseTenantMenuService.getSecondaryMenu(userId, record1);
+
+        Map<String,Integer> map = new HashMap<>();
+        for (HouseMenuRecord houseMenuRecord:secondaryMenu){
+            map.put(houseMenuRecord.getComponent(),houseMenuRecord.getEnabled());
+        }
+
+
+
+
         /*
         查询楼栋全部房屋
          */
@@ -212,11 +230,17 @@ public class UserAssetExchange {
         List<HouseAssetRecord> houseAssetRecordList = queryHouseAssetDao.findHouseAssetPage(null, houseAssetRecord, null, null, null,
                 null, null);
 
+
+//        查询交换房子信息
         HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(assetId);
+
+
+        //        查询自己有什么房子
         QueryWrapper<HouseUserAsset> houseAssetQueryWrapper = new QueryWrapper<>();
         houseAssetQueryWrapper.eq(HouseUserAsset.USER_ID,userId);
-
         List<HouseUserAsset> houseUserAssetList = houseUserAssetMapper.selectList(houseAssetQueryWrapper);
+
+
         List<Long> userAssetIds = new ArrayList<>();
         for (HouseUserAsset userAsset : houseUserAssetList) {
             userAssetIds.add(userAsset.getAssetId());
@@ -229,6 +253,8 @@ public class UserAssetExchange {
         exchangeRequestRecord.setUserId(userId);
         exchangeRequestRecord.setAssetId(assetId);
         List<HouseAssetExchangeRequestRecord> exchangeRequestRecordList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null, exchangeRequestRecord, null, null, null, null, null);
+
+
         if (exchangeRequestRecordList != null && exchangeRequestRecordList.size() == 1) {
             List<String> matchedAssetRange = Arrays.asList(exchangeRequestRecordList.get(0).getTargetAssetRange().split(","));
             List<Long> matchedAssetRangeIds = matchedAssetRange.stream().map(Long::valueOf).collect(Collectors.toList());
@@ -268,6 +294,27 @@ public class UserAssetExchange {
                 houseAssetRecordList.get(i).setSameHouseType(true);
             } else {
                 houseAssetRecordList.get(i).setSameHouseType(false);
+            }
+
+            if (map.get("unlimited")!=null &&!map.get("unlimited").equals(1)){
+
+                if (map.get("unitId").equals(1) &&  houseAssetRecordList.get(i).getUnitId().equals(houseAssetModel.getUnitId())){
+                    houseAssetRecordList.get(i).setExchangeAsset(true);
+                }
+
+                if (map.get("houseType").equals(1) &&  houseAssetRecordList.get(i).getDesignModelId().equals(houseAssetModel.getDesignModelId())){
+                    houseAssetRecordList.get(i).setExchangeAsset(true);
+                }
+
+                if (map.get("area").equals(1) &&  houseAssetRecordList.get(i).getArea().equals(houseAssetModel.getArea())){
+                    houseAssetRecordList.get(i).setExchangeAsset(true);
+                }
+
+                if (map.get("issue").equals(1) &&  houseAssetRecordList.get(i).getIssue().equals(houseAssetModel.getIssue())){
+                    houseAssetRecordList.get(i).setExchangeAsset(true);
+                }
+            }else {
+                houseAssetRecordList.get(i).setExchangeAsset(true);
             }
 
             /*
@@ -355,7 +402,20 @@ public class UserAssetExchange {
     @DeleteMapping("/{id}")
     public Tip deleteHouseAssetExchangeRequest(@PathVariable Long id) {
 
-        return SuccessTip.create();
+        Long userId = JWTKit.getUserId();
+        if (userId==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+
+        Integer affect = 0;
+        QueryWrapper<HouseAssetExchangeRequest> exchangeRequestQueryWrapper = new QueryWrapper<>();
+        exchangeRequestQueryWrapper.eq(HouseAssetExchangeRequest.ASSET_ID,id);
+        affect+=houseAssetExchangeRequestMapper.delete(exchangeRequestQueryWrapper);
+
+        QueryWrapper<HouseAssetMatchLog> matchLogQueryWrapper = new QueryWrapper<>();
+        matchLogQueryWrapper.eq(HouseAssetMatchLog.OWNER_ASSET_ID,id).or().eq(HouseAssetMatchLog.MATHCHED_ASSET_ID,id);
+        affect+=houseAssetMatchLogMapper.delete(matchLogQueryWrapper);
+        return SuccessTip.create(affect);
     }
 
     //    获取用户某间房间 换房需求房源数组

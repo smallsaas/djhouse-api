@@ -65,6 +65,7 @@ public class HouseAsset extends Model<HouseAsset> {
     @TableField(exist = false)
     private String communityName;
 
+
     @ApiModelProperty(value = "楼栋编号")
     @TableField(exist = false)
     private String buildingCode;

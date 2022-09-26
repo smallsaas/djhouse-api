@@ -26,4 +26,5 @@ public interface HouseAssetExchangeRequestService extends CRUDHouseAssetExchange
 
 //    添加不喜欢请求
     int addUnlikeAssetExchangeRequest(List<HouseAssetExchangeRequest> assetExchangeRequest, List<HouseUnlikeLog> houseUnlikeLogList);
+
 }

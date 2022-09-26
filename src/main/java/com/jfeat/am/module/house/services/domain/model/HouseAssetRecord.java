@@ -40,9 +40,19 @@ public class HouseAssetRecord extends HouseAsset {
 
     private String slideshow;
 
+    private Boolean isExchangeAsset;
+
+    public Boolean getExchangeAsset() {
+        return isExchangeAsset;
+    }
+
+    public void setExchangeAsset(Boolean exchangeAsset) {
+        isExchangeAsset = exchangeAsset;
+    }
+
     /*
-    是否是自己的
-     */
+        是否是自己的
+         */
     private Boolean self;
 
     /*
