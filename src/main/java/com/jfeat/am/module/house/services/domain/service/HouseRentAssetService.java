@@ -11,6 +11,10 @@ public interface HouseRentAssetService extends CRUDHouseRentAssetService {
 //    用户上架出租自己房子
     int createUserRentAsset(HouseRentAsset entity);
 
+    int createUserRentAssetNotAssetId(HouseRentAsset entity);
+
     int updateUserRentAsset(HouseRentAsset entity);
+
+    int updateUserRentAssetNotAssetId(HouseRentAsset entity);
 
 }

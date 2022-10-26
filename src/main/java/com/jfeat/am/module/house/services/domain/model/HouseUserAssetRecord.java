@@ -3,6 +3,7 @@ package com.jfeat.am.module.house.services.domain.model;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -11,6 +12,10 @@ import java.util.List;
 public class HouseUserAssetRecord extends HouseUserAsset {
 
     private Boolean isExistRent;
+
+    private BigDecimal rentPrice;
+
+    private Integer rentStatus;
 
     private Boolean isExistTrust;
 
@@ -47,6 +52,22 @@ public class HouseUserAssetRecord extends HouseUserAsset {
 
     private List<HouseUserNote> userNoteList;
 
+
+    public BigDecimal getRentPrice() {
+        return rentPrice;
+    }
+
+    public void setRentPrice(BigDecimal rentPrice) {
+        this.rentPrice = rentPrice;
+    }
+
+    public Integer getRentStatus() {
+        return rentStatus;
+    }
+
+    public void setRentStatus(Integer rentStatus) {
+        this.rentStatus = rentStatus;
+    }
 
     public String getLandlordType() {
         return LandlordType;

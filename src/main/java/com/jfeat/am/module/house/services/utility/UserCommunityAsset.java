@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.services.utility;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
@@ -10,6 +11,10 @@ import com.jfeat.am.module.house.services.domain.model.HousePropertyBuildingReco
 import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseUserCommunityStatusRecord;
 
+import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyCommunityMapper;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserCommunityStatusMapper;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyCommunity;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserCommunityStatus;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +34,12 @@ public class UserCommunityAsset {
 
     @Resource
     QueryHouseAssetDao queryHouseAssetDao;
+
+    @Resource
+    HouseUserCommunityStatusMapper houseUserCommunityStatusMapper;
+
+    @Resource
+    HousePropertyCommunityMapper housePropertyCommunityMapper;
 
 //    过滤不是当前小区的房屋
     public List<HouseUserAssetRecord> getCommunityAsset(Long userId, List<HouseUserAssetRecord> list){
@@ -66,6 +77,21 @@ public class UserCommunityAsset {
             communityId = communityStatusRecordList.get(0).getCommunityId();
         }
         return communityId;
+    }
+
+
+    public HousePropertyCommunity getUserCommunityInfo(Long userId){
+        QueryWrapper<HouseUserCommunityStatus> houseUserCommunityStatusQueryWrapper = new QueryWrapper<>();
+        houseUserCommunityStatusQueryWrapper.eq(HouseUserCommunityStatus.USER_ID,userId);
+        HouseUserCommunityStatus houseUserCommunityStatus = houseUserCommunityStatusMapper.selectOne(houseUserCommunityStatusQueryWrapper);
+
+        if (houseUserCommunityStatus==null){
+            throw new BusinessException(BusinessCode.CodeBase,"未找到小区信息");
+        }
+        Long communityId = houseUserCommunityStatus.getCommunityId();
+
+        HousePropertyCommunity housePropertyCommunity =  housePropertyCommunityMapper.selectById(communityId);
+        return housePropertyCommunity;
     }
 
 //    返回当前小区的assetId 列表

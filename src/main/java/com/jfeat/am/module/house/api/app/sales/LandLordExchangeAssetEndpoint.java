@@ -146,6 +146,23 @@ public class LandLordExchangeAssetEndpoint {
 
         HouseAssetExchangeRequestRecord record = new HouseAssetExchangeRequestRecord();
         record.setOrgId(orgId);
+        if (search!=null && search.contains("-")){
+            String[] strings = search.split("-");
+            for (int i=0;i<strings.length;i++){
+                if (!strings[i].equals("")){
+                    if (i==0){
+                        record.setBuildingCode(strings[0]);
+                        record.setTargetBuildingCode(strings[0]);
+                    }
+                    if (i==1){
+                        record.setNumber(strings[1]);
+                        record.setTargetHouseNumber(strings[1]);
+//                        record.set(strings[1]);
+                    }
+                }
+            }
+            search = null;
+        }
 
         List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestList = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(page, record, null, search, null, null, null);
 
@@ -268,6 +285,9 @@ public class LandLordExchangeAssetEndpoint {
         page.setRecords(recordList);
         return SuccessTip.create(page);
     }
+
+
+
 
 
 }

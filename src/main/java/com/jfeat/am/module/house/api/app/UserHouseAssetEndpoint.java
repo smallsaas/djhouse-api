@@ -1,21 +1,16 @@
 package com.jfeat.am.module.house.api.app;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.core.model.EndUserTypeSetting;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
-import com.jfeat.am.module.house.services.domain.service.EndpointUserService;
-import com.jfeat.am.module.house.services.domain.service.HouseAssetComplaintService;
-import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
-import com.jfeat.am.module.house.services.domain.service.HouseUserCommunityStatusService;
+import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseUserAssetModel;
-import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMapper;
-import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMatchLogMapper;
-import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyCommunityMapper;
-import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
+import com.jfeat.am.module.house.services.gen.persistence.dao.*;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.am.module.house.services.utility.TenantUtility;
 import com.jfeat.am.module.house.services.utility.UserAccountUtility;
@@ -36,6 +31,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -113,6 +109,13 @@ public class UserHouseAssetEndpoint {
 
     @Resource
     UserAccountUtility userAccountUtility;
+
+    @Resource
+    HousePropertyBuildingMapper housePropertyBuildingMapper;
+
+
+    @Resource
+    HouseAssetExchangeRequestService houseAssetExchangeRequestService;
 
     @GetMapping("/tenant")
     public Tip getTenantList(Page<Tenant> page,
@@ -219,9 +222,12 @@ public class UserHouseAssetEndpoint {
         HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
         List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, null, null, null, null, null);
 
+
+
         for (int i = 0; i < houseAssetList.size(); i++) {
 //            判断是否有人居住
             for (int j = 0; j < recordList.size(); j++) {
+
                 if (recordList.get(j).getAssetId().equals(houseAssetList.get(i).getId())) {
                     houseAssetList.get(i).setExistUser(true);
 
@@ -241,16 +247,38 @@ public class UserHouseAssetEndpoint {
                         houseAssetList.get(i).setMyselfAsset(true);
                     }
 
+                    /*
+                    是否二房东
+                     */
                     if (recordList.get(j).getUserType().equals(HouseUserAsset.USER_TYPE_PRINCIPAL)) {
                         houseAssetList.get(i).setPrincipal(true);
                     }
+
+                    if (recordList.get(j).getUnlike().equals(HouseUserAsset.UNLIKE_STATUS_UNLIKE)){
+                        houseAssetList.get(i).setUnlikeStatus(true);
+                    }
                 }
-
-
             }
         }
 
-        return SuccessTip.create(houseAssetList);
+        HousePropertyBuilding housePropertyBuilding = housePropertyBuildingMapper.selectById(buildingId);
+        if (housePropertyBuilding.getUnits()<=0){
+            throw new BusinessException(BusinessCode.CodeBase,"此小区没有房子");
+        }
+
+        List<BigDecimal> unitAreas = new ArrayList<>();
+        for (int i = 0; i < housePropertyBuilding.getUnits(); i++) {
+            if (houseAssetList.get(i).getArea() != null) {
+                unitAreas.add(houseAssetList.get(i).getRealArea());
+            }
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("header", unitAreas);
+        jsonObject.put("data", houseAssetList);
+
+
+        return SuccessTip.create(jsonObject);
     }
 
 
@@ -364,8 +392,10 @@ public class UserHouseAssetEndpoint {
 
 //            出租状态
             for (HouseRentAssetRecord record : houseRentAssetRecordList) {
-                if (record.getAssetId().equals(houseUserAssets.get(i).getAssetId())) {
+                if (record.getAssetId()!=null && record.getAssetId().equals(houseUserAssets.get(i).getAssetId())) {
                     houseUserAssets.get(i).setExistRent(true);
+                    houseUserAssets.get(i).setRentPrice(record.getPrice());
+                    houseUserAssets.get(i).setRentStatus(record.getStatus());
                 }
             }
 
@@ -469,6 +499,11 @@ public class UserHouseAssetEndpoint {
             } catch (DuplicateKeyException e) {
                 throw new BusinessException(BusinessCode.DuplicateKey);
             }
+
+//            进行同层添加
+            houseAssetExchangeRequestService.addSameFloorExchangeRequest(JWTKit.getUserId());
+
+
             return SuccessTip.create(affected);
         } else {
             /*
@@ -499,6 +534,11 @@ public class UserHouseAssetEndpoint {
                             throw new BusinessException(BusinessCode.DuplicateKey);
                         }
                     }
+
+                    //            进行同层添加
+                    houseAssetExchangeRequestService.addSameFloorExchangeRequest(JWTKit.getUserId());
+
+
                     return SuccessTip.create(affected);
                 } else {
                     throw new BusinessException(BusinessCode.CodeBase, "该资产已被确认");

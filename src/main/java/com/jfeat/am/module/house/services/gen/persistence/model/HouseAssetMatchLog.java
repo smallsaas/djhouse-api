@@ -48,6 +48,9 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
     @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
+    @ApiModelProperty(value = "1已联系 2-未设置 3-完成")
+    private Integer status;
+
     private Long orgId;
 
     @ApiModelProperty(value = "物主名字")
@@ -95,6 +98,14 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
 
     @TableField(exist = false)
     private String matchedRealName;
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
     public String getOwnerRealName() {
         return ownerRealName;
@@ -281,6 +292,14 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
     public static final String MATHCHED_ASSET_ID = "mathched_asset_id";
 
     public static final String CREATE_TIME = "create_time";
+
+    public static final String STATUS = "status";
+
+    public static final Integer STATUS_CONTACT =2;
+
+    public static final Integer STATUS_COMPLETE =3;
+
+    public static final Integer STATUS_NOT_SET =1;
 
     @Override
     protected Serializable pkVal() {

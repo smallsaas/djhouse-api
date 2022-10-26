@@ -42,6 +42,32 @@ public class HouseAssetRecord extends HouseAsset {
 
     private Boolean isExchangeAsset;
 
+    /*
+    不喜欢状态
+     */
+    private Boolean unlikeStatus;
+
+    /**
+     * 别人选了我的房状态
+     */
+    private Boolean optionalExchangeStatus;
+
+    public Boolean getUnlikeStatus() {
+        return unlikeStatus;
+    }
+
+    public void setUnlikeStatus(Boolean unlikeStatus) {
+        this.unlikeStatus = unlikeStatus;
+    }
+
+    public Boolean getOptionalExchangeStatus() {
+        return optionalExchangeStatus;
+    }
+
+    public void setOptionalExchangeStatus(Boolean optionalExchangeStatus) {
+        this.optionalExchangeStatus = optionalExchangeStatus;
+    }
+
     public Boolean getExchangeAsset() {
         return isExchangeAsset;
     }

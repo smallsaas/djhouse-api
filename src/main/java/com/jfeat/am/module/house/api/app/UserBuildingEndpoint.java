@@ -270,8 +270,10 @@ public class UserBuildingEndpoint {
             }
         }
 
+        if (RedisKit.isSanity()){
+            stringRedisTemplate.opsForValue().set(key,unitJson.toJSONString(),24, TimeUnit.HOURS);
+        }
 
-        stringRedisTemplate.opsForValue().set(key,unitJson.toJSONString(),24, TimeUnit.HOURS);
         return SuccessTip.create(unitJson);
     }
 }

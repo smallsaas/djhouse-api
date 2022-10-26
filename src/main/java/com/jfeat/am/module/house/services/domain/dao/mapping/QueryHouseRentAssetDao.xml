@@ -21,6 +21,12 @@
         t_house_rent_asset.rent_time AS rentTime,
         t_house_rent_asset.shelves_time AS shelvesTime,
         t_house_rent_asset.rate AS rate,
+        t_house_rent_asset.house_number AS houseNumber,
+ t_house_rent_asset.floor AS floor,
+ t_house_rent_asset.toward AS toward,
+ t_house_rent_asset.building_code AS buildingCode,
+ t_house_rent_asset.community_name AS communityName,
+ t_house_rent_asset.configuration_status AS configurationStatus,
 
         t_end_user.name As serverName,
         t_end_user.phone AS serverPhone,
@@ -141,7 +147,7 @@
         <result column="community_id" property="communityId"/>
         <result column="house_type_id" property="houseTypeId"/>
         <result column="landlord_id" property="landlordId"/>
-        <result column="houseTypeArea" property="area"/>
+        <result column="area" property="area"/>
         <result column="introduce_picture" property="introducePicture"/>
         <result column="server_id" property="serverId"/>
         <result column="cover" property="cover"/>
@@ -154,6 +160,14 @@
         <result column="rent_time" property="rentTime"/>
         <result column="shelves_time" property="shelvesTime"/>
         <result column="rate" property="rate"/>
+
+        <result column="house_number" property="houseNumber"/>
+        <result column="floor" property="floor"/>
+        <result column="toward" property="toward"/>
+        <result column="building_code" property="buildingCode"/>
+        <result column="community_name" property="communityName"/>
+        <result column="configuration_status" property="configurationStatus"/>
+
         <association property="houseAssetModel"
                      javaType="com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel">
             <id column="assetId" property="id"/>
@@ -185,10 +199,7 @@
     </resultMap>
 
     <sql id="houseRentSql">
-        t_house_rent_asset
-        .
-        *
-        ,
+        t_house_rent_asset.*,
         t_house_asset.id AS assetId,
         t_house_asset.building_id AS buildingId,
         t_house_asset.unit_id AS unitId,
@@ -225,9 +236,9 @@
 
 
         FROM t_house_rent_asset
-        join t_house_asset on t_house_rent_asset.asset_id=t_house_asset.id
-        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
-        JOIN t_house_property_community ON t_house_property_community.id = t_house_property_building.community_id
+        left join t_house_asset on t_house_rent_asset.asset_id=t_house_asset.id
+        left JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        left JOIN t_house_property_community ON t_house_property_community.id = t_house_property_building.community_id
         left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
         left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
         left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
@@ -320,6 +331,7 @@
         OR t_house_rent_asset.name LIKE CONCAT('%',#{search},'%')
     </if>
     -->
+        ORDER BY t_house_rent_asset.rent_status ASC ,t_house_rent_asset.rent_time DESC
     </select>
 
 

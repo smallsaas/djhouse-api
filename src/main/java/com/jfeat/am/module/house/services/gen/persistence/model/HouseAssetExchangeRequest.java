@@ -47,6 +47,9 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
     @ApiModelProperty(value = "更新时间")
     private Date updateTime;
 
+    @ApiModelProperty(value = "是否自动生成 0-不是 1-是")
+    private Boolean autoGenerateStatus;
+
 
     @ApiModelProperty(value = "目标资产范围")
     @TableField(exist = false)
@@ -134,6 +137,14 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
     @TableField(exist = false)
     private String userAvatar;
 
+
+    public Boolean getAutoGenerateStatus() {
+        return autoGenerateStatus;
+    }
+
+    public void setAutoGenerateStatus(Boolean autoGenerateStatus) {
+        this.autoGenerateStatus = autoGenerateStatus;
+    }
 
     public Long getBuildingId() {
         return buildingId;
@@ -392,6 +403,11 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
     public static final String CREATE_TIME = "create_time";
 
     public static final String UPDATE_TIME = "update_time";
+
+
+    public static final Boolean AUTO_GENERATE_STATUS_YES = true;
+
+    public static final Boolean AUTO_GENERATE_STATUS_NO = false;
 
     @Override
     protected Serializable pkVal() {

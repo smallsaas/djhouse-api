@@ -68,15 +68,20 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
 
     @Override
     public JSONObject parseMatchAssetData(List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecordList) {
+
+//        将交换请求分类
+        //        {"assetId":{"buildingId":{"unitId":["交换请求对象"]}}}
+
         JSONObject resultJson = new JSONObject();
         for (int i = 0; i < houseAssetExchangeRequestRecordList.size(); i++) {
-            JSONObject matchJson = new JSONObject();
             JSONObject jsonObject = new JSONObject();
 
             List<HouseAsset> targetList = houseAssetExchangeRequestRecordList.get(i).getTargetAssetList();
             if (targetList==null || targetList.size()<=0){
                 continue;
             }
+
+
             for (HouseAsset matchHouseAsset : targetList) {
 
                 if (matchHouseAsset != null) {
@@ -86,7 +91,9 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                         //                    查找是否存在单元
                         if (buildingJson.containsKey(matchHouseAsset.getUnitId().toString())){
                             JSONArray unit = (JSONArray) buildingJson.get(matchHouseAsset.getUnitId().toString());
-                            unit.add(matchHouseAsset.getHouseNumber());
+
+//                            单元
+                            unit.add(matchHouseAsset);
                         }else {
                             JSONArray unit = new JSONArray();
                             unit.add(matchHouseAsset.getHouseNumber());
@@ -99,7 +106,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                         buildingJson.put(matchHouseAsset.getUnitId().toString(),unit);
                         jsonObject.put(matchHouseAsset.getBuildingCode(),buildingJson);
                     }
-//                    houseAssetList.add(matchHouseAsset);
+
                 }
             }
             resultJson.put(houseAssetExchangeRequestRecordList.get(i).getAssetId().toString(),jsonObject);
@@ -136,6 +143,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
             }
 
             Iterator buildingIterator = buildings.entrySet().iterator();
+
             while (buildingIterator.hasNext()) {
 
                 Map.Entry uniteEntry = (Map.Entry) buildingIterator.next();

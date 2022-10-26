@@ -110,6 +110,9 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private Long unitId;
 
+    @TableField(exist = false)
+    private Long houseTypeId;
+
     @ApiModelProperty(value = "户型")
     @TableField(exist = false)
     private String houseType;
@@ -170,6 +173,14 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private Integer assetNumber;
 
+
+    public Long getHouseTypeId() {
+        return houseTypeId;
+    }
+
+    public void setHouseTypeId(Long houseTypeId) {
+        this.houseTypeId = houseTypeId;
+    }
 
     public Boolean getUnlikeStatus() {
         return unlikeStatus;

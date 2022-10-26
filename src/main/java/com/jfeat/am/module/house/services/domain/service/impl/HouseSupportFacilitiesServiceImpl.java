@@ -33,14 +33,17 @@ public class HouseSupportFacilitiesServiceImpl extends CRUDHouseSupportFacilitie
 
 
     @Override
-    public List<HouseSupportFacilitiesTypeRecord> getRentHouseSupportFacilitiesStatus(Long assetId, List<HouseSupportFacilitiesTypeRecord> list) {
-        if (list==null || list.size()<=0 || assetId==null){
+    public List<HouseSupportFacilitiesTypeRecord> getRentHouseSupportFacilitiesStatus(Long rentId, List<HouseSupportFacilitiesTypeRecord> list) {
+        if (list==null || list.size()<=0 || rentId==null){
             return null;
         }
         HouseRentSupportFacilitiesRecord rentSupportFacilitiesRecord = new HouseRentSupportFacilitiesRecord();
-        rentSupportFacilitiesRecord.setAssetId(assetId);
+
+        rentSupportFacilitiesRecord.setRentId(rentId);
+
         List<HouseRentSupportFacilitiesRecord> rentSupportFacilitiesRecordList = queryHouseRentSupportFacilitiesDao.findHouseRentSupportFacilitiesPage(null,rentSupportFacilitiesRecord,null,null,null,null,null);
         if (rentSupportFacilitiesRecordList!=null && rentSupportFacilitiesRecordList.size()>0){
+
             for (HouseSupportFacilitiesTypeRecord typeRecord:list){
                 if (typeRecord.getItems()!=null && typeRecord.getItems().size()>0){
 

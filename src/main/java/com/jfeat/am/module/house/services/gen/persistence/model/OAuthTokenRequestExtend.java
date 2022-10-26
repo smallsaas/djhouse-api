@@ -5,6 +5,17 @@ import com.jfeat.users.weChatMiniprogram.services.domain.model.wx.OAuthTokenRequ
 public class OAuthTokenRequestExtend extends OAuthTokenRequest {
     private Long communityId;
 
+    private Boolean isChangeCommunity;
+
+
+    public Boolean getChangeCommunity() {
+        return isChangeCommunity;
+    }
+
+    public void setChangeCommunity(Boolean changeCommunity) {
+        isChangeCommunity = changeCommunity;
+    }
+
     public Long getCommunityId() {
         return communityId;
     }

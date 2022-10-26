@@ -8,6 +8,7 @@
         t_house_asset_match_log.matched_user_id AS matchedUserId,
         t_house_asset_match_log.mathched_asset_id AS mathchedAssetId,
         t_house_asset_match_log.create_time AS createTime,
+        t_house_asset_match_log.status,
 
         asset1.house_number AS ownerNumber,
         building1.code AS ownerBuilding,
@@ -128,7 +129,10 @@
             AND (
             t_end_user1.name LIKE CONCAT('%',#{search},'%')
             OR t_end_user1.phone LIKE CONCAT('%',#{search},'%')
+            OR t_end_user1.real_name LIKE CONCAT('%',#{search},'%')
+
             OR t_end_user2.name LIKE CONCAT('%',#{search},'%')
+            OR t_end_user2.real_name LIKE CONCAT('%',#{search},'%')
             OR t_end_user2.phone LIKE CONCAT('%',#{search},'%')
             OR asset1.house_number LIKE CONCAT('%',#{search},'%')
             OR asset2.house_number LIKE CONCAT('%',#{search},'%')
@@ -136,7 +140,7 @@
             OR building1.code LIKE CONCAT('%',#{search},'%')
             )
         </if>
-        ORDER BY t_house_asset_match_log.create_time DESC,t_house_asset_match_log.owner_user_id
+        ORDER BY t_house_asset_match_log.status ASC,t_house_asset_match_log.create_time DESC,t_house_asset_match_log.owner_user_id
     </select>
 
 

@@ -13,6 +13,7 @@ import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyCommu
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyCommunity;
 import com.jfeat.am.module.house.services.utility.Authentication;
 import com.jfeat.am.module.house.services.utility.RedisScript;
+import com.jfeat.am.module.house.services.utility.TenantUtility;
 import com.jfeat.am.uaas.tenant.services.gen.persistence.dao.TenantMapper;
 import com.jfeat.am.uaas.tenant.services.gen.persistence.model.Tenant;
 import com.jfeat.crud.base.exception.BusinessCode;
@@ -53,6 +54,9 @@ public class UserCommunityManageEndpoint {
 
     @Resource
     RedisScript redisScript;
+
+    @Resource
+    TenantUtility tenantUtility;
 
 
 //    小区
@@ -247,7 +251,7 @@ public class UserCommunityManageEndpoint {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
-        Long tenantId = JWTKit.getTenantOrgId();
+        Long tenantId = tenantUtility.getCurrentOrgId(JWTKit.getUserId());
        if (tenantId!=null){
            QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
            queryWrapper.eq(Tenant.ORG_ID,tenantId);

@@ -92,6 +92,21 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     @ApiModelProperty(value = "评分 0-10")
     private Integer rate;
 
+    @ApiModelProperty(value = "房间号")
+    private String houseNumber;
+
+    @ApiModelProperty(value = "楼层")
+    private Integer floor;
+
+    @ApiModelProperty(value = "朝向")
+    private String toward;
+
+    @ApiModelProperty("楼栋号")
+    private String buildingCode;
+
+    @ApiModelProperty("小区名")
+    private String communityName;
+
     @TableField(exist = false)
     private Boolean subscribeStatus;
 
@@ -110,10 +125,20 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     @TableField(exist = false)
     private String serverAvatar;
 
+    private Boolean configurationStatus;
+
     @ApiModelProperty(value = "出租家居列表清单")
     @TableField(exist = false)
     private List<HouseRentSupportFacilitiesRecord> supportFacilitiesList;
 
+
+    public Boolean getConfigurationStatus() {
+        return configurationStatus;
+    }
+
+    public void setConfigurationStatus(Boolean configurationStatus) {
+        this.configurationStatus = configurationStatus;
+    }
 
     public Integer getStatus() {
         return status;
@@ -121,6 +146,46 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getHouseNumber() {
+        return houseNumber;
+    }
+
+    public void setHouseNumber(String houseNumber) {
+        this.houseNumber = houseNumber;
+    }
+
+    public Integer getFloor() {
+        return floor;
+    }
+
+    public void setFloor(Integer floor) {
+        this.floor = floor;
+    }
+
+    public String getToward() {
+        return toward;
+    }
+
+    public void setToward(String toward) {
+        this.toward = toward;
+    }
+
+    public String getBuildingCode() {
+        return buildingCode;
+    }
+
+    public void setBuildingCode(String buildingCode) {
+        this.buildingCode = buildingCode;
+    }
+
+    public String getCommunityName() {
+        return communityName;
+    }
+
+    public void setCommunityName(String communityName) {
+        this.communityName = communityName;
     }
 
     public Boolean getSubscribeStatus() {
@@ -374,6 +439,20 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     public static final String RENT_TIME = "rent_time";
 
     public static final String SHELVES_TIME = "shelves_time";
+
+    public static final String RATE = "rate";
+
+    public static final String HOUSE_NUMBER = "house_number";
+
+    public static final String FLOOR = "floor";
+
+    public static final String TOWARD = "toward";
+
+    public static final String BUILDING_CODE = "building_code";
+
+    public static final String COMMUNITY_NAME = "community_name";
+
+    public static final String CONFIGURATION_STATUS = "configuration_status";
 
     public static final Integer RENT_STATUS_SHELVES = 2;
 

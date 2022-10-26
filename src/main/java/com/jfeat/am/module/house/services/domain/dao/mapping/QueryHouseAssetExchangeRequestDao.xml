@@ -118,11 +118,32 @@
         <if test="endTime != null">
             <![CDATA[AND t_house_asset_exchange_request.end_time <= DATE(#{endTime}]]>
         </if>
-        <!--
-    <if test="search != null and search != ''">
-        OR t_house_asset_exchange_request.name LIKE CONCAT('%',#{search},'%')
-    </if>
-    -->
+
+        --         额外搜索
+        <if test="record.buildingCode!=null and record.buildingCode!='' and record.number!=null and record.number!='' and record.targetBuildingCode!=null and record.targetBuildingCode!='' and record.targetHouseNumber!=null and record.targetHouseNumber!=''">
+            and ((t_house_property_building.code  LIKE CONCAT('%',#{record.buildingCode},'%')and t_house_asset.house_number LIKE CONCAT('%',#{record.number},'%'))
+            OR (target_building.code LIKE CONCAT('%',#{record.targetBuildingCode},'%')
+            and   target_asset.house_number LIKE CONCAT('%',#{record.targetHouseNumber},'%'))
+            )
+
+        </if>
+
+
+        <if test="search != null and search != ''">
+            AND (
+            t_end_user.name LIKE CONCAT('%',#{search},'%')
+            OR t_end_user.phone LIKE CONCAT('%',#{search},'%')
+            OR t_end_user.real_name LIKE CONCAT('%',#{search},'%')
+
+            OR t_house_asset.house_number LIKE CONCAT('%',#{search},'%')
+
+            OR target_asset.house_number LIKE CONCAT('%',#{search},'%')
+
+            OR t_house_property_building.code LIKE CONCAT('%',#{search},'%')
+            OR target_building.code LIKE CONCAT('%',#{search},'%')
+            )
+        </if>
+
         ORDER BY t_house_asset_exchange_request.update_time DESC
         , t_house_asset_exchange_request.create_time DESC
     </select>
@@ -201,11 +222,11 @@
 
     <!--    批量添加匹配需求-->
     <insert id="batchAddExchangeRequest" parameterType="java.util.List">
-        insert into t_house_asset_exchange_request
-        (user_id,asset_id,target_asset)
+        insert ignore into  t_house_asset_exchange_request
+        (user_id,asset_id,target_asset,auto_generate_status)
         values
         <foreach collection="exchangeRequestList" item="item" separator=",">
-            (#{item.userId}, #{item.assetId}, #{item.targetAsset})
+            (#{item.userId}, #{item.assetId}, #{item.targetAsset},#{item.autoGenerateStatus})
         </foreach>
     </insert>
 

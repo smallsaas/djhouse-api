@@ -29,6 +29,7 @@
         t_house_property_building_unit.real_area AS realArea,
 
         t_house_design_model.area AS unitArea,
+        t_house_design_model.id AS houseTypeId,
         t_house_design_model.house_type AS houseType,
        t_house_design_model.house_type_picture AS houseTypePicture,
 
@@ -109,6 +110,10 @@
 
         <if test="record.communityId != null and record.communityId>0 ">
             AND t_house_property_community.id = #{record.communityId}
+        </if>
+
+        <if test="record.buildingId != null and record.buildingId>0 ">
+            AND t_house_property_building.id = #{record.buildingId}
         </if>
 
 
@@ -423,6 +428,8 @@
         IF(t_house_rent_asset.server_id IS NOT NULL,3,IF(t_house_rent_asset.`status`=1,1,1)
         ))),t_house_user_asset.create_time desc
     </select>
+
+
 
 
 

@@ -5,5 +5,9 @@ import com.jfeat.am.module.house.services.gen.crud.service.CRUDHouseAssetMatchLo
 /**
  * Created by vincent on 2017/10/19.
  */
-public interface HouseAssetMatchLogService extends CRUDHouseAssetMatchLogService{
-    }
+public interface HouseAssetMatchLogService extends CRUDHouseAssetMatchLogService {
+
+    Integer setMatchLogStatusToComplete(Long id);
+
+    Integer cancelMatchLogStatus(Long id);
+}

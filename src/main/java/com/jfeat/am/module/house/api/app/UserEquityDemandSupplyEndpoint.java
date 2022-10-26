@@ -127,8 +127,10 @@ public class UserEquityDemandSupplyEndpoint {
             houseEquityDemandSupply.setUserId(null);
             houseEquityDemandSupply.setUsername(null);
             String number = houseEquityDemandSupply.getPhoneNumber();
+            if (number!=null&&number.length()>8){
+                houseEquityDemandSupply.setPhoneNumber(number.substring(0, 3).concat("********").concat(number.substring(number.length() - 1, number.length())));
+            }
 
-            houseEquityDemandSupply.setPhoneNumber(number.substring(0, 3).concat("********").concat(number.substring(number.length() - 1, number.length())));
             houseEquityDemandSupply.setUserAvatar(null);
         }
         page.setRecords(houseEquityDemandSupplyPage);

@@ -5,7 +5,7 @@
         t_house_rent_support_facilities
         .
         id
-        , t_house_rent_support_facilities.facilities_id AS facilitiesId, t_house_rent_support_facilities.asset_id AS assetId
+        , t_house_rent_support_facilities.facilities_id AS facilitiesId, t_house_rent_support_facilities.rent_id AS rentId
     </sql>
 
 
@@ -39,8 +39,8 @@
         </if>
 
 
-        <if test="record.assetId != null and record.assetId>0 ">
-            AND t_house_rent_support_facilities.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+        <if test="record.rentId != null and record.rentId>0 ">
+            AND t_house_rent_support_facilities.rent_id = #{record.rentId}
         </if>
 
         <if test="startTime != null">
@@ -59,10 +59,10 @@
 <!--    批量插入-->
     <insert id="batchInsertHouseRentSupportFacilities">
         insert into t_house_rent_support_facilities
-        (t_house_rent_support_facilities.facilities_id, t_house_rent_support_facilities.asset_id)
+        (t_house_rent_support_facilities.facilities_id, t_house_rent_support_facilities.rent_id)
         values
         <foreach collection ="rentSupportFacilities" item="item" separator =",">
-            ( #{item.facilitiesId}, #{item.assetId})
+            ( #{item.facilitiesId}, #{item.rentId})
         </foreach >
     </insert>
 </mapper>

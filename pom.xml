@@ -46,29 +46,6 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>lc_low_main_page</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>lc_modal_item_basic_o</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>lc_modal_item_basic</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>lc_low_auto_main</artifactId>
-            <version>1.0.0</version>
-        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -120,11 +97,11 @@
             <version>0.0.1</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.jfeat</groupId>-->
-<!--            <artifactId>banner-service</artifactId>-->
-<!--            <version>1.2.0</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>banner-service</artifactId>
+            <version>1.2.0</version>
+        </dependency>
 
 <!--        Excel导入导出-->
         <dependency>
@@ -166,7 +143,18 @@
             <version>1.2.0</version>
         </dependency>
 
+<!--&lt;!&ndash;        代表事项&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>com.jfeat</groupId>-->
+<!--            <artifactId>user-task</artifactId>-->
+<!--            <version>1.0.0</version>-->
+<!--        </dependency>-->
 
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>rss</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
     </dependencies>
 

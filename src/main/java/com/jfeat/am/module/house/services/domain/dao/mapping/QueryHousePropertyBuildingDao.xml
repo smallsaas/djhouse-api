@@ -56,7 +56,7 @@
 
 
         <if test="record.communityId != null and record.communityId>0 ">
-            AND t_house_property_building.community_id LIKE CONCAT('%',#{record.communityId},'%')
+            AND t_house_property_building.community_id =#{record.communityId}
         </if>
         <if test="record.area != null and record.area!= ''">
             AND t_house_property_building.area LIKE CONCAT('%',#{record.area},'%')
