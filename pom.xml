@@ -143,6 +143,17 @@
             <version>1.2.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>user-kafka</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
 <!--&lt;!&ndash;        代表事项&ndash;&gt;-->
 <!--        <dependency>-->
 <!--            <groupId>com.jfeat</groupId>-->
@@ -153,6 +164,12 @@
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>rss</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>kafka-email</artifactId>
             <version>1.0.0</version>
         </dependency>
 

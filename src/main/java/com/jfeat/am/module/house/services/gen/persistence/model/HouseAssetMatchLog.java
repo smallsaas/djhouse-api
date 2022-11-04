@@ -62,6 +62,9 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
     private String ownerPhone;
 
     @TableField(exist = false)
+    private String ownerEmail;
+
+    @TableField(exist = false)
     private String ownerAvatar;
 
     @TableField(exist = false)
@@ -85,6 +88,9 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
     private String matchedPhone;
 
     @TableField(exist = false)
+    private String matchedEmail;
+
+    @TableField(exist = false)
     private String matchedAvatar;
 
     @TableField(exist = false)
@@ -98,6 +104,22 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
 
     @TableField(exist = false)
     private String matchedRealName;
+
+    public String getOwnerEmail() {
+        return ownerEmail;
+    }
+
+    public void setOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
+    }
+
+    public String getMatchedEmail() {
+        return matchedEmail;
+    }
+
+    public void setMatchedEmail(String matchedEmail) {
+        this.matchedEmail = matchedEmail;
+    }
 
     public Integer getStatus() {
         return status;

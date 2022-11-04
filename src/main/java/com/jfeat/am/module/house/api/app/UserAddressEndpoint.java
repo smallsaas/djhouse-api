@@ -14,8 +14,10 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.module.kafka.services.domain.service.KafkaEmailProductService;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
+
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -33,6 +35,11 @@ public class UserAddressEndpoint {
 
     @Resource
     QueryHouseUserAssetDao queryHouseUserAssetDao;
+
+
+    @Resource
+    KafkaEmailProductService kafkaEmailProductService;
+
 
 
 
@@ -170,5 +177,11 @@ public class UserAddressEndpoint {
         page.setRecords(houseUserAddressPage);
 
         return SuccessTip.create(page);
+    }
+
+    @GetMapping("/test")
+    public SuccessTip test(){
+
+        return SuccessTip.create();
     }
 }

@@ -93,7 +93,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
                             JSONArray unit = (JSONArray) buildingJson.get(matchHouseAsset.getUnitId().toString());
 
 //                            单元
-                            unit.add(matchHouseAsset);
+                            unit.add(matchHouseAsset.getHouseNumber());
                         }else {
                             JSONArray unit = new JSONArray();
                             unit.add(matchHouseAsset.getHouseNumber());

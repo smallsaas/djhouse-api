@@ -11,6 +11,7 @@ import java.util.List;
  */
 public class HouseAssetExchangeRequestRecord extends HouseAssetExchangeRequest {
 
+    private List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecordList;
 
     private Long targetBuildingId;
 
@@ -26,12 +27,62 @@ public class HouseAssetExchangeRequestRecord extends HouseAssetExchangeRequest {
 
     private String targetHouseNumber;
 
+    private String targetRealName;
+
+    private String targetEmail;
+
+    private String targetPhone;
+
+
+
     private Long targetUserId;
 
     private List<HouseAsset> targetAssetList;
 
     private String realName;
 
+    private String email;
+
+
+    public String getTargetRealName() {
+        return targetRealName;
+    }
+
+    public void setTargetRealName(String targetRealName) {
+        this.targetRealName = targetRealName;
+    }
+
+    public String getTargetEmail() {
+        return targetEmail;
+    }
+
+    public void setTargetEmail(String targetEmail) {
+        this.targetEmail = targetEmail;
+    }
+
+    public String getTargetPhone() {
+        return targetPhone;
+    }
+
+    public void setTargetPhone(String targetPhone) {
+        this.targetPhone = targetPhone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public List<HouseAssetExchangeRequestRecord> getHouseAssetExchangeRequestRecordList() {
+        return houseAssetExchangeRequestRecordList;
+    }
+
+    public void setHouseAssetExchangeRequestRecordList(List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecordList) {
+        this.houseAssetExchangeRequestRecordList = houseAssetExchangeRequestRecordList;
+    }
 
     public Long getTargetBuildingId() {
         return targetBuildingId;

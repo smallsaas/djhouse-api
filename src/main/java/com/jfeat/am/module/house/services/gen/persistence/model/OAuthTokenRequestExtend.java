@@ -23,4 +23,12 @@ public class OAuthTokenRequestExtend extends OAuthTokenRequest {
     public void setCommunityId(Long communityId) {
         this.communityId = communityId;
     }
+
+    @Override
+    public String toString() {
+        return "OAuthTokenRequestExtend{" +
+                "communityId=" + communityId +
+                ", isChangeCommunity=" + isChangeCommunity +
+                '}';
+    }
 }

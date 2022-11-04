@@ -25,6 +25,7 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.poi.agent.util.IdWorker;
 import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
 import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
 import io.swagger.annotations.Api;
@@ -156,6 +157,7 @@ public class UserAssetExchange {
 
         List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecordList = queryHouseAssetExchangeRequestDao.queryExchangeRequestGroupByAssetId(page, record);
 
+//        获取目标信息
         List<HouseAsset> targetList = queryHouseAssetExchangeRequestDao.queryExchangeTargetList(null, record);
 
         for (HouseAssetExchangeRequestRecord exchangeRequestRecord : houseAssetExchangeRequestRecordList) {
@@ -173,6 +175,9 @@ public class UserAssetExchange {
                 }
             }
         }
+
+
+
 
         if (houseAssetExchangeRequestRecordList != null && houseAssetExchangeRequestRecordList.size() > 0) {
 //            将列表解析成对应json格式

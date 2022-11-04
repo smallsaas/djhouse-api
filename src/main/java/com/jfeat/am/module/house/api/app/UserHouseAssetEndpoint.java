@@ -27,7 +27,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -35,11 +37,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 @RestController
 @Api("UserHouseAsset")
 @RequestMapping("/api/u/asset")
+@EnableAsync
 public class UserHouseAssetEndpoint {
     protected final static Logger logger = LoggerFactory.getLogger(UserHouseAssetEndpoint.class);
 
@@ -116,6 +120,7 @@ public class UserHouseAssetEndpoint {
 
     @Resource
     HouseAssetExchangeRequestService houseAssetExchangeRequestService;
+
 
     @GetMapping("/tenant")
     public Tip getTenantList(Page<Tenant> page,
@@ -463,6 +468,7 @@ public class UserHouseAssetEndpoint {
             throw new BusinessException(BusinessCode.BadRequest, "assetId为必填项");
         }
 
+        Long start = System.currentTimeMillis();
 
 //        判断用户是是房东 还是二房东
         List<Integer> typeList =  userAccountUtility.getUserTypeList(JWTKit.getUserId());
@@ -500,10 +506,11 @@ public class UserHouseAssetEndpoint {
                 throw new BusinessException(BusinessCode.DuplicateKey);
             }
 
-//            进行同层添加
+
             houseAssetExchangeRequestService.addSameFloorExchangeRequest(JWTKit.getUserId());
 
-
+            System.out.println("===============");
+            System.out.println(System.currentTimeMillis()-start);
             return SuccessTip.create(affected);
         } else {
             /*
@@ -535,10 +542,13 @@ public class UserHouseAssetEndpoint {
                         }
                     }
 
+
                     //            进行同层添加
                     houseAssetExchangeRequestService.addSameFloorExchangeRequest(JWTKit.getUserId());
 
 
+                    System.out.println("===============");
+                    System.out.println(System.currentTimeMillis()-start);
                     return SuccessTip.create(affected);
                 } else {
                     throw new BusinessException(BusinessCode.CodeBase, "该资产已被确认");
