@@ -154,12 +154,12 @@
             <artifactId>spring-kafka</artifactId>
         </dependency>
 
-<!--&lt;!&ndash;        代表事项&ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>com.jfeat</groupId>-->
-<!--            <artifactId>user-task</artifactId>-->
-<!--            <version>1.0.0</version>-->
-<!--        </dependency>-->
+<!--        代表事项-->
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>user-task</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
         <dependency>
             <groupId>com.jfeat</groupId>
@@ -178,7 +178,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>com.github.kongchen</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>

@@ -55,10 +55,22 @@ public class HouseEquityDemandSupply extends Model<HouseEquityDemandSupply> {
     @TableField(exist = false)
     private String username;
 
+    @ApiModelProperty("真实姓名")
+    @TableField(exist = false)
+    private String realName;
+
     @ApiModelProperty(value = "用户头像")
     @TableField(exist = false)
     private String userAvatar;
 
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
 
     public Long getId() {
         return id;

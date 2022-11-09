@@ -170,8 +170,8 @@
         </if>
         <if test="record.appids != null and record.appids.size()>0">
             AND t_end_user.appid in
-            <foreach  item="item" index="index" collection="record.appids" open="(" separator="," close=" )">
-            #{item}
+            <foreach item="item" index="index" collection="record.appids" open="(" separator="," close=" )">
+                #{item}
             </foreach>
         </if>
 
@@ -186,11 +186,34 @@
             AND (
             t_end_user.name LIKE CONCAT('%',#{search},'%') OR
             t_end_user.phone LIKE CONCAT('%',#{search},'%')
-          )
+            )
         </if>
 
         ORDER BY create_time DESC
     </select>
 
+
+    <select id="getAllUserList" resultType="UserAccount" parameterType="UserAccount">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_end_user
+        LEFT JOIN sys_third_party_user ON sys_third_party_user.user_id = t_end_user.id
+        WHERE 1=1
+        AND t_end_user.appid in ("1","2")
+
+
+        <if test="search != null and search != ''">
+            AND (
+            t_end_user.name LIKE CONCAT('%',#{search},'%') OR
+            t_end_user.phone LIKE CONCAT('%',#{search},'%') OR
+            sys_third_party_user.nickname LIKE CONCAT('%',#{search},'%')
+            )
+        </if>
+
+        GROUP BY t_end_user.id
+        ORDER BY t_end_user.create_time DESC
+    </select>
 
 </mapper>

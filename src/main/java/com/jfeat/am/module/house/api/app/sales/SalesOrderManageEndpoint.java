@@ -5,13 +5,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.common.annotation.EndUserPermission;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.core.model.EndUserTypeSetting;
-import com.jfeat.am.module.config.api.UserEndConfigFieldEndpoint;
 import com.jfeat.am.module.order.services.domain.dao.QueryOrderDao;
 import com.jfeat.am.module.order.services.domain.model.OrderRecord;
 import com.jfeat.am.module.order.services.domain.service.OrderService;
 import com.jfeat.am.module.order.services.gen.persistence.model.TOrder;
-import com.jfeat.crud.base.exception.BusinessCode;
-import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.crud.plus.util.QueryParamUtils;
@@ -234,6 +231,8 @@ public class SalesOrderManageEndpoint {
         BigDecimal rightMoney = searchMoney != null ? (searchMoney.length == 2 ? searchMoney[1] : (searchMoney.length == 1 ? searchMoney[0] : null)) : null;
 
 
+
+
         Date startEndTime = null;
 
         QueryWrapper multiEntityWrapper = QueryParamUtils.getMultiEntityWrapper(parms, TOrder.class, "t_order.");
@@ -254,7 +253,7 @@ public class SalesOrderManageEndpoint {
         record.setDealDate(dealDate);
         record.setDeliverOrderNumber(deliverOrderNumber);
         record.setCategory("bulk");
-        record.setUserId(JWTKit.getUserId().intValue());
+//        record.setUserId(JWTKit.getUserId().intValue());
 
 
         record.setStatus(status);

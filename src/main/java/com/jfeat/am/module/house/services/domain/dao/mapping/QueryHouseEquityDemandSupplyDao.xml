@@ -9,7 +9,8 @@
         t_house_equity_demand_supply.create_time AS createTime,
         t_end_user.phone  AS phoneNumber,
        t_end_user.avatar AS userAvatar,
-       t_end_user.name   AS userName
+       t_end_user.name   AS userName,
+         t_end_user.real_name   AS realName
     </sql>
 
 

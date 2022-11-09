@@ -739,4 +739,24 @@ public class UserAssetExchange {
     }
 
 
+//    交换上下房屋
+    @PostMapping("/upAndDownStairs")
+    public Tip upAndDownStairsExchangeRequest(@RequestParam("assetId") Long assetId,@RequestParam("isUp") Boolean isUp){
+        Long userId = JWTKit.getUserId();
+        if (userId==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+        QueryWrapper<HouseUserAsset> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(HouseUserAsset.USER_ID,userId).eq(HouseUserAsset.ASSET_ID,assetId);
+        HouseUserAsset houseUserAsset =  houseUserAssetMapper.selectOne(queryWrapper);
+        if (houseUserAsset==null){
+            throw new BusinessException(BusinessCode.NoPermission,"该房屋产权不是该用户");
+        }
+
+        return SuccessTip.create(houseAssetExchangeRequestService.addUpAndDownStairsExchangeRequest(userId,assetId,isUp));
+
+    }
+
+
+
 }

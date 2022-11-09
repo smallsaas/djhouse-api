@@ -4,6 +4,7 @@ import com.jfeat.am.module.house.services.domain.model.EndpointUserRecord;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.crud.plus.QueryMasterDao;
+import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
 import org.apache.ibatis.annotations.Param;
 import com.jfeat.am.module.house.services.gen.persistence.model.EndpointUser;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
@@ -35,4 +36,10 @@ public interface QueryEndpointUserDao extends QueryMasterDao<EndpointUser> {
     List<EndpointUserModel> queryMasterModelList(@Param("masterId") Object masterId);
 
     EndpointUser queryEndpointUserByOrgId(@Param("orgId") Long orgId);
+
+
+    List<UserAccount> getAllUserList(Page<UserAccount> page, @Param("record") UserAccount record,
+                                     @Param("tag") String tag,
+                                     @Param("search") String search, @Param("orderBy") String orderBy,
+                                     @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 }

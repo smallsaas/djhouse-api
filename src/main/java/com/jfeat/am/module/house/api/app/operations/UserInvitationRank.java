@@ -1,5 +1,4 @@
-package com.jfeat.am.module.house.api.app.sales;
-
+package com.jfeat.am.module.house.api.app.operations;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -14,18 +13,21 @@ import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
 import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
-import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
-@RequestMapping("/api/u/house/sales/rank")
-public class SalesRankEndpoint {
+@RequestMapping("/api/u/house/operations/invitationRank")
+public class UserInvitationRank {
+
 
     @Resource
     UserAccountMapper userAccountMapper;
@@ -54,34 +56,51 @@ public class SalesRankEndpoint {
 
         List<UserAccount> userAccountList = userAccountMapper.selectList(queryWrapper);
 
+        Map<Long,JSONObject> userMap = new HashMap<>();
 
-        QueryWrapper<HouseRentAsset> rentAssetQueryWrapper = new QueryWrapper<>();
-        rentAssetQueryWrapper.select(HouseRentAsset.SERVER_ID,"count(*) as number").isNotNull(HouseRentAsset.SERVER_ID).groupBy(HouseRentAsset.SERVER_ID).orderByDesc("number");
-        houseRentAssetMapper.selectMaps(rentAssetQueryWrapper);
+        for (UserAccount userAccount:userAccountList){
+            JSONObject json = new JSONObject();
+            json.put("id",userAccount.getId());
+            json.put("phone",userAccount.getPhone());
+            json.put("name",userAccount.getName());
+            json.put("number",0);
+            userMap.put(userAccount.getId(),json);
+        }
 
-        List<Map<String, Object>> maps = houseRentAssetMapper.selectMaps(rentAssetQueryWrapper);
 
-        JSONArray jsonArray = new JSONArray();
-        Integer rank=1;
-        for (Map<String,Object> map:maps){
-            for (UserAccount userAccount:userAccountList){
-                if (userAccount.getId().equals((Long) map.get("server_id"))){
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("id",userAccount.getId());
-                    jsonObject.put("name",userAccount.getName());
-                    jsonObject.put("realName",userAccount.getRealName());
-                    jsonObject.put("avatar",userAccount.getAvatar());
-                    jsonObject.put("number",map.get("number"));
-                    jsonObject.put("rank",rank);
-                    jsonObject.put("phone",userAccount.getPhone());
-                    jsonArray.add(jsonObject);
-                    rank+=1;
-                    break;
+        QueryWrapper<UserAccount> userAccountQueryWrapper = new QueryWrapper<>();
+        List<UserAccount> userAccounts = userAccountMapper.selectList(userAccountQueryWrapper);
+
+
+        for (UserAccount userAccount:userAccounts){
+
+            if (userAccount.getInvitorId()!=null) {
+                JSONObject json = userMap.get(userAccount.getInvitorId());
+                if (json==null){
+                    continue;
+                }
+                if (json.containsKey("number")) {
+                    json.put("number", json.getIntValue("number") + 1);
+                } else {
+                    json.put("number", 0);
                 }
             }
-
         }
+
+        JSONArray jsonArray = new JSONArray();
+        for (UserAccount userAccount:userAccountList){
+            jsonArray.add(userMap.get(userAccount.getId()));
+        }
+
+
+        jsonArray.sort(Comparator.comparing(obj -> ((JSONObject) obj).getIntValue("number")).reversed());
+
+        for (int i=0;i<jsonArray.size();i++){
+            JSONObject json  = jsonArray.getJSONObject(i);
+            json.put("rank",i+1);
+        }
+
+
         return SuccessTip.create(jsonArray);
     }
-
 }

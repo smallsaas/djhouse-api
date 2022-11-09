@@ -28,4 +28,6 @@ public interface HouseAssetExchangeRequestService extends CRUDHouseAssetExchange
     int addUnlikeAssetExchangeRequest(List<HouseAssetExchangeRequest> assetExchangeRequest, List<HouseUnlikeLog> houseUnlikeLogList);
 
     void addSameFloorExchangeRequest(Long userId);
+
+    Integer addUpAndDownStairsExchangeRequest(Long userId, Long assetId,Boolean isUp);
 }

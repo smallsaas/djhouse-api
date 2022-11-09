@@ -118,21 +118,26 @@ public class UserEquityDemandSupplyEndpoint {
         record.setUserId(userId);
         record.setEquityOption(equityOption);
         record.setArea(area);
-
-
         List<HouseEquityDemandSupplyRecord> houseEquityDemandSupplyPage = queryHouseEquityDemandSupplyDao.findHouseEquityDemandSupplyPage(page, record, tag, search, orderBy, null, null, leftRange, rightRange);
-
-//        将用户的隐私 隐藏起来
-        for (HouseEquityDemandSupply houseEquityDemandSupply : houseEquityDemandSupplyPage) {
-            houseEquityDemandSupply.setUserId(null);
-            houseEquityDemandSupply.setUsername(null);
-            String number = houseEquityDemandSupply.getPhoneNumber();
-            if (number!=null&&number.length()>8){
-                houseEquityDemandSupply.setPhoneNumber(number.substring(0, 3).concat("********").concat(number.substring(number.length() - 1, number.length())));
+        for (HouseEquityDemandSupplyRecord houseEquityDemandSupplyRecord:houseEquityDemandSupplyPage){
+            if (houseEquityDemandSupplyRecord.getEquityOption().equals(HouseEquityDemandSupply.EQUITY_OPTION_DEMAND)){
+                houseEquityDemandSupplyRecord.setStatus("需求");
+            }else {
+                houseEquityDemandSupplyRecord.setStatus("供给");
             }
-
-            houseEquityDemandSupply.setUserAvatar(null);
         }
+
+////        将用户的隐私 隐藏起来
+//        for (HouseEquityDemandSupply houseEquityDemandSupply : houseEquityDemandSupplyPage) {
+//            houseEquityDemandSupply.setUserId(null);
+//            houseEquityDemandSupply.setUsername(null);
+//            String number = houseEquityDemandSupply.getPhoneNumber();
+//            if (number!=null&&number.length()>8){
+//                houseEquityDemandSupply.setPhoneNumber(number.substring(0, 3).concat("********").concat(number.substring(number.length() - 1, number.length())));
+//            }
+//
+//            houseEquityDemandSupply.setUserAvatar(null);
+//        }
         page.setRecords(houseEquityDemandSupplyPage);
 
         return SuccessTip.create(page);
@@ -223,7 +228,6 @@ public class UserEquityDemandSupplyEndpoint {
         if (houseEquityDemandSupplyPage!=null && houseEquityDemandSupplyPage.size()==1){
             houseEquityDemandSupplyRecord = houseEquityDemandSupplyPage.get(0);
         }
-
         return SuccessTip.create(houseEquityDemandSupplyRecord);
     }
 

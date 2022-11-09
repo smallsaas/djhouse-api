@@ -11,7 +11,9 @@ import com.jfeat.am.module.house.services.domain.service.HouseAssetMatchLogServi
 import com.jfeat.am.module.house.services.domain.service.HouseEmailService;
 import com.jfeat.am.module.house.services.domain.service.HouseTenantMenuService;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHouseAssetExchangeRequestServiceImpl;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMatchLogMapper;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetExchangeRequest;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetMatchLog;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseUnlikeLog;
@@ -83,6 +85,9 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
 
     @Resource
     HouseAssetMatchLogMapper houseAssetMatchLogMapper;
+
+    @Resource
+    HouseAssetMapper houseAssetMapper;
 
 
     @Override
@@ -479,6 +484,145 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    @Override
+    @Transactional
+    public Integer addUpAndDownStairsExchangeRequest(Long userId, Long assetId,Boolean isUp) {
+
+//        查询房屋信息
+        HouseAsset houseAsset =  houseAssetMapper.selectById(assetId);
+
+
+
+        //        获取用户当前小区信息
+        Long communityId = userCommunityAsset.getUserCommunityStatus(userId);
+        if (communityId==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有找到小区信息");
+        }
+
+//        获取用当前小区房屋
+        HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
+        houseUserAssetRecord.setCommunityId(communityId);
+        houseUserAssetRecord.setUserId(userId);
+        List<HouseUserAssetRecord> userAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord,null,null,null,null,null);
+
+        List<HouseAssetRecord> houseAssetRecordList = new ArrayList<>();
+        for (HouseUserAssetRecord userAssetRecord:userAssetRecordList){
+            HouseAssetRecord houseAssetRecord = new HouseAssetRecord();
+            houseAssetRecord.setBuildingId(userAssetRecord.getBuildingId());
+            houseAssetRecord.setFloor(userAssetRecord.getFloor());
+
+            houseAssetRecordList.add(houseAssetRecord);
+        }
+
+
+//        获取当前小区同楼栋同楼层房屋
+        List<HouseAssetRecord> sameBuildingAssetList =  queryHouseAssetDao.queryUpAndDownStairs(houseAsset.getBuildingId(),houseAsset.getFloor(),isUp);
+
+        List<HouseAssetRecord> temp = new ArrayList<>();
+        for (HouseAssetRecord sameBuildingAsset:sameBuildingAssetList){
+            Boolean flag = true;
+            for (HouseUserAssetRecord ownHouseAsset:userAssetRecordList){
+
+                if (ownHouseAsset.getAssetId().equals(sameBuildingAsset.getId())){
+                    flag=false;
+                }
+
+            }
+            if (flag){
+                temp.add(sameBuildingAsset);
+            }
+        }
+        sameBuildingAssetList = temp;
+
+
+
+//        判断条件匹配条件是否合适
+        //        获取换房功能条件
+        HouseMenuRecord record1 = new HouseMenuRecord();
+        record1.setType("exchangeAsset");
+        List<HouseMenuRecord> secondaryMenu = houseTenantMenuService.getSecondaryMenu(userId, record1);
+
+        Map<String,Integer> map = new HashMap<>();
+        for (HouseMenuRecord houseMenuRecord:secondaryMenu){
+            map.put(houseMenuRecord.getComponent(),houseMenuRecord.getEnabled());
+        }
+
+        List<HouseAssetExchangeRequest> houseAssetExchangeRequestList = new ArrayList<>();
+
+//        自己的房子
+        for (HouseUserAssetRecord userAssetRecord:userAssetRecordList){
+
+//            同城的房子
+            for (HouseAssetRecord houseAssetRecord: sameBuildingAssetList){
+                if (!userAssetRecord.getFloor().equals(houseAssetRecord.getFloor())){
+
+                    HouseAssetExchangeRequest houseAssetExchangeRequest = new HouseAssetExchangeRequest();
+
+                    if (userAssetRecord.getBuildingId().equals(houseAssetRecord.getBuildingId())){
+
+
+                        if (map.get("unlimited")!=null &&!map.get("unlimited").equals(1)){
+
+                            if (map.get("unitId").equals(1) &&  userAssetRecord.getUnitId().equals(houseAssetRecord.getUnitId())){
+                                houseAssetExchangeRequest.setUserId(userId);
+                                houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
+                                houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
+                                houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
+                            }
+
+                            if (map.get("houseType").equals(1) &&  userAssetRecord.getHouseTypeId().equals(houseAssetRecord.getDesignModelId())){
+                                houseAssetExchangeRequest.setUserId(userId);
+                                houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
+                                houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
+                                houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
+                            }
+
+                            if (map.get("area").equals(1) &&  userAssetRecord.getUnitArea().equals(houseAssetRecord.getArea())){
+                                houseAssetExchangeRequest.setUserId(userId);
+                                houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
+                                houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
+                                houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
+                            }
+
+                            if (map.get("issue").equals(1) &&  userAssetRecord.getIssue().equals(houseAssetRecord.getIssue())){
+                                houseAssetExchangeRequest.setUserId(userId);
+                                houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
+                                houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
+                                houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
+                            }
+                        }else {
+                            houseAssetExchangeRequest.setUserId(userId);
+                            houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
+                            houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
+                            houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
+                        }
+
+
+                    }
+
+                }
+            }
+        }
+
+        logger.info("自动交换记录",userId,houseAssetExchangeRequestList);
+
+        System.out.println(houseAssetExchangeRequestList);
+
+        if (houseAssetExchangeRequestList!=null){
+            for (HouseAssetExchangeRequest houseAssetExchangeRequest:houseAssetExchangeRequestList){
+                houseAssetExchangeRequest.setAutoGenerateStatus(HouseAssetExchangeRequest.AUTO_GENERATE_STATUS_YES);
+            }
+        }
+
+        Integer affect  =  batchAddExchangeRequest(houseAssetExchangeRequestList);
+
+        for (HouseAssetExchangeRequest houseAssetExchangeRequest:houseAssetExchangeRequestList){
+            assetMachResult(houseAssetExchangeRequest);
+        }
+
+        return null;
     }
 
 }

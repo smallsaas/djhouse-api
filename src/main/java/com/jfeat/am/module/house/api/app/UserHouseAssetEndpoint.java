@@ -508,8 +508,6 @@ public class UserHouseAssetEndpoint {
 
 
             houseAssetExchangeRequestService.addSameFloorExchangeRequest(JWTKit.getUserId());
-
-            System.out.println("===============");
             System.out.println(System.currentTimeMillis()-start);
             return SuccessTip.create(affected);
         } else {
@@ -523,6 +521,8 @@ public class UserHouseAssetEndpoint {
                 if (!(HouseUserAsset.FINAL_FLAG_CONFIRM.equals(houseUserAssetRecordList.get(0).getFinalFlag()))) {
                     entity.setId(houseUserAssetRecordList.get(0).getId());
                     entity.setUserId(JWTKit.getUserId());
+                    entity.setUnlike(HouseUserAsset.UNLIKE_STATUS_LIKE);
+                    entity.setLocked(HouseUserAsset.LOCKED_STATUS_UNLOCKED);
 
                     HouseAssetComplaint complaint = new HouseAssetComplaint();
                     complaint.setUserId(JWTKit.getUserId());

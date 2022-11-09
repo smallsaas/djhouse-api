@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.common.annotation.EndUserPermission;
 import com.jfeat.am.core.model.EndUserTypeSetting;
+import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
 import com.jfeat.am.module.house.services.domain.model.HouseApplicationIntermediaryRecord;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
@@ -31,6 +32,9 @@ public class UserDataManageEndpoint {
     @Resource
     UserAccountMapper userAccountMapper;
 
+    @Resource
+    QueryEndpointUserDao queryEndpointUserDao;
+
     @PostMapping("/{sqlFile}")
     @EndUserPermission({EndUserTypeSetting.USER_TYPE_ADMIN_STRING})
     public Tip getResultList(@PathVariable("sqlFile") String sqlFile, HttpServletRequest request) {
@@ -48,13 +52,9 @@ public class UserDataManageEndpoint {
         page.setCurrent(pageNum);
         page.setSize(pageSize);
 
-        QueryWrapper<UserAccount> userAccountQueryWrapper = new QueryWrapper<>();
-        List<Integer> appids = Arrays.asList(1, 2);
-        userAccountQueryWrapper.in("appid", appids);
-        if (search != null) {
-            userAccountQueryWrapper.and(e -> e.like(UserAccount.PHONE, search).or().like(UserAccount.NAME, search));
-        }
-        page = userAccountMapper.selectPage(page, userAccountQueryWrapper);
+        UserAccount record = new UserAccount();
+        List<UserAccount> userAccounts =  queryEndpointUserDao.getAllUserList(page,record,null,search,null,null,null);
+       page.setRecords(userAccounts);
         return SuccessTip.create(page);
     }
 
