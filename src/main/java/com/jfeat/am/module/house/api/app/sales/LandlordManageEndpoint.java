@@ -74,21 +74,23 @@ public class LandlordManageEndpoint {
 
 
 
-
-
-
-
     //    房东列表
     @GetMapping
     public Tip getLandlordList(Page<HouseUserAssetRecord> page,
                                @RequestParam(value = "type",required = false) Integer type,
                                @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                               @RequestParam(name = "orderBy",required = false) String orderBy,
                                @RequestParam(name = "search", required = false) String search) {
         if (JWTKit.getUserId()==null){
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");
         }
 
+        if (orderBy!=null && orderBy.equals("endLogin")){
+            orderBy = "endLoginTime";
+        }else {
+            orderBy = null;
+        }
 
         page.setCurrent(pageNum);
         page.setSize(pageSize);
@@ -96,7 +98,7 @@ public class LandlordManageEndpoint {
         HouseUserAssetRecord record = new HouseUserAssetRecord();
 
 
-        List<HouseUserAssetRecord> userAssetRecords = queryHouseUserAssetDao.queryLandlordPage(page, record,tenantUtility.getCurrentOrgId(JWTKit.getUserId()), null, search, null, null, null);
+        List<HouseUserAssetRecord> userAssetRecords = queryHouseUserAssetDao.queryLandlordPage(page, record,tenantUtility.getCurrentOrgId(JWTKit.getUserId()), null, search, orderBy, null, null);
 
         List<Long> userId = new ArrayList<>();
         for (HouseUserAssetRecord houseUserAssetRecord : userAssetRecords) {
@@ -109,6 +111,7 @@ public class LandlordManageEndpoint {
         }
 
 
+//        获取房东 房屋数量
         List<HouseUserAssetModel> houseUserAssetModelList = queryHouseUserAssetDao.queryLandlordAssetNumber(null, null);
         for (HouseUserAssetRecord houseUserAssetRecord : userAssetRecords) {
             for (HouseUserAssetModel houseUserAssetModel : houseUserAssetModelList) {
@@ -120,6 +123,7 @@ public class LandlordManageEndpoint {
         }
 
 
+//        查询是否出租房屋
         if (userId!=null && userId.size()>0){
             QueryWrapper<HouseRentAsset> rentAssetQueryWrapper = new QueryWrapper<>();
             rentAssetQueryWrapper.in(HouseRentAsset.LANDLORD_ID, userId);

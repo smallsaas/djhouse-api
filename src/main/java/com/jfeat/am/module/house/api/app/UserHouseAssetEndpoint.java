@@ -94,7 +94,7 @@ public class UserHouseAssetEndpoint {
     HouseUserAssetMapper houseUserAssetMapper;
 
     @Resource
-    HouseAssetMapper houseAssetMapper;
+    HouseEmailService houseEmailService;
 
     @Resource
     HouseAssetMatchLogMapper houseAssetMatchLogMapper;
@@ -486,8 +486,6 @@ public class UserHouseAssetEndpoint {
 
         entity.setUserType(userType);
 
-
-
         HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
         houseUserAssetRecord.setAssetId(entity.getAssetId());
         houseUserAssetRecord.setUserType(userType);
@@ -537,6 +535,12 @@ public class UserHouseAssetEndpoint {
                          */
                         try {
                             affected += houseAssetComplaintService.createMaster(complaint);
+
+//                            发送申诉消息
+                            if (affected>0){
+                                houseEmailService.sendComplaintAssetInfo(complaint);
+                            }
+
                         } catch (DuplicateKeyException e) {
                             throw new BusinessException(BusinessCode.DuplicateKey);
                         }
@@ -546,9 +550,6 @@ public class UserHouseAssetEndpoint {
                     //            进行同层添加
                     houseAssetExchangeRequestService.addSameFloorExchangeRequest(JWTKit.getUserId());
 
-
-                    System.out.println("===============");
-                    System.out.println(System.currentTimeMillis()-start);
                     return SuccessTip.create(affected);
                 } else {
                     throw new BusinessException(BusinessCode.CodeBase, "该资产已被确认");

@@ -238,11 +238,12 @@
         select
         <include refid="LandlordSql"></include>
         FROM t_end_user
+        LEFT JOIN sys_third_party_user ON sys_third_party_user.user_id = t_end_user.id
         LEFT JOIN t_house_user_asset ON t_end_user.id=t_house_user_asset.user_id
 
         WHERE 1=1
 
-        and t_end_user.appid="1"
+        and (t_end_user.appid="1" or t_end_user.appid="2")
 
         <if test="record.id != null and record.id>0 ">
             AND t_house_user_asset.id LIKE CONCAT('%',#{record.id},'%')
@@ -283,10 +284,18 @@
             AND (
             t_end_user.phone LIKE CONCAT('%',#{search},'%')
             OR t_end_user.name LIKE CONCAT('%',#{search},'%')
+            OR t_end_user.real_name LIKE CONCAT('%',#{search},'%')
+            or sys_third_party_user.nickname LIKE CONCAT('%',#{search},'%')
             )
         </if>
         GROUP BY t_end_user.id
-        order by t_end_user.create_time desc
+        <if test="orderBy==null">order by t_end_user.create_time desc</if>
+        <if test="orderBy!=null">
+
+            <if test='orderBy =="endLoginTime"'>
+                order by t_end_user.end_login_time desc
+            </if>
+        </if>
     </select>
 
 

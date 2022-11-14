@@ -36,14 +36,14 @@ public class UserDataManageEndpoint {
     QueryEndpointUserDao queryEndpointUserDao;
 
     @PostMapping("/{sqlFile}")
-    @EndUserPermission({EndUserTypeSetting.USER_TYPE_ADMIN_STRING})
+    @EndUserPermission({EndUserTypeSetting.USER_TYPE_ADMIN_STRING,EndUserTypeSetting.USER_TYPE_DEVELOPER_STRING})
     public Tip getResultList(@PathVariable("sqlFile") String sqlFile, HttpServletRequest request) {
 
         return SuccessTip.create(devopsServices.executeSql(request,sqlFile));
     }
 
     @GetMapping("/allUser")
-    @EndUserPermission({EndUserTypeSetting.USER_TYPE_ADMIN_STRING})
+    @EndUserPermission({EndUserTypeSetting.USER_TYPE_ADMIN_STRING,EndUserTypeSetting.USER_TYPE_DEVELOPER_STRING})
     public Tip getAllUserAccount(Page<UserAccount> page,
                                  @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                  @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,

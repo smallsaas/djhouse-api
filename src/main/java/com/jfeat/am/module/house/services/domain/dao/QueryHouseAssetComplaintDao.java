@@ -3,6 +3,7 @@ package com.jfeat.am.module.house.services.domain.dao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetComplaintRecord;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
 import com.jfeat.crud.plus.QueryMasterDao;
 import org.apache.ibatis.annotations.Param;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetComplaint;
@@ -27,6 +28,8 @@ public interface QueryHouseAssetComplaintDao extends QueryMasterDao<HouseAssetCo
      * Query entity model for details
      */
     HouseAssetComplaintModel queryMasterModel(@Param("id") Long id);
+
+    HouseAssetComplaintRecord queryMastRecord(@Param("id") Long id);
 
 
     /*

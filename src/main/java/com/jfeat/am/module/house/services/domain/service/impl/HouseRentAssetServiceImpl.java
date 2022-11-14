@@ -9,6 +9,7 @@ import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseRentSupportFacilitiesRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
+import com.jfeat.am.module.house.services.domain.service.HouseEmailService;
 import com.jfeat.am.module.house.services.domain.service.HouseRentAssetService;
 import com.jfeat.am.module.house.services.domain.service.HouseRentSupportFacilitiesService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
@@ -63,6 +64,9 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
 
     @Resource
     HouseUserAssetMapper houseUserAssetMapper;
+
+    @Resource
+    HouseEmailService houseEmailService;
 
     @Override
     protected String entityName() {
@@ -130,30 +134,6 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
         return affected;
     }
 
-//    @Override
-//    @Transactional
-//    public int createUserRentAssetNotAssetId(HouseRentAsset entity) {
-//        Integer affected = 0;
-//        entity.setRentStatus(HouseRentAsset.RENT_STATUS_SOLD_OUT);
-//        try {
-//            affected = houseRentAssetService.createMaster(entity);
-//        } catch (DuplicateKeyException e) {
-//            throw new BusinessException(BusinessCode.DuplicateKey);
-//        }
-//
-////        判断是否填入家居
-//        if (affected>0 && entity.getSupportFacilitiesList()!=null && entity.getSupportFacilitiesList().size()>0){
-//            QueryWrapper<HouseRentSupportFacilities> queryWrapper = new QueryWrapper<>();
-//            queryWrapper.eq(HouseRentSupportFacilities.RENT_ID,entity.getId());
-//            affected+=houseRentSupportFacilitiesMapper.delete(queryWrapper);
-//            for (HouseRentSupportFacilities houseRentSupportFacilities:entity.getSupportFacilitiesList()){
-//                houseRentSupportFacilities.setRentId(entity.getId());
-//            }
-//            affected+=queryHouseRentSupportFacilitiesDao.batchInsertHouseRentSupportFacilities(entity.getSupportFacilitiesList());
-//        }
-//        return affected;
-//    }
-
 
     @Transactional
     public int createUserRentAssetNotAssetId(HouseRentAsset entity) {
@@ -206,6 +186,11 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
             entity.setRentStatus(HouseRentAsset.RENT_STATUS_SOLD_OUT);
             try {
                 affected = houseRentAssetService.createMaster(entity);
+
+                if (affected>0){
+                    houseEmailService.sendRentAssetInfo(entity);
+                }
+
             } catch (DuplicateKeyException e) {
                 throw new BusinessException(BusinessCode.DuplicateKey);
             }

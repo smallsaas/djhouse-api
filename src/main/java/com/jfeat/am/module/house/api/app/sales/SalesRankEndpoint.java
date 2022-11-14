@@ -17,6 +17,7 @@ import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -37,7 +38,7 @@ public class SalesRankEndpoint {
     TenantUtility tenantUtility;
 
     @GetMapping
-    public Tip getSaleRankList(){
+    public Tip getSaleRankList(@RequestParam(value = "search",required = false) String search){
 
         Long userId = JWTKit.getUserId();
         if (userId==null){
@@ -51,6 +52,9 @@ public class SalesRankEndpoint {
 
         QueryWrapper<UserAccount> queryWrapper = new QueryWrapper<>();
         queryWrapper.and(e->e.eq(UserAccount.ORG_ID,orgId).isNull("current_org_id")).or(e->e.eq("current_org_id",orgId));
+        if (search!=null && search!=null){
+            queryWrapper.and(e->e.like(UserAccount.PHONE,search).or(a->a.like(UserAccount.NAME,search)));
+        }
 
         List<UserAccount> userAccountList = userAccountMapper.selectList(queryWrapper);
 

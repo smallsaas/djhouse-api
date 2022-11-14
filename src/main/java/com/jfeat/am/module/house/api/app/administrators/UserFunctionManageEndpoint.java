@@ -2,7 +2,9 @@ package com.jfeat.am.module.house.api.app.administrators;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.common.annotation.EndUserPermission;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.core.model.EndUserTypeSetting;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseMenuDao;
 import com.jfeat.am.module.house.services.domain.model.HouseMenuRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseMenuService;
@@ -36,6 +38,7 @@ public class UserFunctionManageEndpoint {
 
 
     @GetMapping
+    @EndUserPermission({EndUserTypeSetting.USER_TYPE_ADMIN_STRING})
     public Tip queryHouseMenuPage(Page<HouseMenuRecord> page,
                                   @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                   @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
@@ -68,9 +71,6 @@ public class UserFunctionManageEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
-        if (!authentication.verifyOperation(JWTKit.getUserId())) {
-            throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
-        }
 
         if (orderBy != null && orderBy.length() > 0) {
             if (sort != null && sort.length() > 0) {
@@ -108,13 +108,10 @@ public class UserFunctionManageEndpoint {
  修改功能管理状态
   */
     @PutMapping("/updateHouseMenu")
+    @EndUserPermission({EndUserTypeSetting.USER_TYPE_ADMIN_STRING})
     public Tip updateHouseMenu(@RequestBody HouseMenu entity) {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
-        }
-
-        if (!authentication.verifyOperation(JWTKit.getUserId())) {
-            throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
         }
         return SuccessTip.create(houseMenuService.updateMenuStatus(entity));
     }

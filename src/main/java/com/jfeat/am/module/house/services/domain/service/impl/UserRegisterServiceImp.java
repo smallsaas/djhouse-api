@@ -76,6 +76,8 @@ public class UserRegisterServiceImp implements UserRegisterService {
                     logger.info("修改状态"+record.toString());
                     houseUserCommunityStatusMapper.updateById(record);
                 }
+                jsonObject.put("communityId",token.getCommunityId());
+                jsonObject.put("communityName",housePropertyCommunity.getCommunity());
             }
 
             if (userAccount.getOrgId()==null){

@@ -2,6 +2,7 @@ package com.jfeat.am.module.house.api.app;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.module.house.services.domain.service.HouseEmailService;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
@@ -34,6 +35,10 @@ public class UserEquityDemandSupplyEndpoint {
     QueryHouseEquityDemandSupplyDao queryHouseEquityDemandSupplyDao;
 
 
+    @Resource
+    HouseEmailService houseEmailService;
+
+
     /*
     查看表中是否已经有方数买卖信息 如果有就修改信息 没有就添加
      */
@@ -56,13 +61,22 @@ public class UserEquityDemandSupplyEndpoint {
         if (houseEquityDemandSupplyPage==null|| houseEquityDemandSupplyPage.size()==0){
             try {
                 affected = houseEquityDemandSupplyService.createMaster(entity);
+//                发送邮件
+                if (affected>0){
+                    houseEmailService.sendEquityDemand(entity);
+                }
+
             } catch (DuplicateKeyException e) {
                 throw new BusinessException(BusinessCode.DuplicateKey);
             }
         }
         if (houseEquityDemandSupplyPage!=null && houseEquityDemandSupplyPage.size()==1){
             entity.setId(houseEquityDemandSupplyPage.get(0).getId());
-            return SuccessTip.create(houseEquityDemandSupplyService.updateMaster(entity));
+            affected += houseEquityDemandSupplyService.updateMaster(entity);
+            if (affected>0){
+                houseEmailService.sendEquityDemand(entity);
+            }
+            return SuccessTip.create(affected);
         }
 
         return SuccessTip.create(affected);

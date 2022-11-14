@@ -61,16 +61,16 @@ public class UserTenantMangeEndpoint {
 
     @PutMapping("/markProductionData")
     public Tip markProductionData(@RequestBody Tenant entity) {
-        if (entity.getOrgId()==null){
-            throw new BusinessException(BusinessCode.BadRequest,"orgId为必填项");
+        if (entity.getOrgId() == null) {
+            throw new BusinessException(BusinessCode.BadRequest, "orgId为必填项");
         }
-        if (entity.getLocked()==null){
-            throw new BusinessException(BusinessCode.BadRequest,"locked为必填项");
+        if (entity.getLocked() == null) {
+            throw new BusinessException(BusinessCode.BadRequest, "locked为必填项");
         }
         QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(Tenant.ORG_ID, entity.getOrgId());
         Tenant tenant = tenantMapper.selectOne(queryWrapper);
-        if (tenant!=null){
+        if (tenant != null) {
             tenant.setLocked(entity.getLocked());
             return SuccessTip.create(tenantMapper.updateById(tenant));
         }

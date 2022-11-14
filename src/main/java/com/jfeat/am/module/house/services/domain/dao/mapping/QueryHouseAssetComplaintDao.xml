@@ -9,7 +9,22 @@
     </sql>
 
 
-    <select id="queryMasterModel" resultType="HouseAssetComplaintModel">
+    <select id="queryMastRecord" resultType="HouseAssetComplaintRecord">
+        SELECT
+            <include refid="Base_Column_List"/>,t_house_asset.house_number as houseNumber,t_house_property_building.code as buildingCode,t_house_property_community.community as communityName,
+        t_end_user.name as userName,t_end_user.phone as userPhone,t_end_user.real_name as realName
+        FROM t_house_asset_complaint
+        JOIN t_house_asset ON t_house_asset.id = t_house_asset_complaint.asset_id
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
+        JOIN t_end_user ON t_end_user.id =t_house_asset_complaint.user_id
+
+        WHERE t_house_asset_complaint.id = #{id}
+
+        GROUP BY t_house_asset_complaint.id
+    </select>
+
+    <select id="">
         SELECT t_house_asset_complaint.*
         FROM t_house_asset_complaint
         WHERE t_house_asset_complaint.id = #{id}

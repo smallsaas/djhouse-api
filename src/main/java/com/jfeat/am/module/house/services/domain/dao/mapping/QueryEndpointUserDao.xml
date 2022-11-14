@@ -33,6 +33,7 @@
 
 
         FROM t_end_user
+        LEFT JOIN sys_third_party_user ON sys_third_party_user.user_id = t_end_user.id
 
 
         <if test="record.orgId > 0">
@@ -185,11 +186,13 @@
         <if test="search != null and search != ''">
             AND (
             t_end_user.name LIKE CONCAT('%',#{search},'%') OR
-            t_end_user.phone LIKE CONCAT('%',#{search},'%')
+            t_end_user.phone LIKE CONCAT('%',#{search},'%') OR
+            sys_third_party_user.nickname LIKE CONCAT('%',#{search},'%')
             )
         </if>
 
-        ORDER BY create_time DESC
+        GROUP BY t_end_user.id
+        ORDER BY t_end_user.create_time DESC
     </select>
 
 
