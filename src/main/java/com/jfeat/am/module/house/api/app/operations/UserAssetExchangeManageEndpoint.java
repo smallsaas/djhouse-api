@@ -77,9 +77,6 @@ public class UserAssetExchangeManageEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
-        if (!authentication.verifyOperation(JWTKit.getUserId())){
-            throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
-        }
 
 
 

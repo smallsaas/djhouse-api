@@ -59,6 +59,8 @@ public class UserAssetDemandSupplyEndpoint {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
+
+
         if (entity.getAssetOption()==1){
             HouseUserAsset houseUserAsset =  queryHouseUserAssetDao.queryHouseUserAssetByAssetId(entity.getAssetId());
             if (houseUserAsset==null || !(houseUserAsset.getUserId().equals(JWTKit.getUserId()))){

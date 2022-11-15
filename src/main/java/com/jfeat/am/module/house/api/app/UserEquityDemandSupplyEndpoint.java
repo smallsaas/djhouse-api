@@ -1,8 +1,10 @@
 package com.jfeat.am.module.house.api.app;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.service.HouseEmailService;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseEquityDemandSupplyMapper;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
@@ -38,6 +40,9 @@ public class UserEquityDemandSupplyEndpoint {
     @Resource
     HouseEmailService houseEmailService;
 
+    @Resource
+    HouseEquityDemandSupplyMapper houseEquityDemandSupplyMapper;
+
 
     /*
     查看表中是否已经有方数买卖信息 如果有就修改信息 没有就添加
@@ -46,10 +51,18 @@ public class UserEquityDemandSupplyEndpoint {
     @PostMapping
     public Tip createHouseEquityDemandSupply(@RequestBody HouseEquityDemandSupply entity) {
         System.out.println(JWTKit.getUserId());
+        Long userId = JWTKit.getUserId();
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
-        Long userId = JWTKit.getUserId();
+
+        if (entity.getArea()==null || entity.getArea().compareTo(BigDecimal.ZERO)<=0){
+            QueryWrapper<HouseEquityDemandSupply> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq(HouseEquityDemandSupply.USER_ID,userId);
+            return SuccessTip.create(houseEquityDemandSupplyMapper.delete(queryWrapper));
+        }
+
+
         entity.setUserId(userId);
         entity.setCreateTime(new Date());
 

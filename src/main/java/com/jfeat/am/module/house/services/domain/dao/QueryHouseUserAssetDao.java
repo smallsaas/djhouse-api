@@ -71,5 +71,11 @@ public interface QueryHouseUserAssetDao extends QueryMasterDao<HouseUserAsset> {
                                                  @Param("search") String search);
 
 
+    List<HouseUserAssetRecord> queryUserAssetRank(Page<HouseUserAssetRecord> page, @Param("record") HouseUserAssetRecord record,
+                                                  @Param("tag") String tag,
+                                                  @Param("search") String search, @Param("orderBy") String orderBy,
+                                                  @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
+
 
 }

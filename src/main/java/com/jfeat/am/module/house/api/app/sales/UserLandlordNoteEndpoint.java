@@ -30,7 +30,10 @@ public class UserLandlordNoteEndpoint {
 
 
     @PostMapping
-    public Tip createHouseUserNote(@RequestBody HouseUserNote entity) {
+    public Tip createHouseUserNote(@RequestParam("userId") Long userId,
+            @RequestBody HouseUserNote entity) {
+
+        entity.setUserId(userId);
 
         if (JWTKit.getUserId()==null){
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");

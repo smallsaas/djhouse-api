@@ -133,6 +133,7 @@ public class LandLordExchangeAssetEndpoint {
     public Tip getExchangeRequestList(Page<HouseAssetExchangeRequestRecord> page,
                                       @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                       @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                      @RequestParam(name = "userId",required = false) Long landLordId,
                                       @RequestParam(name = "search", required = false) String search) {
         Long userId = JWTKit.getUserId();
 
@@ -146,6 +147,7 @@ public class LandLordExchangeAssetEndpoint {
 
         HouseAssetExchangeRequestRecord record = new HouseAssetExchangeRequestRecord();
         record.setOrgId(orgId);
+        record.setUserId(landLordId);
         if (search!=null && search.contains("-")){
             String[] strings = search.split("-");
             for (int i=0;i<strings.length;i++){

@@ -35,32 +35,32 @@ public class IntermediaryAgentManageEndpoint {
     public Tip getIntermediaryAgent(Page<UserAccount> page,
                                     @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                     @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                                    @RequestParam(name = "search", required = false) String search){
+                                    @RequestParam(name = "search", required = false) String search) {
 
-        Long userId  = JWTKit.getUserId();
+        Long userId = JWTKit.getUserId();
 
-        if (userId==null){
-            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        if (userId == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "没有登录");
         }
 
         page.setCurrent(pageNum);
         page.setSize(pageSize);
 
-        Long orgId =  tenantUtility.getCurrentOrgId(userId);
-        if (orgId==null){
-            throw new BusinessException(BusinessCode.NoPermission,"未设置社区");
+        Long orgId = tenantUtility.getCurrentOrgId(userId);
+        if (orgId == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "未设置社区");
         }
 
-        List<String> appids = Arrays.asList("1","2");
+        List<String> appids = Arrays.asList("1", "2");
         QueryWrapper<UserAccount> userAccountQueryWrapper = new QueryWrapper<>();
-        userAccountQueryWrapper.eq(UserAccount.ORG_ID,orgId);
-        userAccountQueryWrapper.in("appid",appids);
+        userAccountQueryWrapper.eq(UserAccount.ORG_ID, orgId);
+        userAccountQueryWrapper.in("appid", appids);
 
         userAccountQueryWrapper.last("and type & ".concat(EndUserTypeSetting.USER_TYPE_INTERMEDIARY_STRING));
-        if (search!=null && !search.equals("")){
-            userAccountQueryWrapper.and(wrapper->wrapper.lambda().like(UserAccount::getName,search).or().like(UserAccount::getPhone,search));
+        if (search != null && !search.equals("")) {
+            userAccountQueryWrapper.and(wrapper -> wrapper.lambda().like(UserAccount::getName, search).or().like(UserAccount::getPhone, search));
         }
-        userAccountMapper.selectPage(page,userAccountQueryWrapper);
+        userAccountMapper.selectPage(page, userAccountQueryWrapper);
         return SuccessTip.create(page);
     }
 }

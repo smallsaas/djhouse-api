@@ -9,6 +9,7 @@ import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
 import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetLogModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseUserAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.dao.*;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
@@ -82,7 +83,7 @@ public class UserHouseAssetEndpoint {
 
 
     @Resource
-    UserCommunityAsset userCommunityAsset;
+    HouseAssetLogService houseAssetLogService;
 
     @Resource
     QueryHouseRentAssetDao queryHouseRentAssetDao;
@@ -468,6 +469,12 @@ public class UserHouseAssetEndpoint {
             throw new BusinessException(BusinessCode.BadRequest, "assetId为必填项");
         }
 
+        Integer affected = 0;
+
+//        产权记录
+        HouseAssetLog houseAssetLog = new HouseAssetLog();
+        houseAssetLog.setUserId(JWTKit.getUserId());
+
         Long start = System.currentTimeMillis();
 
 //        判断用户是是房东 还是二房东
@@ -497,7 +504,6 @@ public class UserHouseAssetEndpoint {
 
         if (houseUserAssetRecordList == null || houseUserAssetRecordList.size() == 0) {
             entity.setUserId(JWTKit.getUserId());
-            Integer affected = 0;
             try {
                 affected = houseUserAssetService.createMaster(entity);
             } catch (DuplicateKeyException e) {
@@ -505,8 +511,13 @@ public class UserHouseAssetEndpoint {
             }
 
 
+            houseAssetLog.setAssetId(entity.getAssetId());
+            affected+=houseAssetLogService.createMaster(houseAssetLog);
+
+
             houseAssetExchangeRequestService.addSameFloorExchangeRequest(JWTKit.getUserId());
-            System.out.println(System.currentTimeMillis()-start);
+
+
             return SuccessTip.create(affected);
         } else {
             /*
@@ -527,7 +538,13 @@ public class UserHouseAssetEndpoint {
                     complaint.setOldUserId(houseUserAssetRecordList.get(0).getUserId());
                     complaint.setAssetId(houseUserAssetRecordList.get(0).getAssetId());
 
-                    Integer affected = 0;
+
+//                    添加记录
+                    houseAssetLog.setOldUserId(houseUserAssetRecordList.get(0).getUserId());
+                    houseAssetLog.setAssetId(houseUserAssetRecordList.get(0).getAssetId());
+                    affected+=houseAssetLogService.createMaster(houseAssetLog);
+
+
                     affected = houseUserAssetService.updateMaster(entity);
                     if (affected > 0) {
                         /*

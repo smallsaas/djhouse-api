@@ -160,6 +160,8 @@ public class UserAgentRentManageEndpoint {
                                        @RequestParam(name = "orderBy", required = false) String orderBy,
                                        @RequestParam(name = "sort", required = false) String sort) {
 
+        Long userId = JWTKit.getUserId();
+
         if (JWTKit.getUserId()==null){
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");
         }
@@ -180,22 +182,23 @@ public class UserAgentRentManageEndpoint {
 
         HouseRentAssetRecord record = new HouseRentAssetRecord();
         record.setAssetId(assetId);
+        record.setServerId(userId);
         record.setCommunityId(communityId);
         record.setHouseTypeId(houseTypeId);
         record.setLandlordId(landlordId);
         record.setArea(area);
         record.setIntroducePicture(introducePicture);
 
-        UserAccount userAccount =  userAccountMapper.selectById(JWTKit.getUserId());
-        List<Integer> typeList = null;
-        if (userAccount.getType()!=null){
-            typeList = userAccountService.getUserTypeList(userAccount.getType());
-        }
-        if (typeList!=null && typeList.contains(EndUserTypeSetting.USER_TYPE_SALES)){
-            record.setServerId(null);
-        }else {
-            record.setServerId(JWTKit.getUserId());
-        }
+//        UserAccount userAccount =  userAccountMapper.selectById(JWTKit.getUserId());
+//        List<Integer> typeList = null;
+//        if (userAccount.getType()!=null){
+//            typeList = userAccountService.getUserTypeList(userAccount.getType());
+//        }
+//        if (typeList!=null && typeList.contains(EndUserTypeSetting.USER_TYPE_SALES)){
+//            record.setServerId(null);
+//        }else {
+//            record.setServerId(JWTKit.getUserId());
+//        }
 
 
 
