@@ -506,7 +506,7 @@
 
 
     <!--    查询房东有多少房产-->
-    <select id="queryUserAssetRank" resultType="HouseUserAssetModel">
+    <select id="queryUserAssetRank" resultType="HouseUserAssetRecord">
         SELECT t_house_user_asset.*, COUNT(*) AS assetNumber,t_end_user.phone as userPhone,t_end_user.name as username,t_end_user.avatar as userAvatar,t_end_user.real_name as realName
         FROM t_house_user_asset
         JOIN t_house_asset ON t_house_user_asset.asset_id = t_house_asset.id

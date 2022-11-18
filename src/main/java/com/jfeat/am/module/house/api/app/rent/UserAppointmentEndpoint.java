@@ -369,7 +369,14 @@ public class UserAppointmentEndpoint {
         }else {
             record.setUserId(userId);
         }
+
+        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateStr = format.format(date);
+        record.setNowDate(dateStr);
         List<HouseAppointmentRecord> houseAppointmentPage = queryHouseAppointmentDao.findHouseAppointmentPageDetail(page, record, null, search, null, null, null);
+
+
         for (HouseAppointmentRecord houseAppointmentRecord : houseAppointmentPage) {
             houseAppointmentRecord.setSimpleTime(DateTimeKit.toTimeline(houseAppointmentRecord.getCreateTime()));
             houseAppointmentRecord.setAppointmentTimeStamp(houseAppointmentRecord.getAppointmentTime().getTime());

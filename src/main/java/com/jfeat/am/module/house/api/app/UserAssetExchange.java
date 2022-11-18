@@ -25,6 +25,7 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.module.blacklist.services.domain.service.EndUserBlacklistService;
 import com.jfeat.poi.agent.util.IdWorker;
 import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
 import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
@@ -89,12 +90,19 @@ public class UserAssetExchange {
     @Resource
     HouseTenantMenuService houseTenantMenuService;
 
+    @Resource
+    EndUserBlacklistService endUserBlacklistService;
+
 
     //    新建或者修改资产交换记录并匹配
     @PostMapping
     public Tip createHouseAssetExchangeRequest(@RequestParam(value = "isSameHouseType", defaultValue = "true", required = false) Boolean isSameHouseType, @RequestBody HouseAssetExchangeRequest entity) {
 
         Long userId = JWTKit.getUserId();
+
+        if (endUserBlacklistService.isUserShield(userId)){
+            throw new BusinessException(BusinessCode.CodeBase,"已被拉黑");
+        }
 
         if (userId == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
@@ -531,6 +539,15 @@ public class UserAssetExchange {
     @PostMapping("/confirmExchangeAsset")
     public Tip confirmExchangeAsset(@RequestBody List<HouseAssetExchangeRequest> exchangeRequestList) {
 
+        Long userId = JWTKit.getUserId();
+        if (userId==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+
+        if (endUserBlacklistService.isUserShield(userId)){
+            throw new BusinessException(BusinessCode.CodeBase,"已被拉黑");
+        }
+
         List<HouseAssetExchangeRequest> houseAssetExchangeRequestList = new ArrayList<>();
         for (HouseAssetExchangeRequest houseAssetExchangeRequest : exchangeRequestList) {
             HouseAssetExchangeRequest record = new HouseAssetExchangeRequest();
@@ -606,6 +623,10 @@ public class UserAssetExchange {
         Long userId = JWTKit.getUserId();
         if (userId == null) {
             throw new BusinessException(BusinessCode.NoPermission, "没有登录");
+        }
+
+        if (endUserBlacklistService.isUserShield(userId)){
+            throw new BusinessException(BusinessCode.CodeBase,"已被拉黑");
         }
 
         Long communityId = userCommunityAsset.getUserCommunityStatus(userId);

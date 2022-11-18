@@ -83,7 +83,10 @@ public class HousingEstatesEndpoint {
 
 //        查询出租情况
         QueryWrapper<HouseRentAsset> houseRentAssetQueryWrapper = new QueryWrapper<>();
-        houseRentAssetQueryWrapper.in(HouseRentAsset.ASSET_ID,assetIds);
+        if (assetIds!=null && assetIds.size()>0){
+            houseRentAssetQueryWrapper.in(HouseRentAsset.ASSET_ID,assetIds);
+        }
+
         List<HouseRentAsset> houseRentAssets = houseRentAssetMapper.selectList(houseRentAssetQueryWrapper);
 
         for (HouseUserAssetRecord houseUserAssetRecord:userAssetRecords){

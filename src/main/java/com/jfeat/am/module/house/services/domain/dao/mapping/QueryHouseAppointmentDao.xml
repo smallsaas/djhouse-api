@@ -362,6 +362,10 @@
         </if>
 
 
+        <if test="record.nowDate != null and record.nowDate!='' ">
+            AND t_house_appointment.appointment_time >= #{record.nowDate}
+        </if>
+
         <if test="record.appointmentTime != null and record.appointmentTime>0 ">
             AND t_house_appointment.appointment_time LIKE CONCAT('%',#{record.appointmentTime},'%')
         </if>

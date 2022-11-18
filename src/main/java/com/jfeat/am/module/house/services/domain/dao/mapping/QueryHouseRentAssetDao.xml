@@ -266,6 +266,10 @@
             AND t_house_design_model.id LIKE CONCAT('%',#{record.houseTypeId},'%')
         </if>
 
+        <if test="record.houseType != null and record.houseType!='' ">
+            AND t_house_design_model.description LIKE CONCAT('%',#{record.houseType},'%')
+        </if>
+
 
         <if test="record.landlordId != null and record.landlordId>0 ">
             AND t_house_rent_asset.landlord_id LIKE CONCAT('%',#{record.landlordId},'%')

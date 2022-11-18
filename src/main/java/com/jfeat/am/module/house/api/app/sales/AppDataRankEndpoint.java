@@ -125,12 +125,23 @@ public class AppDataRankEndpoint {
             throw new BusinessException(BusinessCode.NoPermission,"没有社区信息");
         }
 
+        Integer startRank = 0;
+        if (pageNum!=null &&pageNum>0 && pageSize!=null && pageSize>0){
+            startRank = (pageNum-1)*pageSize;
+        }
+
         page.setCurrent(pageNum);
         page.setSize(pageSize);
 
         HouseUserAssetRecord record = new HouseUserAssetRecord();
         record.setOrgId(orgId);
         List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.queryUserAssetRank(page,record,null,search,null,null,null);
+
+        for (HouseUserAssetRecord houseUserAssetRecord:houseUserAssets){
+            startRank+=1;
+            houseUserAssetRecord.setRank(startRank);
+
+        }
 
         page.setRecords(houseUserAssets);
         return SuccessTip.create(page);

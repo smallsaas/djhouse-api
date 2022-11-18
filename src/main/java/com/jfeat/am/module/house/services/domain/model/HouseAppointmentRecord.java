@@ -12,6 +12,8 @@ import java.util.Date;
 public class HouseAppointmentRecord extends HouseAppointment {
     private Long appointmentTimeStamp;
 
+    private String nowDate;
+
     private Long appointmentCreateTimeStamp;
 
     private HouseAssetModel houseAssetModel;
@@ -23,6 +25,15 @@ public class HouseAppointmentRecord extends HouseAppointment {
     private String userAvatar;
 
     private String serverAvatar;
+
+
+    public String getNowDate() {
+        return nowDate;
+    }
+
+    public void setNowDate(String nowDate) {
+        this.nowDate = nowDate;
+    }
 
     public Long getAppointmentCreateTimeStamp() {
         return appointmentCreateTimeStamp;

@@ -5,6 +5,7 @@ import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetComplaintDao
 import com.jfeat.am.module.house.services.domain.model.HouseAssetComplaintRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseEmailService;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseEquityDemandSupplyMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseRentAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetComplaint;
@@ -30,6 +31,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -49,6 +51,8 @@ public class HouseEmailServiceImpl implements HouseEmailService {
 
     private static final String QUEUE_HOUSE_COMPLAINT = "QUEUE_HOUSE_COMPLAINT";
 
+    private static final String QUEUE_HOUSE_ASSET_NUMBER = "QUEUE_HOUSE_ASSET_NUMBER";
+
     private static final String HOUSE_MATCH_USER_TEMPLATE = "【通知】{targetBuilding}栋{targetAsset}房的户主希望与您的{building}栋{asset}房交换";
 
     private static final String HOUSE_MATCH_SALES_TEMPLATE="【通知】{targetBuilding}栋{targetAsset}房的户主与{building}栋{asset}房的户主有交换意向。{targetBuilding}栋{targetAsset}房的户主信息为:名字：{targetUserName}，电话：{targetUserPhone}。{building}栋{asset}房的户主信息为：姓名：{username},电话:{userPhone}";
@@ -59,6 +63,8 @@ public class HouseEmailServiceImpl implements HouseEmailService {
     private static final String HOUSE_RENT_TEMPLATE = "【通知】用户：{username} 出租了{communityName}小区{buildCode}栋{houseNumber}，此房产不在系统中。用户真实姓名：{realName},用户联系电话：{phone}";
 
     private static final String HOUSE_EQUITY_TEMPLATE = "【通知】用户：{username} {demand}面积{area}平方。真实姓名：{realName},电话：{phone}";
+
+    private static final String HOUSE_ASSET_LIMIT = "【通知】{communityName}小区{buildCode}栋{houseNumber}房在{date}切换了产权，切换房东用户信息：昵称：【{userName}】，电话号码： 【{userPhone}】，真实姓名： 【{realName}】，被切换房东用户信息：昵称：【{oldUserName}】，电话号码： 【{oldUserPhone}】，真实姓名： 【{oldRealName}】，请确认产权";
 
     private static final int DEADLINE_DAY = 7;
 
@@ -174,9 +180,10 @@ public class HouseEmailServiceImpl implements HouseEmailService {
                 tempalteMap.put("userPhone",houseAssetComplaintRecord.getUserPhone()==null?"":houseAssetComplaintRecord.getUserPhone());
                 tempalteMap.put("realName",houseAssetComplaintRecord.getRealName()==null?"":houseAssetComplaintRecord.getRealName());
 
+
                 String mas = TemplateUtil.getContent(HOUSE_COMPLAINT_TEMPLATE,tempalteMap);
 
-                this.houseQueueTaskMessage(QUEUE_HOUSE_CHANCE,"产权申述",mas,userId,true,emailList);
+                this.houseQueueTaskMessage(QUEUE_HOUSE_COMPLAINT,"产权申述",mas,userId,true,emailList);
                 log.info("sendComplaintAssetInfo:",mas);
             }catch (Exception e){
                 log.info("sendComplaintAssetInfo 异常",e.toString());
@@ -219,7 +226,7 @@ public class HouseEmailServiceImpl implements HouseEmailService {
                 templateMap.put("houseNumber",houseRentAsset.getHouseNumber()==null?"":houseRentAsset.getHouseNumber());
                 String mas = TemplateUtil.getContent(HOUSE_RENT_TEMPLATE,templateMap);
 
-                this.houseQueueTaskMessage(QUEUE_HOUSE_CHANCE,"出租房屋",mas,userId,true,emailList);
+                this.houseQueueTaskMessage(QUEUE_HOUSE_RENT,"出租房屋",mas,userId,true,emailList);
                 log.info("sendRentAssetInfo:",mas);
             }catch (Exception e){
                 e.printStackTrace();
@@ -275,6 +282,52 @@ public class HouseEmailServiceImpl implements HouseEmailService {
             }
         }).start();
 
+    }
+
+    @Override
+    public void sendMoreThanAssetLimit(Long oldUser,Long newUser,HouseAssetModel houseAssetModel) {
+        Long userId = JWTKit.getUserId();
+        new Thread(() -> {
+//做处理
+            try {
+                List<String> emailList = FileUtility.readFileToList(EMAIL_LIST_PATH);
+                if (emailList==null||emailList.size()<=0){
+                    return;
+                }
+
+
+                Map<String,String> templateMap = new HashMap<>();
+                UserAccount userAccount =  userAccountMapper.selectById(newUser);
+
+                UserAccount oldUserAccount = userAccountMapper.selectById(oldUser);
+
+                if (userAccount==null||oldUserAccount==null){
+                    return;
+                }
+
+                templateMap.put("communityName",houseAssetModel.getCommunityName()==null?"":houseAssetModel.getCommunityName());
+                templateMap.put("buildCode",houseAssetModel.getBuildingCode()==null?"":houseAssetModel.getBuildingCode());
+                templateMap.put("houseNumber",houseAssetModel.getHouseNumber()==null?"":houseAssetModel.getHouseNumber());
+                templateMap.put("userName",userAccount.getName()==null?"":userAccount.getName());
+                templateMap.put("realName",userAccount.getRealName()==null?"":userAccount.getRealName());
+                templateMap.put("userPhone",userAccount.getPhone()==null?"":userAccount.getPhone());
+                templateMap.put("oldUserName",oldUserAccount.getName()==null?"":oldUserAccount.getName());
+                templateMap.put("oldRealName",oldUserAccount.getRealName()==null?"":oldUserAccount.getRealName());
+                templateMap.put("oldUserPhone",oldUserAccount.getPhone()==null?"":oldUserAccount.getPhone());
+                Date date = new Date();
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String dateStr = format.format(date);
+                templateMap.put("date",dateStr);
+
+                String mas = TemplateUtil.getContent(HOUSE_ASSET_LIMIT,templateMap);
+
+                this.houseQueueTaskMessage(QUEUE_HOUSE_ASSET_NUMBER,"房屋产权",mas,userId,true,emailList);
+                log.info("sendMoreThanAssetLimit:",mas);
+            }catch (Exception e){
+                e.printStackTrace();
+                log.info("sendMoreThanAssetLimit 异常",e.toString());
+            }
+        }).start();
     }
 
 

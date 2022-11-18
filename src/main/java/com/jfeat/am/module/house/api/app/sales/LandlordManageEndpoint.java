@@ -26,6 +26,8 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.module.blacklist.services.gen.persistence.dao.EndUserBlacklistMapper;
+import com.jfeat.module.blacklist.services.gen.persistence.model.EndUserBlacklist;
 import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
 import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
 import io.swagger.annotations.ApiOperation;
@@ -71,6 +73,9 @@ public class LandlordManageEndpoint {
 
     @Resource
     QueryHouseAssetDao queryHouseAssetDao;
+
+    @Resource
+    EndUserBlacklistMapper endUserBlacklistMapper;
 
 
 
@@ -138,6 +143,27 @@ public class LandlordManageEndpoint {
 
                 }
             }
+        }
+
+//        查询是否被列入黑名单
+        if (userId!=null && userId.size()>0){
+            QueryWrapper<EndUserBlacklist> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq(EndUserBlacklist.USER_RANGE,true);
+            queryWrapper.in(EndUserBlacklist.USER_ID,userId);
+
+            List<EndUserBlacklist> endUserBlacklists = endUserBlacklistMapper.selectList(queryWrapper);
+
+            for (HouseUserAssetRecord houseUserAssetRecord : userAssetRecords) {
+                Boolean flag =false;
+                for (EndUserBlacklist endUserBlacklist : endUserBlacklists) {
+                    if (houseUserAssetRecord.getId().equals(endUserBlacklist.getUserId())) {
+                        flag = true;
+                    }
+
+                }
+                houseUserAssetRecord.setShield(flag);
+            }
+
         }
 
 

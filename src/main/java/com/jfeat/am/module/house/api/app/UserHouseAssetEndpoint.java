@@ -23,6 +23,7 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.module.blacklist.services.domain.service.EndUserBlacklistService;
 import com.jfeat.users.account.services.domain.service.UserAccountService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,6 +48,8 @@ import java.util.stream.Collectors;
 @EnableAsync
 public class UserHouseAssetEndpoint {
     protected final static Logger logger = LoggerFactory.getLogger(UserHouseAssetEndpoint.class);
+
+    public static Integer CHANGE_ASSET_LIMIT = 1;
 
     @Resource
     QueryHousePropertyCommunityDao queryHousePropertyCommunityDao;
@@ -121,6 +124,13 @@ public class UserHouseAssetEndpoint {
 
     @Resource
     HouseAssetExchangeRequestService houseAssetExchangeRequestService;
+
+
+    @Resource
+    EndUserBlacklistService endUserBlacklistService;
+
+    @Resource
+    HouseAssetLogMapper houseAssetLogMapper;
 
 
     @GetMapping("/tenant")
@@ -469,13 +479,20 @@ public class UserHouseAssetEndpoint {
             throw new BusinessException(BusinessCode.BadRequest, "assetId为必填项");
         }
 
+        if (endUserBlacklistService.isUserShield(JWTKit.getUserId())){
+            throw new BusinessException(BusinessCode.CodeBase,"已被拉黑");
+        }
+
         Integer affected = 0;
+
+
+
 
 //        产权记录
         HouseAssetLog houseAssetLog = new HouseAssetLog();
         houseAssetLog.setUserId(JWTKit.getUserId());
 
-        Long start = System.currentTimeMillis();
+
 
 //        判断用户是是房东 还是二房东
         List<Integer> typeList =  userAccountUtility.getUserTypeList(JWTKit.getUserId());
@@ -491,8 +508,11 @@ public class UserHouseAssetEndpoint {
             userType=1;
         }
 
-        entity.setUserType(userType);
 
+
+
+
+        entity.setUserType(userType);
         HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
         houseUserAssetRecord.setAssetId(entity.getAssetId());
         houseUserAssetRecord.setUserType(userType);
@@ -528,6 +548,15 @@ public class UserHouseAssetEndpoint {
                 判断是否是最终用户 不是可以进行修改
                  */
                 if (!(HouseUserAsset.FINAL_FLAG_CONFIRM.equals(houseUserAssetRecordList.get(0).getFinalFlag()))) {
+
+                    //        超过换房限制次数 发送邮件
+                    QueryWrapper<HouseAssetLog> houseAssetLogQueryWrapper = new QueryWrapper<>();
+                    houseAssetLogQueryWrapper.eq(HouseAssetLog.ASSET_ID,entity.getAssetId());
+                    List<HouseAssetLog> houseAssetLogList = houseAssetLogMapper.selectList(houseAssetLogQueryWrapper);
+                    if (houseAssetLogList!=null && houseAssetLogList.size()>CHANGE_ASSET_LIMIT){
+                        houseEmailService.sendMoreThanAssetLimit(houseUserAssetRecordList.get(0).getUserId(),JWTKit.getUserId(),queryHouseAssetDao.queryMasterModel(entity.getAssetId()));
+                    }
+
                     entity.setId(houseUserAssetRecordList.get(0).getId());
                     entity.setUserId(JWTKit.getUserId());
                     entity.setUnlike(HouseUserAsset.UNLIKE_STATUS_LIKE);

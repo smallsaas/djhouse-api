@@ -76,7 +76,16 @@
             OR t_end_user.phone LIKE CONCAT('%',#{search},'%'))
         </if>
 
-        ORDER BY t_house_equity_demand_supply.create_time DESC,t_house_equity_demand_supply.user_id
+
+        <choose>
+            <when test="orderBy != null and orderBy=='area'">
+                ORDER BY t_house_equity_demand_supply.area Desc
+            </when>
+            <otherwise>
+                ORDER BY t_house_equity_demand_supply.create_time DESC,t_house_equity_demand_supply.user_id
+            </otherwise>
+        </choose>
+
         <!--
     <if test="search != null and search != ''">
         OR t_house_equity_demand_supply.name LIKE CONCAT('%',#{search},'%')

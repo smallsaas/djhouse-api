@@ -13,6 +13,16 @@ public class HouseUserAssetRecord extends HouseUserAsset {
 
     private Boolean isExistRent;
 
+    /**
+     * 是否被拉黑了
+     */
+    private Boolean shield;
+
+    /**
+     * 排名
+     */
+    private Integer rank;
+
     private BigDecimal rentPrice;
 
     private Integer rentStatus;
@@ -52,6 +62,21 @@ public class HouseUserAssetRecord extends HouseUserAsset {
 
     private List<HouseUserNote> userNoteList;
 
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    public Boolean getShield() {
+        return shield;
+    }
+
+    public void setShield(Boolean shield) {
+        this.shield = shield;
+    }
 
     public BigDecimal getRentPrice() {
         return rentPrice;

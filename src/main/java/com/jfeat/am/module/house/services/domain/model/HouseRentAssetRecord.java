@@ -16,6 +16,16 @@ public class HouseRentAssetRecord extends HouseRentAsset {
 
     private HouseAssetModel houseAssetModel;
 
+    private String houseType;
+
+    public String getHouseType() {
+        return houseType;
+    }
+
+    public void setHouseType(String houseType) {
+        this.houseType = houseType;
+    }
+
     public HouseAssetModel getHouseAssetModel() {
         return houseAssetModel;
     }

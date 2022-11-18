@@ -1,10 +1,8 @@
 package com.jfeat.am.module.house.services.domain.service;
 
 import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetComplaint;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetMatchLog;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseEquityDemandSupply;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
+import com.jfeat.am.module.house.services.gen.persistence.model.*;
 
 import java.util.List;
 
@@ -20,6 +18,8 @@ public interface HouseEmailService {
 
 //    发送权益信息
     void sendEquityDemand(HouseEquityDemandSupply entity);
+
+    void sendMoreThanAssetLimit(Long oldUser,Long newUser,HouseAssetModel houseAssetModel);
 
     boolean verifyEmail(String email);
 

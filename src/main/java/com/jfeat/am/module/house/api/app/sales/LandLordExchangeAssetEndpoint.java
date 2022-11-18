@@ -23,6 +23,8 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.module.blacklist.services.domain.service.EndUserBlacklistService;
+import com.jfeat.module.blacklist.services.gen.persistence.model.EndUserBlacklist;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -61,6 +63,9 @@ public class LandLordExchangeAssetEndpoint {
     @Resource
     QueryHouseAssetDao queryHouseAssetDao;
 
+    @Resource
+    EndUserBlacklistService endUserBlacklistService;
+
 
     //    新建或者修改资产交换记录并匹配
     @PostMapping
@@ -72,6 +77,11 @@ public class LandLordExchangeAssetEndpoint {
         if (entity.getTargetAssetRange() == null) {
             throw new BusinessException(BusinessCode.BadRequest, "targetAssetRange为必填项");
         }
+
+        if (endUserBlacklistService.isUserShield(userId)){
+            throw new BusinessException(BusinessCode.CodeBase,"已被拉黑");
+        }
+
         entity.setUserId(userId);
 
         return SuccessTip.create(houseAssetExchangeRequestService.addHouseAssetExchangeRequest(entity));

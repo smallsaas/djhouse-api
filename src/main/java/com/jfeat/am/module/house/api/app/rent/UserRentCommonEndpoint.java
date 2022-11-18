@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.JsonObject;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.core.model.EndUserTypeSetting;
 import com.jfeat.am.crud.tag.services.persistence.dao.StockTagMapper;
 import com.jfeat.am.crud.tag.services.persistence.dao.StockTagRelationMapper;
 import com.jfeat.am.crud.tag.services.persistence.model.StockTag;
@@ -28,6 +29,9 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.users.account.services.domain.service.UserAccountService;
+import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
+import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -102,6 +106,18 @@ public class UserRentCommonEndpoint {
     @Resource
     AppointmentTimeMapper appointmentTimeMapper;
 
+    @Resource
+    UserAccountMapper userAccountMapper;
+
+
+    @Resource
+    UserAccountService userAccountService;
+
+    @Resource
+    QueryHouseAppointmentDao queryHouseAppointmentDao;
+
+    @Resource
+    QueryHouseSubscribeDao queryHouseSubscribeDao;
 
 
     @GetMapping("/getUserRentAsset")
@@ -118,6 +134,7 @@ public class UserRentCommonEndpoint {
                                        @RequestParam(name = "communityId", required = false) Long communityId,
 
                                        @RequestParam(name = "houseTypeId", required = false) Long houseTypeId,
+                                       @RequestParam(name = "houseType", required = false) String houseType,
 
                                        @RequestParam(name = "landlordId", required = false) Long landlordId,
 
@@ -180,6 +197,7 @@ public class UserRentCommonEndpoint {
         record.setNote(note);
         record.setRentTime(rentTime);
         record.setShelvesTime(shelvesTime);
+        record.setHouseType(houseType);
 
 
         List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPageDetails(page, record, tag, search, orderBy, null, null);
@@ -304,10 +322,31 @@ public class UserRentCommonEndpoint {
     @GetMapping("/houseTypeList")
     public Tip getHouseTypeList(){
 
+
         HouseDesignModelRecord houseDesignModelRecord = new HouseDesignModelRecord();
         List<HouseDesignModelRecord> houseDesignModelRecordList = queryHouseDesignModelDao.findHouseDesignModelPage(null,houseDesignModelRecord,null,null
         ,null,null,null);
         return SuccessTip.create(houseDesignModelRecordList);
+    }
+
+
+    @GetMapping("/houseType")
+    public Tip getHouseType(){
+
+        QueryWrapper<HouseDesignModel> queryWrapper = new QueryWrapper<>();
+        queryWrapper.groupBy(HouseDesignModel.DESCRIPTION);
+        List<HouseDesignModel> houseDesignModels = houseDesignModelMapper.selectList(queryWrapper);
+        JSONArray jsonArray = new JSONArray();
+        for (HouseDesignModel houseDesignModel:houseDesignModels){
+            if (houseDesignModel.getDescription()==null || houseDesignModel.getDescription().equals("")){
+                continue;
+            }
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("description",houseDesignModel.getDescription());
+            jsonObject.put("houseType",houseDesignModel.getDescription());
+            jsonArray.add(jsonObject);
+        }
+        return SuccessTip.create(jsonArray);
     }
 
 
@@ -414,9 +453,89 @@ public class UserRentCommonEndpoint {
         if (category==null||category.equals("")){
             return SuccessTip.create(appointmentTimeList);
         }
-
         return SuccessTip.create(result);
+    }
 
+//    根据前端要求返回 指定几个api 数据总数
+    @GetMapping("/infoNumber")
+    public Tip infoNumber(){
+        Long userId = JWTKit.getUserId();
+        if (userId==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+
+        JSONObject jsonObject = new JSONObject();
+       if (1==1){
+           Page<HouseAppointmentRecord> page = new Page<>();
+           page.setCurrent(1);
+           page.setSize(1);
+
+           HouseAppointmentRecord record = new HouseAppointmentRecord();
+
+
+           record.setConfirmStatus(HouseAppointment.CONFIRM_STATUS_WAIT);
+
+
+//        设置身份
+           UserAccount userAccount =  userAccountMapper.selectById(userId);
+           List<Integer> typeList =  null;
+           if (userAccount.getType()!=null){
+               typeList = userAccountService.getUserTypeList(userAccount.getType());
+           }
+           if (typeList!=null && typeList.contains(EndUserTypeSetting.USER_TYPE_INTERMEDIARY)){
+               record.setServerId(userId);
+           }else {
+               record.setUserId(userId);
+           }
+
+           Date date = new Date();
+           SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+           String dateStr = format.format(date);
+           record.setNowDate(dateStr);
+           List<HouseAppointmentRecord> houseAppointmentPage = queryHouseAppointmentDao.findHouseAppointmentPageDetail(page, record, null, null, null, null, null);
+           jsonObject.put("unconfirmedAppointment",page.getTotal());
+       }
+
+
+       if (1==1){
+           Page<HouseRentAssetRecord> page = new Page<>();
+           page.setCurrent(1);
+           page.setSize(1);
+
+           HouseSubscribeRecord record = new HouseSubscribeRecord();
+           record.setUserId(JWTKit.getUserId());
+           List<HouseRentAssetRecord> houseRentAssetPage = queryHouseSubscribeDao.userSubscribe(page, record);
+           page.getTotal();
+
+           jsonObject.put("subscribe",page.getTotal());
+       }
+
+       if (1==1){
+
+           Page<HouseRentAssetRecord> page = new Page<>();
+           page.setCurrent(1);
+           page.setSize(1);
+
+           HouseRentAssetRecord record = new HouseRentAssetRecord();
+
+
+           UserAccount userAccount =  userAccountMapper.selectById(JWTKit.getUserId());
+           List<Integer> typeList = null;
+           if (userAccount.getType()!=null){
+               typeList = userAccountService.getUserTypeList(userAccount.getType());
+           }
+           if (typeList!=null && typeList.contains(EndUserTypeSetting.USER_TYPE_SALES)){
+               record.setServerId(null);
+           }else {
+               record.setServerId(JWTKit.getUserId());
+           }
+
+           List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPageDetails(page, record, null, null, null, null, null);
+
+           jsonObject.put("rent",page.getTotal());
+       }
+
+        return SuccessTip.create(jsonObject);
     }
 
 
