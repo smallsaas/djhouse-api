@@ -94,6 +94,10 @@ public class UserAssetExchange {
     EndUserBlacklistService endUserBlacklistService;
 
 
+    @Resource
+    HouseFloorExchangeRequestMapper houseFloorExchangeRequestMapper;
+
+
     //    新建或者修改资产交换记录并匹配
     @PostMapping
     public Tip createHouseAssetExchangeRequest(@RequestParam(value = "isSameHouseType", defaultValue = "true", required = false) Boolean isSameHouseType, @RequestBody HouseAssetExchangeRequest entity) {
@@ -137,7 +141,8 @@ public class UserAssetExchange {
     @GetMapping("/userAllAssetExchangeDemand")
     public Tip getUserAllAssetExchangeDemand(Page<HouseAssetExchangeRequestRecord> page,
                                              @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                                             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+                                             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                             @RequestParam(name = "isAuto",required = false) Boolean isAuto) {
 
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
@@ -160,6 +165,9 @@ public class UserAssetExchange {
         HouseAssetExchangeRequestRecord record = new HouseAssetExchangeRequestRecord();
         record.setUserId(JWTKit.getUserId());
         record.setCommunityId(communityId);
+        if (isAuto!=null && isAuto){
+            record.setAutoGenerateStatus(true);
+        }
         page.setSize(pageSize);
         page.setCurrent(pageNum);
 
@@ -775,6 +783,8 @@ public class UserAssetExchange {
         }
 
         return SuccessTip.create(houseAssetExchangeRequestService.addUpAndDownStairsExchangeRequest(userId,assetId,isUp));
+
+
 
     }
 

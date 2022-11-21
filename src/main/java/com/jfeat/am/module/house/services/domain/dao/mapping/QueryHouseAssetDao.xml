@@ -101,10 +101,14 @@
         </if>
 
         <if test="record.floor != null and record.floor>0 ">
-            AND t_house_asset.floor LIKE CONCAT('%',#{record.floor},'%')
+            AND t_house_asset.floor = #{record.floor}
         </if>
         <if test="record.number != null and record.number!= ''">
-            AND t_house_asset.number LIKE CONCAT('%',#{record.number},'%')
+            AND t_house_asset.number = #{record.number}
+        </if>
+
+        <if test="record.houseNumber != null and record.houseNumber!= ''">
+            AND t_house_asset.house_number = #{record.houseNumber}
         </if>
 
 
@@ -123,11 +127,11 @@
 
 
         <if test="record.communityName != null and record.communityName!='' ">
-            AND t_house_property_community.community LIKE CONCAT('%',#{record.communityName},'%')
+            AND t_house_property_community.community = #{record.communityName}
         </if>
 
         <if test="record.buildingCode != null and record.buildingCode!='' ">
-            AND t_house_property_building.code LIKE CONCAT('%',#{record.buildingCode},'%')
+            AND t_house_property_building.code = #{record.buildingCode}
         </if>
 
         <if test="startTime != null">

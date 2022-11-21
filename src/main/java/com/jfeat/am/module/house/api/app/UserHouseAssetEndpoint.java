@@ -553,7 +553,7 @@ public class UserHouseAssetEndpoint {
                     QueryWrapper<HouseAssetLog> houseAssetLogQueryWrapper = new QueryWrapper<>();
                     houseAssetLogQueryWrapper.eq(HouseAssetLog.ASSET_ID,entity.getAssetId());
                     List<HouseAssetLog> houseAssetLogList = houseAssetLogMapper.selectList(houseAssetLogQueryWrapper);
-                    if (houseAssetLogList!=null && houseAssetLogList.size()>CHANGE_ASSET_LIMIT){
+                    if (houseAssetLogList!=null && houseAssetLogList.size()>=CHANGE_ASSET_LIMIT){
                         houseEmailService.sendMoreThanAssetLimit(houseUserAssetRecordList.get(0).getUserId(),JWTKit.getUserId(),queryHouseAssetDao.queryMasterModel(entity.getAssetId()));
                     }
 

@@ -394,6 +394,10 @@
             AND t_house_asset_exchange_request.update_time =#{record.updateTime}
         </if>
 
+        <if test="record.autoGenerateStatus != null">
+            AND t_house_asset_exchange_request.auto_generate_status = #{record.autoGenerateStatus}
+        </if>
+
 
         <if test="record.communityId != null and record.communityId >0 ">
             AND t_house_property_community.id = #{record.communityId}

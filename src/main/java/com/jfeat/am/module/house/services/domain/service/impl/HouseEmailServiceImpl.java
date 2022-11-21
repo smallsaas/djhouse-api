@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetComplaintDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetComplaintRecord;
@@ -17,10 +18,12 @@ import com.jfeat.am.module.kafkaEmail.util.TemplateUtil;
 import com.jfeat.am.module.task.services.crud.service.SnpoolService;
 import com.jfeat.am.module.task.services.crud.service.WorkTaskService;
 import com.jfeat.am.module.task.services.domain.model.WorkTaskModel;
+import com.jfeat.am.module.task.services.persistence.dao.WorkTaskMapper;
 import com.jfeat.am.module.task.services.persistence.model.WorkTask;
 import com.jfeat.am.module.taskQueue.services.domain.service.TaskQueueMassageService;
 import com.jfeat.am.module.taskQueue.services.domain.service.TaskQueueService;
 import com.jfeat.am.module.taskQueue.services.gen.persistence.model.TaskQueue;
+import com.jfeat.crud.plus.CRUD;
 import com.jfeat.module.kafka.services.domain.model.KafkaEmailProperties;
 import com.jfeat.module.kafka.services.domain.service.KafkaEmailProductService;
 import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
@@ -57,10 +60,10 @@ public class HouseEmailServiceImpl implements HouseEmailService {
 
     private static final String HOUSE_MATCH_SALES_TEMPLATE="【通知】{targetBuilding}栋{targetAsset}房的户主与{building}栋{asset}房的户主有交换意向。{targetBuilding}栋{targetAsset}房的户主信息为:名字：{targetUserName}，电话：{targetUserPhone}。{building}栋{asset}房的户主信息为：姓名：{username},电话:{userPhone}";
 
-    private static final String HOUSE_COMPLAINT_TEMPLATE = "【通知】用户：【{userName}】对【{buildingCode}-{houseNumber}】发起产权申诉。用户信息：昵称：【{userName}】，电话号码： 【{userPhone}】，真实姓名： 【{realName}】";
+    private static final String HOUSE_COMPLAINT_TEMPLATE = "【通知】用户：【{userName}】对【{buildingCode}-{houseNumber}】发起产权申诉，请处理待办事项： 【{taskName}-{taskNumber}】。用户信息：昵称：【{userName}】，电话号码： 【{userPhone}】，真实姓名： 【{realName}】";
 
 
-    private static final String HOUSE_RENT_TEMPLATE = "【通知】用户：{username} 出租了{communityName}小区{buildCode}栋{houseNumber}，此房产不在系统中。用户真实姓名：{realName},用户联系电话：{phone}";
+    private static final String HOUSE_RENT_TEMPLATE = "【通知】用户：{username} 出租了{communityName}小区{buildCode}栋{houseNumber}，此房产不在系统中，请处理待办事项： 【{taskName}-{taskNumber}】，把出租房产信息加入到系统中。用户真实姓名：{realName},用户联系电话：{phone}";
 
     private static final String HOUSE_EQUITY_TEMPLATE = "【通知】用户：{username} {demand}面积{area}平方。真实姓名：{realName},电话：{phone}";
 
@@ -95,6 +98,9 @@ public class HouseEmailServiceImpl implements HouseEmailService {
 
     @Resource
     HouseEquityDemandSupplyMapper houseEquityDemandSupplyMapper;
+
+    @Resource
+    WorkTaskMapper workTaskMapper;
 
 
     /**
@@ -147,7 +153,8 @@ public class HouseEmailServiceImpl implements HouseEmailService {
 
                     String mas = TemplateUtil.getContent(HOUSE_MATCH_SALES_TEMPLATE,tempalteMap);
 
-                    this.houseQueueTaskMessage(QUEUE_HOUSE_CHANCE,"换房匹配记录",mas,userId,true,emailList);
+                    WorkTaskModel workTaskModel =  this.createWorkTask(QUEUE_HOUSE_CHANCE,"换房匹配记录",mas,userId,emailList);
+                    this.houseQueueTaskMessage(workTaskModel,true);
                     log.info("sendAssetMatchLog:",mas);
                 }
             }catch (Exception e){
@@ -173,17 +180,24 @@ public class HouseEmailServiceImpl implements HouseEmailService {
                 if (houseAssetComplaintRecord==null){
                     return;
                 }
+                WorkTaskModel workTaskModel =  this.createWorkTask(QUEUE_HOUSE_COMPLAINT,"产权申述","",userId,emailList);
                 Map<String,String> tempalteMap = new HashMap<>();
                 tempalteMap.put("userName",houseAssetComplaintRecord.getUserName()==null?"":houseAssetComplaintRecord.getUserName());
                 tempalteMap.put("buildingCode",houseAssetComplaintRecord.getBuildingCode()==null?"":houseAssetComplaintRecord.getBuildingCode());
                 tempalteMap.put("houseNumber",houseAssetComplaintRecord.getHouseNumber()==null?"":houseAssetComplaintRecord.getHouseNumber());
                 tempalteMap.put("userPhone",houseAssetComplaintRecord.getUserPhone()==null?"":houseAssetComplaintRecord.getUserPhone());
                 tempalteMap.put("realName",houseAssetComplaintRecord.getRealName()==null?"":houseAssetComplaintRecord.getRealName());
-
+                tempalteMap.put("taskName",workTaskModel.getTaskName()==null?"":workTaskModel.getTaskName());
+                tempalteMap.put("taskNumber",workTaskModel.getTaskNumber()==null?"":workTaskModel.getTaskNumber());
 
                 String mas = TemplateUtil.getContent(HOUSE_COMPLAINT_TEMPLATE,tempalteMap);
 
-                this.houseQueueTaskMessage(QUEUE_HOUSE_COMPLAINT,"产权申述",mas,userId,true,emailList);
+                WorkTask workTask = workTaskMapper.selectById(workTaskModel.getId());
+                workTask.setDesc(mas);
+                workTaskMapper.updateById(workTask);
+
+                workTaskModel.setDesc(mas);
+                this.houseQueueTaskMessage(workTaskModel,true);
                 log.info("sendComplaintAssetInfo:",mas);
             }catch (Exception e){
                 log.info("sendComplaintAssetInfo 异常",e.toString());
@@ -213,6 +227,7 @@ public class HouseEmailServiceImpl implements HouseEmailService {
                     return;
                 }
 
+                WorkTaskModel workTaskModel =  this.createWorkTask(QUEUE_HOUSE_RENT,"出租房屋","",userId,emailList);
 
                 Map<String,String> templateMap = new HashMap<>();
 
@@ -224,9 +239,17 @@ public class HouseEmailServiceImpl implements HouseEmailService {
                 templateMap.put("communityName",houseRentAsset.getCommunityName()==null?"":houseRentAsset.getCommunityName());
                 templateMap.put("buildCode",houseRentAsset.getBuildingCode()==null?"":houseRentAsset.getBuildingCode());
                 templateMap.put("houseNumber",houseRentAsset.getHouseNumber()==null?"":houseRentAsset.getHouseNumber());
+                templateMap.put("taskName",workTaskModel.getTaskName()==null?"":workTaskModel.getTaskName());
+                templateMap.put("taskNumber",workTaskModel.getTaskNumber()==null?"":workTaskModel.getTaskNumber());
                 String mas = TemplateUtil.getContent(HOUSE_RENT_TEMPLATE,templateMap);
 
-                this.houseQueueTaskMessage(QUEUE_HOUSE_RENT,"出租房屋",mas,userId,true,emailList);
+                WorkTask workTask = workTaskMapper.selectById(workTaskModel.getId());
+                workTask.setDesc(mas);
+                workTaskMapper.updateById(workTask);
+
+                workTaskModel.setDesc(mas);
+
+                this.houseQueueTaskMessage(workTaskModel,true);
                 log.info("sendRentAssetInfo:",mas);
             }catch (Exception e){
                 e.printStackTrace();
@@ -274,7 +297,9 @@ public class HouseEmailServiceImpl implements HouseEmailService {
                 templateMap.put("area",houseEquityDemandSupply.getArea().toString()==null?"":houseEquityDemandSupply.getArea().toString());
                 String mas = TemplateUtil.getContent(HOUSE_EQUITY_TEMPLATE,templateMap);
 
-                this.houseQueueTaskMessage(QUEUE_HOUSE_EQUITY,"方数买卖",mas,userId,true,emailList);
+
+                WorkTaskModel workTaskModel =  this.createWorkTask(QUEUE_HOUSE_EQUITY,"方数买卖",mas,userId,emailList);
+                this.houseQueueTaskMessage(workTaskModel,true);
                 log.info("sendEquityDemand:",mas);
             }catch (Exception e){
                 e.printStackTrace();
@@ -321,7 +346,8 @@ public class HouseEmailServiceImpl implements HouseEmailService {
 
                 String mas = TemplateUtil.getContent(HOUSE_ASSET_LIMIT,templateMap);
 
-                this.houseQueueTaskMessage(QUEUE_HOUSE_ASSET_NUMBER,"房屋产权",mas,userId,true,emailList);
+                WorkTaskModel workTaskModel =  this.createWorkTask(QUEUE_HOUSE_ASSET_NUMBER,"房屋产权",mas,userId,emailList);
+                this.houseQueueTaskMessage(workTaskModel,true);
                 log.info("sendMoreThanAssetLimit:",mas);
             }catch (Exception e){
                 e.printStackTrace();
@@ -354,8 +380,13 @@ public class HouseEmailServiceImpl implements HouseEmailService {
 
 
 //    消息队列控制
-    private void houseQueueTaskMessage(String queueName,String taskName,String msg,Long userId,boolean isKafka,List<String> emailList){
-        //           获取队列
+    private void houseQueueTaskMessage(WorkTaskModel workTaskModel,boolean isKafka){
+        if (workTaskModel!=null){
+            taskQueueMassageService.taskQueueMessageControl(workTaskModel,isKafka);
+        }
+    }
+
+    private WorkTaskModel createWorkTask(String queueName,String taskName,String msg,Long userId,List<String> emailList) {
         TaskQueue taskQueue = taskQueueService.getTaskQueueByName(queueName);
 
         WorkTaskModel workTaskModel = new WorkTaskModel();
@@ -366,14 +397,13 @@ public class HouseEmailServiceImpl implements HouseEmailService {
         workTaskModel.setDesc(msg);
         workTaskModel.setTaskType("TODO");
         workTaskModel.setStartTime(new Date());
-        workTaskModel.setDeadline(dateAddOne(new Date(),DEADLINE_DAY));
-        workTaskModel.setCloseTime(dateAddOne(new Date(),DEADLINE_DAY));
+        workTaskModel.setDeadline(dateAddOne(new Date(), DEADLINE_DAY));
+        workTaskModel.setCloseTime(dateAddOne(new Date(), DEADLINE_DAY));
 
         UserAccount userAccount = userAccountMapper.selectById(userId);
-        Long taskId = workTaskService.createMasterByStaff(workTaskModel, userAccount, true);
-//            队列控制是否自动发送消息
-        if (taskId!=null){
-            taskQueueMassageService.taskQueueMessageControl(workTaskModel,isKafka);
-        }
+        workTaskService.createMasterByStaff(workTaskModel, userAccount, true);
+
+        return workTaskModel;
+
     }
 }

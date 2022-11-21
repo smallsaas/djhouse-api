@@ -404,6 +404,8 @@ public class HouseAssetExchangeRequest extends Model<HouseAssetExchangeRequest> 
 
     public static final String UPDATE_TIME = "update_time";
 
+    public static final String AUTO_GENERATE_STATUS = "auto_generate_status";
+
 
     public static final Boolean AUTO_GENERATE_STATUS_YES = true;
 

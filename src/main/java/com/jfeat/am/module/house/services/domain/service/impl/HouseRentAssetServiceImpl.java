@@ -139,6 +139,7 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
     public int createUserRentAssetNotAssetId(HouseRentAsset entity) {
         Integer affected = 0;
         Boolean flag = false;
+        Boolean isSendEmail = false;
 
         Long userId = JWTKit.getUserId();
         if (userId==null){
@@ -146,9 +147,10 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
         }
 //        判断是否有房子
         HouseAssetRecord houseAssetRecord = new HouseAssetRecord();
+        houseAssetRecord.setCommunityName(entity.getCommunityName());
         houseAssetRecord.setCommunityId(entity.getCommunityId());
         houseAssetRecord.setBuildingCode(entity.getBuildingCode());
-        houseAssetRecord.setHouseNumber(entity.getBuildingCode());
+        houseAssetRecord.setHouseNumber(entity.getHouseNumber());
         List<HouseAssetRecord> queryHouseAssetDaoList = queryHouseAssetDao.findHouseAssetPage(null,houseAssetRecord,null,null,null,null,null);
 
 //        是否存在房子
@@ -157,14 +159,36 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
             QueryWrapper<HouseRentAsset> houseRentAssetQueryWrapper = new QueryWrapper<>();
             houseRentAssetQueryWrapper.eq(HouseRentAsset.BUILDING_CODE,entity.getBuildingCode()).eq(HouseRentAsset.COMMUNITY_NAME,entity.getCommunityName()).eq(HouseRentAsset.HOUSE_NUMBER,entity.getHouseNumber());
             List<HouseRentAsset> houseRentAssetList = houseRentAssetMapper.selectList(houseRentAssetQueryWrapper);
-
             if (houseRentAssetList!=null && houseRentAssetList.size()>0){
                 throw new BusinessException(BusinessCode.CodeBase,"已存在出租房屋");
             }
-
             flag=true;
+            isSendEmail = true;
 
         }else if (queryHouseAssetDaoList.size()==1){
+
+             /*
+        验证房子是否是用户的
+         */
+            HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
+            houseUserAssetRecord.setAssetId(entity.getAssetId());
+            houseUserAssetRecord.setUserId(JWTKit.getUserId());
+            List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord
+                    ,null,null,null,null,null);
+            if (houseUserAssetRecordList==null || houseUserAssetRecordList.size()==0){
+                throw new BusinessException(BusinessCode.NoPermission,"没有找到房子,请重试");
+            }
+
+        /*
+        设置出租的 小区  户型 面积 房东
+         */
+
+            HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(entity.getAssetId());
+            entity.setArea(houseAssetModel.getArea());
+            entity.setCommunityId(houseAssetModel.getCommunityId());
+            entity.setHouseTypeId(houseAssetModel.getDesignModelId());
+            entity.setLandlordId(JWTKit.getUserId());
+            entity.setCommunityName(houseAssetModel.getCommunityName());
 
             Long assetId = queryHouseAssetDaoList.get(0).getId();
 
@@ -183,18 +207,29 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
 
 //        是否可出租
         if (flag){
-            entity.setRentStatus(HouseRentAsset.RENT_STATUS_SOLD_OUT);
-            try {
-                affected = houseRentAssetService.createMaster(entity);
+            QueryWrapper<HouseRentAsset> houseRentAssetQueryWrapper = new QueryWrapper<>();
+            houseRentAssetQueryWrapper.eq(HouseRentAsset.BUILDING_CODE,entity.getBuildingCode()).eq(HouseRentAsset.COMMUNITY_NAME,entity.getCommunityName()).eq(HouseRentAsset.HOUSE_NUMBER,entity.getHouseNumber()).eq(HouseRentAsset.LANDLORD_ID,userId);
+            List<HouseRentAsset> houseRentAssetList = houseRentAssetMapper.selectList(houseRentAssetQueryWrapper);
 
-                if (affected>0){
-                    houseEmailService.sendRentAssetInfo(entity);
+            entity.setLandlordId(userId);
+            if (houseRentAssetList==null|| houseRentAssetList.size()==0){
+                entity.setRentStatus(HouseRentAsset.RENT_STATUS_SOLD_OUT);
+                try {
+                    affected = houseRentAssetService.createMaster(entity);
+
+                    if (affected>0 && isSendEmail!=null&& isSendEmail){
+                        houseEmailService.sendRentAssetInfo(entity);
+                    }
+                } catch (DuplicateKeyException e) {
+                    throw new BusinessException(BusinessCode.DuplicateKey);
                 }
-
-            } catch (DuplicateKeyException e) {
-                throw new BusinessException(BusinessCode.DuplicateKey);
+            }else if (houseRentAssetList.size()==1){
+                entity.setId(houseRentAssetList.get(0).getId());
+                entity.setRentTime(new Date());
+                affected = houseRentAssetService.updateMaster(entity);
+            }else {
+                throw new BusinessException(BusinessCode.CodeBase,"出租房屋已存在");
             }
-
 //        判断是否填入家居
             if (affected>0 && entity.getSupportFacilitiesList()!=null && entity.getSupportFacilitiesList().size()>0){
                 QueryWrapper<HouseRentSupportFacilities> queryWrapper = new QueryWrapper<>();

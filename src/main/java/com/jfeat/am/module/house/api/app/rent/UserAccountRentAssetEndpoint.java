@@ -14,6 +14,7 @@ import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
 import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseRentAssetMapper;
@@ -72,6 +73,10 @@ public class UserAccountRentAssetEndpoint {
     @Resource
     UserCommunityAsset userCommunityAsset;
 
+
+    @Resource
+    QueryHouseUserAssetDao queryHouseUserAssetDao;
+
     /*
     用户出租自己的房子 填写照片 价格 描述信息
      */
@@ -84,7 +89,29 @@ public class UserAccountRentAssetEndpoint {
         if (entity.getAssetId() == null) {
             throw new BusinessException(BusinessCode.EmptyNotAllowed, "assetId不能为空");
         }
-        return SuccessTip.create(houseRentAssetService.createUserRentAsset(entity));
+         /*
+        验证房子是否是用户的
+         */
+        HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
+        houseUserAssetRecord.setAssetId(entity.getAssetId());
+        houseUserAssetRecord.setUserId(JWTKit.getUserId());
+        List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord
+                ,null,null,null,null,null);
+        if (houseUserAssetRecordList==null || houseUserAssetRecordList.size()==0){
+            throw new BusinessException(BusinessCode.NoPermission,"没有找到房子,请重试");
+        }
+
+        /*
+        设置出租的 小区  户型 面积 房东
+         */
+
+        HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(entity.getAssetId());
+        entity.setArea(houseAssetModel.getArea());
+        entity.setCommunityId(houseAssetModel.getCommunityId());
+        entity.setHouseTypeId(houseAssetModel.getDesignModelId());
+        entity.setLandlordId(JWTKit.getUserId());
+        entity.setCommunityName(houseAssetModel.getCommunityName());
+        return SuccessTip.create(houseRentAssetService.createUserRentAssetNotAssetId(entity));
     }
 
     /*
