@@ -234,6 +234,8 @@ public class UserAccountRentAssetEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "没有登录");
         }
 
+        String orderBy = "rentStatusDesc";
+
         page.setCurrent(pageNum);
         page.setSize(pageSize);
 
@@ -241,7 +243,7 @@ public class UserAccountRentAssetEndpoint {
         record.setLandlordId(userId);
 
 
-        List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPageDetails(page, record, null, null, null, null, null);
+        List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPageDetails(page, record, null, null, orderBy, null, null);
 
 //        如果出租房屋时不存在的时候将 房屋信息设置为空
         for (HouseRentAssetRecord houseRentAssetRecord:houseRentAssetPage){

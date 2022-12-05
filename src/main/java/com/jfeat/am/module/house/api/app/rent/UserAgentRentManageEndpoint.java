@@ -166,17 +166,8 @@ public class UserAgentRentManageEndpoint {
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");
         }
 
-        if (orderBy != null && orderBy.length() > 0) {
-            if (sort != null && sort.length() > 0) {
-                String sortPattern = "(ASC|DESC|asc|desc)";
-                if (!sort.matches(sortPattern)) {
-                    throw new BusinessException(BusinessCode.BadRequest.getCode(), "sort must be ASC or DESC");//此处异常类型根据实际情况而定
-                }
-            } else {
-                sort = "ASC";
-            }
-            orderBy = "`" + orderBy + "`" + " " + sort;
-        }
+        orderBy = "rentStatusAsc";
+
         page.setCurrent(pageNum);
         page.setSize(pageSize);
 

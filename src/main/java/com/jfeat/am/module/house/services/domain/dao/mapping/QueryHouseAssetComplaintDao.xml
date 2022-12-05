@@ -8,6 +8,19 @@
         , t_house_asset_complaint.user_id AS userId, t_house_asset_complaint.old_user_id AS oldUserId, t_house_asset_complaint.asset_id AS assetId, t_house_asset_complaint.clash_certificate AS clashCertificate, t_house_asset_complaint.clash_describe AS clashDescribe, t_house_asset_complaint.solve_status AS solveStatus, t_house_asset_complaint.create_time AS createTime, t_house_asset_complaint.solve_time AS solveTime
     </sql>
 
+    <select id="queryMasterModel" resultType="HouseAssetComplaintModel">
+        SELECT t_house_asset_complaint.*,t_house_asset.house_number as houseNumber,t_house_property_building.code as buildingCode,t_house_property_community.community as communityName,
+        t_end_user.name as userName,t_end_user.phone as userPhone,t_end_user.real_name as realName
+        FROM t_house_asset_complaint
+        JOIN t_house_asset ON t_house_asset.id = t_house_asset_complaint.asset_id
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
+        JOIN t_end_user ON t_end_user.id =t_house_asset_complaint.user_id
+
+        WHERE t_house_asset_complaint.id = #{id}
+
+        GROUP BY t_house_asset_complaint.id
+    </select>
 
     <select id="queryMastRecord" resultType="HouseAssetComplaintRecord">
         SELECT

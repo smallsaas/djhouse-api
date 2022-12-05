@@ -107,6 +107,10 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     @ApiModelProperty("小区名")
     private String communityName;
 
+    private Date createTime;
+
+    private Date updateTime;
+
     @TableField(exist = false)
     private Boolean subscribeStatus;
 
@@ -131,6 +135,22 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     @TableField(exist = false)
     private List<HouseRentSupportFacilitiesRecord> supportFacilitiesList;
 
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
     public Boolean getConfigurationStatus() {
         return configurationStatus;

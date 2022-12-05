@@ -69,6 +69,7 @@ public class UserAccountManageEndpoint {
         if ("house".equals(appid)){
             appids.add(1L);
             appids.add(2L);
+            appids.add(3L);
         }
 
         EndpointUserRecord record = new EndpointUserRecord();

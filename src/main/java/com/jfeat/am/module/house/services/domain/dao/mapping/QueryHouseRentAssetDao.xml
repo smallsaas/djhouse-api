@@ -335,7 +335,17 @@
         OR t_house_rent_asset.name LIKE CONCAT('%',#{search},'%')
     </if>
     -->
-        ORDER BY t_house_rent_asset.rent_status ASC ,t_house_rent_asset.rent_time DESC
+        <choose>
+            <when test="orderBy=='rentStatusDesc'">
+                ORDER BY t_house_rent_asset.rent_status Desc ,t_house_rent_asset.update_time DESC,t_house_rent_asset.create_time DESC
+            </when>
+            <when test="orderBy=='rentStatusAsc'">
+                ORDER BY t_house_rent_asset.rent_status ASC ,t_house_rent_asset.update_time DESC,t_house_rent_asset.create_time DESC
+            </when>
+            <otherwise>
+                ORDER BY t_house_rent_asset.update_time DESC,t_house_rent_asset.create_time DESC
+            </otherwise>
+        </choose>
     </select>
 
 
