@@ -22,7 +22,7 @@ public class HouseAssetRecord extends HouseAsset {
 
     private Boolean isExistUser;
 
-    private List<Product> decoratePlanProductList;
+//    private List<Product> decoratePlanProductList;
 
     private String username;
 
@@ -171,13 +171,13 @@ public class HouseAssetRecord extends HouseAsset {
         this.phone = phone;
     }
 
-    public List<Product> getDecoratePlanProductList() {
-        return decoratePlanProductList;
-    }
-
-    public void setDecoratePlanProductList(List<Product> decoratePlanProductList) {
-        this.decoratePlanProductList = decoratePlanProductList;
-    }
+//    public List<Product> getDecoratePlanProductList() {
+//        return decoratePlanProductList;
+//    }
+//
+//    public void setDecoratePlanProductList(List<Product> decoratePlanProductList) {
+//        this.decoratePlanProductList = decoratePlanProductList;
+//    }
 
     public String getUserAvatar() {
         return userAvatar;

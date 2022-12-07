@@ -8,9 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
-import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
-import com.jfeat.am.module.house.services.domain.model.ProductRecord;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -133,9 +131,9 @@ public class EndpointUser extends Model<EndpointUser> {
     @TableField(exist = false)
     private List<HouseAssetExchangeRequestRecord> exchangeRequestRecords;
 
-    @ApiModelProperty(value = "团购列表")
-    @TableField(exist = false)
-    private List<Product> products;
+//    @ApiModelProperty(value = "团购列表")
+//    @TableField(exist = false)
+//    private List<Product> products;
 
     @ApiModelProperty(value = "用户类型列表")
     @TableField(exist = false)
@@ -439,13 +437,13 @@ public class EndpointUser extends Model<EndpointUser> {
         this.exchangeRequestRecords = exchangeRequestRecords;
     }
 
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
+//    public List<Product> getProducts() {
+//        return products;
+//    }
+//
+//    public void setProducts(List<Product> products) {
+//        this.products = products;
+//    }
 
     public List<Integer> getTypeList() {
         return typeList;

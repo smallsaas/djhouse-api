@@ -41,11 +41,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
     @Resource
     HouseUserAssetMapper houseUserAssetMapper;
 
-    @Resource
-    HouseUserDecoratePlanMapper houseUserDecoratePlanMapper;
 
-    @Resource
-    HouseUserDecorateFunitureMapper houseUserDecorateFunitureMapper;
 
     @Resource
     HouseAssetComplaintMapper houseAssetComplaintMapper;
@@ -269,15 +265,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
         userAssetQueryWrapper.eq(HouseUserAsset.USER_ID,userId).eq(HouseUserAsset.ASSET_ID,assetId);
         effect += houseUserAssetMapper.delete(userAssetQueryWrapper);
 
-//        删除用户装修计划地址
-        QueryWrapper<HouseUserDecoratePlan> houseUserDecoratePlanQueryWrapper = new QueryWrapper<>();
-        houseUserDecoratePlanQueryWrapper.eq(HouseUserDecoratePlan.USER_ID,userId).eq(HouseUserDecoratePlan.ASSET_ID,assetId);
-        effect += houseUserDecoratePlanMapper.delete(houseUserDecoratePlanQueryWrapper);
 
-//        删除用户装修计划家居
-        QueryWrapper<HouseUserDecorateFuniture> houseUserDecorateFunitureQueryWrapper = new QueryWrapper<>();
-        houseUserDecorateFunitureQueryWrapper.eq(HouseUserDecorateFuniture.USER_ID,userId).eq(HouseUserDecorateFuniture.ASSET_ID,assetId);
-        effect += houseUserDecorateFunitureMapper.delete(houseUserDecorateFunitureQueryWrapper);
 
 //        删除用户申诉
         QueryWrapper<HouseAssetComplaint> houseAssetComplaintQueryWrapper = new QueryWrapper<>();

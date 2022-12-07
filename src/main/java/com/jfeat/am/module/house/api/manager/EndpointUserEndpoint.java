@@ -4,7 +4,6 @@ package com.jfeat.am.module.house.api.manager;
 
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
-import com.jfeat.am.module.house.services.gen.persistence.model.Product;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.ApiImplicitParam;
@@ -35,7 +34,6 @@ import com.jfeat.am.module.house.services.gen.persistence.model.EndpointUser;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -63,14 +61,10 @@ public class EndpointUserEndpoint {
     @Resource
     QueryHouseAssetExchangeRequestDao queryHouseAssetExchangeRequestDao;
 
-    @Resource
-    QueryHouseUserDecoratePlanDao queryHouseUserDecoratePlanDao;
 
-    @Resource
-    QueryHouseUserDecorateFunitureDao queryHouseUserDecorateFunitureDao;
 
-    @Resource
-    QueryProductDao queryProductDao;
+//    @Resource
+//    QueryProductDao queryProductDao;
 
 
     @Permission(EndUserPermission.ENDUSER_NEW)
@@ -103,23 +97,6 @@ public class EndpointUserEndpoint {
             List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecords = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null,houseAssetExchangeRequestRecord,null,null,null,null,null);
             endpointUser.setExchangeRequestRecords(houseAssetExchangeRequestRecords);
 
-
-            HouseUserDecoratePlanRecord houseUserDecoratePlanRecord = new HouseUserDecoratePlanRecord();
-            houseUserDecoratePlanRecord.setUserId(id);
-            houseUserDecoratePlanRecord.setOptionType(2);
-            List<Product> products = new ArrayList<>();
-            List<HouseUserDecoratePlanRecord> houseUserDecoratePlanRecordList = queryHouseUserDecoratePlanDao.findHouseUserDecoratePlanPage(null,houseUserDecoratePlanRecord,null,null,null,null,null);
-            for (int j=0;j<houseUserDecoratePlanRecordList.size();j++){
-                HouseUserDecorateFunitureRecord houseUserDecorateFunitureRecord = new HouseUserDecorateFunitureRecord();
-                houseUserDecorateFunitureRecord.setUserId(id);
-                houseUserDecorateFunitureRecord.setDecoratePlanId(houseUserDecoratePlanRecordList.get(j).getDecoratePlanId());
-                List<HouseUserDecorateFunitureRecord> houseUserDecorateFunitureRecordList = queryHouseUserDecorateFunitureDao.findHouseUserDecorateFuniturePage(null,houseUserDecorateFunitureRecord,null,null,null,null,null);
-                for (HouseUserDecorateFunitureRecord funitureRecord:houseUserDecorateFunitureRecordList){
-                    Product product = queryProductDao.queryMasterModel(funitureRecord.getFunitureId());
-                    products.add(product);
-                }
-            }
-            endpointUser.setProducts(products);
         }
 
         return SuccessTip.create(endpointUser);
@@ -316,19 +293,6 @@ public class EndpointUserEndpoint {
             List<HouseAssetExchangeRequestRecord> houseAssetExchangeRequestRecords = queryHouseAssetExchangeRequestDao.findHouseAssetExchangeRequestPage(null,houseAssetExchangeRequestRecord,null,null,null,null,null);
             endUserPage.get(i).setExchangeCount(houseAssetExchangeRequestRecords.size());
 
-            HouseUserDecoratePlanRecord houseUserDecoratePlanRecord = new HouseUserDecoratePlanRecord();
-            houseUserDecoratePlanRecord.setUserId(id);
-            houseUserDecoratePlanRecord.setOptionType(2);
-            int bulkCount=0;
-            List<HouseUserDecoratePlanRecord> houseUserDecoratePlanRecordList = queryHouseUserDecoratePlanDao.findHouseUserDecoratePlanPage(null,houseUserDecoratePlanRecord,null,null,null,null,null);
-            for (int j=0;j<houseUserDecoratePlanRecordList.size();j++){
-                HouseUserDecorateFunitureRecord houseUserDecorateFunitureRecord = new HouseUserDecorateFunitureRecord();
-                houseUserDecorateFunitureRecord.setUserId(id);
-                houseUserDecorateFunitureRecord.setDecoratePlanId(houseUserDecoratePlanRecordList.get(j).getDecoratePlanId());
-                List<HouseUserDecorateFunitureRecord> houseUserDecorateFunitureRecordList = queryHouseUserDecorateFunitureDao.findHouseUserDecorateFuniturePage(null,houseUserDecorateFunitureRecord,null,null,null,null,null);
-                bulkCount+=houseUserDecorateFunitureRecordList.size();
-            }
-            endUserPage.get(i).setBulkCount(bulkCount);
         }
 
         page.setRecords(endUserPage);

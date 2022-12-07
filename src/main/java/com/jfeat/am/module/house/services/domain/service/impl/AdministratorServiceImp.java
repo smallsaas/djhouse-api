@@ -41,12 +41,6 @@ public class AdministratorServiceImp implements AdministratorService {
     HouseAssetMatchLogMapper houseAssetMatchLogMapper;
 
     //        删除装修计划数据
-    @Resource
-    HouseDecoratePlanMapper houseDecoratePlanMapper;
-
-    //        删除家居数据
-    @Resource
-    HouseDecoratePlanFunitureMapper houseDecoratePlanFunitureMapper;
 
     //        删除方数买卖数据
     @Resource
@@ -72,12 +66,7 @@ public class AdministratorServiceImp implements AdministratorService {
     @Resource
     HouseUserCommunityStatusMapper houseUserCommunityStatusMapper;
 
-    @Resource
-    HouseUserDecoratePlanMapper houseUserDecoratePlanMapper;
 
-    //        删除用户装修家居
-    @Resource
-    HouseUserDecorateFunitureMapper houseUserDecorateFunitureMapper;
 
     @Override
     @Transactional
@@ -105,11 +94,6 @@ public class AdministratorServiceImp implements AdministratorService {
 //        删除匹配成功数据
         affect += houseAssetMatchLogMapper.delete(new QueryWrapper<HouseAssetMatchLog>());
 
-//        删除装修计划数据
-        affect += houseDecoratePlanMapper.delete(new QueryWrapper<HouseDecoratePlan>());
-
-//        删除家居数据
-        affect += houseDecoratePlanFunitureMapper.delete(new QueryWrapper<HouseDecoratePlanFuniture>());
 
 //        删除方数买卖数据
         affect += houseEquityDemandSupplyMapper.delete(new QueryWrapper<HouseEquityDemandSupply>());
@@ -129,11 +113,7 @@ public class AdministratorServiceImp implements AdministratorService {
 //        删除用户小区状态
         affect += houseUserCommunityStatusMapper.delete(new QueryWrapper<HouseUserCommunityStatus>());
 
-//        删除用户装修家居
-        affect += houseUserDecoratePlanMapper.delete(new QueryWrapper<HouseUserDecoratePlan>());
 
-//        删除用户装修计划
-        affect += houseUserDecorateFunitureMapper.delete(new QueryWrapper<HouseUserDecorateFuniture>());
         return affect;
     }
 }
