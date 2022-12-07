@@ -192,7 +192,7 @@
         </if>
 
         GROUP BY t_end_user.id
-        ORDER BY t_end_user.create_time DESC
+        ORDER BY t_end_user.end_login_time DESC,t_end_user.create_time DESC
     </select>
 
 
@@ -204,7 +204,7 @@
         FROM t_end_user
         LEFT JOIN sys_third_party_user ON sys_third_party_user.user_id = t_end_user.id
         WHERE 1=1
-        AND t_end_user.appid in ("1","2")
+        AND t_end_user.appid in ("1","2","3")
 
 
         <if test="search != null and search != ''">
@@ -216,7 +216,7 @@
         </if>
 
         GROUP BY t_end_user.id
-        ORDER BY t_end_user.create_time DESC
+        ORDER BY t_end_user.end_login_time DESC,t_end_user.create_time DESC
     </select>
 
 </mapper>

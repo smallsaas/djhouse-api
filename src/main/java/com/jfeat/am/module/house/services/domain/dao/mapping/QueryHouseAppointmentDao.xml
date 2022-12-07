@@ -190,32 +190,31 @@
         <result column="field_c" property="fieldC" />
 
         <association property="houseAssetModel"
-                     javaType="com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel">
-            <id column="assetId" property="id"/>
-            <result column="address" property="address"/>
-            <result column="area" property="area"/>
-            <result column="assetFlag" property="assetFlag"/>
-            <result column="assetSlot" property="assetSlot"/>
-            <result column="assetType" property="assetType"/>
-            <result column="buildingArea" property="buildingArea"/>
-            <result column="buildingCode" property="buildingCode"/>
-
-            <result column="buildingId" property="buildingId"/>
-            <result column="cadPicture" property="cadPicture"/>
+                     javaType="com.jfeat.am.module.house.services.gen.crud.model.HouseRentAssetModel">
+            <id column="rentId" property="id"/>
+            <result column="assetId" property="assetId"/>
             <result column="communityId" property="communityId"/>
-            <result column="communityName" property="communityName"/>
-            <result column="designModelId" property="designModelId"/>
-            <result column="direction" property="direction"/>
+            <result column="houseTypeTd" property="houseTypeId"/>
+            <result column="landlordTd" property="landlordId"/>
+            <result column="area" property="area"/>
+            <result column="introducePicture" property="introducePicture"/>
+            <result column="serverId" property="serverId"/>
+            <result column="cover" property="cover"/>
+            <result column="title" property="title"/>
+            <result column="price" property="price"/>
+            <result column="slide" property="slide"/>
+            <result column="describe" property="describe"/>
+            <result column="rentStatus" property="rentStatus"/>
+            <result column="note" property="note"/>
+            <result column="rentTime" property="rentTime"/>
+            <result column="shelvesTime" property="shelvesTime"/>
+            <result column="rate" property="rate"/>
+            <result column="houseNumber" property="houseNumber"/>
             <result column="floor" property="floor"/>
-
-            <result column="houseType" property="houseType"/>
-            <result column="houseTypeId" property="houseTypeId"/>
-            <result column="houseTypePicture" property="houseTypePicture"/>
-            <result column="number" property="number"/>
-            <result column="unitId" property="unitId"/>
-            <result column="vrLink" property="vrLink"/>
-            <result column="vrPicture" property="vrPicture"/>
-            <result column="vrSnapshot" property="vrSnapshot"/>
+            <result column="toward" property="toward"/>
+            <result column="buildingCode" property="buildingCode"/>
+            <result column="communityName" property="communityName"/>
+            <result column="configurationStatus" property="configurationStatus"/>
         </association>
     </resultMap>
 
@@ -231,32 +230,31 @@
         t2.phone AS userPhone,
         t2.avatar AS userAvatar,
 
-        t_house_asset.id AS assetId,
-        t_house_asset.building_id AS buildingId,
-        t_house_asset.unit_id AS unitId,
-        t_house_asset.floor,
-        t_house_asset.number,
-        t_house_asset.asset_slot AS assetSlot,
-        t_house_asset.asset_type AS assetType,
-        t_house_asset.asset_flag AS assetFlag,
-        t_house_asset.house_type_id AS houseTypeId,
-
-        t_house_property_building.cad_picture AS cadPicture,
-        t_house_property_building.code       AS buildingCode,
-
-        t_house_property_building_unit.direction AS direction,
-
-        t_house_property_community.id        AS communityId,
-        t_house_property_community.community AS communityName,
-        t_house_property_community.address AS address,
-
-        t_house_design_model.id AS designModelId,
-        t_house_design_model.house_type AS houseType,
-        t_house_design_model.house_type_picture AS houseTypePicture,
-        t_house_vr_picture.vr_picture AS vrPicture,
-        t_house_vr_picture.link                  AS vrLink,
-        t_house_vr_picture.snapshot              AS vrSnapshot,
-        t_house_design_model.area AS area
+       t_house_rent_asset.id as rentId,
+        t_house_rent_asset.asset_id AS assetId,
+        t_house_rent_asset.community_id AS communityId,
+        t_house_rent_asset.house_type_id AS houseTypeId,
+        t_house_rent_asset.landlord_id AS landlordId,
+        t_house_rent_asset.area,
+        t_house_rent_asset.introduce_picture AS introducePicture,
+        t_house_rent_asset.server_id AS serverId,
+        t_house_rent_asset.cover,
+        t_house_rent_asset.title,
+        t_house_rent_asset.price,
+        t_house_rent_asset.slide,
+        t_house_rent_asset.rent_describe,
+        t_house_rent_asset.rent_status AS rentStatus,
+        t_house_rent_asset.status,
+        t_house_rent_asset.note,
+        t_house_rent_asset.rent_time AS rentTime,
+        t_house_rent_asset.shelves_time AS shelvesTime,
+        t_house_rent_asset.rate AS rate,
+        t_house_rent_asset.house_number AS houseNumber,
+         t_house_rent_asset.floor AS floor,
+         t_house_rent_asset.toward AS toward,
+         t_house_rent_asset.building_code AS buildingCode,
+         t_house_rent_asset.community_name AS communityName,
+         t_house_rent_asset.configuration_status AS configurationStatus
     </sql>
 
 
@@ -266,19 +264,9 @@
 
 
         FROM t_house_appointment
-        LEFT JOIN t_end_user AS t1 ON t1.id=t_house_appointment.server_id
-        LEFT JOIN t_end_user AS t2 ON t2.id = t_house_appointment.user_id
-        left join t_house_asset on t_house_appointment.address_id=t_house_asset.id
-        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
-        JOIN t_house_property_community
-        ON t_house_property_community.id = t_house_property_building.community_id
-
-        left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
-
-        left JOIN t_house_design_model
-        ON t_house_property_building_unit.design_model_id = t_house_design_model.id
-        left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
-
+        JOIN t_end_user AS t1 ON t1.id=t_house_appointment.server_id
+        JOIN t_end_user AS t2 ON t2.id = t_house_appointment.user_id
+        JOIN t_house_rent_asset on t_house_appointment.address_id=t_house_rent_asset.id
 
         WHERE 1=1
 
@@ -415,6 +403,6 @@
         OR t_house_appointment.name LIKE CONCAT('%',#{search},'%')
     </if>
     -->
-        ORDER BY create_time DESC
+        ORDER BY t_house_appointment.create_time DESC
     </select>
 </mapper>

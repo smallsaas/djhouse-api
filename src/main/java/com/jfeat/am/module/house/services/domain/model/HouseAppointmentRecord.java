@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.services.domain.model;
 
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseRentAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAppointment;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 
@@ -16,7 +17,7 @@ public class HouseAppointmentRecord extends HouseAppointment {
 
     private Long appointmentCreateTimeStamp;
 
-    private HouseAssetModel houseAssetModel;
+    private HouseRentAssetModel houseAssetModel;
 
     private String simpleTime;
 
@@ -59,11 +60,11 @@ public class HouseAppointmentRecord extends HouseAppointment {
         this.serverAvatar = serverAvatar;
     }
 
-    public HouseAssetModel getHouseAssetModel() {
+    public HouseRentAssetModel getHouseAssetModel() {
         return houseAssetModel;
     }
 
-    public void setHouseAssetModel(HouseAssetModel houseAssetModel) {
+    public void setHouseAssetModel(HouseRentAssetModel houseAssetModel) {
         this.houseAssetModel = houseAssetModel;
     }
 

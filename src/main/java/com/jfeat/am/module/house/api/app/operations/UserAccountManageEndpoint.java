@@ -1,10 +1,13 @@
 package com.jfeat.am.module.house.api.app.operations;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.common.annotation.EndUserPermission;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.core.model.EndUserTypeSetting;
+import com.jfeat.am.core.model.UserTypeEnum;
 import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
 import com.jfeat.am.module.house.services.domain.model.EndpointUserRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseApplicationIntermediaryRecord;
 import com.jfeat.am.module.house.services.domain.service.EndpointUserService;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.persistence.dao.EndpointUserMapper;
@@ -55,6 +58,9 @@ public class UserAccountManageEndpoint {
     @GetMapping("/getRecentlyRegisteredUser/{appid}")
     @EndUserPermission(value = {EndUserTypeSetting.USER_TYPE_OPERATION_STRING,EndUserTypeSetting.USER_TYPE_TENANT_MANAGER_STRING})
     public Tip getRecentlyRegisteredUser(
+            Page<EndpointUserRecord> page,
+            @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+            @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @PathVariable("appid") String appid,
             @RequestParam(name = "phone", required = false) String phone,
             @RequestParam(name = "type", required = false) Integer type,
@@ -72,29 +78,19 @@ public class UserAccountManageEndpoint {
             appids.add(3L);
         }
 
+        page.setCurrent(pageNum);
+        page.setSize(pageSize);
+
         EndpointUserRecord record = new EndpointUserRecord();
         record.setPhone(phone);
         record.setType(type);
         record.setAppids(appids);
         record.setDeleteFlag(0);
 
+        List<EndpointUserRecord> userRecordList = queryEndpointUserDao.findEndUserPage(page, record, null, search, null, null, null);
 
 
-        List<EndpointUserRecord> userRecordList = queryEndpointUserDao.findEndUserPage(null, record, null, search, null, null, null);
 
-         /*
-         按照创建时间倒序排列
-          */
-        if (userRecordList != null && userRecordList.size() > 0) {
-            userRecordList.sort((t1, t2) -> t2.getCreateTime().compareTo(t1.getCreateTime()));
-        }
-
-        /*
-        当大于10个时分页
-         */
-        if (userRecordList.size() > 10) {
-            userRecordList = userRecordList.subList(0, 10);
-        }
 
         for (int i = 0; i < userRecordList.size(); i++) {
             if (userRecordList.get(i).getType() == null) {
@@ -108,9 +104,9 @@ public class UserAccountManageEndpoint {
             }
 
         }
+        page.setRecords(userRecordList);
 
-
-        return SuccessTip.create(userRecordList);
+        return SuccessTip.create(page);
     }
 
 
@@ -141,7 +137,12 @@ public class UserAccountManageEndpoint {
         EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(id);
 
 //        前端可以修改的权限列表
-        List<Integer> modifyAble = Arrays.asList(EndUserTypeSetting.USER_TYPE_LANDLORD,EndUserTypeSetting.USER_TYPE_EXPERIENCE,EndUserTypeSetting.USER_TYPE_SUPPLIER,EndUserTypeSetting.USER_TYPE_INTERMEDIARY,EndUserTypeSetting.USER_TYPE_OPERATION,EndUserTypeSetting.USER_TYPE_SALES);
+        List<Integer> modifyAble = Arrays.asList(EndUserTypeSetting.USER_TYPE_LANDLORD,
+                EndUserTypeSetting.USER_TYPE_EXPERIENCE,EndUserTypeSetting.USER_TYPE_SUPPLIER,EndUserTypeSetting.USER_TYPE_INTERMEDIARY,
+                EndUserTypeSetting.USER_TYPE_OPERATION,EndUserTypeSetting.USER_TYPE_SALES,
+                EndUserTypeSetting.USER_TYPE_RESIDENTS,EndUserTypeSetting.USER_TYPE_INVESTOR,EndUserTypeSetting.USER_TYPE_BRAND
+                ,EndUserTypeSetting.USER_TYPE_GROUP_MEMBER ,EndUserTypeSetting.USER_TYPE_DEVELOPER ,EndUserTypeSetting.USER_TYPE_TEAM_LEADER
+        );
 
 //        用户原来拥护的所有权限
         List<Integer> userTypeList = userAccountService.getUserTypeList(endpointUserModel.getType());

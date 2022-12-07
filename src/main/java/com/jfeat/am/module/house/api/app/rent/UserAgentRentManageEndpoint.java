@@ -11,6 +11,10 @@ import com.jfeat.am.crud.tag.services.persistence.dao.StockTagMapper;
 import com.jfeat.am.crud.tag.services.persistence.dao.StockTagRelationMapper;
 import com.jfeat.am.crud.tag.services.persistence.model.StockTag;
 import com.jfeat.am.crud.tag.services.persistence.model.StockTagRelation;
+import com.jfeat.am.module.appointment.services.gen.persistence.dao.AppointmentTimeMapper;
+import com.jfeat.am.module.appointment.services.gen.persistence.model.AppointmentTime;
+import com.jfeat.am.module.appointment.services.persistence.dao.AppointmentMapper;
+import com.jfeat.am.module.appointment.services.persistence.model.Appointment;
 import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao;
@@ -56,14 +60,9 @@ public class UserAgentRentManageEndpoint {
     @Resource
     QueryHouseRentAssetDao queryHouseRentAssetDao;
 
-    @Resource
-    HouseUserAssetService houseUserAssetService;
 
     @Resource
-    QueryHouseUserAssetDao queryHouseUserAssetDao;
-
-    @Resource
-    HouseAssetService houseAssetService;
+    AppointmentTimeMapper appointmentTimeMapper;
 
     @Resource
     QueryHouseAssetDao queryHouseAssetDao;
@@ -274,19 +273,26 @@ public class UserAgentRentManageEndpoint {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
+        Long userId = JWTKit.getUserId();
 
-        /*
-        判断是否是中介身份
-         */
-        if (!authentication.verifyIntermediary(JWTKit.getUserId())) {
-            throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
-        }
+
+//        appointmentMapper
 
         if (entity.getId()==null || "".equals(entity.getId())){
             throw new BusinessException(BusinessCode.BadRequest,"id为必填");
         }
         if (entity.getRentStatus()==null || "".equals(entity.getRentStatus())){
             throw new BusinessException(BusinessCode.BadRequest,"rentStatus");
+        }
+
+
+        if (entity.getRentStatus().equals(HouseRentAsset.RENT_STATUS_SHELVES)){
+            QueryWrapper<AppointmentTime> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq(Appointment.USERID,userId);
+            List<AppointmentTime> list = appointmentTimeMapper.selectList(queryWrapper);
+            if (list==null || list.size()<=0){
+                throw new BusinessException(BusinessCode.CodeBase,"必须设置个人预约时间");
+            }
         }
 
         HouseRentAssetModel houseRentAssetModel = queryHouseRentAssetDao.queryMasterModel(entity.getId());
