@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetHistoryDao">
+    <sql id="Base_Column_List">
+        t_house_user_asset_history
+        .
+        id
+        , t_house_user_asset_history.user_id AS userId, t_house_user_asset_history.asset_id AS assetId, t_house_user_asset_history.trust, t_house_user_asset_history.rent_status AS rentStatus, t_house_user_asset_history.create_time AS createTime, t_house_user_asset_history.note, t_house_user_asset_history.final_flag AS finalFlag, t_house_user_asset_history.user_type AS userType, t_house_user_asset_history.locked, t_house_user_asset_history.unlike
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseUserAssetHistoryModel">
+        SELECT t_house_user_asset_history.*
+        FROM t_house_user_asset_history
+        WHERE t_house_user_asset_history.id = #{id}
+        GROUP BY t_house_user_asset_history.id
+    </select>
+
+
+    <select id="findHouseUserAssetHistoryPage" resultType="HouseUserAssetHistoryRecord"
+            parameterType="HouseUserAssetHistoryRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_user_asset_history
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_user_asset_history.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_user_asset_history.user_id LIKE CONCAT('%',#{record.userId},'%')
+        </if>
+
+
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_user_asset_history.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+        </if>
+        <if test="record.trust != null and record.trust>0 ">
+            AND t_house_user_asset_history.trust LIKE CONCAT('%',#{record.trust},'%')
+        </if>
+
+
+        <if test="record.rentStatus != null and record.rentStatus>0 ">
+            AND t_house_user_asset_history.rent_status LIKE CONCAT('%',#{record.rentStatus},'%')
+        </if>
+
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_user_asset_history.create_time LIKE CONCAT('%',#{record.createTime},'%')
+        </if>
+        <if test="record.note != null and record.note!= ''">
+            AND t_house_user_asset_history.note LIKE CONCAT('%',#{record.note},'%')
+        </if>
+
+
+        <if test="record.finalFlag != null and record.finalFlag>0 ">
+            AND t_house_user_asset_history.final_flag LIKE CONCAT('%',#{record.finalFlag},'%')
+        </if>
+
+
+        <if test="record.userType != null and record.userType>0 ">
+            AND t_house_user_asset_history.user_type LIKE CONCAT('%',#{record.userType},'%')
+        </if>
+        <if test="record.locked != null and record.locked>0 ">
+            AND t_house_user_asset_history.locked LIKE CONCAT('%',#{record.locked},'%')
+        </if>
+        <if test="record.unlike != null and record.unlike>0 ">
+            AND t_house_user_asset_history.unlike LIKE CONCAT('%',#{record.unlike},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_user_asset_history.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_user_asset_history.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_user_asset_history.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+        ORDER BY create_time DESC
+    </select>
+</mapper>

@@ -1,11 +1,13 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetMatchLogDao;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetMatchLogHistoryDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetMatchLogRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
@@ -54,6 +56,13 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
 
     @Resource
     HouseRentAssetMapper houseRentAssetMapper;
+
+
+    @Resource
+    HouseUserAssetHistoryMapper houseUserAssetHistoryMapper;
+
+    @Resource
+    QueryHouseAssetMatchLogHistoryDao queryHouseAssetMatchLogHistoryDao;
 
 
     @Override
@@ -263,6 +272,16 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
 //        删除资产表记录
         QueryWrapper<HouseUserAsset> userAssetQueryWrapper = new QueryWrapper<>();
         userAssetQueryWrapper.eq(HouseUserAsset.USER_ID,userId).eq(HouseUserAsset.ASSET_ID,assetId);
+
+        HouseUserAsset houseUserAsset = houseUserAssetMapper.selectOne(userAssetQueryWrapper);
+        if (houseUserAsset!=null){
+            JSONObject jsonObject = (JSONObject) JSON.toJSON(houseUserAsset);
+            HouseUserAssetHistory houseUserAssetHistory = JSON.parseObject(jsonObject.toString(),HouseUserAssetHistory.class);
+            houseUserAssetHistory.setId(null);
+            houseUserAssetHistory.setDeleteTime(new Date());
+            houseUserAssetHistoryMapper.insert(houseUserAssetHistory);
+        }
+
         effect += houseUserAssetMapper.delete(userAssetQueryWrapper);
 
 
@@ -277,14 +296,46 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
         houseAssetExchangeRequestQueryWrapper.eq(HouseAssetExchangeRequest.USER_ID,userId).eq(HouseAssetExchangeRequest.ASSET_ID,assetId);
         effect += houseAssetExchangeRequestMapper.delete(houseAssetExchangeRequestQueryWrapper);
 
+
+        List<HouseAssetMatchLogHistory> houseAssetMatchLogHistories = new ArrayList<>();
+
 //        删除匹配成功记录
         QueryWrapper<HouseAssetMatchLog> houseAssetMatchLogQueryWrapper = new QueryWrapper<>();
         houseAssetMatchLogQueryWrapper.eq(HouseAssetMatchLog.OWNER_USER_ID,userId).eq(HouseAssetMatchLog.OWNER_ASSET_ID,assetId);
-        effect += houseAssetMatchLogMapper.delete(houseAssetMatchLogQueryWrapper);
+
+        List<HouseAssetMatchLog> houseAssetMatchLogList = houseAssetMatchLogMapper.selectList(houseAssetMatchLogQueryWrapper);
+        if (houseAssetMatchLogList!=null&&houseAssetMatchLogList.size()>0){
+           for (HouseAssetMatchLog matchLog:houseAssetMatchLogList){
+               JSONObject jsonObject = (JSONObject) JSON.toJSON(matchLog);
+               HouseAssetMatchLogHistory houseAssetMatchLogHistory = JSON.parseObject(jsonObject.toString(),HouseAssetMatchLogHistory.class);
+               houseAssetMatchLogHistory.setId(null);
+               houseAssetMatchLogHistory.setDeleteTime(new Date());
+               houseAssetMatchLogHistories.add(houseAssetMatchLogHistory);
+           }
+        }
+
+
 
 //        删除别人匹配自己成功记录
         QueryWrapper<HouseAssetMatchLog> matchLogQueryWrapper = new QueryWrapper<>();
         matchLogQueryWrapper.eq(HouseAssetMatchLog.MATCHED_USER_ID,userId).eq(HouseAssetMatchLog.MATHCHED_ASSET_ID,assetId);
+
+        List<HouseAssetMatchLog> houseAssetMatchLogs = houseAssetMatchLogMapper.selectList(houseAssetMatchLogQueryWrapper);
+        if (houseAssetMatchLogs!=null&&houseAssetMatchLogs.size()>0){
+            for (HouseAssetMatchLog matchLog:houseAssetMatchLogs){
+                JSONObject jsonObject = (JSONObject) JSON.toJSON(matchLog);
+                HouseAssetMatchLogHistory houseAssetMatchLogHistory = JSON.parseObject(jsonObject.toString(),HouseAssetMatchLogHistory.class);
+                houseAssetMatchLogHistory.setId(null);
+                houseAssetMatchLogHistory.setDeleteTime(new Date());
+                houseAssetMatchLogHistories.add(houseAssetMatchLogHistory);
+            }
+        }
+
+        if (houseAssetMatchLogHistories!=null && houseAssetMatchLogs.size()>0){
+            queryHouseAssetMatchLogHistoryDao.batchAddHouseAssetMatchLogHistory(houseAssetMatchLogHistories);
+        }
+
+        effect += houseAssetMatchLogMapper.delete(houseAssetMatchLogQueryWrapper);
         effect += houseAssetMatchLogMapper.delete(matchLogQueryWrapper);
 
 //        删除出租房子
