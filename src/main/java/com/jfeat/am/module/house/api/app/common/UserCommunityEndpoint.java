@@ -48,6 +48,9 @@ public class UserCommunityEndpoint {
         }
 
         Long currentCommunityId =  userCommunityAsset.getUserCommunityStatus(userId);
+        if (currentCommunityId==null){
+            throw new BusinessException(BusinessCode.NoPermission,"未找到当前小区信息");
+        }
 
         HousePropertyCommunity housePropertyCommunity = housePropertyCommunityMapper.selectById(currentCommunityId);
 

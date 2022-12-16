@@ -123,6 +123,16 @@ public class EndpointUser extends Model<EndpointUser> {
 
     private String appid;
 
+    private Date endLoginTime;
+
+    public Date getEndLoginTime() {
+        return endLoginTime;
+    }
+
+    public void setEndLoginTime(Date endLoginTime) {
+        this.endLoginTime = endLoginTime;
+    }
+
     @ApiModelProperty(value = "用户拥有房产列表")
     @TableField(exist = false)
     private List<HouseUserAssetRecord> houseUserAssetRecords;

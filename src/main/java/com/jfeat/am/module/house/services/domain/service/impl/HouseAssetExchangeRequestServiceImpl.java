@@ -352,7 +352,6 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
     public void addSameFloorExchangeRequest(Long userId) {
         //            进行同层添加
         new Thread(() -> {
-//做处理
             try {
                 //        获取用户当前小区信息
                 Long communityId = userCommunityAsset.getUserCommunityStatus(userId);

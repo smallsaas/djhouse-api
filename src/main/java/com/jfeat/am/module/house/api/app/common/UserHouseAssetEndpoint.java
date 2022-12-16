@@ -33,7 +33,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -220,16 +222,39 @@ public class UserHouseAssetEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
+//        获取整栋房屋
         HouseAssetRecord houseAssetRecord = new HouseAssetRecord();
         houseAssetRecord.setBuildingId(buildingId);
         List<HouseAssetRecord> houseAssetList = queryHouseAssetDao.findHouseAssetPage(null, houseAssetRecord, null, null, null, null, null);
 
+//        获取用户房屋
         HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
         List<HouseUserAssetRecord> recordList = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, null, null, null, null, null);
 
 
 
+
+        List<Map<String,Object>> headerListMap = new ArrayList<>();
+
         for (int i = 0; i < houseAssetList.size(); i++) {
+
+//            获取第十层单元号和面积
+            if (houseAssetList.get(i).getFloor()==10){
+
+                Map<String,Object> map = new HashMap<>();
+               String houseNumber =  houseAssetList.get(i).getHouseNumber();
+               BigDecimal area = houseAssetList.get(i).getRealArea();
+               String unitNumber = houseNumber.substring(houseNumber.length()-2);
+
+               map.put("unitNumber",unitNumber);
+               map.put("area",area);
+
+               headerListMap.add(map);
+
+            }
+
+
+
 //            判断是否有人居住
             for (int j = 0; j < recordList.size(); j++) {
 
@@ -271,15 +296,16 @@ public class UserHouseAssetEndpoint {
             throw new BusinessException(BusinessCode.CodeBase,"此小区没有房子");
         }
 
-        List<BigDecimal> unitAreas = new ArrayList<>();
-        for (int i = 0; i < housePropertyBuilding.getUnits(); i++) {
-            if (houseAssetList.get(i).getArea() != null) {
-                unitAreas.add(houseAssetList.get(i).getRealArea());
-            }
-        }
+//        List<BigDecimal> unitAreas = new ArrayList<>();
+//        for (int i = 0; i < housePropertyBuilding.getUnits(); i++) {
+//            if (houseAssetList.get(i).getArea() != null) {
+//                unitAreas.add(houseAssetList.get(i).getRealArea());
+//            }
+//        }
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("header", unitAreas);
+        jsonObject.put("header", headerListMap);
+//        jsonObject.put("header", unitAreas);
         jsonObject.put("data", houseAssetList);
 
 
@@ -418,28 +444,6 @@ public class UserHouseAssetEndpoint {
         return SuccessTip.create(houseUserAssets);
     }
 
-    //    用户asset 详情信息
-//    @GetMapping("/user/userAsset/{id}")
-//    public Tip getUserAssetDetails(@PathVariable("id") Long id) {
-//        HouseUserAssetModel houseAssetRecord = houseUserAssetService.queryMasterModel(queryHouseUserAssetDao, id);
-//        HouseUserDecoratePlanRecord houseUserDecoratePlanRecord = new HouseUserDecoratePlanRecord();
-//        if (houseAssetRecord != null) {
-//            houseUserDecoratePlanRecord.setUserId(JWTKit.getUserId());
-//            houseUserDecoratePlanRecord.setAssetId(houseAssetRecord.getAssetId());
-//            houseUserDecoratePlanRecord.setOptionType(HouseUserDecoratePlan.DECORATE_TYPE);
-//            List<HouseUserDecoratePlanRecord> houseUserDecoratePlanRecordList = queryHouseUserDecoratePlanDao.findHouseUserDecoratePlanPage(null, houseUserDecoratePlanRecord, null, null, null, null, null);
-//            if (houseUserDecoratePlanRecordList != null && houseUserDecoratePlanRecordList.size() > 0) {
-//                Long planId = houseUserDecoratePlanRecordList.get(0).getDecoratePlanId();
-//                HouseDecoratePlan houseDecoratePlan = queryHouseDecoratePlanDao.queryMasterModel(planId);
-//                houseAssetRecord.setHouseDecoratePlan(houseDecoratePlan);
-//
-////                装修方案是否可改
-//                houseAssetRecord.setDecorateModifyOption(houseUserDecoratePlanRecordList.get(0).getModifyOption());
-//            }
-//
-//        }
-//        return SuccessTip.create(houseAssetRecord);
-//    }
 
 
     //    添加房子

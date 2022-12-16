@@ -285,7 +285,27 @@ public class UserAssetExchange {
           遍历房屋，标记相同户型、自己房屋、匹配成功房屋、匹配需求房屋
          */
 
+
+//        头部map
+        List<Map<String,Object>> headerListMap = new ArrayList<>();
+
         for (int i = 0; i < houseAssetRecordList.size(); i++) {
+
+            //            获取第十层单元号和面积
+            if (houseAssetRecordList.get(i).getFloor()==10){
+
+                Map<String,Object> headerMap = new HashMap<>();
+                String houseNumber =  houseAssetRecordList.get(i).getHouseNumber();
+                BigDecimal area = houseAssetRecordList.get(i).getRealArea();
+                String unitNumber = houseNumber.substring(houseNumber.length()-2);
+
+                headerMap.put("unitNumber",unitNumber);
+                headerMap.put("area",area);
+
+                headerListMap.add(headerMap);
+
+            }
+
             /*
             是否是自己的
              */
@@ -372,18 +392,19 @@ public class UserAssetExchange {
         }
         List<BigDecimal> unitAreas = new ArrayList<>();
 
-        for (int i = 0; i < unitCount; i++) {
-            if (houseAssetRecordList.get(i).getArea() != null) {
-                unitAreas.add(houseAssetRecordList.get(i).getRealArea());
-            }
-        }
+//        for (int i = 0; i < unitCount; i++) {
+//            if (houseAssetRecordList.get(i).getArea() != null) {
+//                unitAreas.add(houseAssetRecordList.get(i).getRealArea());
+//            }
+//        }
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("header", unitAreas);
+//        jsonObject.put("header", unitAreas);
+        jsonObject.put("header", headerListMap);
         jsonObject.put("data", houseAssetRecordList);
-        if (unitCount != unitAreas.size()) {
-            jsonObject.put("msg", "数据有误");
-        }
+//        if (unitCount != unitAreas.size()) {
+//            jsonObject.put("msg", "数据有误");
+//        }
 
         return SuccessTip.create(jsonObject);
 

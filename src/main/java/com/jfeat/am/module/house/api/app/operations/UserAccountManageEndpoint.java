@@ -116,6 +116,7 @@ public class UserAccountManageEndpoint {
      */
 
     @PutMapping("/updateUserAccountType/{id}")
+    @EndUserPermission(value = {EndUserTypeSetting.USER_TYPE_OPERATION_STRING,EndUserTypeSetting.USER_TYPE_TENANT_MANAGER_STRING})
     public Tip updateUserCountType(
             @PathVariable("id") Long id,
             @RequestBody EndpointUser entity) {
@@ -123,13 +124,6 @@ public class UserAccountManageEndpoint {
          /*
         验证用户是否是运营身份
          */
-        if (JWTKit.getUserId() == null) {
-            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
-        }
-
-        if (!authentication.verifyOperation(JWTKit.getUserId())) {
-            throw new BusinessException(BusinessCode.NoPermission, "该用户没有权限");
-        }
         if (entity.getTypeList() == null && entity.getTypeList().size() > 0) {
             throw new BusinessException(BusinessCode.EmptyNotAllowed, "typeList不能为空");
         }

@@ -5,7 +5,18 @@
         t_end_user
         .
         id
-        , t_end_user.avatar, t_end_user.account, t_end_user.password, t_end_user.salt, t_end_user.name, t_end_user.dob, t_end_user.gender, t_end_user.email, t_end_user.phone, t_end_user.invite_code AS inviteCode, t_end_user.invitor_id AS invitorId, t_end_user.status, t_end_user.team_count AS teamCount, t_end_user.create_time AS createTime, t_end_user.version, t_end_user.delete_flag AS deleteFlag, t_end_user.registered_github_username AS registeredGithubUsername, t_end_user.registered_phone AS registeredPhone, t_end_user.registered_email AS registeredEmail, t_end_user.email_validated AS emailValidated, t_end_user.phone_validated AS phoneValidated, t_end_user.org_id AS orgId, t_end_user.tag, t_end_user.category_tag AS categoryTag, t_end_user.is_compere AS isCompere, t_end_user.is_register AS isRegister, t_end_user.type, t_end_user.sys_user_id AS sysUserId, t_end_user.vendor
+        , t_end_user.avatar, t_end_user.account, t_end_user.password,
+            t_end_user.salt, t_end_user.name, t_end_user.dob,
+            t_end_user.gender, t_end_user.email, t_end_user.phone,
+            t_end_user.invite_code AS inviteCode, t_end_user.invitor_id AS invitorId,
+            t_end_user.status, t_end_user.team_count AS teamCount,
+            t_end_user.create_time AS createTime, t_end_user.version,
+            t_end_user.delete_flag AS deleteFlag, t_end_user.registered_github_username AS registeredGithubUsername,
+            t_end_user.registered_phone AS registeredPhone, t_end_user.registered_email AS registeredEmail,
+            t_end_user.email_validated AS emailValidated, t_end_user.phone_validated AS phoneValidated,
+            t_end_user.org_id AS orgId, t_end_user.tag, t_end_user.category_tag AS categoryTag,
+            t_end_user.is_compere AS isCompere, t_end_user.is_register AS isRegister, t_end_user.type,
+            t_end_user.sys_user_id AS sysUserId, t_end_user.vendor,t_end_user.end_login_time As endLoginTime
     </sql>
 
     <sql id="QueryOwnedOrgIds">
@@ -99,6 +110,11 @@
         <if test="record.createTime != null and record.createTime>0 ">
             AND t_end_user.create_time LIKE CONCAT('%',#{record.createTime},'%')
         </if>
+
+        <if test="record.endLoginTime != null and record.endLoginTime>0 ">
+            AND t_end_user.end_login_time LIKE CONCAT('%',#{record.endLoginTime},'%')
+        </if>
+
         <if test="record.version != null and record.version>0 ">
             AND t_end_user.version LIKE CONCAT('%',#{record.version},'%')
         </if>
