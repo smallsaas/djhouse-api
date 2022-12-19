@@ -289,6 +289,7 @@ public class UserAccountRentAssetEndpoint {
     @PostMapping("/userRent")
     public Tip createRentAsset(@RequestParam(value = "appid",required = false,defaultValue = "1") String appid,@RequestBody HouseRentAsset entity) {
 
+
         Long userId = JWTKit.getUserId();
         if (userId==null){
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");
