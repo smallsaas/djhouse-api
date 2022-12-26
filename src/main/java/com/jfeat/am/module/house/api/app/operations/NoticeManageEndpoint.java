@@ -136,7 +136,6 @@ public class NoticeManageEndpoint {
 
 
         page.setRecords(noticeRequestList);
-        System.out.println(page);
         return SuccessTip.create(page);
     }
 
