@@ -25,6 +25,8 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -246,6 +248,8 @@ public class UserBuildingManageEndpoint {
 
 
         List<HousePropertyBuildingRecord> housePropertyBuildingPage = queryHousePropertyBuildingDao.findHousePropertyBuildingPage(page, record, tag, search, orderBy, null, null);
+        Collections.sort(housePropertyBuildingPage);
+
         page.setRecords(housePropertyBuildingPage);
 
         return SuccessTip.create(page);

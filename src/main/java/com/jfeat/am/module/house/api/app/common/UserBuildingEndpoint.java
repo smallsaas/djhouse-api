@@ -38,6 +38,7 @@ import javax.annotation.Resource;
 import javax.management.Query;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -90,7 +91,11 @@ public class UserBuildingEndpoint {
 
         HousePropertyBuildingRecord record = new HousePropertyBuildingRecord();
         record.setCommunityId(userCommunityStatus);
-        return SuccessTip.create(queryHousePropertyBuildingDao.findHousePropertyBuildingPage(null, record, null, null, null, null, null));
+        List<HousePropertyBuildingRecord> housePropertyBuildingPage
+                = queryHousePropertyBuildingDao.findHousePropertyBuildingPage(null, record, null, null, null, null, null);
+
+        Collections.sort(housePropertyBuildingPage);
+        return SuccessTip.create(housePropertyBuildingPage);
     }
 
     @GetMapping("/{id}")

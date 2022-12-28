@@ -163,6 +163,9 @@
         user_building.id AS buildingId,
         user_building.issue AS issue,
         user_building.code As buildingCode,
+            user_community.community As communityName,
+            user_community.tenant_id As orgId,
+
         user_house_type.id AS designModelId,
         user_house_type.area AS area,
 
@@ -198,11 +201,13 @@
         JOIN t_house_asset AS user_asset ON user_asset.id = t1.asset_id
         JOIN t_house_property_building_unit AS user_unit ON user_unit.id = user_asset.unit_id
         JOIN t_house_property_building AS user_building ON user_building.id = user_asset.building_id
+        JOIN t_house_property_community AS user_community on user_community.id = user_building.community_id
         JOIN t_house_design_model AS user_house_type ON user_house_type.id = user_unit.design_model_id
 
         JOIN t_house_asset AS target_asset ON target_asset.id = t1.target_asset
         JOIN t_house_property_building_unit AS target_unit ON target_unit.id = target_asset.unit_id
         JOIN t_house_property_building AS target_building ON target_building.id = target_asset.building_id
+        JOIN t_house_property_community AS target_community on target_community.id = target_building.community_id
         JOIN t_house_design_model AS target_house_type ON target_house_type.id = target_unit.design_model_id
 
         WHERE 1=1

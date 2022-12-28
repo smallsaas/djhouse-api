@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -21,7 +23,7 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @TableName("t_house_property_building")
 @ApiModel(value = "HousePropertyBuilding对象", description = "")
-public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
+public class HousePropertyBuilding  extends Model<HousePropertyBuilding> implements Comparable<HousePropertyBuilding> {
 
     private static final long serialVersionUID = 1L;
 
@@ -268,5 +270,48 @@ public class HousePropertyBuilding extends Model<HousePropertyBuilding> {
                 ", units=" + units +
                 ", cadPicture='" + cadPicture + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(HousePropertyBuilding target) {
+
+
+        int isTargetNum = 0;
+        int isThisNum = 0;
+
+        if (target.getCode()!=null&&!target.getCode().equals("")){
+            char c = target.getCode().charAt(0);
+            if (!Character.isLetter(c)){
+                isTargetNum = 1;
+            }
+        }
+
+        if (this.getCode()!=null&&!this.getCode().equals("")){
+            char c = this.getCode().charAt(0);
+            if (!Character.isLetter(c)){
+                isThisNum = 1;
+            }
+        }
+
+        if (isTargetNum==1&&isThisNum==1){
+
+            Integer thisNumber=0;
+            Integer targetNumber=0;
+            Pattern p = Pattern.compile("(^[0-9]*)");
+            Matcher thisMatcher = p.matcher(this.getCode());
+            if (thisMatcher.find()) {
+                thisNumber = Integer.valueOf(thisMatcher.group(1));
+            }
+
+            Matcher targetMatcher = p.matcher(target.getCode());
+            if (targetMatcher.find()) {
+                targetNumber = Integer.valueOf(targetMatcher.group(1));
+            }
+            return thisNumber-targetNumber;
+
+        }else {
+           return isThisNum-isTargetNum;
+        }
+
     }
 }

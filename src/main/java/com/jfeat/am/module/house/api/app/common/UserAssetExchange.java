@@ -10,15 +10,13 @@ import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.advertisement.services.service.TenantUtilsService;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
-import com.jfeat.am.module.house.services.domain.service.HouseAssetExchangeRequestService;
-import com.jfeat.am.module.house.services.domain.service.HouseTenantMenuService;
-import com.jfeat.am.module.house.services.domain.service.HouseUnlikeLogService;
-import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
+import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseUserAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.dao.*;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
+import com.jfeat.am.module.house.services.utility.ExcelUtility;
 import com.jfeat.am.module.house.services.utility.TenantUtility;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.crud.base.exception.BusinessCode;
@@ -33,8 +31,12 @@ import io.swagger.annotations.Api;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -92,6 +94,10 @@ public class UserAssetExchange {
 
     @Resource
     EndUserBlacklistService endUserBlacklistService;
+
+
+    @Resource
+    HouseExcelService houseExcelService;
 
 
 
@@ -802,9 +808,37 @@ public class UserAssetExchange {
         }
 
         return SuccessTip.create(houseAssetExchangeRequestService.addUpAndDownStairsExchangeRequest(userId,assetId,isUp));
+    }
 
 
+    /**
+     * 自动导出 同层匹配成功Excel
+     * @param response
+     * @param request
+     * @param file 导入房屋产权
+     */
+    @PostMapping("/excel")
+    public void importEmp(HttpServletResponse response, HttpServletRequest request, MultipartFile file) {
+        JSONObject json = houseExcelService.setAssetId(houseExcelService.parseExcelData(ExcelUtility.readExcel(file)));
 
+        houseExcelService.addAsset(json);
+
+//        return SuccessTip.create(houseExcelService.addSameFloorExchange(json));
+
+        String sheetName = "同层匹配成功记录";
+        String fileName = "同层匹配成功记录";
+        List<HouseAssetMatchLog> houseAssetMatchLogList = houseExcelService.addSameFloorExchange(json);
+
+        Set<HouseAssetMatchLog> houseAssetMatchLogSet = new HashSet<>();
+        houseAssetMatchLogSet.addAll(houseAssetMatchLogList);
+        houseAssetMatchLogList = new ArrayList<>(houseAssetMatchLogSet);
+
+//        return SuccessTip.create(houseAssetMatchLogList);
+
+        try {
+            ExcelUtility.exportExcel(response, houseAssetMatchLogList, sheetName, fileName, 15);
+        } catch (IOException e) {
+        }
     }
 
 

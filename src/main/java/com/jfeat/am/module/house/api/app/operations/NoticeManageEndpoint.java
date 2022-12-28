@@ -200,6 +200,8 @@ public class NoticeManageEndpoint {
         return SuccessTip.create(notice);
     }
 
+    
+
     @PutMapping("/{id}")
     @ApiOperation(value = "修改公告", response = Notice.class)
     public Tip updateNotice(@PathVariable Long id, @RequestBody Notice entity) {

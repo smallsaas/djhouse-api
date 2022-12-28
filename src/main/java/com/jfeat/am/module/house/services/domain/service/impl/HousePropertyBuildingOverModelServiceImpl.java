@@ -13,6 +13,7 @@ import com.jfeat.am.module.house.services.domain.service.HousePropertyBuildingUn
 import com.jfeat.am.module.house.services.gen.crud.model.HousePropertyBuildingModel;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHousePropertyBuildingOverModelServiceImpl;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -322,5 +323,10 @@ public class HousePropertyBuildingOverModelServiceImpl extends CRUDHouseProperty
 
         }
         return affected;
+    }
+
+    @Override
+    public void buildingCodeSort(List<HousePropertyBuilding> buildingList) {
+
     }
 }
