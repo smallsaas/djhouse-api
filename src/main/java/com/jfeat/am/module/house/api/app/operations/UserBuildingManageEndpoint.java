@@ -191,7 +191,7 @@ public class UserBuildingManageEndpoint {
     @GetMapping
     public Tip queryHousePropertyBuildingPage(Page<HousePropertyBuildingRecord> page,
                                               @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                                              @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                              @RequestParam(name = "pageSize", required = false, defaultValue = "100") Integer pageSize,
                                               // for tag feature query
                                               @RequestParam(name = "tag", required = false) String tag,
                                               // end tag
@@ -218,9 +218,6 @@ public class UserBuildingManageEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
-        if (!authentication.verifyOperation(JWTKit.getUserId())){
-            throw new BusinessException(BusinessCode.NoPermission,"该用户没有权限");
-        }
 
         if (orderBy != null && orderBy.length() > 0) {
             if (sort != null && sort.length() > 0) {
