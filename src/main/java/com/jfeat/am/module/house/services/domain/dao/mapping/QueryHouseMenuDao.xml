@@ -35,7 +35,7 @@ t_house_menu.type
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_menu.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_menu.id =#{record.id}
         </if>
         <if test="record.url != null and record.url!= ''">
             AND t_house_menu.url LIKE CONCAT('%',#{record.url},'%')

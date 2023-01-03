@@ -43,18 +43,28 @@ public class HouseTest {
 
         String sheetName = "同层匹配成功记录";
         String fileName = "同层匹配成功记录";
-        List<HouseAssetMatchLog> houseAssetMatchLogList = houseExcelService.addSameFloorExchange(json);
+//        List<HouseAssetMatchLog> houseAssetMatchLogList = houseExcelService.addSameFloorExchange(json);
+//
+//        Set<HouseAssetMatchLog> houseAssetMatchLogSet = new HashSet<>();
+//        houseAssetMatchLogSet.addAll(houseAssetMatchLogList);
+//        houseAssetMatchLogList = new ArrayList<>(houseAssetMatchLogSet);
+//
+////        return SuccessTip.create(houseAssetMatchLogList);
+//
+//        try {
+//            ExcelUtility.exportExcel(response, houseAssetMatchLogList, sheetName, fileName, 15);
+//        } catch (IOException e) {
+//        }
+    }
 
+    @GetMapping
+    public Tip getTest() {
+        List<HouseAssetMatchLog> houseAssetMatchLogList = houseExcelService.addAllSameFloorExchange();
         Set<HouseAssetMatchLog> houseAssetMatchLogSet = new HashSet<>();
         houseAssetMatchLogSet.addAll(houseAssetMatchLogList);
         houseAssetMatchLogList = new ArrayList<>(houseAssetMatchLogSet);
-
-//        return SuccessTip.create(houseAssetMatchLogList);
-
-        try {
-            ExcelUtility.exportExcel(response, houseAssetMatchLogList, sheetName, fileName, 15);
-        } catch (IOException e) {
-        }
+        return SuccessTip.create(houseAssetMatchLogList);
     }
+
 
 }

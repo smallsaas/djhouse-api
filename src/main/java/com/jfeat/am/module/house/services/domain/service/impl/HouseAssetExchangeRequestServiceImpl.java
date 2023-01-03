@@ -376,24 +376,6 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
                 }
 
 
-//        获取当前小区同楼栋同楼层房屋
-                List<HouseAssetRecord> sameBuildingAssetList = queryHouseAssetDao.querySameBuildingAndFloor(houseAssetRecordList);
-
-                List<HouseAssetRecord> temp = new ArrayList<>();
-                for (HouseAssetRecord sameBuildingAsset : sameBuildingAssetList) {
-                    Boolean flag = true;
-                    for (HouseUserAssetRecord ownHouseAsset : userAssetRecordList) {
-
-                        if (ownHouseAsset.getAssetId().equals(sameBuildingAsset.getId())) {
-                            flag = false;
-                        }
-
-                    }
-                    if (flag) {
-                        temp.add(sameBuildingAsset);
-                    }
-                }
-                sameBuildingAssetList = temp;
 
 
 //        判断条件匹配条件是否合适
@@ -412,52 +394,53 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
 //        自己的房子
                 for (HouseUserAssetRecord userAssetRecord : userAssetRecordList) {
 
+//                    获取同一个小区 不同楼栋 同一层的所有房屋
+                    List<HouseAssetRecord> sameBuildingAssetList = queryHouseAssetDao.querySameBuildingAndFloor(userAssetRecord);
+                    if (sameBuildingAssetList==null||sameBuildingAssetList.size()<=0){
+                        continue;
+                    }
+
+
 //            同城的房子
                     for (HouseAssetRecord houseAssetRecord : sameBuildingAssetList) {
-                        if (!userAssetRecord.getFloor().equals(houseAssetRecord.getFloor())) {
+                        if (!userAssetRecord.getFloor().equals(houseAssetRecord.getFloor())&& isSameBuildingAndFloor(userAssetRecordList,houseAssetRecord)) {
 
                             HouseAssetExchangeRequest houseAssetExchangeRequest = new HouseAssetExchangeRequest();
 
-                            if (userAssetRecord.getBuildingId().equals(houseAssetRecord.getBuildingId())) {
+                            if (map.get("unlimited") != null && !map.get("unlimited").equals(1)) {
 
-
-                                if (map.get("unlimited") != null && !map.get("unlimited").equals(1)) {
-
-                                    if (map.get("unitId").equals(1) && userAssetRecord.getUnitId().equals(houseAssetRecord.getUnitId())) {
-                                        houseAssetExchangeRequest.setUserId(userId);
-                                        houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
-                                        houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
-                                        houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
-                                    }
-
-                                    if (map.get("houseType").equals(1) && userAssetRecord.getHouseTypeId().equals(houseAssetRecord.getDesignModelId())) {
-                                        houseAssetExchangeRequest.setUserId(userId);
-                                        houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
-                                        houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
-                                        houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
-                                    }
-
-                                    if (map.get("area").equals(1) && userAssetRecord.getUnitArea().equals(houseAssetRecord.getArea())) {
-                                        houseAssetExchangeRequest.setUserId(userId);
-                                        houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
-                                        houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
-                                        houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
-                                    }
-
-                                    if (map.get("issue").equals(1) && userAssetRecord.getIssue().equals(houseAssetRecord.getIssue())) {
-                                        houseAssetExchangeRequest.setUserId(userId);
-                                        houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
-                                        houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
-                                        houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
-                                    }
-                                } else {
+                                if (map.get("unitId").equals(1) && userAssetRecord.getUnitId().equals(houseAssetRecord.getUnitId())) {
                                     houseAssetExchangeRequest.setUserId(userId);
                                     houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
                                     houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
                                     houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
                                 }
 
+                                if (map.get("houseType").equals(1) && userAssetRecord.getHouseTypeId().equals(houseAssetRecord.getDesignModelId())) {
+                                    houseAssetExchangeRequest.setUserId(userId);
+                                    houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
+                                    houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
+                                    houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
+                                }
 
+                                if (map.get("area").equals(1) && userAssetRecord.getUnitArea().equals(houseAssetRecord.getArea())) {
+                                    houseAssetExchangeRequest.setUserId(userId);
+                                    houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
+                                    houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
+                                    houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
+                                }
+
+                                if (map.get("issue").equals(1) && userAssetRecord.getIssue().equals(houseAssetRecord.getIssue())) {
+                                    houseAssetExchangeRequest.setUserId(userId);
+                                    houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
+                                    houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
+                                    houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
+                                }
+                            } else {
+                                houseAssetExchangeRequest.setUserId(userId);
+                                houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
+                                houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
+                                houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
                             }
 
                         }
@@ -487,14 +470,18 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
 
     @Override
     @Transactional
-    public List<HouseAssetMatchLog> addSameFloorExchangeRequest(String communityName, Long userId) {
+    public List<HouseAssetMatchLog> addSameFloorExchangeRequest(Long communityId, Long userId) {
         //            进行同层添加
 
 //        获取用当前小区房屋
         HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
-        houseUserAssetRecord.setCommunityName(communityName);
+        houseUserAssetRecord.setCommunityId(communityId);
         houseUserAssetRecord.setUserId(userId);
         List<HouseUserAssetRecord> userAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null, houseUserAssetRecord, null, null, null, null, null);
+
+        if (userAssetRecordList==null||userAssetRecordList.size()<=1){
+            return null;
+        }
 
         List<HouseAssetRecord> houseAssetRecordList = new ArrayList<>();
         for (HouseUserAssetRecord userAssetRecord : userAssetRecordList) {
@@ -506,24 +493,8 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
         }
 
 
-//        获取当前小区同楼栋同楼层房屋
-        List<HouseAssetRecord> sameBuildingAssetList = queryHouseAssetDao.querySameBuildingAndFloor(houseAssetRecordList);
 
-        List<HouseAssetRecord> temp = new ArrayList<>();
-        for (HouseAssetRecord sameBuildingAsset : sameBuildingAssetList) {
-            Boolean flag = true;
-            for (HouseUserAssetRecord ownHouseAsset : userAssetRecordList) {
 
-                if (ownHouseAsset.getAssetId().equals(sameBuildingAsset.getId())) {
-                    flag = false;
-                }
-
-            }
-            if (flag) {
-                temp.add(sameBuildingAsset);
-            }
-        }
-        sameBuildingAssetList = temp;
 
 
 //        判断条件匹配条件是否合适
@@ -542,52 +513,50 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
 //        自己的房子
         for (HouseUserAssetRecord userAssetRecord : userAssetRecordList) {
 
+            //        获取当前小区同楼栋同楼层房屋
+            List<HouseAssetRecord> sameBuildingAssetList = queryHouseAssetDao.querySameBuildingAndFloor(userAssetRecord);
+            if (sameBuildingAssetList==null||sameBuildingAssetList.size()<=0){
+                continue;
+            }
 //            同城的房子
             for (HouseAssetRecord houseAssetRecord : sameBuildingAssetList) {
-                if (!userAssetRecord.getFloor().equals(houseAssetRecord.getFloor())) {
+                if (!userAssetRecord.getFloor().equals(houseAssetRecord.getFloor())&& isSameBuildingAndFloor(userAssetRecordList,houseAssetRecord)) {
 
                     HouseAssetExchangeRequest houseAssetExchangeRequest = new HouseAssetExchangeRequest();
+                    if (map.get("unlimited") != null && !map.get("unlimited").equals(1)) {
 
-                    if (userAssetRecord.getBuildingId().equals(houseAssetRecord.getBuildingId())) {
-
-
-                        if (map.get("unlimited") != null && !map.get("unlimited").equals(1)) {
-
-                            if (map.get("unitId").equals(1) && userAssetRecord.getUnitId().equals(houseAssetRecord.getUnitId())) {
-                                houseAssetExchangeRequest.setUserId(userId);
-                                houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
-                                houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
-                                houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
-                            }
-
-                            if (map.get("houseType").equals(1) && userAssetRecord.getHouseTypeId().equals(houseAssetRecord.getDesignModelId())) {
-                                houseAssetExchangeRequest.setUserId(userId);
-                                houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
-                                houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
-                                houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
-                            }
-
-                            if (map.get("area").equals(1) && userAssetRecord.getUnitArea().equals(houseAssetRecord.getArea())) {
-                                houseAssetExchangeRequest.setUserId(userId);
-                                houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
-                                houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
-                                houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
-                            }
-
-                            if (map.get("issue").equals(1) && userAssetRecord.getIssue().equals(houseAssetRecord.getIssue())) {
-                                houseAssetExchangeRequest.setUserId(userId);
-                                houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
-                                houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
-                                houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
-                            }
-                        } else {
+                        if (map.get("unitId").equals(1) && userAssetRecord.getUnitId().equals(houseAssetRecord.getUnitId())) {
                             houseAssetExchangeRequest.setUserId(userId);
                             houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
                             houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
                             houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
                         }
 
+                        if (map.get("houseType").equals(1) && userAssetRecord.getHouseTypeId().equals(houseAssetRecord.getDesignModelId())) {
+                            houseAssetExchangeRequest.setUserId(userId);
+                            houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
+                            houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
+                            houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
+                        }
 
+                        if (map.get("area").equals(1) && userAssetRecord.getUnitArea().equals(houseAssetRecord.getArea())) {
+                            houseAssetExchangeRequest.setUserId(userId);
+                            houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
+                            houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
+                            houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
+                        }
+
+                        if (map.get("issue").equals(1) && userAssetRecord.getIssue().equals(houseAssetRecord.getIssue())) {
+                            houseAssetExchangeRequest.setUserId(userId);
+                            houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
+                            houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
+                            houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
+                        }
+                    } else {
+                        houseAssetExchangeRequest.setUserId(userId);
+                        houseAssetExchangeRequest.setAssetId(userAssetRecord.getAssetId());
+                        houseAssetExchangeRequest.setTargetAsset(houseAssetRecord.getId());
+                        houseAssetExchangeRequestList.add(houseAssetExchangeRequest);
                     }
 
                 }
@@ -757,6 +726,22 @@ public class HouseAssetExchangeRequestServiceImpl extends CRUDHouseAssetExchange
         }
 
         return null;
+    }
+
+
+
+    private Boolean isSameBuildingAndFloor(List<HouseUserAssetRecord> userAssetRecordList,HouseAssetRecord houseAssetRecord){
+
+        for (HouseUserAssetRecord houseUserAssetRecord:userAssetRecordList){
+
+            if (houseAssetRecord.getBuildingId().equals(houseUserAssetRecord.getBuildingId())&&houseAssetRecord.getFloor().equals(houseUserAssetRecord.getFloor())){
+                return true;
+            }
+
+
+        }
+        return false;
+
     }
 
 }

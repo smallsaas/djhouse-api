@@ -35,22 +35,22 @@ t_house_user_tag.tag_name AS tagName
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_user_tag_relate.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_user_tag_relate.id =#{record.id}
         </if>
 
 
         <if test="record.tagId != null and record.tagId>0 ">
-            AND t_house_user_tag_relate.tag_id LIKE CONCAT('%',#{record.tagId},'%')
+            AND t_house_user_tag_relate.tag_id =#{record.tagId}
         </if>
 
 
         <if test="record.userId != null and record.userId>0 ">
-            AND t_house_user_tag_relate.user_id LIKE CONCAT('%',#{record.userId},'%')
+            AND t_house_user_tag_relate.user_id =#{record.userId}
         </if>
 
 
         <if test="record.salesId != null and record.salesId>0 ">
-            AND t_house_user_tag_relate.sales_id LIKE CONCAT('%',#{record.salesId},'%')
+            AND t_house_user_tag_relate.sales_id =#{record.salesId}
         </if>
 
 

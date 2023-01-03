@@ -510,7 +510,7 @@ public class UserHouseAssetEndpoint {
 
 
             houseAssetLog.setAssetId(entity.getAssetId());
-            affected+=houseAssetLogService.createMaster(houseAssetLog);
+            affected+=houseAssetLogMapper.insert(houseAssetLog);
 
 
             houseAssetExchangeRequestService.addSameFloorExchangeRequest(JWTKit.getUserId());
@@ -549,7 +549,7 @@ public class UserHouseAssetEndpoint {
 //                    添加记录
                     houseAssetLog.setOldUserId(houseUserAssetRecordList.get(0).getUserId());
                     houseAssetLog.setAssetId(houseUserAssetRecordList.get(0).getAssetId());
-                    affected+=houseAssetLogService.createMaster(houseAssetLog);
+                    affected+=houseAssetLogMapper.insert(houseAssetLog);
 
 
                     affected = houseUserAssetService.updateMaster(entity);
@@ -711,7 +711,7 @@ public class UserHouseAssetEndpoint {
 
 //    设置不喜欢房子
     @PutMapping("/unlike/{id}")
-    public Tip unlikeAsset(@PathVariable("id") Long assetId){
+    public Tip unlikeAsset(@PathVariable("id") Long assetId,@RequestBody(required = false) HouseUserAsset entity){
         Integer affect =0;
         QueryWrapper<HouseUserAsset> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(HouseUserAsset.ASSET_ID,assetId);
@@ -719,6 +719,10 @@ public class UserHouseAssetEndpoint {
         if (houseUserAssetList!=null && houseUserAssetList.size()>0){
             for (HouseUserAsset houseUserAsset:houseUserAssetList){
                 houseUserAsset.setUnlike(HouseUserAsset.UNLIKE_STATUS_UNLIKE);
+                if (entity!=null){
+                    houseUserAsset.setNote(entity.getNote());
+                }
+
 
                 affect+=houseUserAssetMapper.updateById(houseUserAsset);
             }
@@ -739,7 +743,7 @@ public class UserHouseAssetEndpoint {
         if (houseUserAssetList!=null && houseUserAssetList.size()>0){
             for (HouseUserAsset houseUserAsset:houseUserAssetList){
                 houseUserAsset.setUnlike(HouseUserAsset.UNLIKE_STATUS_LIKE);
-
+                houseUserAsset.setNote(null);
                 affect+=houseUserAssetMapper.updateById(houseUserAsset);
             }
 

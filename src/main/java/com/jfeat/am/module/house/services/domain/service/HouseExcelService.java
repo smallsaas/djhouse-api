@@ -20,7 +20,9 @@ public interface HouseExcelService {
 
     Integer addAsset(JSONObject json);
 
-    List<HouseAssetMatchLog> addSameFloorExchange(JSONObject json);
+
+
+    List<HouseAssetMatchLog> addAllSameFloorExchange();
 
 
 

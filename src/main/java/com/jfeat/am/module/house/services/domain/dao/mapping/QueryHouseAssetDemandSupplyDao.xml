@@ -60,20 +60,20 @@ t_house_asset_demand_supply.create_time AS createTime,
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_asset_demand_supply.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_asset_demand_supply.id =#{record.id}
         </if>
 
 
         <if test="record.userId != null and record.userId>0 ">
-            AND t_house_asset_demand_supply.user_id LIKE CONCAT('%',#{record.userId},'%')
+            AND t_house_asset_demand_supply.user_id =#{record.userId}
         </if>
 
 
         <if test="record.assetId != null and record.assetId>0 ">
-            AND t_house_asset_demand_supply.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+            AND t_house_asset_demand_supply.asset_id =#{record.assetId}
         </if>
         <if test="record.designModelId != null and record.designModelId>=0 ">
-            AND t_house_asset_demand_supply.design_model_id LIKE CONCAT('%',#{record.designModelId},'%')
+            AND t_house_asset_demand_supply.design_model_id =#{record.designModelId}
         </if>
 
 

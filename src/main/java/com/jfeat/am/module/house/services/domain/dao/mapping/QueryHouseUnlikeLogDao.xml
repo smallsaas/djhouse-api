@@ -29,17 +29,17 @@
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_unlike_log.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_unlike_log.id =#{record.id}
         </if>
 
 
         <if test="record.userId != null and record.userId>0 ">
-            AND t_house_unlike_log.user_id LIKE CONCAT('%',#{record.userId},'%')
+            AND t_house_unlike_log.user_id= #{record.userId}
         </if>
 
 
         <if test="record.assetId != null and record.assetId>0 ">
-            AND t_house_unlike_log.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+            AND t_house_unlike_log.asset_id =#{record.assetId}
         </if>
 
 

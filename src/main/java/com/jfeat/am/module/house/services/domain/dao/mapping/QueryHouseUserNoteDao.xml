@@ -31,17 +31,17 @@ t_house_user_note.note_time AS noteTime
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_user_note.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_user_note.id =#{record.id}
         </if>
 
 
         <if test="record.userId != null and record.userId>0 ">
-            AND t_house_user_note.user_id LIKE CONCAT('%',#{record.userId},'%')
+            AND t_house_user_note.user_id =#{record.userId}
         </if>
 
 
         <if test="record.salesId != null and record.salesId>0 ">
-            AND t_house_user_note.sales_id LIKE CONCAT('%',#{record.salesId},'%')
+            AND t_house_user_note.sales_id =#{record.salesId}
         </if>
         <if test="record.note != null and record.note!= ''">
             AND t_house_user_note.note LIKE CONCAT('%',#{record.note},'%')

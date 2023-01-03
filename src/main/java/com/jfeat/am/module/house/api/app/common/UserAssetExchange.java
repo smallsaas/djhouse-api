@@ -97,9 +97,7 @@ public class UserAssetExchange {
 
 
     @Resource
-    HouseExcelService houseExcelService;
-
-
+    HouseAssetMatchLogService houseAssetMatchLogService;
 
 
     //    新建或者修改资产交换记录并匹配
@@ -108,8 +106,8 @@ public class UserAssetExchange {
 
         Long userId = JWTKit.getUserId();
 
-        if (endUserBlacklistService.isUserShield(userId)){
-            throw new BusinessException(BusinessCode.CodeBase,"已被拉黑");
+        if (endUserBlacklistService.isUserShield(userId)) {
+            throw new BusinessException(BusinessCode.CodeBase, "已被拉黑");
         }
 
         if (userId == null) {
@@ -146,7 +144,7 @@ public class UserAssetExchange {
     public Tip getUserAllAssetExchangeDemand(Page<HouseAssetExchangeRequestRecord> page,
                                              @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                              @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                                             @RequestParam(name = "isAuto",required = false) Boolean isAuto) {
+                                             @RequestParam(name = "isAuto", required = false) Boolean isAuto) {
 
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
@@ -169,7 +167,7 @@ public class UserAssetExchange {
         HouseAssetExchangeRequestRecord record = new HouseAssetExchangeRequestRecord();
         record.setUserId(JWTKit.getUserId());
         record.setCommunityId(communityId);
-        if (isAuto!=null && isAuto){
+        if (isAuto != null && isAuto) {
             record.setAutoGenerateStatus(true);
         }
         page.setSize(pageSize);
@@ -195,8 +193,6 @@ public class UserAssetExchange {
                 }
             }
         }
-
-
 
 
         if (houseAssetExchangeRequestRecordList != null && houseAssetExchangeRequestRecordList.size() > 0) {
@@ -293,20 +289,20 @@ public class UserAssetExchange {
 
 
 //        头部map
-        List<Map<String,Object>> headerListMap = new ArrayList<>();
+        List<Map<String, Object>> headerListMap = new ArrayList<>();
 
         for (int i = 0; i < houseAssetRecordList.size(); i++) {
 
             //            获取第十层单元号和面积
-            if (houseAssetRecordList.get(i).getFloor()==10){
+            if (houseAssetRecordList.get(i).getFloor() == 10) {
 
-                Map<String,Object> headerMap = new HashMap<>();
-                String houseNumber =  houseAssetRecordList.get(i).getHouseNumber();
+                Map<String, Object> headerMap = new HashMap<>();
+                String houseNumber = houseAssetRecordList.get(i).getHouseNumber();
                 BigDecimal area = houseAssetRecordList.get(i).getRealArea();
-                String unitNumber = houseNumber.substring(houseNumber.length()-2);
+                String unitNumber = houseNumber.substring(houseNumber.length() - 2);
 
-                headerMap.put("unitNumber",unitNumber);
-                headerMap.put("area",area);
+                headerMap.put("unitNumber", unitNumber);
+                headerMap.put("area", area);
 
                 headerListMap.add(headerMap);
 
@@ -437,8 +433,50 @@ public class UserAssetExchange {
             houseAssetMatchLogs.get(i).setOwner(ownerHouseAsset);
             houseAssetMatchLogs.get(i).setMatcher(matchedHouseAsset);
         }
+        houseAssetMatchLogService.setMatchedStatusStr(houseAssetMatchLogs);
         page.setRecords(houseAssetMatchLogs);
         return SuccessTip.create(page);
+    }
+
+
+    @PutMapping("/mathReSult/op/refuse/{id}")
+    public Tip refuseMatchedResult(@PathVariable("id") Long id) {
+        Long userId = JWTKit.getUserId();
+        if (userId == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "未登录");
+        }
+        HouseAssetMatchLog houseAssetMatchLog = houseAssetMatchLogMapper.selectById(id);
+        if (houseAssetMatchLog == null) {
+            throw new BusinessException(BusinessCode.CodeBase, "未找到");
+        }
+
+        if (!userId.equals(houseAssetMatchLog.getOwnerUserId())) {
+            throw new BusinessException(BusinessCode.NoPermission, "没有权限修改");
+        }
+
+        Integer  affect= houseAssetMatchLogService.changeMatchStatus(houseAssetMatchLog,HouseAssetMatchLog.MATCHED_STATUS_REFUSE);
+        return SuccessTip.create(affect);
+    }
+
+
+    @PutMapping("/mathReSult/op/agree/{id}")
+    public Tip agreeMatchedResult(@PathVariable("id") Long id) {
+
+        Long userId = JWTKit.getUserId();
+        if (userId == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "未登录");
+        }
+        HouseAssetMatchLog houseAssetMatchLog = houseAssetMatchLogMapper.selectById(id);
+        if (houseAssetMatchLog == null) {
+            throw new BusinessException(BusinessCode.CodeBase, "未找到");
+        }
+
+        if (!userId.equals(houseAssetMatchLog.getOwnerUserId())) {
+            throw new BusinessException(BusinessCode.NoPermission, "没有权限修改");
+        }
+
+        Integer  affect= houseAssetMatchLogService.changeMatchStatus(houseAssetMatchLog,HouseAssetMatchLog.MATCHED_STATUS_AGREE);
+        return SuccessTip.create(affect);
     }
 
 
@@ -573,12 +611,12 @@ public class UserAssetExchange {
     public Tip confirmExchangeAsset(@RequestBody List<HouseAssetExchangeRequest> exchangeRequestList) {
 
         Long userId = JWTKit.getUserId();
-        if (userId==null){
-            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        if (userId == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "没有登录");
         }
 
-        if (endUserBlacklistService.isUserShield(userId)){
-            throw new BusinessException(BusinessCode.CodeBase,"已被拉黑");
+        if (endUserBlacklistService.isUserShield(userId)) {
+            throw new BusinessException(BusinessCode.CodeBase, "已被拉黑");
         }
 
         List<HouseAssetExchangeRequest> houseAssetExchangeRequestList = new ArrayList<>();
@@ -658,8 +696,8 @@ public class UserAssetExchange {
             throw new BusinessException(BusinessCode.NoPermission, "没有登录");
         }
 
-        if (endUserBlacklistService.isUserShield(userId)){
-            throw new BusinessException(BusinessCode.CodeBase,"已被拉黑");
+        if (endUserBlacklistService.isUserShield(userId)) {
+            throw new BusinessException(BusinessCode.CodeBase, "已被拉黑");
         }
 
         Long communityId = userCommunityAsset.getUserCommunityStatus(userId);
@@ -793,54 +831,22 @@ public class UserAssetExchange {
     }
 
 
-//    交换上下房屋
+    //    交换上下房屋
     @PostMapping("/upAndDownStairs")
-    public Tip upAndDownStairsExchangeRequest(@RequestParam("assetId") Long assetId,@RequestParam("isUp") Boolean isUp){
+    public Tip upAndDownStairsExchangeRequest(@RequestParam("assetId") Long assetId, @RequestParam("isUp") Boolean isUp) {
         Long userId = JWTKit.getUserId();
-        if (userId==null){
-            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        if (userId == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "没有登录");
         }
         QueryWrapper<HouseUserAsset> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(HouseUserAsset.USER_ID,userId).eq(HouseUserAsset.ASSET_ID,assetId);
-        HouseUserAsset houseUserAsset =  houseUserAssetMapper.selectOne(queryWrapper);
-        if (houseUserAsset==null){
-            throw new BusinessException(BusinessCode.NoPermission,"该房屋产权不是该用户");
+        queryWrapper.eq(HouseUserAsset.USER_ID, userId).eq(HouseUserAsset.ASSET_ID, assetId);
+        HouseUserAsset houseUserAsset = houseUserAssetMapper.selectOne(queryWrapper);
+        if (houseUserAsset == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "该房屋产权不是该用户");
         }
 
-        return SuccessTip.create(houseAssetExchangeRequestService.addUpAndDownStairsExchangeRequest(userId,assetId,isUp));
+        return SuccessTip.create(houseAssetExchangeRequestService.addUpAndDownStairsExchangeRequest(userId, assetId, isUp));
     }
-
-
-    /**
-     * 自动导出 同层匹配成功Excel
-     * @param response
-     * @param request
-     * @param file 导入房屋产权
-     */
-    @PostMapping("/excel")
-    public void importEmp(HttpServletResponse response, HttpServletRequest request, MultipartFile file) {
-        JSONObject json = houseExcelService.setAssetId(houseExcelService.parseExcelData(ExcelUtility.readExcel(file)));
-
-        houseExcelService.addAsset(json);
-
-//        return SuccessTip.create(houseExcelService.addSameFloorExchange(json));
-
-        String sheetName = "同层匹配成功记录";
-        String fileName = "同层匹配成功记录";
-        List<HouseAssetMatchLog> houseAssetMatchLogList = houseExcelService.addSameFloorExchange(json);
-
-        Set<HouseAssetMatchLog> houseAssetMatchLogSet = new HashSet<>();
-        houseAssetMatchLogSet.addAll(houseAssetMatchLogList);
-        houseAssetMatchLogList = new ArrayList<>(houseAssetMatchLogSet);
-
-//        return SuccessTip.create(houseAssetMatchLogList);
-
-        try {
-            ExcelUtility.exportExcel(response, houseAssetMatchLogList, sheetName, fileName, 15);
-        } catch (IOException e) {
-        }
-    }
-
 
 
 }

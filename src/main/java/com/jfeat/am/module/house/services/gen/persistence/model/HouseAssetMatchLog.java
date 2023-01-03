@@ -52,7 +52,26 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
     @ApiModelProperty(value = "1已联系 2-未设置 3-完成")
     private Integer status;
 
+
     private Long orgId;
+
+
+    @ApiModelProperty(value = "我方是否同意")
+    private Integer ownerStatus;
+
+    @ApiModelProperty(value = "对方是否同意")
+    private Integer mathchedStatus;
+
+    @ApiModelProperty(value = "区分是否有效时间")
+    private Integer flag;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "中文匹配状态")
+    private String zhMatchedStatus;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "英文匹配状态匹配状态")
+    private String enMatchedStatus;
 
     @ApiModelProperty(value = "物主名字")
     @TableField(exist = false)
@@ -105,6 +124,47 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
 
     @TableField(exist = false)
     private String matchedRealName;
+
+
+    public String getZhMatchedStatus() {
+        return zhMatchedStatus;
+    }
+
+    public void setZhMatchedStatus(String zhMatchedStatus) {
+        this.zhMatchedStatus = zhMatchedStatus;
+    }
+
+    public String getEnMatchedStatus() {
+        return enMatchedStatus;
+    }
+
+    public void setEnMatchedStatus(String enMatchedStatus) {
+        this.enMatchedStatus = enMatchedStatus;
+    }
+
+    public Integer getOwnerStatus() {
+        return ownerStatus;
+    }
+
+    public void setOwnerStatus(Integer ownerStatus) {
+        this.ownerStatus = ownerStatus;
+    }
+
+    public Integer getMathchedStatus() {
+        return mathchedStatus;
+    }
+
+    public void setMathchedStatus(Integer mathchedStatus) {
+        this.mathchedStatus = mathchedStatus;
+    }
+
+    public Integer getFlag() {
+        return flag;
+    }
+
+    public void setFlag(Integer flag) {
+        this.flag = flag;
+    }
 
     public String getOwnerEmail() {
         return ownerEmail;
@@ -324,6 +384,10 @@ public class HouseAssetMatchLog extends Model<HouseAssetMatchLog> {
 
     public static final Integer STATUS_NOT_SET =1;
 
+    public static final Integer MATCHED_STATUS_REFUSE=0;
+
+    public static final Integer MATCHED_STATUS_AGREE=1;
+    public static final Integer MATCHED_STATUS_DEFAULT=2;
     @Override
     protected Serializable pkVal() {
         return this.id;

@@ -1,63 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseSurroundFacilitiesDao">
-                                                                                                                                                                                                <sql id="Base_Column_List">
-                                                                                                                                                                                                                                                                                                                                                                                        t_house_surround_facilities.id, t_house_surround_facilities.type_id AS typeId, t_house_surround_facilities.title, t_house_surround_facilities.icon, t_house_surround_facilities.distance
+    <sql id="Base_Column_List">
+        t_house_surround_facilities
+        .
+        id
+        , t_house_surround_facilities.type_id AS typeId, t_house_surround_facilities.title, t_house_surround_facilities.icon, t_house_surround_facilities.distance
     </sql>
 
-    
-    
+
     <select id="queryMasterModel" resultType="HouseSurroundFacilitiesModel">
-       SELECT t_house_surround_facilities.*
-       FROM t_house_surround_facilities
-       WHERE t_house_surround_facilities.id=#{id}
-       GROUP BY t_house_surround_facilities.id
+        SELECT t_house_surround_facilities.*
+        FROM t_house_surround_facilities
+        WHERE t_house_surround_facilities.id = #{id}
+        GROUP BY t_house_surround_facilities.id
     </select>
 
 
+    <select id="findHouseSurroundFacilitiesPage" resultType="HouseSurroundFacilitiesRecord"
+            parameterType="HouseSurroundFacilitiesRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
 
-                    
-    <select id="findHouseSurroundFacilitiesPage" resultType="HouseSurroundFacilitiesRecord" parameterType="HouseSurroundFacilitiesRecord">
-            SELECT <include refid="Base_Column_List"/>
-
-        
 
         FROM t_house_surround_facilities
 
-        
-        
+
         WHERE 1=1
-        
 
-        
-                                                                            <if test="record.id != null and record.id>0 ">
-                                    AND t_house_surround_facilities.id LIKE CONCAT('%',#{record.id},'%')
-                            </if>
-                                                                    
 
-                                                                                        <if test="record.typeId != null and record.typeId>0 ">
-                                    AND t_house_surround_facilities.type_id LIKE CONCAT('%',#{record.typeId},'%')
-                            </if>
-                                                                    <if test="record.title != null and record.title!= ''">
-                                    AND t_house_surround_facilities.title LIKE CONCAT('%',#{record.title},'%')
-                            </if>
-                                                                    <if test="record.icon != null and record.icon!= ''">
-                                    AND t_house_surround_facilities.icon LIKE CONCAT('%',#{record.icon},'%')
-                            </if>
-                                                                    <if test="record.distance != null and record.distance>0 ">
-                                    AND t_house_surround_facilities.distance LIKE CONCAT('%',#{record.distance},'%')
-                            </if>
-        
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_surround_facilities.id =#{record.id}
+        </if>
+
+
+        <if test="record.typeId != null and record.typeId>0 ">
+            AND t_house_surround_facilities.type_id =#{record.typeId}
+        </if>
+        <if test="record.title != null and record.title!= ''">
+            AND t_house_surround_facilities.title LIKE CONCAT('%',#{record.title},'%')
+        </if>
+        <if test="record.icon != null and record.icon!= ''">
+            AND t_house_surround_facilities.icon LIKE CONCAT('%',#{record.icon},'%')
+        </if>
+        <if test="record.distance != null and record.distance>0 ">
+            AND t_house_surround_facilities.distance LIKE CONCAT('%',#{record.distance},'%')
+        </if>
+
         <if test="startTime != null">
             <![CDATA[AND t_house_surround_facilities.start_time >= DATE(#{startTime})]]>
         </if>
         <if test="endTime != null">
             <![CDATA[AND t_house_surround_facilities.end_time <= DATE(#{endTime}]]>
         </if>
-            <!--
-        <if test="search != null and search != ''">
-            OR t_house_surround_facilities.name LIKE CONCAT('%',#{search},'%')
-        </if>
-        -->
-                                    </select>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_surround_facilities.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+    </select>
 </mapper>

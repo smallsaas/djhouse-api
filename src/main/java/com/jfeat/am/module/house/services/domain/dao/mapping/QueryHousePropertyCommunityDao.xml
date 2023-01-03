@@ -40,7 +40,7 @@
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_property_community.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_property_community.id=#{record.id}
         </if>
         <if test="record.community != null and record.community!= ''">
             AND t_house_property_community.community LIKE CONCAT('%',#{record.community},'%')
@@ -48,7 +48,7 @@
 
 
         <if test="record.tenantId != null and record.tenantId>0 ">
-            AND t_house_property_community.tenant_id LIKE CONCAT('%',#{record.tenantId},'%')
+            AND t_house_property_community.tenant_id =#{record.tenantId}
         </if>
 
 

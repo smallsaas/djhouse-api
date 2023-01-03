@@ -46,7 +46,7 @@
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_user_tag.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_user_tag.id =#{record.id}
         </if>
 
 
@@ -56,7 +56,7 @@
 
 
         <if test="record.salesId != null and record.salesId>0 ">
-            AND t_house_user_tag.sales_id LIKE CONCAT('%',#{record.salesId},'%')
+            AND t_house_user_tag.sales_id =#{record.salesId}
         </if>
 
 

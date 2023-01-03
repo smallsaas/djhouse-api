@@ -29,12 +29,12 @@ t_house_application_intermediary.note
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_application_intermediary.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_application_intermediary.id =#{record.id}
         </if>
 
 
         <if test="record.userId != null and record.userId>0 ">
-            AND t_house_application_intermediary.user_id LIKE CONCAT('%',#{record.userId},'%')
+            AND t_house_application_intermediary.user_id =#{record.userId}
         </if>
         <if test="record.organization != null and record.organization!= ''">
             AND t_house_application_intermediary.organization LIKE CONCAT('%',#{record.organization},'%')

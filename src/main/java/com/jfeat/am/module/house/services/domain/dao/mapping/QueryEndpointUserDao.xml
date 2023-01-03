@@ -58,7 +58,7 @@
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_end_user.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_end_user.id = #{record.id}
         </if>
         <if test="record.avatar != null and record.avatar!= ''">
             AND t_end_user.avatar LIKE CONCAT('%',#{record.avatar},'%')
@@ -95,7 +95,7 @@
 
 
         <if test="record.invitorId != null and record.invitorId>0 ">
-            AND t_end_user.invitor_id LIKE CONCAT('%',#{record.invitorId},'%')
+            AND t_end_user.invitor_id = #{record.invitorId}
         </if>
         <if test="record.status != null and record.status>0 ">
             AND t_end_user.status LIKE CONCAT('%',#{record.status},'%')
@@ -177,13 +177,13 @@
 
 
         <if test="record.sysUserId != null and record.sysUserId>0 ">
-            AND t_end_user.sys_user_id LIKE CONCAT('%',#{record.sysUserId},'%')
+            AND t_end_user.sys_user_id =#{record.sysUserId}
         </if>
         <if test="record.vendor != null and record.vendor!= ''">
             AND t_end_user.vendor LIKE CONCAT('%',#{record.vendor},'%')
         </if>
         <if test="record.appid != null and record.appid>0">
-            AND t_end_user.appid LIKE CONCAT('%',#{record.appid},'%')
+            AND t_end_user.appid=#{record.appid}
         </if>
         <if test="record.appids != null and record.appids.size()>0">
             AND t_end_user.appid in

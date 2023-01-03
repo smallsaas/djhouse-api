@@ -29,7 +29,7 @@
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_appointment.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_appointment.id =#{record.id}
         </if>
         <if test="record.code != null and record.code!= ''">
             AND t_house_appointment.code LIKE CONCAT('%',#{record.code},'%')
@@ -45,7 +45,7 @@
 
 
         <if test="record.userId != null and record.userId>0 ">
-            AND t_house_appointment.user_id LIKE CONCAT('%',#{record.userId},'%')
+            AND t_house_appointment.user_id =#{record.userId}
         </if>
 
 
@@ -78,7 +78,7 @@
 
 
         <if test="record.addressId != null and record.addressId>0 ">
-            AND t_house_appointment.address_id LIKE CONCAT('%',#{record.addressId},'%')
+            AND t_house_appointment.address_id =#{record.addressId}
         </if>
 
 
@@ -272,7 +272,7 @@
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_appointment.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_appointment.id =#{record.id}
         </if>
         <if test="record.code != null and record.code!= ''">
             AND t_house_appointment.code LIKE CONCAT('%',#{record.code},'%')
@@ -280,7 +280,7 @@
 
 
         <if test="record.typeId != null and record.typeId>0 ">
-            AND t_house_appointment.type_id LIKE CONCAT('%',#{record.typeId},'%')
+            AND t_house_appointment.type_id =#{record.typeId}
         </if>
         <if test="record.type != null and record.type!= ''">
             AND t_house_appointment.type LIKE CONCAT('%',#{record.type},'%')
@@ -288,7 +288,7 @@
 
 
         <if test="record.userId != null and record.userId>0 ">
-            AND t_house_appointment.user_id LIKE CONCAT('%',#{record.userId},'%')
+            AND t_house_appointment.user_id =#{record.userId}
         </if>
 
 
@@ -303,7 +303,7 @@
 
 
         <if test="record.serverId != null and record.serverId>0 ">
-            AND t_house_appointment.server_id LIKE CONCAT('%',#{record.serverId},'%')
+            AND t_house_appointment.server_id =#{record.serverId}
         </if>
 
 

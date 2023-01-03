@@ -94,6 +94,7 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private Long buildingId;
 
+
     @ApiModelProperty(value = "楼栋编号")
     @TableField(exist = false)
     private String buildingCode;

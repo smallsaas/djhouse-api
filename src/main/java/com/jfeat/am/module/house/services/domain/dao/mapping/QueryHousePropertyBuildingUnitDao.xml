@@ -41,17 +41,17 @@
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_property_building_unit.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_property_building_unit.id =#{record.id}
         </if>
 
 
         <if test="record.buildingId != null and record.buildingId>0 ">
-            AND t_house_property_building_unit.building_id LIKE CONCAT('%',#{record.buildingId},'%')
+            AND t_house_property_building_unit.building_id =#{record.buildingId}
         </if>
 
 
         <if test="record.designModelId != null and record.designModelId>0 ">
-            AND t_house_property_building_unit.design_model_id LIKE CONCAT('%',#{record.designModelId},'%')
+            AND t_house_property_building_unit.design_model_id =#{record.designModelId}
         </if>
 
 

@@ -48,7 +48,7 @@
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_property_building.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_property_building.id =#{record.id}
         </if>
 
 

@@ -31,7 +31,7 @@ public interface HouseAssetExchangeRequestService extends CRUDHouseAssetExchange
 
     void addSameFloorExchangeRequest(Long userId);
 
-    List<HouseAssetMatchLog> addSameFloorExchangeRequest(String communityName, Long userId);
+    List<HouseAssetMatchLog> addSameFloorExchangeRequest(Long communityId, Long userId);
 
     Integer addUpAndDownStairsExchangeRequest(Long userId, Long assetId,Boolean isUp);
 }

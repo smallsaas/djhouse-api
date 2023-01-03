@@ -14,6 +14,8 @@ import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.users.account.services.domain.service.UserAccountService;
 import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
 import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
+import com.jfeat.users.weChatMiniprogram.services.domain.dao.SysThirdPartyUserMapper;
+import com.jfeat.users.weChatMiniprogram.services.domain.model.wx.SysThirdPartyUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +58,10 @@ public class HouseExcelServiceImpl implements HouseExcelService {
 
     @Resource
     HouseAssetService houseAssetService;
+
+
+    @Resource
+    SysThirdPartyUserMapper sysThirdPartyUserMapper;
 
 
     @Resource
@@ -298,38 +304,33 @@ public class HouseExcelServiceImpl implements HouseExcelService {
         return affect;
     }
 
+
+
     @Override
     @Transactional
-    public List<HouseAssetMatchLog> addSameFloorExchange(JSONObject json) {
-        Set<String> userNames = json.keySet();
-
-
+    public List<HouseAssetMatchLog> addAllSameFloorExchange() {
         List<HouseAssetMatchLog> result= new ArrayList<>();
+        QueryWrapper<SysThirdPartyUser> sysThirdPartyUserQueryWrapper = new QueryWrapper<>();
+        sysThirdPartyUserQueryWrapper.eq(SysThirdPartyUser.APP,"1");
+        List<SysThirdPartyUser> sysThirdPartyUserList = sysThirdPartyUserMapper.selectList(sysThirdPartyUserQueryWrapper);
 
-        for (String userName : userNames) {
+        QueryWrapper<HousePropertyCommunity> communityQueryWrapper = new QueryWrapper<>();
+        List<HousePropertyCommunity> communityList = housePropertyCommunityMapper.selectList(communityQueryWrapper);
+        if ((sysThirdPartyUserList==null||sysThirdPartyUserList.size()<=0)||(communityList==null||communityList.size()<=0)){
+            return null;
+        }
 
-            JSONObject userJson = json.getJSONObject(userName);
-            if (!userJson.containsKey("userId") || !userJson.containsKey("house")) {
-                continue;
-            }
-
-            Long userId = userJson.getLong("userId");
-
-            JSONObject houseJson = userJson.getJSONObject("house");
-
-            Set<String> communityKeys = houseJson.keySet();
-
-            for (String communityName : communityKeys) {
-
-                List<HouseAssetMatchLog> item =  houseAssetExchangeRequestService.addSameFloorExchangeRequest(communityName,userId);
+        for (SysThirdPartyUser sysThirdPartyUser:sysThirdPartyUserList){
+            for (HousePropertyCommunity housePropertyCommunity:communityList){
+                List<HouseAssetMatchLog> item =  houseAssetExchangeRequestService.addSameFloorExchangeRequest(housePropertyCommunity.getId(),sysThirdPartyUser.getUserId());
                 if (item!=null&&item.size()>0){
                     result.addAll(item);
                 }
 
             }
-
-
         }
+
+
         return result;
     }
 

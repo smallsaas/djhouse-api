@@ -338,11 +338,21 @@
         left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
         left JOIN t_house_design_model ON  t_house_property_building_unit.design_model_id= t_house_design_model.id
         left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
-       <where>
-           <foreach collection="recordList" item="items" separator="or">
-               (t_house_property_building.id= #{items.buildingId} and t_house_asset.floor =#{ items.floor})
-           </foreach>
-       </where>
+        where
+
+        (t_house_property_building.id in(SELECT t_house_asset.building_id FROM t_house_user_asset
+        JOIN t_house_asset on t_house_user_asset.asset_id = t_house_asset.id
+        WHERE t_house_user_asset.user_id=#{record.userId}))
+
+        and t_house_property_community.id = #{record.communityId}
+
+        and (t_house_asset.floor in(SELECT t_house_asset.floor FROM t_house_user_asset
+        JOIN t_house_asset on t_house_user_asset.asset_id = t_house_asset.id
+        WHERE t_house_user_asset.user_id=#{record.userId}))
+
+        and t_house_property_building.issue=#{record.issue}
+
+        and(t_house_asset.id NOT IN(SELECT t_house_user_asset.asset_id FROM t_house_user_asset WHERE t_house_user_asset.user_id=#{record.userId}))
 
     </select>
 

@@ -29,6 +29,12 @@ public interface QueryHouseAssetMatchLogDao extends QueryMasterDao<HouseAssetMat
     HouseAssetMatchLogModel queryMasterModel(@Param("id") Long id);
 
 
+    List<HouseAssetMatchLog> findHouseAssetMatchLog(Page<HouseAssetMatchLog> page, @Param("record") HouseAssetMatchLogRecord record,
+                                                        @Param("tag") String tag,
+                                                        @Param("search") String search, @Param("orderBy") String orderBy,
+                                                        @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
+
     /*
      * Query entity model list for slave items
      */

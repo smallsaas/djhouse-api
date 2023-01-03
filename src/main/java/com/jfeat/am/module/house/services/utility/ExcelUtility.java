@@ -203,10 +203,14 @@ public class ExcelUtility {
         HSSFRow header = sheet.createRow(0);
         header.createCell(0).setCellValue("序号");
         header.createCell(1).setCellValue("小区名");
-        header.createCell(2).setCellValue("业主楼栋编号");
-        header.createCell(3).setCellValue("业主门牌地址");
-        header.createCell(4).setCellValue("目标楼栋编号");
-        header.createCell(5).setCellValue("目标门牌地址");
+        header.createCell(2).setCellValue("业主昵称");
+        header.createCell(3).setCellValue("业主电话");
+        header.createCell(4).setCellValue("业主楼栋编号");
+        header.createCell(5).setCellValue("业主门牌地址");
+        header.createCell(6).setCellValue("目标业主昵称");
+        header.createCell(7).setCellValue("目标业主电话");
+        header.createCell(8).setCellValue("目标楼栋编号");
+        header.createCell(9).setCellValue("目标门牌地址");
 
         int rowIndex = 0;
         for (int i = 0; i < houseAssetMatchLogList.size(); i++) {
@@ -214,10 +218,15 @@ public class ExcelUtility {
             HouseAssetMatchLog record = houseAssetMatchLogList.get(i);
             row.createCell(0).setCellValue(i+1);
             row.createCell(1).setCellValue(record.getOwnerCommunity());
-            row.createCell(2).setCellValue(record.getOwnerBuilding());
-            row.createCell(3).setCellValue(record.getOwnerNumber());
-            row.createCell(4).setCellValue(record.getMatchedBuilding());
-            row.createCell(5).setCellValue(record.getMatchedNumber());
+            row.createCell(2).setCellValue(record.getOwnerName());
+            row.createCell(3).setCellValue(record.getOwnerPhone());
+            row.createCell(4).setCellValue(record.getOwnerBuilding());
+            row.createCell(5).setCellValue(record.getOwnerNumber());
+
+            row.createCell(6).setCellValue(record.getMatchedName());
+            row.createCell(7).setCellValue(record.getMatchedPhone());
+            row.createCell(8).setCellValue(record.getMatchedBuilding());
+            row.createCell(9).setCellValue(record.getMatchedNumber());
         }
         //设置中文文件名与后缀
         String encodedFileName = URLEncoder.encode(fileName + ".xlsx","utf-8").replaceAll("\\+", "%20");

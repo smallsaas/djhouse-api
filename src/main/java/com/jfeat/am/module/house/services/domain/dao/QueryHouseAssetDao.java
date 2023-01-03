@@ -3,6 +3,7 @@ package com.jfeat.am.module.house.services.domain.dao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 import com.jfeat.crud.plus.QueryMasterDao;
 import org.apache.ibatis.annotations.Param;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
@@ -67,7 +68,7 @@ public interface QueryHouseAssetDao extends QueryMasterDao<HouseAsset> {
 
     List<HouseAssetRecord> batchQueryAsset(Page<HouseAssetRecord> page,@Param("record") HouseAssetRecord record,@Param("assetIds") List<Long> assetIds);
 
-    List<HouseAssetRecord> querySameBuildingAndFloor(@Param("recordList") List<HouseAssetRecord> recordList);
+    List<HouseAssetRecord> querySameBuildingAndFloor(@Param("record") HouseUserAssetRecord record);
 
     List<HouseAssetRecord> queryUpAndDownStairs(@Param("buildingId") Long buildingId,@Param("floor")Integer floor,@Param("isUp") Boolean isUp);
 

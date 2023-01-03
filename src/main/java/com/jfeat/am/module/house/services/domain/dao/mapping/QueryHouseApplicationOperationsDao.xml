@@ -32,12 +32,12 @@ t_house_application_operations.note
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_application_operations.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_application_operations.id=#{record.id}
         </if>
 
 
         <if test="record.userId != null and record.userId>0 ">
-            AND t_house_application_operations.user_id LIKE CONCAT('%',#{record.userId},'%')
+            AND t_house_application_operations.user_id =#{record.userId}
         </if>
 
 

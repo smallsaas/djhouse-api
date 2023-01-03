@@ -46,7 +46,7 @@
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_tenant_menu.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_tenant_menu.id =#{record.id}
         </if>
 
 
@@ -56,7 +56,7 @@
 
 
         <if test="record.menuId != null and record.menuId>0 ">
-            AND t_house_tenant_menu.menu_id LIKE CONCAT('%',#{record.menuId},'%')
+            AND t_house_tenant_menu.menu_id=#{record.menuId}
         </if>
         <if test="record.enabled != null and record.enabled>0 ">
             AND t_house_tenant_menu.enabled LIKE CONCAT('%',#{record.enabled},'%')

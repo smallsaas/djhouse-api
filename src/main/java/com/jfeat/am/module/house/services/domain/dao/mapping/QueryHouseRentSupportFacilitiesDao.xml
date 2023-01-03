@@ -30,12 +30,12 @@
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_rent_support_facilities.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_rent_support_facilities.id =#{record.id}
         </if>
 
 
         <if test="record.facilitiesId != null and record.facilitiesId>0 ">
-            AND t_house_rent_support_facilities.facilities_id LIKE CONCAT('%',#{record.facilitiesId},'%')
+            AND t_house_rent_support_facilities.facilities_id =#{record.facilitiesId}
         </if>
 
 

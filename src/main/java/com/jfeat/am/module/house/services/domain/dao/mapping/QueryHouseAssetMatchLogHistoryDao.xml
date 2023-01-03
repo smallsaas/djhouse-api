@@ -47,27 +47,27 @@
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_asset_match_log_history.id LIKE CONCAT('%',#{record.id},'%')
+            AND t_house_asset_match_log_history.id =#{record.id}
         </if>
 
 
         <if test="record.ownerUserId != null and record.ownerUserId>0 ">
-            AND t_house_asset_match_log_history.owner_user_id LIKE CONCAT('%',#{record.ownerUserId},'%')
+            AND t_house_asset_match_log_history.owner_user_id =#{record.ownerUserId}
         </if>
 
 
         <if test="record.ownerAssetId != null and record.ownerAssetId>0 ">
-            AND t_house_asset_match_log_history.owner_asset_id LIKE CONCAT('%',#{record.ownerAssetId},'%')
+            AND t_house_asset_match_log_history.owner_asset_id =#{record.ownerAssetId}
         </if>
 
 
         <if test="record.matchedUserId != null and record.matchedUserId>0 ">
-            AND t_house_asset_match_log_history.matched_user_id LIKE CONCAT('%',#{record.matchedUserId},'%')
+            AND t_house_asset_match_log_history.matched_user_id =#{record.matchedUserId}
         </if>
 
 
         <if test="record.mathchedAssetId != null and record.mathchedAssetId>0 ">
-            AND t_house_asset_match_log_history.mathched_asset_id LIKE CONCAT('%',#{record.mathchedAssetId},'%')
+            AND t_house_asset_match_log_history.mathched_asset_id =#{record.mathchedAssetId}
         </if>
 
 
