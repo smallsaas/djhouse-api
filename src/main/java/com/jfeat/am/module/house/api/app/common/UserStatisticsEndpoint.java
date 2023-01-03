@@ -11,6 +11,7 @@ import com.jfeat.am.module.frontproduct.services.domain.model.FrontProductModel;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
 import com.jfeat.am.module.house.services.domain.service.HouseStatistics;
+import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingUnitMapper;
@@ -75,6 +76,9 @@ public class UserStatisticsEndpoint {
 
     @Resource
     OrderMapper orderMapper;
+
+    @Resource
+    HouseUserAssetService houseUserAssetService;
 
 
     @GetMapping("/houseOverStatistics")
@@ -464,6 +468,8 @@ public class UserStatisticsEndpoint {
         userAssetRecord.setUserId(JWTKit.getUserId());
         userAssetRecord.setCommunityId(communityId);
         List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, null, null, null, null, null);
+
+        houseUserAssetService.setUserAssetArea(houseUserAssets);
 
         BigDecimal totalArea = new BigDecimal(0);
         BigDecimal overArea = new BigDecimal(0);

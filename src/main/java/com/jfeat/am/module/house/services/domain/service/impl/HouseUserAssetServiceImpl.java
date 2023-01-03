@@ -10,6 +10,7 @@ import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetMatchLogDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetMatchLogHistoryDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetMatchLogRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHouseUserAssetServiceImpl;
@@ -343,5 +344,29 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
         houseRentAssetQueryWrapper.eq(HouseRentAsset.LANDLORD_ID,userId).eq(HouseRentAsset.ASSET_ID,assetId);
         effect += houseRentAssetMapper.delete(houseRentAssetQueryWrapper);
         return effect;
+    }
+
+    @Override
+    public void setUserAssetArea(List<HouseUserAssetRecord> recordList) {
+
+        if (recordList!=null&&recordList.size()>0){
+
+            for (HouseUserAssetRecord record:recordList){
+
+                if (record.getAssetFlag()!=null&&record.getAssetFlag().equals(HouseAsset.ASSET_FLAG_MULTIPLE)){
+                    if (record.getMultiArea()!=null){
+                        record.setUnitArea(record.getMultiArea());
+
+                    }
+
+                    if (record.getMultiRealArea()!=null){
+                        record.setRealArea(record.getMultiRealArea());
+                    }
+                }
+
+            }
+
+        }
+
     }
 }

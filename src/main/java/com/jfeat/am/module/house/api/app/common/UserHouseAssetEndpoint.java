@@ -622,8 +622,6 @@ public class UserHouseAssetEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
-        Long star = System.currentTimeMillis();
-
 //        获取当前小区
         Long communityId = null;
         HouseUserCommunityStatusRecord communityStatusRecord = new HouseUserCommunityStatusRecord();
@@ -641,11 +639,11 @@ public class UserHouseAssetEndpoint {
         userAssetRecord.setCommunityId(communityId);
         List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, null, null, null, null, null);
 
+
         // 查询匹配到的房屋
         QueryWrapper<HouseAssetMatchLog> matchLogQueryWrapper = new QueryWrapper<>();
         matchLogQueryWrapper.eq(HouseAssetMatchLog.OWNER_USER_ID, JWTKit.getUserId());
         List<HouseAssetMatchLog> matchLogList = houseAssetMatchLogMapper.selectList(matchLogQueryWrapper);
-        Long mid = System.currentTimeMillis();
 
 
         for (int i = 0; i < houseUserAssets.size(); i++) {
@@ -665,6 +663,8 @@ public class UserHouseAssetEndpoint {
             }
 
         }
+
+        houseUserAssetService.setUserAssetArea(houseUserAssets);
 
         return SuccessTip.create(houseUserAssets);
     }

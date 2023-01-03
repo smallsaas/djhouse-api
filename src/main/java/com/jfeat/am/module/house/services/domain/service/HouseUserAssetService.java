@@ -3,6 +3,7 @@ package com.jfeat.am.module.house.services.domain.service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 import com.jfeat.am.module.house.services.gen.crud.service.CRUDHouseUserAssetService;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 
@@ -24,4 +25,6 @@ public interface HouseUserAssetService extends CRUDHouseUserAssetService {
      * @return 删除有效记录数
      */
     int deleteUserAsset(Long userId,Long assetId);
+
+    void setUserAssetArea(List<HouseUserAssetRecord> recordList);
 }

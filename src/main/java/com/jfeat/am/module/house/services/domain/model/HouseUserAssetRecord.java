@@ -43,6 +43,12 @@ public class HouseUserAssetRecord extends HouseUserAsset {
 
     private String LandlordType;
 
+    private BigDecimal multiArea;
+
+    private BigDecimal multiRealArea;
+
+    private Integer assetFlag;
+
     private List<HouseAssetRecord> exchangeRequestRecordList;
 
     private List<HouseUserAssetRecord> houseUserAssetRecordList;
@@ -61,6 +67,31 @@ public class HouseUserAssetRecord extends HouseUserAsset {
 
 
     private List<HouseUserNote> userNoteList;
+
+
+    public Integer getAssetFlag() {
+        return assetFlag;
+    }
+
+    public void setAssetFlag(Integer assetFlag) {
+        this.assetFlag = assetFlag;
+    }
+
+    public BigDecimal getMultiArea() {
+        return multiArea;
+    }
+
+    public void setMultiArea(BigDecimal multiArea) {
+        this.multiArea = multiArea;
+    }
+
+    public BigDecimal getMultiRealArea() {
+        return multiRealArea;
+    }
+
+    public void setMultiRealArea(BigDecimal multiRealArea) {
+        this.multiRealArea = multiRealArea;
+    }
 
     public Integer getRank() {
         return rank;
