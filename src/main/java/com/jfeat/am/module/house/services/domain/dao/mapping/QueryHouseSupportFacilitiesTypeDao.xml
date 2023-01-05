@@ -56,6 +56,7 @@
     <if test="search != null and search != ''">
         OR t_house_support_facilities_type.name LIKE CONCAT('%',#{search},'%')
     </if>
+
     -->
     </select>
 
@@ -63,9 +64,10 @@
     <sql id="HouseSupportFacilitiesTypeSql">
         t_house_support_facilities_type.*,
         t_house_support_facilities.id AS itemId,
-t_house_support_facilities.type_id AS typeId,
-t_house_support_facilities.title,
-t_house_support_facilities.icon AS itemIcon
+        t_house_support_facilities.type_id AS typeId,
+        t_house_support_facilities.title,
+        t_house_support_facilities.icon AS itemIcon,
+        t_house_support_facilities.sort_num AS itemSortNum
     </sql>
 
     <resultMap id="HouseSupportFacilitiesTypeMapper" type="HouseSupportFacilitiesTypeRecord">
@@ -73,23 +75,20 @@ t_house_support_facilities.icon AS itemIcon
         <result column="en_name" property="enName" />
         <result column="cn_name" property="cnName" />
         <result column="icon" property="icon" />
-        <collection property="items" ofType="com.jfeat.am.module.house.services.gen.persistence.model.HouseSupportFacilities">
-            <id column="itemId" property="id" />
-            <result column="typeId" property="typeId" />
-            <result column="title" property="title" />
-            <result column="itemIcon" property="icon" />
+        <result column="icon" property="icon" />
+        <result column="sort_num" property="sortNum" />
+        <collection property="items" select="com.jfeat.am.module.house.services.domain.dao.QueryHouseSupportFacilitiesDao.querySupportFacilitiesByTypeId" column="id">
+
         </collection>
     </resultMap>
 
     <select id="findHouseSupportFacilitiesTypeItem" resultMap="HouseSupportFacilitiesTypeMapper"
             parameterType="HouseSupportFacilitiesTypeRecord">
         SELECT
-        <include refid="HouseSupportFacilitiesTypeSql"/>
+        t_house_support_facilities_type.*
 
 
         FROM t_house_support_facilities_type
-        LEFT JOIN t_house_support_facilities
-            ON t_house_support_facilities_type.id = t_house_support_facilities.type_id
 
 
         WHERE 1=1
@@ -117,10 +116,12 @@ t_house_support_facilities.icon AS itemIcon
         <if test="endTime != null">
             <![CDATA[AND t_house_support_facilities_type.end_time <= DATE(#{endTime}]]>
         </if>
+
         <!--
     <if test="search != null and search != ''">
         OR t_house_support_facilities_type.name LIKE CONCAT('%',#{search},'%')
     </if>
     -->
+        order By t_house_support_facilities_type.sort_num desc
     </select>
 </mapper>

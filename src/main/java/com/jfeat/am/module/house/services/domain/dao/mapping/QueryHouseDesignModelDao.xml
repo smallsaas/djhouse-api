@@ -242,4 +242,15 @@
         <include refid="Base_Column_List"/>
         FROM t_house_design_model
     </select>
+
+    <select id="queryHouseDesignModelById" resultType="HouseDesignModel">
+        SELECT t_house_design_model.*,
+               t_house_vr_picture.vr_picture  AS vrPicture,
+               t_house_vr_picture.link AS vrLink,
+               t_house_vr_picture.snapshot AS vrSnapshot
+        FROM t_house_design_model
+                 left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
+        WHERE t_house_design_model.id = #{id}
+        GROUP BY t_house_design_model.id
+    </select>
 </mapper>

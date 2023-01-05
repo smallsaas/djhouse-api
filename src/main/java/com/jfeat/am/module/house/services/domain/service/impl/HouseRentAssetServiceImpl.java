@@ -18,6 +18,7 @@ import com.jfeat.am.module.house.services.gen.persistence.dao.HouseRentSupportFa
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentSupportFacilities;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseSupportFacilities;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -341,5 +342,34 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
 
 
         return affect;
+    }
+
+    @Override
+    public void setRentTitle(List<HouseRentAssetRecord> houseRentAssetRecordList) {
+
+
+        if (houseRentAssetRecordList!=null && houseRentAssetRecordList.size()>0){
+
+            StringBuffer sb = new StringBuffer();
+            for (HouseRentAssetRecord record:houseRentAssetRecordList){
+
+                if (record.getHouseSupportFacilitiesList()!=null&&record.getHouseSupportFacilitiesList().size()>0){
+
+                    for (HouseSupportFacilities houseSupportFacilities:record.getHouseSupportFacilitiesList()){
+                        if (houseSupportFacilities.getTypeEnName().equals("rentDescription")){
+                            sb.append(houseSupportFacilities.getTitle());
+                            sb.append(" ");
+                        }
+
+                    }
+
+                }
+                sb.append(record.getTitle());
+                record.setTitle(sb.toString());
+
+            }
+
+        }
+
     }
 }

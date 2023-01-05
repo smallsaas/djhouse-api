@@ -167,6 +167,7 @@ public class UserAssetExchange {
         HouseAssetExchangeRequestRecord record = new HouseAssetExchangeRequestRecord();
         record.setUserId(JWTKit.getUserId());
         record.setCommunityId(communityId);
+        record.setAutoGenerateStatus(HouseAssetExchangeRequest.AUTO_GENERATE_STATUS_NO);
         if (isAuto != null && isAuto) {
             record.setAutoGenerateStatus(true);
         }

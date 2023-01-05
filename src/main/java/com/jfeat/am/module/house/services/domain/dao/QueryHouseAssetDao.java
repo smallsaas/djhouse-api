@@ -72,4 +72,7 @@ public interface QueryHouseAssetDao extends QueryMasterDao<HouseAsset> {
 
     List<HouseAssetRecord> queryUpAndDownStairs(@Param("buildingId") Long buildingId,@Param("floor")Integer floor,@Param("isUp") Boolean isUp);
 
+
+    HouseAsset queryHouseAssetById(@Param("id") Long id);
+
 }

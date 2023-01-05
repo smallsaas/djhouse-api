@@ -322,12 +322,7 @@ public class UserAccountRentAssetEndpoint {
             throw new BusinessException(BusinessCode.CodeBase,"未找到改出租房屋");
         }
 
-//        HousePropertyCommunity housePropertyCommunity = userCommunityAsset.getUserCommunityInfo(userId);
-//        if (housePropertyCommunity==null){
-//            throw new BusinessException(BusinessCode.CodeBase,"没有小区信息");
-//        }
-//        entity.setCommunityName(housePropertyCommunity.getCommunity());
-//        entity.setCommunityId(housePropertyCommunity.getId());
+
         entity.setId(id);
         entity.setLandlordId(userId);
         return SuccessTip.create(houseRentAssetService.updateUserRentAssetNotAssetId(entity));

@@ -36,4 +36,6 @@ public interface QueryHouseDesignModelDao extends QueryMasterDao<HouseDesignMode
 
     List<HouseDesignModelRecord> queryAllHouseDesignModel();
 
+    HouseDesignModel queryHouseDesignModelById(@Param("id")Long id);
+
 }

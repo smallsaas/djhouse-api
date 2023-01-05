@@ -111,6 +111,9 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
 
     private Date updateTime;
 
+
+    private String customImagesList;
+
     @TableField(exist = false)
     private Boolean subscribeStatus;
 
@@ -130,6 +133,15 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     private String serverAvatar;
 
     private Boolean configurationStatus;
+
+
+    public String getCustomImagesList() {
+        return customImagesList;
+    }
+
+    public void setCustomImagesList(String customImagesList) {
+        this.customImagesList = customImagesList;
+    }
 
     @ApiModelProperty(value = "出租家居列表清单")
     @TableField(exist = false)

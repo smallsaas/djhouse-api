@@ -2,7 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao">
     <sql id="Base_Column_List">
-        t_house_asset.id,
+        t_house_asset
+        .
+        id
+        ,
         t_house_asset.building_id AS buildingId,
         t_house_asset.unit_id AS unitId,
         t_house_asset.floor,
@@ -39,7 +42,7 @@
                t_house_property_building.cad_picture    AS cadPicture,
                t_house_property_building.code           AS buildingCode,
                t_house_property_building_unit.direction AS direction,
-               t_house_property_building.issue as issue,
+               t_house_property_building.issue          as issue,
 
                t_house_property_community.id            AS communityId,
                t_house_property_community.community     AS communityName,
@@ -151,21 +154,21 @@
     </select>
 
     <select id="batchQueryAsset" resultType="HouseAssetRecord">
-    SELECT
-    <include refid="Base_Column_List"/>
+        SELECT
+        <include refid="Base_Column_List"/>
 
 
-    FROM t_house_asset
+        FROM t_house_asset
 
-    JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
-    JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
-    left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
-    left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
-    left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
-    WHERE t_house_asset.id in
-    <foreach collection="assetIds" item="item" open="(" close=")" separator=",">
-        #{item}
-    </foreach>
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
+        left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
+        left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+        left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
+        WHERE t_house_asset.id in
+        <foreach collection="assetIds" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
 
         <if test="record.buildingId != null and record.buildingId>0 ">
             AND t_house_asset.building_id =#{record.buildingId}
@@ -239,7 +242,7 @@
         JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
         JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
         left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
-        left JOIN t_house_design_model ON  t_house_asset.house_type_id= t_house_design_model.id
+        left JOIN t_house_design_model ON t_house_asset.house_type_id= t_house_design_model.id
         left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
         WHERE 1=1
 
@@ -318,7 +321,7 @@
         JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
         JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
         left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
-        left JOIN t_house_design_model ON  t_house_asset.house_type_id= t_house_design_model.id
+        left JOIN t_house_design_model ON t_house_asset.house_type_id= t_house_design_model.id
         left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
         WHERE t_house_asset.id in
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
@@ -336,7 +339,7 @@
         JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
         JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
         left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
-        left JOIN t_house_design_model ON  t_house_property_building_unit.design_model_id= t_house_design_model.id
+        left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id= t_house_design_model.id
         left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
         where
 
@@ -352,7 +355,8 @@
 
         and t_house_property_building.issue=#{record.issue}
 
-        and(t_house_asset.id NOT IN(SELECT t_house_user_asset.asset_id FROM t_house_user_asset WHERE t_house_user_asset.user_id=#{record.userId}))
+        and(t_house_asset.id NOT IN(SELECT t_house_user_asset.asset_id FROM t_house_user_asset WHERE
+        t_house_user_asset.user_id=#{record.userId}))
 
     </select>
 
@@ -365,7 +369,7 @@
         JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
         JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
         left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
-        left JOIN t_house_design_model ON  t_house_property_building_unit.design_model_id= t_house_design_model.id
+        left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id= t_house_design_model.id
         left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
         where 1=1
         and t_house_property_building.id = #{buildingId}
@@ -377,5 +381,35 @@
                 and t_house_asset.floor &lt; #{floor}
             </otherwise>
         </choose>
+    </select>
+
+    <select id="queryHouseAssetById" resultType="HouseAsset">
+        select
+            t_house_asset.*,
+               t_house_property_building.cad_picture    AS cadPicture,
+               t_house_property_building.code           AS buildingCode,
+               t_house_property_building_unit.direction AS direction,
+               t_house_property_building.issue          as issue,
+
+               t_house_property_community.id            AS communityId,
+               t_house_property_community.community     AS communityName,
+               t_house_property_community.address       AS address,
+
+               t_house_design_model.id                  AS designModelId,
+               t_house_design_model.house_type          AS houseType,
+               t_house_design_model.house_type_picture  AS houseTypePicture,
+               t_house_vr_picture.vr_picture            AS vrPicture,
+               t_house_vr_picture.link                  AS vrLink,
+               t_house_vr_picture.snapshot              AS vrSnapshot,
+               t_house_design_model.area                AS area
+        FROM t_house_asset
+                 JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+                 JOIN t_house_property_community
+                      ON t_house_property_community.id = t_house_property_building.community_id
+                 left JOIN t_house_property_building_unit on t_house_asset.unit_id = t_house_property_building_unit.id
+                 left JOIN t_house_design_model
+                           ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+                 left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
+        where t_house_asset.id=#{id}
     </select>
 </mapper>

@@ -53,4 +53,27 @@
     </if>
     -->
     </select>
+
+    <select id="querySupportFacilitiesByTypeId" resultType="HouseSupportFacilities">
+        SELECT t_house_support_facilities.*
+        FROM t_house_support_facilities
+        WHERE t_house_support_facilities.type_id = #{typeId}
+        order By t_house_support_facilities.sort_num desc
+    </select>
+
+
+    <select id="querySupportFacilitiesByRentId" resultType="HouseSupportFacilities">
+        SELECT
+            t_house_support_facilities.*,
+            t_house_support_facilities_type.cn_name AS typeCnName,
+            t_house_support_facilities_type.en_name AS typeEnName,
+            t_house_support_facilities_type.sort_num AS typeSortNum
+        FROM
+            t_house_rent_support_facilities
+                JOIN t_house_support_facilities ON t_house_support_facilities.id = t_house_rent_support_facilities.facilities_id
+                JOIN t_house_support_facilities_type ON t_house_support_facilities_type.id = t_house_support_facilities.type_id
+        WHERE t_house_rent_support_facilities.rent_id=#{rentId}
+        ORDER BY t_house_support_facilities.sort_num DESC
+    </select>
+
 </mapper>

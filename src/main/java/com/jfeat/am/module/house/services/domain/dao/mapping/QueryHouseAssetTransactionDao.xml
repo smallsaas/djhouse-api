@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetTransactionDao">
+    <sql id="Base_Column_List">
+        t_house_asset_transaction
+        .
+        id
+        , t_house_asset_transaction.user_id AS userId, t_house_asset_transaction.asset_id AS assetId, t_house_asset_transaction.house_type_id AS houseTypeId, t_house_asset_transaction.state, t_house_asset_transaction.note, t_house_asset_transaction.create_time AS createTime, t_house_asset_transaction.update_time AS updateTime
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseAssetTransactionModel">
+        SELECT t_house_asset_transaction.*
+        FROM t_house_asset_transaction
+        WHERE t_house_asset_transaction.id = #{id}
+        GROUP BY t_house_asset_transaction.id
+    </select>
+
+
+    <select id="findHouseAssetTransactionPage" resultType="HouseAssetTransactionRecord"
+            parameterType="HouseAssetTransactionRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_asset_transaction
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_asset_transaction.id = #{record.id}
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_asset_transaction.user_id =#{record.userId}
+        </if>
+
+
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_asset_transaction.asset_id =#{record.assetId}
+        </if>
+
+
+        <if test="record.houseTypeId != null and record.houseTypeId>0 ">
+            AND t_house_asset_transaction.house_type_id =#{record.houseTypeId}
+        </if>
+        <if test="record.state != null and record.state>=0 ">
+            AND t_house_asset_transaction.state =#{record.state}
+        </if>
+        <if test="record.note != null and record.note!= ''">
+            AND t_house_asset_transaction.note LIKE CONCAT('%',#{record.note},'%')
+        </if>
+
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_asset_transaction.create_time LIKE CONCAT('%',#{record.createTime},'%')
+        </if>
+
+
+        <if test="record.updateTime != null and record.updateTime>0 ">
+            AND t_house_asset_transaction.update_time LIKE CONCAT('%',#{record.updateTime},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_asset_transaction.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_asset_transaction.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_asset_transaction.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+        ORDER BY t_house_asset_transaction.update_time DESC
+        , t_house_asset_transaction.create_time DESC
+    </select>
+
+    <resultMap id="HouseAssetTransactionMap" type="HouseAssetTransactionRecord">
+        <id column="id" property="id" />
+        <result column="userId" property="userId" />
+        <result column="assetId" property="assetId" />
+        <result column="houseTypeId" property="houseTypeId" />
+        <result column="state" property="state" />
+        <result column="note" property="note" />
+        <result column="createTime" property="createTime" />
+        <result column="updateTime" property="updateTime" />
+        <result column="userPhone" property="userPhone" />
+        <result column="userRealName" property="userRealName" />
+        <result column="userName" property="userName" />
+        <association property="houseAsset" select="com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao.queryHouseAssetById" column="assetId"></association>
+        <association property="houseDesignModel" select="com.jfeat.am.module.house.services.domain.dao.QueryHouseDesignModelDao.queryHouseDesignModelById" column="houseTypeId"></association>
+    </resultMap>
+
+
+    <select id="findHouseAssetTransactionPageDetail" resultMap="HouseAssetTransactionMap"
+            parameterType="HouseAssetTransactionRecord">
+        SELECT
+        <include refid="Base_Column_List"/>,t_end_user.name as userName,t_end_user.phone as userPhone,t_end_user.real_name as userRealName
+
+
+        FROM t_house_asset_transaction
+        join t_end_user on t_end_user.id=t_house_asset_transaction.user_id
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_asset_transaction.id = #{record.id}
+        </if>
+
+
+        <if test="record.userId != null and record.userId>0 ">
+            AND t_house_asset_transaction.user_id =#{record.userId}
+        </if>
+
+
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_asset_transaction.asset_id =#{record.assetId}
+        </if>
+
+
+        <if test="record.houseTypeId != null and record.houseTypeId>0 ">
+            AND t_house_asset_transaction.house_type_id =#{record.houseTypeId}
+        </if>
+        <if test="record.state != null and record.state>=0 ">
+            AND t_house_asset_transaction.state =#{record.state}
+        </if>
+        <if test="record.note != null and record.note!= ''">
+            AND t_house_asset_transaction.note LIKE CONCAT('%',#{record.note},'%')
+        </if>
+
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_asset_transaction.create_time LIKE CONCAT('%',#{record.createTime},'%')
+        </if>
+
+
+        <if test="record.updateTime != null and record.updateTime>0 ">
+            AND t_house_asset_transaction.update_time LIKE CONCAT('%',#{record.updateTime},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_asset_transaction.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_asset_transaction.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_asset_transaction.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+        ORDER BY t_house_asset_transaction. create_time DESC,t_house_asset_transaction.update_time DESC
+
+    </select>
+
+
+</mapper>

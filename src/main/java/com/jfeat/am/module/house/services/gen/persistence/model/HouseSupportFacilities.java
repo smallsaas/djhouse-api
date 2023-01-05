@@ -41,7 +41,51 @@ public class HouseSupportFacilities extends Model<HouseSupportFacilities> {
     @TableField(exist = false)
     private Integer status;
 
+    @ApiModelProperty(value = "排序号")
+    private Integer sortNum;
 
+
+    @TableField(exist = false)
+    private String typeEnName;
+
+    @TableField(exist = false)
+    private String typeCnName;
+
+    @TableField(exist = false)
+    private Integer typeSortNum;
+
+
+    public String getTypeEnName() {
+        return typeEnName;
+    }
+
+    public void setTypeEnName(String typeEnName) {
+        this.typeEnName = typeEnName;
+    }
+
+    public String getTypeCnName() {
+        return typeCnName;
+    }
+
+    public void setTypeCnName(String typeCnName) {
+        this.typeCnName = typeCnName;
+    }
+
+    public Integer getTypeSortNum() {
+        return typeSortNum;
+    }
+
+    public void setTypeSortNum(Integer typeSortNum) {
+        this.typeSortNum = typeSortNum;
+    }
+
+    public Integer getSortNum() {
+        return sortNum;
+    }
+
+    public void setSortNum(Integer sortNum) {
+        this.sortNum = sortNum;
+    }
 
     public Long getId() {
         return id;

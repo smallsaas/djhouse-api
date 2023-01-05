@@ -15,13 +15,13 @@ import java.util.List;
  * Created by Code generator on 2022-08-05
  */
 public interface QueryHouseSupportFacilitiesDao extends QueryMasterDao<HouseSupportFacilities> {
-   /*
-    * Query entity list by page
-    */
+    /*
+     * Query entity list by page
+     */
     List<HouseSupportFacilitiesRecord> findHouseSupportFacilitiesPage(Page<HouseSupportFacilitiesRecord> page, @Param("record") HouseSupportFacilitiesRecord record,
-                                            @Param("tag") String tag,
-                                            @Param("search") String search, @Param("orderBy") String orderBy,
-                                            @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+                                                                      @Param("tag") String tag,
+                                                                      @Param("search") String search, @Param("orderBy") String orderBy,
+                                                                      @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
     /*
      * Query entity model for details
@@ -33,4 +33,10 @@ public interface QueryHouseSupportFacilitiesDao extends QueryMasterDao<HouseSupp
      * Query entity model list for slave items
      */
     List<HouseSupportFacilitiesModel> queryMasterModelList(@Param("masterId") Object masterId);
+
+
+    List<HouseSupportFacilities> querySupportFacilitiesByTypeId(@Param("typeId") Long typeId);
+
+
+    List<HouseSupportFacilities> querySupportFacilitiesByRentId(@Param("rentId")Long rentId);
 }

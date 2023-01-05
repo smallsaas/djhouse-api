@@ -22,11 +22,12 @@
         t_house_rent_asset.shelves_time AS shelvesTime,
         t_house_rent_asset.rate AS rate,
         t_house_rent_asset.house_number AS houseNumber,
- t_house_rent_asset.floor AS floor,
- t_house_rent_asset.toward AS toward,
- t_house_rent_asset.building_code AS buildingCode,
- t_house_rent_asset.community_name AS communityName,
- t_house_rent_asset.configuration_status AS configurationStatus,
+         t_house_rent_asset.floor AS floor,
+         t_house_rent_asset.toward AS toward,
+         t_house_rent_asset.building_code AS buildingCode,
+         t_house_rent_asset.community_name AS communityName,
+         t_house_rent_asset.configuration_status AS configurationStatus,
+            t_house_rent_asset.custom_images_list AS customimageslist,
 
         t_end_user.name As serverName,
         t_end_user.phone AS serverPhone,
@@ -167,6 +168,10 @@
         <result column="building_code" property="buildingCode"/>
         <result column="community_name" property="communityName"/>
         <result column="configuration_status" property="configurationStatus"/>
+        <result column="custom_images_list" property="customImagesList"/>
+
+        <association property="houseSupportFacilitiesList" select="com.jfeat.am.module.house.services.domain.dao.QueryHouseSupportFacilitiesDao.querySupportFacilitiesByRentId" column="id">
+        </association>
 
         <association property="houseAssetModel"
                      javaType="com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel">

@@ -248,6 +248,7 @@ public class UserRentCommonEndpoint {
         }
 
 
+        houseRentAssetService.setRentTitle(houseRentAssetPage);
 
         page.setRecords(houseRentAssetPage);
 
