@@ -20,10 +20,7 @@ import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseRentAssetModel;
-import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAppointmentMapper;
-import com.jfeat.am.module.house.services.gen.persistence.dao.HouseBrowseLogMapper;
-import com.jfeat.am.module.house.services.gen.persistence.dao.HouseDesignModelMapper;
-import com.jfeat.am.module.house.services.gen.persistence.dao.HouseSubscribeMapper;
+import com.jfeat.am.module.house.services.gen.persistence.dao.*;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -44,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/u/house/rent/rentCommon")
@@ -101,6 +99,9 @@ public class UserRentCommonEndpoint {
     @Resource
     HouseAppointmentMapper houseAppointmentMapper;
 
+    @Resource
+    HouseRentAssetMapper houseRentAssetMapper;
+
     protected final Log logger = LogFactory.getLog(getClass());
 
     @Resource
@@ -118,6 +119,11 @@ public class UserRentCommonEndpoint {
 
     @Resource
     QueryHouseSubscribeDao queryHouseSubscribeDao;
+
+    @Resource
+    HouseUserAssetMapper houseUserAssetMapper;
+
+
 
 
     @GetMapping("/getUserRentAsset")
@@ -157,6 +163,8 @@ public class UserRentCommonEndpoint {
                                        @RequestParam(name = "rentStatus", required = false) Integer rentStatus,
 
                                        @RequestParam(name = "note", required = false) String note,
+                                       @RequestParam(name = "landlordName",required = false) String landlordName,
+                                       @RequestParam(name = "landlordRealName",required = false) String landlordRealName,
 
                                        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                        @RequestParam(name = "rentTime", required = false) Date rentTime,
@@ -198,6 +206,8 @@ public class UserRentCommonEndpoint {
         record.setRentTime(rentTime);
         record.setShelvesTime(shelvesTime);
         record.setHouseType(houseType);
+        record.setLandlordRealName(landlordRealName);
+        record.setLandlordName(landlordName);
 
 
         List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPageDetails(page, record, tag, search, orderBy, null, null);
@@ -322,8 +332,6 @@ public class UserRentCommonEndpoint {
 //    列出户型种类
     @GetMapping("/houseTypeList")
     public Tip getHouseTypeList(){
-
-
         HouseDesignModelRecord houseDesignModelRecord = new HouseDesignModelRecord();
         List<HouseDesignModelRecord> houseDesignModelRecordList = queryHouseDesignModelDao.findHouseDesignModelPage(null,houseDesignModelRecord,null,null
         ,null,null,null);
@@ -333,7 +341,6 @@ public class UserRentCommonEndpoint {
 
     @GetMapping("/houseType")
     public Tip getHouseType(){
-
         QueryWrapper<HouseDesignModel> queryWrapper = new QueryWrapper<>();
         queryWrapper.groupBy(HouseDesignModel.DESCRIPTION);
         List<HouseDesignModel> houseDesignModels = houseDesignModelMapper.selectList(queryWrapper);
@@ -351,29 +358,80 @@ public class UserRentCommonEndpoint {
     }
 
 
+//    返回出租的全部房东信息
+    @GetMapping("/landLord")
+    public Tip getHouseRentLandlordInfo(){
+        QueryWrapper<HouseRentAsset> rentAssetQueryWrapper = new QueryWrapper<>();
+        rentAssetQueryWrapper.groupBy(HouseRentAsset.LANDLORD_ID);
+        List<HouseRentAsset> houseRentAssets = houseRentAssetMapper.selectList(rentAssetQueryWrapper);
+        List<Long> landlordIds = houseRentAssets.stream().map(HouseRentAsset::getLandlordId).collect(Collectors.toList());
+        if (landlordIds==null||landlordIds.size()<=0){
+            return SuccessTip.create();
+        }
+
+        QueryWrapper<UserAccount> userAccountQueryWrapper = new QueryWrapper<>();
+        userAccountQueryWrapper.select(UserAccount.ID,UserAccount.NAME,"real_name");
+        userAccountQueryWrapper.in(UserAccount.ID,landlordIds);
+        List<UserAccount> userAccounts = userAccountMapper.selectList(userAccountQueryWrapper);
+
+        return SuccessTip.create(userAccounts);
+
+    }
+
+
 //    获取关注数 和浏览数
     @GetMapping("/statistics")
     public Tip getStatisticsNumber(){
-        if (JWTKit.getUserId()==null){
+
+        Long userId = JWTKit.getUserId();
+
+        if (userId==null){
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");
         }
 
+
+        JSONObject jsonObject = new JSONObject();
+
+        UserAccount userAccount = userAccountMapper.selectById(userId);
+        if (userAccount==null){
+         return SuccessTip.create();
+        }
+
+        List<Integer> userTypeList = userAccountService.getUserTypeList(userAccount.getType());
+
+        if (userTypeList.contains(EndUserTypeSetting.USER_TYPE_INTERMEDIARY)){
+
+            QueryWrapper<HouseUserAsset> userAssetQueryWrapper = new QueryWrapper<>();
+            userAssetQueryWrapper.eq(HouseUserAsset.USER_ID,userId);
+            List<HouseUserAsset> houseUserAssets = houseUserAssetMapper.selectList(userAssetQueryWrapper);
+
+
+            QueryWrapper<HouseRentAsset> rentAssetQueryWrapper = new QueryWrapper<>();
+            rentAssetQueryWrapper.groupBy(HouseRentAsset.LANDLORD_ID);
+            List<HouseRentAsset> houseRentAssets = houseRentAssetMapper.selectList(rentAssetQueryWrapper);
+
+            jsonObject.put("assetNumber",houseUserAssets.size());
+            jsonObject.put("rentNumber",houseUserAssets.size());
+
+        }
+
+
 //        浏览数
         QueryWrapper<HouseBrowseLog> browseLogQueryWrapper = new QueryWrapper<>();
-        browseLogQueryWrapper.eq(HouseBrowseLog.USER_ID,JWTKit.getUserId());
+        browseLogQueryWrapper.eq(HouseBrowseLog.USER_ID,userId);
         HouseBrowseLog houseBrowseLog = houseBrowseLogMapper.selectOne(browseLogQueryWrapper);
 
 //        关注数
         QueryWrapper<HouseSubscribe> subscribeQueryWrapper = new QueryWrapper<>();
-        subscribeQueryWrapper.eq(HouseSubscribe.USER_ID,JWTKit.getUserId());
+        subscribeQueryWrapper.eq(HouseSubscribe.USER_ID,userId);
         List<HouseSubscribe> houseSubscribeList = houseSubscribeMapper.selectList(subscribeQueryWrapper);
 
 //        预约数量
         QueryWrapper<HouseAppointment> appointmentQueryWrapper = new QueryWrapper<>();
-        appointmentQueryWrapper.eq(HouseAppointment.USER_ID,JWTKit.getUserId());
+        appointmentQueryWrapper.eq(HouseAppointment.USER_ID,userId);
         List<HouseAppointment> houseAppointmentList =  houseAppointmentMapper.selectList(appointmentQueryWrapper);
 
-        JSONObject jsonObject = new JSONObject();
+
 
         if (houseBrowseLog!=null){
             jsonObject.put("browseNumber",houseBrowseLog.getBrowseNumber());

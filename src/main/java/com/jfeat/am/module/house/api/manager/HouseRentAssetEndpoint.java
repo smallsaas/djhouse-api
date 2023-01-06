@@ -169,6 +169,8 @@ public class HouseRentAssetEndpoint {
 
                                        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                        @RequestParam(name = "rentTime", required = false) Date rentTime,
+                                       @RequestParam(name = "landlordName",required = false) String landlordName,
+                                       @RequestParam(name = "landlordRealName",required = false) String landlordRealName,
 
                                        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                        @RequestParam(name = "shelvesTime", required = false) Date shelvesTime,
@@ -206,6 +208,8 @@ public class HouseRentAssetEndpoint {
         record.setNote(note);
         record.setRentTime(rentTime);
         record.setShelvesTime(shelvesTime);
+        record.setLandlordName(landlordName);
+        record.setLandlordRealName(landlordRealName);
 
 
         List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPage(page, record, tag, search, orderBy, null, null);

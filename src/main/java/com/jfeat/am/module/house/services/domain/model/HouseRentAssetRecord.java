@@ -21,6 +21,25 @@ public class HouseRentAssetRecord extends HouseRentAsset {
 
     private String houseType;
 
+    private String landlordName;
+
+    private String landlordRealName;
+
+    public String getLandlordName() {
+        return landlordName;
+    }
+
+    public void setLandlordName(String landlordName) {
+        this.landlordName = landlordName;
+    }
+
+    public String getLandlordRealName() {
+        return landlordRealName;
+    }
+
+    public void setLandlordRealName(String landlordRealName) {
+        this.landlordRealName = landlordRealName;
+    }
 
     public List<HouseSupportFacilities> getHouseSupportFacilitiesList() {
         return houseSupportFacilitiesList;

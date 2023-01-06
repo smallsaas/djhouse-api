@@ -51,13 +51,22 @@
 
         FROM t_house_rent_asset
         LEFT JOIN t_end_user ON t_end_user.id = t_house_rent_asset.server_id
-
+        LEFT JOIN t_end_user as loadord ON loadord.id = t_house_rent_asset.landlord_id
 
         WHERE 1=1
 
 
         <if test="record.id != null and record.id>0 ">
             AND t_house_rent_asset.id #{record.id}
+        </if>
+
+
+        <if test="record.landlordName != null and record.landlordName!='' ">
+            AND loadord.name LIKE CONCAT('%',#{record.landlordName},'%')
+        </if>
+
+        <if test="record.landlordRealName != null and record.landlordRealName!='' ">
+            AND loadord.realName LIKE CONCAT('%',#{record.landlordRealName},'%')
         </if>
 
 
@@ -241,6 +250,8 @@
 
 
         FROM t_house_rent_asset
+        LEFT JOIN t_end_user as loadord ON loadord.id = t_house_rent_asset.landlord_id
+        LEFT JOIN t_end_user as service ON service.id = t_house_rent_asset.server_id
         left join t_house_asset on t_house_rent_asset.asset_id=t_house_asset.id
         left JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
         left JOIN t_house_property_community ON t_house_property_community.id = t_house_property_building.community_id
@@ -274,6 +285,16 @@
         <if test="record.houseType != null and record.houseType!='' ">
             AND t_house_design_model.description LIKE CONCAT('%',#{record.houseType},'%')
         </if>
+
+
+        <if test="record.landlordName != null and record.landlordName!='' ">
+            AND loadord.name LIKE CONCAT('%',#{record.landlordName},'%')
+        </if>
+
+        <if test="record.landlordRealName != null and record.landlordRealName!='' ">
+            AND loadord.realName LIKE CONCAT('%',#{record.landlordRealName},'%')
+        </if>
+
 
 
         <if test="record.landlordId != null and record.landlordId>0 ">

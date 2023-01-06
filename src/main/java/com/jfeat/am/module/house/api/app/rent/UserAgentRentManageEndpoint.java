@@ -152,6 +152,9 @@ public class UserAgentRentManageEndpoint {
 
                                        @RequestParam(name = "note", required = false) String note,
 
+                                       @RequestParam(name = "landlordName",required = false) String landlordName,
+                                       @RequestParam(name = "landlordRealName",required = false) String landlordRealName,
+
                                        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                        @RequestParam(name = "rentTime", required = false) Date rentTime,
 
@@ -178,6 +181,8 @@ public class UserAgentRentManageEndpoint {
         record.setArea(area);
         record.setHouseType(houseType);
         record.setIntroducePicture(introducePicture);
+        record.setLandlordName(landlordName);
+        record.setLandlordRealName(landlordRealName);
 
 
 
