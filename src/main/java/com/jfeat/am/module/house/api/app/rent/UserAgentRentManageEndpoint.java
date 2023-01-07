@@ -15,6 +15,7 @@ import com.jfeat.am.module.appointment.services.gen.persistence.dao.AppointmentT
 import com.jfeat.am.module.appointment.services.gen.persistence.model.AppointmentTime;
 import com.jfeat.am.module.appointment.services.persistence.dao.AppointmentMapper;
 import com.jfeat.am.module.appointment.services.persistence.model.Appointment;
+import com.jfeat.am.module.house.services.definition.HouseRentLogStatus;
 import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao;
@@ -29,10 +30,7 @@ import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseRentAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
-import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
+import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.am.module.house.services.utility.Authentication;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -109,6 +107,10 @@ public class UserAgentRentManageEndpoint {
     UserAccountService userAccountService;
 
 
+    @Resource
+    HouseRentLogService houseRentLogService;
+
+
 
     /*
     用户出租列表
@@ -152,8 +154,8 @@ public class UserAgentRentManageEndpoint {
 
                                        @RequestParam(name = "note", required = false) String note,
 
-                                       @RequestParam(name = "landlordName",required = false) String landlordName,
-                                       @RequestParam(name = "landlordRealName",required = false) String landlordRealName,
+                                       @RequestParam(name = "landlordName", required = false) String landlordName,
+                                       @RequestParam(name = "landlordRealName", required = false) String landlordRealName,
 
                                        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                        @RequestParam(name = "rentTime", required = false) Date rentTime,
@@ -164,8 +166,8 @@ public class UserAgentRentManageEndpoint {
                                        @RequestParam(name = "sort", required = false) String sort) {
 
 
-        if (JWTKit.getUserId()==null){
-            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        if (JWTKit.getUserId() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "没有登录");
         }
 
         orderBy = "rentStatusAsc";
@@ -185,15 +187,14 @@ public class UserAgentRentManageEndpoint {
         record.setLandlordRealName(landlordRealName);
 
 
-
-        UserAccount userAccount =  userAccountMapper.selectById(JWTKit.getUserId());
+        UserAccount userAccount = userAccountMapper.selectById(JWTKit.getUserId());
         List<Integer> typeList = null;
-        if (userAccount.getType()!=null){
+        if (userAccount.getType() != null) {
             typeList = userAccountService.getUserTypeList(userAccount.getType());
         }
-        if (typeList!=null && typeList.contains(EndUserTypeSetting.USER_TYPE_SALES)){
+        if (typeList != null && typeList.contains(EndUserTypeSetting.USER_TYPE_SALES)) {
             record.setServerId(null);
-        }else {
+        } else {
             record.setServerId(JWTKit.getUserId());
         }
 
@@ -216,27 +217,27 @@ public class UserAgentRentManageEndpoint {
         List<StockTag> stockTags = stockTagMapper.selectList(stockTagQueryWrapper);
 
         QueryWrapper<StockTagRelation> stockTagRelationQueryWrapper = new QueryWrapper<>();
-        stockTagRelationQueryWrapper.eq(StockTagRelation.STOCK_TYPE,houseRentAssetService.getEntityName());
+        stockTagRelationQueryWrapper.eq(StockTagRelation.STOCK_TYPE, houseRentAssetService.getEntityName());
         List<StockTagRelation> stockTagRelations = stockTagRelationMapper.selectList(stockTagRelationQueryWrapper);
 
-        for (HouseRentAssetRecord houseRentAssetRecord:houseRentAssetPage){
+        for (HouseRentAssetRecord houseRentAssetRecord : houseRentAssetPage) {
             JSONObject resultJson = new JSONObject();
             JSONArray jsonArray = new JSONArray();
-            for (StockTagRelation stockTagRelation:stockTagRelations){
-                if (stockTagRelation.getStockId().equals(houseRentAssetRecord.getId())){
+            for (StockTagRelation stockTagRelation : stockTagRelations) {
+                if (stockTagRelation.getStockId().equals(houseRentAssetRecord.getId())) {
 
-                    for (StockTag stockTag:stockTags){
-                        if (stockTag.getId().equals(stockTagRelation.getTagId())){
+                    for (StockTag stockTag : stockTags) {
+                        if (stockTag.getId().equals(stockTagRelation.getTagId())) {
                             JSONObject tagJson = new JSONObject();
-                            tagJson.put("id",stockTag.getId());
-                            tagJson.put("tagName",stockTag.getTagName());
+                            tagJson.put("id", stockTag.getId());
+                            tagJson.put("tagName", stockTag.getTagName());
                             jsonArray.add(tagJson);
                         }
 
                     }
                 }
             }
-            resultJson.put("tags",jsonArray);
+            resultJson.put("tags", jsonArray);
             houseRentAssetRecord.setExtra(resultJson.toJSONString());
 
         }
@@ -244,7 +245,7 @@ public class UserAgentRentManageEndpoint {
 
         page.setRecords(houseRentAssetPage);
 
-        System.out.println("统计时间"+(System.currentTimeMillis()-start));
+        System.out.println("统计时间" + (System.currentTimeMillis() - start));
         return SuccessTip.create(page);
     }
 
@@ -283,27 +284,40 @@ public class UserAgentRentManageEndpoint {
 
 //        appointmentMapper
 
-        if (entity.getId()==null || "".equals(entity.getId())){
-            throw new BusinessException(BusinessCode.BadRequest,"id为必填");
+        if (entity.getId() == null || "".equals(entity.getId())) {
+            throw new BusinessException(BusinessCode.BadRequest, "id为必填");
         }
-        if (entity.getRentStatus()==null || "".equals(entity.getRentStatus())){
-            throw new BusinessException(BusinessCode.BadRequest,"rentStatus");
+        if (entity.getRentStatus() == null || "".equals(entity.getRentStatus())) {
+            throw new BusinessException(BusinessCode.BadRequest, "rentStatus");
         }
 
 
-        if (entity.getRentStatus().equals(HouseRentAsset.RENT_STATUS_SHELVES)){
+        if (entity.getRentStatus().equals(HouseRentAsset.RENT_STATUS_SHELVES)) {
             QueryWrapper<AppointmentTime> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq(Appointment.USERID,userId);
+            queryWrapper.eq(Appointment.USERID, userId);
             List<AppointmentTime> list = appointmentTimeMapper.selectList(queryWrapper);
-            if (list==null || list.size()<=0){
-                throw new BusinessException(BusinessCode.CodeBase,"必须设置个人预约时间");
+            if (list == null || list.size() <= 0) {
+                throw new BusinessException(BusinessCode.CodeBase, "必须设置个人预约时间");
             }
         }
 
         HouseRentAssetModel houseRentAssetModel = queryHouseRentAssetDao.queryMasterModel(entity.getId());
-        if (houseRentAssetModel==null){
-            throw new BusinessException(BusinessCode.BadRequest,"参数异常,请检查参数是否正确");
+        if (houseRentAssetModel == null) {
+            throw new BusinessException(BusinessCode.BadRequest, "参数异常,请检查参数是否正确");
         }
+
+
+        if (entity.getRentStatus() == 1) {
+
+//            添加下架日志
+            houseRentLogService.addHouseRentLog(entity.getId(), HouseRentLogStatus.pullOffShelves.name());
+
+        } else if (entity.getRentStatus() == 2) {
+            //            添加上架日志
+            houseRentLogService.addHouseRentLog(entity.getId(), HouseRentLogStatus.putOnShelves.name());
+        }
+
+
         /*
         设置中介身份和状态
          */
@@ -319,66 +333,66 @@ public class UserAgentRentManageEndpoint {
     @GetMapping("/userRentDetails/{id}")
     public Tip getHouseRentAsset(@PathVariable Long id) {
         HouseRentAsset houseRentAssetModel = houseRentAssetService.queryMasterModel(queryHouseRentAssetDao, id);
-        if (houseRentAssetModel!=null){
+        if (houseRentAssetModel != null) {
             HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(houseRentAssetModel.getAssetId());
-            if (houseAssetModel!=null){
+            if (houseAssetModel != null) {
                 houseRentAssetModel.setHouseAssetModel(houseAssetModel);
             }
 //            添加中介信息
-            if (houseRentAssetModel.getServerId()!=null){
+            if (houseRentAssetModel.getServerId() != null) {
                 EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(houseRentAssetModel.getServerId());
-                if (endpointUserModel!=null){
+                if (endpointUserModel != null) {
                     houseRentAssetModel.setServerAvatar(endpointUserModel.getAvatar());
                     houseRentAssetModel.setServerPhone(endpointUserModel.getPhone());
                     houseRentAssetModel.setServerName(endpointUserModel.getName());
                 }
             }
             JSONObject jsonObject = (JSONObject) JSONObject.toJSON(houseRentAssetModel);
-            if (houseAssetModel.getCommunityId()!=null){
-                jsonObject.put("facilities",houseSurroundFacilitiesTypeOverModelService.getCommunityFacilities(houseAssetModel.getCommunityId()));
+            if (houseAssetModel.getCommunityId() != null) {
+                jsonObject.put("facilities", houseSurroundFacilitiesTypeOverModelService.getCommunityFacilities(houseAssetModel.getCommunityId()));
             }
-            jsonObject.put("supportFacilities",houseSupportFacilitiesService.getRentHouseSupportFacilitiesStatus(houseRentAssetModel.getAssetId(),houseSupportFacilitiesTypeOverModelService.getHouseSupportFacilitiesTypeItem()));
+            jsonObject.put("supportFacilities", houseSupportFacilitiesService.getRentHouseSupportFacilitiesStatus(houseRentAssetModel.getAssetId(), houseSupportFacilitiesTypeOverModelService.getHouseSupportFacilitiesTypeItem()));
             return SuccessTip.create(jsonObject);
         }
         return SuccessTip.create(houseRentAssetModel);
     }
 
 
-//    查询楼栋
+    //    查询楼栋
     @GetMapping("/community/{id}")
-    public Tip getBuildingList(@PathVariable("id") Long communityId){
+    public Tip getBuildingList(@PathVariable("id") Long communityId) {
         QueryWrapper<HousePropertyBuilding> buildingQueryWrapper = new QueryWrapper<>();
-        buildingQueryWrapper.eq(HousePropertyBuilding.COMMUNITY_ID,communityId);
+        buildingQueryWrapper.eq(HousePropertyBuilding.COMMUNITY_ID, communityId);
         List<HousePropertyBuilding> buildingList = housePropertyBuildingMapper.selectList(buildingQueryWrapper);
         return SuccessTip.create(buildingList);
     }
 
 
-//    查询房号
+    //    查询房号
     @GetMapping("/building/{id}")
     public Tip getAssetList(@PathVariable("id") Long buildingId,
                             Page<HouseAsset> page,
                             @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                            @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize){
+                            @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         QueryWrapper<HouseAsset> assetQueryWrapper = new QueryWrapper<>();
-        assetQueryWrapper.eq(HouseAsset.BUILDING_ID,buildingId);
+        assetQueryWrapper.eq(HouseAsset.BUILDING_ID, buildingId);
         page.setSize(pageSize);
         page.setCurrent(pageNum);
-        page = houseAssetMapper.selectPage(page,assetQueryWrapper);
+        page = houseAssetMapper.selectPage(page, assetQueryWrapper);
 
         List<HouseAsset> houseAssetList = page.getRecords();
         List<Long> assetIds = houseAssetList.stream().map(HouseAsset::getId).collect(Collectors.toList());
 
 
-        if (assetIds!=null){
+        if (assetIds != null) {
             QueryWrapper<HouseRentAsset> rentAssetQueryWrapper = new QueryWrapper<>();
-            rentAssetQueryWrapper.in(HouseRentAsset.ASSET_ID,assetIds);
+            rentAssetQueryWrapper.in(HouseRentAsset.ASSET_ID, assetIds);
             List<HouseRentAsset> rentAssetList = houseRentAssetMapper.selectList(rentAssetQueryWrapper);
 
-            for (HouseAsset houseAsset:houseAssetList){
+            for (HouseAsset houseAsset : houseAssetList) {
 
-                for (HouseRentAsset houseRentAsset:rentAssetList){
-                    if (houseAsset.getId().equals(houseRentAsset.getAssetId())){
+                for (HouseRentAsset houseRentAsset : rentAssetList) {
+                    if (houseAsset.getId().equals(houseRentAsset.getAssetId())) {
                         houseAsset.setExistRent(true);
                     }
 
@@ -394,59 +408,59 @@ public class UserAgentRentManageEndpoint {
 用户出租详情
  */
     @GetMapping("/rentAssetDetails/{assetId}")
-    public Tip userRentAssetDetails(@PathVariable("assetId") Long assetId){
+    public Tip userRentAssetDetails(@PathVariable("assetId") Long assetId) {
 
         HouseRentAssetRecord houseRentAssetRecord = new HouseRentAssetRecord();
         houseRentAssetRecord.setAssetId(assetId);
-        List<HouseRentAssetRecord> houseRentAssetRecordList = queryHouseRentAssetDao.findHouseRentAssetPage(null,houseRentAssetRecord
-                ,null,null,null,null,null);
+        List<HouseRentAssetRecord> houseRentAssetRecordList = queryHouseRentAssetDao.findHouseRentAssetPage(null, houseRentAssetRecord
+                , null, null, null, null, null);
 
         HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(assetId);
 
         /*
         判断是否出租
          */
-        if (houseAssetModel==null){
-            throw new BusinessException(BusinessCode.NoPermission,"没有找到房子,请重试");
+        if (houseAssetModel == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "没有找到房子,请重试");
         }
-        if (houseRentAssetRecordList==null || houseRentAssetRecordList.size()==0){
+        if (houseRentAssetRecordList == null || houseRentAssetRecordList.size() == 0) {
             houseRentAssetRecord.setHouseAssetModel(houseAssetModel);
             houseRentAssetRecordList.add(houseRentAssetRecord);
-        }else {
+        } else {
             HouseRentAsset rentAsset = houseRentAssetService.queryMasterModel(queryHouseRentAssetDao, houseRentAssetRecordList.get(0).getId());
             houseRentAssetRecordList.get(0).setHouseAssetModel(houseAssetModel);
             houseRentAssetRecordList.get(0).setExtra(rentAsset.getExtra());
 
         }
         JSONObject jsonObject = (JSONObject) JSONObject.toJSON(houseRentAssetRecordList.get(0));
-        if (houseAssetModel.getCommunityId()!=null){
-            jsonObject.put("facilities",houseSurroundFacilitiesTypeOverModelService.getCommunityFacilities(houseAssetModel.getCommunityId()));
+        if (houseAssetModel.getCommunityId() != null) {
+            jsonObject.put("facilities", houseSurroundFacilitiesTypeOverModelService.getCommunityFacilities(houseAssetModel.getCommunityId()));
         }
-        jsonObject.put("supportFacilities",houseSupportFacilitiesService.getRentHouseSupportFacilitiesStatus(houseRentAssetRecordList.get(0).getAssetId(),houseSupportFacilitiesTypeOverModelService.getHouseSupportFacilitiesTypeItem()));
+        jsonObject.put("supportFacilities", houseSupportFacilitiesService.getRentHouseSupportFacilitiesStatus(houseRentAssetRecordList.get(0).getAssetId(), houseSupportFacilitiesTypeOverModelService.getHouseSupportFacilitiesTypeItem()));
         return SuccessTip.create(jsonObject);
     }
 
-//    添加出租
+    //    添加出租
     @PostMapping("/createRentAsset")
-    public Tip createRentAsset(@RequestBody HouseRentAsset entity){
-        if (entity.getAssetId()==null){
-            throw new BusinessException(BusinessCode.BadRequest,"assetId为必填值");
+    public Tip createRentAsset(@RequestBody HouseRentAsset entity) {
+        if (entity.getAssetId() == null) {
+            throw new BusinessException(BusinessCode.BadRequest, "assetId为必填值");
         }
 
 //        查看是否存产权
         QueryWrapper<HouseUserAsset> houseUserAssetQueryWrapper = new QueryWrapper<>();
-        houseUserAssetQueryWrapper.eq(HouseUserAsset.ASSET_ID,entity.getAssetId());
+        houseUserAssetQueryWrapper.eq(HouseUserAsset.ASSET_ID, entity.getAssetId());
         HouseUserAsset houseUserAsset = houseUserAssetMapper.selectOne(houseUserAssetQueryWrapper);
-        if (houseUserAsset==null){
-            throw new BusinessException(BusinessCode.CodeBase,"房屋没有产权不能创盘");
+        if (houseUserAsset == null) {
+            throw new BusinessException(BusinessCode.CodeBase, "房屋没有产权不能创盘");
         }
 
 //        查看是否出租
         QueryWrapper<HouseRentAsset> houseRentAssetQueryWrapper = new QueryWrapper<>();
-        houseRentAssetQueryWrapper.eq(HouseRentAsset.ASSET_ID,entity.getAssetId());
+        houseRentAssetQueryWrapper.eq(HouseRentAsset.ASSET_ID, entity.getAssetId());
         HouseRentAsset houseRentAsset = houseRentAssetMapper.selectOne(houseRentAssetQueryWrapper);
-        if (houseRentAsset!=null){
-            throw new BusinessException(BusinessCode.CodeBase,"房屋已出租,不能重复创盘");
+        if (houseRentAsset != null) {
+            throw new BusinessException(BusinessCode.CodeBase, "房屋已出租,不能重复创盘");
         }
 
         HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(entity.getAssetId());
@@ -455,7 +469,11 @@ public class UserAgentRentManageEndpoint {
         entity.setHouseTypeId(houseAssetModel.getDesignModelId());
         entity.setArea(houseAssetModel.getArea());
         entity.setServerId(null);
-        return SuccessTip.create(houseRentAssetMapper.insert(entity));
+
+        Integer affect =  houseRentAssetMapper.insert(entity);
+        //            添加发布日志
+        houseRentLogService.addHouseRentLog(entity.getId(), HouseRentLogStatus.createRentInfo.name());
+        return SuccessTip.create(affect);
     }
 
 }

@@ -2,12 +2,22 @@ package com.jfeat.am.module.house.api;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.jfeat.am.module.house.services.definition.HouseRentLogStatus;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao;
+import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseEmailService;
 import com.jfeat.am.module.house.services.domain.service.HouseExcelService;
+import com.jfeat.am.module.house.services.domain.service.HouseRentAssetService;
+import com.jfeat.am.module.house.services.domain.service.HouseRentLogService;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseRentAssetModel;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseRentAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetMatchLog;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
 import com.jfeat.am.module.house.services.utility.ExcelUtility;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.crud.plus.CRUD;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +41,15 @@ public class HouseTest {
 
     @Resource
     HouseExcelService houseExcelService;
+
+    @Resource
+    HouseRentAssetMapper houseRentAssetMapper;
+
+    @Resource
+    QueryHouseRentAssetDao queryHouseRentAssetDao;
+
+    @Resource
+    HouseRentLogService houseRentLogService;
 
 
     @PostMapping()
@@ -59,11 +78,7 @@ public class HouseTest {
 
     @GetMapping
     public Tip getTest() {
-        List<HouseAssetMatchLog> houseAssetMatchLogList = houseExcelService.addAllSameFloorExchange();
-        Set<HouseAssetMatchLog> houseAssetMatchLogSet = new HashSet<>();
-        houseAssetMatchLogSet.addAll(houseAssetMatchLogList);
-        houseAssetMatchLogList = new ArrayList<>(houseAssetMatchLogSet);
-        return SuccessTip.create(houseAssetMatchLogList);
+        return SuccessTip.create();
     }
 
 

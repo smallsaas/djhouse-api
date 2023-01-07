@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.gen.persistence.dao.HouseRentLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jfeat.am.module.house.services.gen.persistence.model.HouseRentLog">
+        <id column="id" property="id" />
+        <result column="operator" property="operator" />
+        <result column="state" property="state" />
+        <result column="log_note" property="logNote" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="rent_id" property="rentId" />
+        <result column="asset_id" property="assetId" />
+        <result column="community_id" property="communityId" />
+        <result column="house_type_id" property="houseTypeId" />
+        <result column="landlord_id" property="landlordId" />
+        <result column="area" property="area" />
+        <result column="introduce_picture" property="introducePicture" />
+        <result column="server_id" property="serverId" />
+        <result column="cover" property="cover" />
+        <result column="title" property="title" />
+        <result column="price" property="price" />
+        <result column="slide" property="slide" />
+        <result column="rent_describe" property="rentDescribe" />
+        <result column="status" property="status" />
+        <result column="rent_status" property="rentStatus" />
+        <result column="note" property="note" />
+        <result column="rent_time" property="rentTime" />
+        <result column="shelves_time" property="shelvesTime" />
+        <result column="rate" property="rate" />
+        <result column="house_number" property="houseNumber" />
+        <result column="floor" property="floor" />
+        <result column="toward" property="toward" />
+        <result column="building_code" property="buildingCode" />
+        <result column="community_name" property="communityName" />
+        <result column="configuration_status" property="configurationStatus" />
+        <result column="rent_create_time" property="rentCreateTime" />
+        <result column="rent_update_time" property="rentUpdateTime" />
+        <result column="custom_images_list" property="customImagesList" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, operator, state, log_note, create_time, update_time, rent_id, asset_id, community_id, house_type_id, landlord_id, area, introduce_picture, server_id, cover, title, price, slide, rent_describe, status, rent_status, note, rent_time, shelves_time, rate, house_number, floor, toward, building_code, community_name, configuration_status, rent_create_time, rent_update_time, custom_images_list
+    </sql>
+
+</mapper>

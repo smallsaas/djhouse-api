@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.module.house.services.definition.HouseRentLogStatus;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentSupportFacilitiesDao;
@@ -11,6 +12,7 @@ import com.jfeat.am.module.house.services.domain.model.HouseRentSupportFacilitie
 import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseEmailService;
 import com.jfeat.am.module.house.services.domain.service.HouseRentAssetService;
+import com.jfeat.am.module.house.services.domain.service.HouseRentLogService;
 import com.jfeat.am.module.house.services.domain.service.HouseRentSupportFacilitiesService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHouseRentAssetServiceImpl;
@@ -69,6 +71,9 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
     @Resource
     HouseEmailService houseEmailService;
 
+    @Resource
+    HouseRentLogService houseRentLogService;
+
     @Override
     protected String entityName() {
         return "HouseRentAsset";
@@ -114,10 +119,18 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
         if (list!=null &&list.size()>0){
             entity.setId(list.get(0).getId());
             entity.setRentTime(new Date());
+
+            //            添加更新信息日志
+            houseRentLogService.addHouseRentLog(entity.getId(), HouseRentLogStatus.updateRentInfo.name());
+
             affected = houseRentAssetService.updateMaster(entity);
         }else {
             try {
                 affected = houseRentAssetService.createMaster(entity);
+
+                //            添加发布信息日志
+                houseRentLogService.addHouseRentLog(entity.getId(), HouseRentLogStatus.createRentInfo.name());
+
             } catch (DuplicateKeyException e) {
                 throw new BusinessException(BusinessCode.DuplicateKey);
             }
@@ -218,6 +231,9 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
                 try {
                     affected = houseRentAssetService.createMaster(entity);
 
+                    //            添加发布日志
+                    houseRentLogService.addHouseRentLog(entity.getId(), HouseRentLogStatus.createRentInfo.name());
+
                     if (affected>0 && isSendEmail!=null&& isSendEmail){
                         houseEmailService.sendRentAssetInfo(entity);
                     }
@@ -227,7 +243,13 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
             }else if (houseRentAssetList.size()==1){
                 entity.setId(houseRentAssetList.get(0).getId());
                 entity.setRentTime(new Date());
+
+                //            添加更新信息日志
+                houseRentLogService.addHouseRentLog(entity.getId(), HouseRentLogStatus.updateRentInfo.name());
+
                 affected = houseRentAssetService.updateMaster(entity);
+
+
             }else {
                 throw new BusinessException(BusinessCode.CodeBase,"出租房屋已存在");
             }
@@ -253,6 +275,10 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
     public int updateUserRentAsset(HouseRentAsset entity) {
 
         Integer affected = 0;
+
+        //            添加更新信息日志
+        houseRentLogService.addHouseRentLog(entity.getId(), HouseRentLogStatus.updateRentInfo.name());
+
         affected =  houseRentAssetService.updateMaster(entity);
         if (entity.getAssetId()==null){
             return affected;
@@ -328,7 +354,15 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
 
 
         if (flag){
+
+            //            添加更新信息日志
+            houseRentLogService.addHouseRentLog(entity.getId(), HouseRentLogStatus.updateRentInfo.name());
+
             affect = houseRentAssetService.updateMaster(entity);
+
+
+
+
             if (affect>0 && entity.getSupportFacilitiesList()!=null && entity.getSupportFacilitiesList().size()>0){
                 QueryWrapper<HouseRentSupportFacilities> queryWrapper = new QueryWrapper<>();
                 queryWrapper.eq(HouseRentSupportFacilities.RENT_ID,entity.getId());

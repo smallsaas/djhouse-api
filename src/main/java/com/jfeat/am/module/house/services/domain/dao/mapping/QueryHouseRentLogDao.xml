@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseRentLogDao">
+    <sql id="Base_Column_List">
+        t_house_rent_log.id,
+            t_house_rent_log.operator,
+            t_house_rent_log.state,
+            t_house_rent_log.log_note AS logNote,
+            t_house_rent_log.create_time AS createTime,
+            t_house_rent_log.update_time AS updateTime,
+
+            t_end_user.name as operatorName,
+            t_end_user.real_name as operatorRealName,
+            t_end_user.phone as operatorPhone,
+
+            t_house_rent_log.rent_id AS rentId,
+            t_house_rent_log.asset_id AS assetId,
+            t_house_rent_log.community_id AS communityId, t_house_rent_log.house_type_id AS houseTypeId, t_house_rent_log.landlord_id AS landlordId, t_house_rent_log.area, t_house_rent_log.introduce_picture AS introducePicture, t_house_rent_log.server_id AS serverId, t_house_rent_log.cover, t_house_rent_log.title, t_house_rent_log.price, t_house_rent_log.slide, t_house_rent_log.rent_describe AS rentDescribe, t_house_rent_log.status, t_house_rent_log.rent_status AS rentStatus, t_house_rent_log.note, t_house_rent_log.rent_time AS rentTime, t_house_rent_log.shelves_time AS shelvesTime, t_house_rent_log.rate, t_house_rent_log.house_number AS houseNumber, t_house_rent_log.floor, t_house_rent_log.toward, t_house_rent_log.building_code AS buildingCode, t_house_rent_log.community_name AS communityName, t_house_rent_log.configuration_status AS configurationStatus, t_house_rent_log.rent_create_time AS rentCreateTime, t_house_rent_log.rent_update_time AS rentUpdateTime, t_house_rent_log.custom_images_list AS customImagesList
+    </sql>
+
+
+    <select id="queryMasterModel" resultType="HouseRentLogModel">
+        SELECT t_house_rent_log.*
+        FROM t_house_rent_log
+        WHERE t_house_rent_log.id = #{id}
+        GROUP BY t_house_rent_log.id
+    </select>
+
+
+    <select id="findHouseRentLogPage" resultType="HouseRentLogRecord" parameterType="HouseRentLogRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+
+        FROM t_house_rent_log
+        JOIN t_end_user on t_end_user.id = t_house_rent_log.operator
+
+
+        WHERE 1=1
+
+
+        <if test="record.id != null and record.id>0 ">
+            AND t_house_rent_log.id LIKE CONCAT('%',#{record.id},'%')
+        </if>
+        <if test="record.operator != null and record.operator>0 ">
+            AND t_house_rent_log.operator LIKE CONCAT('%',#{record.operator},'%')
+        </if>
+        <if test="record.state != null and record.state>0 ">
+            AND t_house_rent_log.state LIKE CONCAT('%',#{record.state},'%')
+        </if>
+
+
+        <if test="record.logNote != null and record.logNote!= ''">
+            AND t_house_rent_log.log_note LIKE CONCAT('%',#{record.logNote},'%')
+        </if>
+
+
+        <if test="record.createTime != null and record.createTime>0 ">
+            AND t_house_rent_log.create_time LIKE CONCAT('%',#{record.createTime},'%')
+        </if>
+
+
+        <if test="record.updateTime != null and record.updateTime>0 ">
+            AND t_house_rent_log.update_time LIKE CONCAT('%',#{record.updateTime},'%')
+        </if>
+
+
+        <if test="record.rentId != null and record.rentId>0 ">
+            AND t_house_rent_log.rent_id LIKE CONCAT('%',#{record.rentId},'%')
+        </if>
+
+
+        <if test="record.assetId != null and record.assetId>0 ">
+            AND t_house_rent_log.asset_id LIKE CONCAT('%',#{record.assetId},'%')
+        </if>
+
+
+        <if test="record.communityId != null and record.communityId>0 ">
+            AND t_house_rent_log.community_id LIKE CONCAT('%',#{record.communityId},'%')
+        </if>
+
+
+        <if test="record.houseTypeId != null and record.houseTypeId>0 ">
+            AND t_house_rent_log.house_type_id LIKE CONCAT('%',#{record.houseTypeId},'%')
+        </if>
+
+
+        <if test="record.landlordId != null and record.landlordId>0 ">
+            AND t_house_rent_log.landlord_id LIKE CONCAT('%',#{record.landlordId},'%')
+        </if>
+        <if test="record.area != null and record.area>0 ">
+            AND t_house_rent_log.area LIKE CONCAT('%',#{record.area},'%')
+        </if>
+
+
+        <if test="record.introducePicture != null and record.introducePicture!= ''">
+            AND t_house_rent_log.introduce_picture LIKE CONCAT('%',#{record.introducePicture},'%')
+        </if>
+
+
+        <if test="record.serverId != null and record.serverId>0 ">
+            AND t_house_rent_log.server_id LIKE CONCAT('%',#{record.serverId},'%')
+        </if>
+        <if test="record.cover != null and record.cover!= ''">
+            AND t_house_rent_log.cover LIKE CONCAT('%',#{record.cover},'%')
+        </if>
+        <if test="record.title != null and record.title!= ''">
+            AND t_house_rent_log.title LIKE CONCAT('%',#{record.title},'%')
+        </if>
+        <if test="record.price != null and record.price>0 ">
+            AND t_house_rent_log.price LIKE CONCAT('%',#{record.price},'%')
+        </if>
+        <if test="record.slide != null and record.slide!= ''">
+            AND t_house_rent_log.slide LIKE CONCAT('%',#{record.slide},'%')
+        </if>
+
+
+        <if test="record.rentDescribe != null and record.rentDescribe!= ''">
+            AND t_house_rent_log.rent_describe LIKE CONCAT('%',#{record.rentDescribe},'%')
+        </if>
+        <if test="record.status != null and record.status>0 ">
+            AND t_house_rent_log.status LIKE CONCAT('%',#{record.status},'%')
+        </if>
+
+
+        <if test="record.rentStatus != null and record.rentStatus>0 ">
+            AND t_house_rent_log.rent_status LIKE CONCAT('%',#{record.rentStatus},'%')
+        </if>
+        <if test="record.note != null and record.note!= ''">
+            AND t_house_rent_log.note LIKE CONCAT('%',#{record.note},'%')
+        </if>
+
+
+        <if test="record.rentTime != null and record.rentTime>0 ">
+            AND t_house_rent_log.rent_time LIKE CONCAT('%',#{record.rentTime},'%')
+        </if>
+
+
+        <if test="record.shelvesTime != null and record.shelvesTime>0 ">
+            AND t_house_rent_log.shelves_time LIKE CONCAT('%',#{record.shelvesTime},'%')
+        </if>
+        <if test="record.rate != null and record.rate>0 ">
+            AND t_house_rent_log.rate LIKE CONCAT('%',#{record.rate},'%')
+        </if>
+
+
+        <if test="record.houseNumber != null and record.houseNumber!= ''">
+            AND t_house_rent_log.house_number LIKE CONCAT('%',#{record.houseNumber},'%')
+        </if>
+        <if test="record.floor != null and record.floor>0 ">
+            AND t_house_rent_log.floor LIKE CONCAT('%',#{record.floor},'%')
+        </if>
+        <if test="record.toward != null and record.toward!= ''">
+            AND t_house_rent_log.toward LIKE CONCAT('%',#{record.toward},'%')
+        </if>
+
+
+        <if test="record.buildingCode != null and record.buildingCode!= ''">
+            AND t_house_rent_log.building_code LIKE CONCAT('%',#{record.buildingCode},'%')
+        </if>
+
+
+        <if test="record.communityName != null and record.communityName!= ''">
+            AND t_house_rent_log.community_name LIKE CONCAT('%',#{record.communityName},'%')
+        </if>
+
+
+        <if test="record.configurationStatus != null and record.configurationStatus>0 ">
+            AND t_house_rent_log.configuration_status LIKE CONCAT('%',#{record.configurationStatus},'%')
+        </if>
+
+
+        <if test="record.rentCreateTime != null and record.rentCreateTime>0 ">
+            AND t_house_rent_log.rent_create_time LIKE CONCAT('%',#{record.rentCreateTime},'%')
+        </if>
+
+
+        <if test="record.rentUpdateTime != null and record.rentUpdateTime>0 ">
+            AND t_house_rent_log.rent_update_time LIKE CONCAT('%',#{record.rentUpdateTime},'%')
+        </if>
+
+
+        <if test="record.customImagesList != null and record.customImagesList!= ''">
+            AND t_house_rent_log.custom_images_list LIKE CONCAT('%',#{record.customImagesList},'%')
+        </if>
+
+        <if test="startTime != null">
+            <![CDATA[AND t_house_rent_log.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND t_house_rent_log.end_time <= DATE(#{endTime}]]>
+        </if>
+        <!--
+    <if test="search != null and search != ''">
+        OR t_house_rent_log.name LIKE CONCAT('%',#{search},'%')
+    </if>
+    -->
+        ORDER BY  t_house_rent_log.create_time DESC,t_house_rent_log.update_time DESC
+
+    </select>
+</mapper>

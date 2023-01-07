@@ -10,6 +10,7 @@ import com.jfeat.am.crud.tag.services.persistence.dao.StockTagMapper;
 import com.jfeat.am.crud.tag.services.persistence.dao.StockTagRelationMapper;
 import com.jfeat.am.crud.tag.services.persistence.model.StockTag;
 import com.jfeat.am.crud.tag.services.persistence.model.StockTagRelation;
+import com.jfeat.am.module.house.services.definition.HouseRentLogStatus;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
@@ -18,24 +19,17 @@ import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseRentAssetMapper;
-import com.jfeat.am.module.house.services.gen.persistence.dao.HouseSubscribeMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyCommunity;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseSubscribe;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentLog;
 import com.jfeat.am.module.house.services.utility.UserCommunityAsset;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
-import io.swagger.annotations.ApiOperation;
-import org.apache.poi.ss.formula.functions.T;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -76,6 +70,10 @@ public class UserAccountRentAssetEndpoint {
 
     @Resource
     QueryHouseUserAssetDao queryHouseUserAssetDao;
+
+
+    @Resource
+    HouseRentLogService houseRentLogService;
 
     /*
     用户出租自己的房子 填写照片 价格 描述信息
@@ -126,7 +124,6 @@ public class UserAccountRentAssetEndpoint {
                 , null, null, null, null, null);
 
         HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(assetId);
-
         /*
         判断是否出租
          */
@@ -216,7 +213,11 @@ public class UserAccountRentAssetEndpoint {
         删除出租房子
          */
         if (houseRentAssetRecordList != null && houseRentAssetRecordList.size() == 1) {
-            SuccessTip.create(houseRentAssetService.deleteMaster(houseRentAssetRecordList.get(0).getId()));
+
+//            记录删除日志
+            houseRentLogService.addHouseRentLog(houseRentAssetRecordList.get(0).getId(), HouseRentLogStatus.deleteRentInfo.name());
+
+           return SuccessTip.create(houseRentAssetService.deleteMaster(houseRentAssetRecordList.get(0).getId()));
         }
         return SuccessTip.create();
     }
@@ -339,6 +340,10 @@ public class UserAccountRentAssetEndpoint {
         if (houseRentAsset==null || houseRentAsset.getLandlordId()==null || !houseRentAsset.getLandlordId().equals(userId)){
             throw new BusinessException(BusinessCode.CodeBase,"未找到改出租房屋");
         }
+
+        //            记录删除日志
+        houseRentLogService.addHouseRentLog(id, HouseRentLogStatus.deleteRentInfo.name());
+
         return SuccessTip.create(houseRentAssetService.deleteMaster(id));
     }
 
