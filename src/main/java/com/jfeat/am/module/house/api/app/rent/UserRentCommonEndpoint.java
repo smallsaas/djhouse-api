@@ -306,7 +306,7 @@ public class UserRentCommonEndpoint {
             if (houseRentAssetModel!=null && houseRentAssetModel.getCommunityId()!=null){
                  jsonObject.put("facilities",houseSurroundFacilitiesTypeOverModelService.getCommunityFacilities(houseRentAssetModel.getCommunityId()));
             }
-            jsonObject.put("supportFacilities",houseSupportFacilitiesService.getRentHouseSupportFacilitiesStatus(houseRentAssetModel.getAssetId(),houseSupportFacilitiesTypeOverModelService.getHouseSupportFacilitiesTypeItem()));
+            jsonObject.put("supportFacilities",houseSupportFacilitiesService.getRentHouseSupportFacilitiesStatus(houseRentAssetModel.getId(),houseSupportFacilitiesTypeOverModelService.getHouseSupportFacilitiesTypeItem()));
             return SuccessTip.create(jsonObject);
         }
         return SuccessTip.create();
@@ -407,11 +407,11 @@ public class UserRentCommonEndpoint {
 
 
             QueryWrapper<HouseRentAsset> rentAssetQueryWrapper = new QueryWrapper<>();
-            rentAssetQueryWrapper.groupBy(HouseRentAsset.LANDLORD_ID);
+            rentAssetQueryWrapper.eq(HouseRentAsset.LANDLORD_ID,userId);
             List<HouseRentAsset> houseRentAssets = houseRentAssetMapper.selectList(rentAssetQueryWrapper);
 
             jsonObject.put("assetNumber",houseUserAssets.size());
-            jsonObject.put("rentNumber",houseUserAssets.size());
+            jsonObject.put("rentNumber",houseRentAssets.size());
 
         }
 

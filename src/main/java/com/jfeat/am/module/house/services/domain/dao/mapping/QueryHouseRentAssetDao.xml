@@ -27,7 +27,12 @@
          t_house_rent_asset.building_code AS buildingCode,
          t_house_rent_asset.community_name AS communityName,
          t_house_rent_asset.configuration_status AS configurationStatus,
-            t_house_rent_asset.custom_images_list AS customimageslist,
+        t_house_rent_asset.custom_images_list AS customimageslist,
+
+            t_house_rent_asset.state AS state,
+            t_house_rent_asset.contract_start_time AS contractStartTime,
+            t_house_rent_asset.contract_end_time AS contractEndTime,
+            t_house_rent_asset.contract_time_limit AS contractTimeLimit,
 
         t_end_user.name As serverName,
         t_end_user.phone AS serverPhone,
@@ -37,8 +42,9 @@
 
 
     <select id="queryMasterModel" resultType="HouseRentAssetModel">
-        SELECT t_house_rent_asset.*
+        SELECT t_house_rent_asset.*,t_end_user.name as landlordName,t_end_user.real_name as landlordRealName, t_end_user.avatar as landlordAvatar,t_end_user.phone as landlordPhone
         FROM t_house_rent_asset
+        JOIN t_end_user on t_end_user.id = t_house_rent_asset.landlord_id
         WHERE t_house_rent_asset.id = #{id}
         GROUP BY t_house_rent_asset.id
     </select>
@@ -57,7 +63,7 @@
 
 
         <if test="record.id != null and record.id>0 ">
-            AND t_house_rent_asset.id #{record.id}
+            AND t_house_rent_asset.id = #{record.id}
         </if>
 
 
@@ -164,13 +170,12 @@
         <result column="title" property="title"/>
         <result column="price" property="price"/>
         <result column="slide" property="slide"/>
-        <result column="describe" property="describe"/>
+        <result column="rent_describe" property="rentDescribe"/>
         <result column="rent_status" property="rentStatus"/>
         <result column="note" property="note"/>
         <result column="rent_time" property="rentTime"/>
         <result column="shelves_time" property="shelvesTime"/>
         <result column="rate" property="rate"/>
-
         <result column="house_number" property="houseNumber"/>
         <result column="floor" property="floor"/>
         <result column="toward" property="toward"/>
@@ -178,6 +183,11 @@
         <result column="community_name" property="communityName"/>
         <result column="configuration_status" property="configurationStatus"/>
         <result column="custom_images_list" property="customImagesList"/>
+
+        <result column="state" property="customImagesList"/>
+        <result column="contract_start_time" property="contractStartTime"/>
+        <result column="contract_end_time" property="contractEndTime"/>
+        <result column="contract_time_limit" property="contractTimeLimit"/>
 
         <association property="houseSupportFacilitiesList" select="com.jfeat.am.module.house.services.domain.dao.QueryHouseSupportFacilitiesDao.querySupportFacilitiesByRentId" column="id">
         </association>
@@ -366,7 +376,7 @@
                 ORDER BY t_house_rent_asset.rent_status Desc ,t_house_rent_asset.update_time DESC,t_house_rent_asset.create_time DESC
             </when>
             <when test="orderBy=='rentStatusAsc'">
-                ORDER BY t_house_rent_asset.rent_status ASC ,t_house_rent_asset.update_time DESC,t_house_rent_asset.create_time DESC
+                ORDER BY t_house_rent_asset.rent_status ASC ,t_house_rent_asset.state ASC,t_house_rent_asset.update_time DESC,t_house_rent_asset.create_time DESC
             </when>
             <otherwise>
                 ORDER BY t_house_rent_asset.update_time DESC,t_house_rent_asset.create_time DESC

@@ -2,14 +2,10 @@ package com.jfeat.am.module.house.services.gen.persistence.model;
 
 import java.math.BigDecimal;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
 import java.util.List;
@@ -48,6 +44,20 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
 
     @ApiModelProperty(value = "房东id")
     private Long landlordId;
+
+
+    @TableField(exist = false)
+    private String landlordName;
+
+    @TableField(exist = false)
+    private String landlordRealName;
+
+    @TableField(exist = false)
+    private String landlordAvatar;
+
+    @TableField(exist = false)
+    private String landlordPhone;
+
 
     @ApiModelProperty(value = "面积")
     private BigDecimal area;
@@ -114,6 +124,21 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
 
     private String customImagesList;
 
+    @TableField( updateStrategy = FieldStrategy.IGNORED)
+    private Integer state;
+
+    @TableField( updateStrategy = FieldStrategy.IGNORED)
+    private Date contractStartTime;
+
+    @TableField( updateStrategy = FieldStrategy.IGNORED)
+    private Date contractEndTime;
+
+
+    @TableField( updateStrategy = FieldStrategy.IGNORED)
+    private Integer contractTimeLimit;
+
+    private Boolean configurationStatus;
+
     @TableField(exist = false)
     private Boolean subscribeStatus;
 
@@ -132,8 +157,70 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     @TableField(exist = false)
     private String serverAvatar;
 
-    private Boolean configurationStatus;
 
+    public Integer getContractTimeLimit() {
+        return contractTimeLimit;
+    }
+
+    public void setContractTimeLimit(Integer contractTimeLimit) {
+        this.contractTimeLimit = contractTimeLimit;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
+    public Date getContractStartTime() {
+        return contractStartTime;
+    }
+
+    public void setContractStartTime(Date contractStartTime) {
+        this.contractStartTime = contractStartTime;
+    }
+
+    public Date getContractEndTime() {
+        return contractEndTime;
+    }
+
+    public void setContractEndTime(Date contractEndTime) {
+        this.contractEndTime = contractEndTime;
+    }
+
+    public String getLandlordName() {
+        return landlordName;
+    }
+
+    public void setLandlordName(String landlordName) {
+        this.landlordName = landlordName;
+    }
+
+    public String getLandlordRealName() {
+        return landlordRealName;
+    }
+
+    public void setLandlordRealName(String landlordRealName) {
+        this.landlordRealName = landlordRealName;
+    }
+
+    public String getLandlordAvatar() {
+        return landlordAvatar;
+    }
+
+    public void setLandlordAvatar(String landlordAvatar) {
+        this.landlordAvatar = landlordAvatar;
+    }
+
+    public String getLandlordPhone() {
+        return landlordPhone;
+    }
+
+    public void setLandlordPhone(String landlordPhone) {
+        this.landlordPhone = landlordPhone;
+    }
 
     public String getCustomImagesList() {
         return customImagesList;

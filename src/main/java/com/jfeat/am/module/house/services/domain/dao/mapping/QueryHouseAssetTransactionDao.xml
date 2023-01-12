@@ -2,10 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetTransactionDao">
     <sql id="Base_Column_List">
-        t_house_asset_transaction
-        .
-        id
-        , t_house_asset_transaction.user_id AS userId, t_house_asset_transaction.asset_id AS assetId, t_house_asset_transaction.house_type_id AS houseTypeId, t_house_asset_transaction.state, t_house_asset_transaction.note, t_house_asset_transaction.create_time AS createTime, t_house_asset_transaction.update_time AS updateTime
+        t_house_asset_transaction.id,
+            t_house_asset_transaction.user_id AS userId,
+            t_house_asset_transaction.asset_id AS assetId,
+            t_house_asset_transaction.house_type AS houseType,
+            t_house_asset_transaction.state,
+            t_house_asset_transaction.note,
+            t_house_asset_transaction.create_time AS createTime,
+            t_house_asset_transaction.update_time AS updateTime,
+
+            t_house_asset_transaction.issue,
+            t_house_asset_transaction.building,
+            t_house_asset_transaction.unit ,
+            t_house_asset_transaction.start_floor AS startFloor,
+             t_house_asset_transaction.end_floor AS endFloor,
+             t_house_asset_transaction.direction
     </sql>
 
 
@@ -44,8 +55,8 @@
         </if>
 
 
-        <if test="record.houseTypeId != null and record.houseTypeId>0 ">
-            AND t_house_asset_transaction.house_type_id =#{record.houseTypeId}
+        <if test="record.houseType != null and record.houseType!= '' ">
+            AND t_house_asset_transaction.house_type LIKE CONCAT('%',#{record.houseType},'%')
         </if>
         <if test="record.state != null and record.state>=0 ">
             AND t_house_asset_transaction.state =#{record.state}
@@ -83,16 +94,24 @@
         <id column="id" property="id" />
         <result column="userId" property="userId" />
         <result column="assetId" property="assetId" />
-        <result column="houseTypeId" property="houseTypeId" />
+        <result column="houseType" property="houseType" />
         <result column="state" property="state" />
         <result column="note" property="note" />
         <result column="createTime" property="createTime" />
         <result column="updateTime" property="updateTime" />
+
+        <result column="issue" property="issue" />
+        <result column="building" property="building" />
+        <result column="unit" property="unit" />
+        <result column="startFloor" property="startFloor" />
+        <result column="endFloor" property="endFloor" />
+        <result column="direction" property="direction" />
+
+
         <result column="userPhone" property="userPhone" />
         <result column="userRealName" property="userRealName" />
         <result column="userName" property="userName" />
         <association property="houseAsset" select="com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao.queryHouseAssetById" column="assetId"></association>
-        <association property="houseDesignModel" select="com.jfeat.am.module.house.services.domain.dao.QueryHouseDesignModelDao.queryHouseDesignModelById" column="houseTypeId"></association>
     </resultMap>
 
 
@@ -124,8 +143,8 @@
         </if>
 
 
-        <if test="record.houseTypeId != null and record.houseTypeId>0 ">
-            AND t_house_asset_transaction.house_type_id =#{record.houseTypeId}
+        <if test="record.houseType != null and record.houseType!= '' ">
+            AND t_house_asset_transaction.house_type LIKE CONCAT('%',#{record.houseType},'%')
         </if>
         <if test="record.state != null and record.state>=0 ">
             AND t_house_asset_transaction.state =#{record.state}

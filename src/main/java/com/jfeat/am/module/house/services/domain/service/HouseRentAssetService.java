@@ -1,6 +1,8 @@
 package com.jfeat.am.module.house.services.domain.service;
 
 import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseSupportFacilitiesTypeRecord;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseRentAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.service.CRUDHouseRentAssetService;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
 
@@ -21,5 +23,10 @@ public interface HouseRentAssetService extends CRUDHouseRentAssetService {
     int updateUserRentAssetNotAssetId(HouseRentAsset entity);
 
     void setRentTitle(List<HouseRentAssetRecord> houseRentAssetRecordList);
+
+    void setRentDescribe(HouseRentAsset houseRentAsset ,List<HouseSupportFacilitiesTypeRecord> rentHouseSupportFacilitiesStatus);
+
+
+    void setRentDescribe(List<HouseRentAssetRecord> houseRentAssetRecordList);
 
 }

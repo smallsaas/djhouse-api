@@ -58,7 +58,6 @@ public class UserTenantMangeEndpoint {
         return SuccessTip.create(result);
     }
 
-
     @PutMapping("/markProductionData")
     public Tip markProductionData(@RequestBody Tenant entity) {
         if (entity.getOrgId() == null) {

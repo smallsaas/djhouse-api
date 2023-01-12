@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentSupportFacilitiesDao;
 import com.jfeat.am.module.house.services.domain.model.HouseRentSupportFacilitiesRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseSupportFacilitiesRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseSupportFacilitiesTypeRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseSupportFacilitiesService;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHouseSupportFacilitiesServiceImpl;
@@ -66,4 +67,6 @@ public class HouseSupportFacilitiesServiceImpl extends CRUDHouseSupportFacilitie
 
         return list;
     }
+
+
 }

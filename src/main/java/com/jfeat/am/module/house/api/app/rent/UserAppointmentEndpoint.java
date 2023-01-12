@@ -315,11 +315,8 @@ public class UserAppointmentEndpoint {
         record.setAppointmentStrTime(current);
 
         List<HouseAppointmentRecord> houseAppointmentPage = queryHouseAppointmentDao.findHouseAppointmentPageDetail(page, record, null,null, null, null, null);
-        for (HouseAppointmentRecord houseAppointmentRecord : houseAppointmentPage) {
-            houseAppointmentRecord.setSimpleTime(DateTimeKit.toTimeline(houseAppointmentRecord.getCreateTime()));
-            houseAppointmentRecord.setAppointmentTimeStamp(houseAppointmentRecord.getAppointmentTime().getTime());
-            houseAppointmentRecord.setAppointmentCreateTimeStamp(houseAppointmentRecord.getCreateTime().getTime());
-        }
+
+        houseAppointmentService.formatTime(houseAppointmentPage);
 
         return SuccessTip.create(houseAppointmentService.formatAppointmentList(houseAppointmentPage));
     }
@@ -371,16 +368,14 @@ public class UserAppointmentEndpoint {
         }
 
         Date date = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String dateStr = format.format(date);
         record.setNowDate(dateStr);
+
         List<HouseAppointmentRecord> houseAppointmentPage = queryHouseAppointmentDao.findHouseAppointmentPageDetail(page, record, null, search, null, null, null);
 
+        houseAppointmentService.formatTime(houseAppointmentPage);
 
-        for (HouseAppointmentRecord houseAppointmentRecord : houseAppointmentPage) {
-            houseAppointmentRecord.setSimpleTime(DateTimeKit.toTimeline(houseAppointmentRecord.getCreateTime()));
-            houseAppointmentRecord.setAppointmentTimeStamp(houseAppointmentRecord.getAppointmentTime().getTime());
-        }
         page.setRecords(houseAppointmentPage);
         return SuccessTip.create(page);
     }

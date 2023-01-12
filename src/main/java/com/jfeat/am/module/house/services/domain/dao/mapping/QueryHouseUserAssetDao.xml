@@ -217,6 +217,7 @@
     <resultMap id="LandlordResultMap" type="HouseUserAssetRecord">
 
         <id column="userId" property="id"/>
+        <result column="assetNumber" property="assetNumber"/>
         <association property="userAccount"
                      javaType="com.jfeat.users.account.services.gen.persistence.model.UserAccount">
             <id column="userId" property="id"/>
@@ -238,70 +239,6 @@
             <result column="createTime" property="createTime"/>
         </collection>
     </resultMap>
-
-    <select id="queryLandlordPage" resultMap="LandlordResultMap" parameterType="HouseUserAssetRecord">
-        select
-        <include refid="LandlordSql"></include>
-        FROM t_end_user
-        LEFT JOIN sys_third_party_user ON sys_third_party_user.user_id = t_end_user.id
-        LEFT JOIN t_house_user_asset ON t_end_user.id=t_house_user_asset.user_id
-
-        WHERE 1=1
-
-        and (t_end_user.appid="1" or t_end_user.appid="2")
-
-        <if test="record.id != null and record.id>0 ">
-            AND t_house_user_asset.id =#{record.id}
-        </if>
-
-
-        <if test="record.userId != null and record.userId>0 ">
-            AND t_house_user_asset.user_id =#{record.userId}
-        </if>
-
-
-        <if test="record.assetId != null and record.assetId>0 ">
-            AND t_house_user_asset.asset_id =#{record.assetId}
-        </if>
-
-        <if test="record.note != null and record.note!= ''">
-            AND t_house_user_asset.note LIKE CONCAT('%',#{record.note},'%')
-        </if>
-
-
-        <if test="record.createTime != null and record.createTime>0 ">
-            AND t_house_user_asset.create_time LIKE CONCAT('%',#{record.createTime},'%')
-        </if>
-
-
-        <if test="startTime != null">
-            <![CDATA[AND t_house_user_asset.start_time >= DATE(#{startTime})]]>
-        </if>
-        <if test="endTime != null">
-            <![CDATA[AND t_house_user_asset.end_time <= DATE(#{endTime}]]>
-        </if>
-        <if test="orgId !=null and orgId>0">
-            and t_end_user.org_id=#{orgId}
-        </if>
-
-        <if test="search != null and search != ''">
-
-            AND (
-            t_end_user.phone LIKE CONCAT('%',#{search},'%')
-            OR t_end_user.name LIKE CONCAT('%',#{search},'%')
-            OR t_end_user.real_name LIKE CONCAT('%',#{search},'%')
-            or sys_third_party_user.nickname LIKE CONCAT('%',#{search},'%')
-            )
-        </if>
-        GROUP BY t_end_user.id
-        <if test="orderBy==null">order by t_end_user.create_time desc</if>
-        <if test="orderBy!=null">
-
-            <if test='orderBy =="endLoginTime"'>
-                order by t_end_user.end_login_time desc
-            </if>
-        </if>
-    </select>
 
 
 <!--    子查询画像-->
@@ -447,14 +384,22 @@
 
     <select id="queryLandlordPage" resultMap="LandlordResultMap" parameterType="HouseUserAssetRecord">
         select
-        <include refid="LandlordSql"></include>
-        FROM t_end_user
-        LEFT JOIN sys_third_party_user ON sys_third_party_user.user_id = t_end_user.id
+        <include refid="LandlordSql"></include>,t_house_user_asset.assetNumber
+        FROM (
+        (SELECT t_end_user.*,sys_third_party_user.nickname FROM t_end_user
+        JOIN sys_third_party_user ON t_end_user.id =sys_third_party_user.user_id
+        GROUP BY t_end_user.id
+        ) t_end_user
+        LEFT JOIN (SELECT t_house_user_asset.*,COUNT(t_house_user_asset.asset_id) AS assetNumber FROM t_end_user
         LEFT JOIN t_house_user_asset ON t_end_user.id=t_house_user_asset.user_id
+        GROUP BY t_end_user.id
+        ) t_house_user_asset
+        ON t_end_user.id = t_house_user_asset.user_id
+        )
 
         WHERE 1=1
 
-        and (t_end_user.appid="1" or t_end_user.appid="2")
+        and (t_end_user.appid="1" or t_end_user.appid="2" or t_end_user.appid="3")
 
         <if test="record.id != null and record.id>0 ">
             AND t_house_user_asset.id =#{record.id}
@@ -496,11 +441,10 @@
             t_end_user.phone LIKE CONCAT('%',#{search},'%')
             OR t_end_user.name LIKE CONCAT('%',#{search},'%')
             OR t_end_user.real_name LIKE CONCAT('%',#{search},'%')
-            or sys_third_party_user.nickname LIKE CONCAT('%',#{search},'%')
             )
         </if>
         GROUP BY t_end_user.id
-        <if test="orderBy==null">order by t_end_user.create_time desc</if>
+        <if test="orderBy==null">order by assetNumber desc,t_end_user.create_time desc</if>
         <if test="orderBy!=null">
 
             <if test='orderBy =="endLoginTime"'>

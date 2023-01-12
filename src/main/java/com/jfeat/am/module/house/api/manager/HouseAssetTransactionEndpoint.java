@@ -115,7 +115,7 @@ public class HouseAssetTransactionEndpoint {
 
                                               @RequestParam(name = "assetId", required = false) Long assetId,
 
-                                              @RequestParam(name = "houseTypeId", required = false) Long houseTypeId,
+                                              @RequestParam(name = "houseType", required = false) String houseType,
 
                                               @RequestParam(name = "state", required = false) Integer state,
 
@@ -146,7 +146,7 @@ public class HouseAssetTransactionEndpoint {
         HouseAssetTransactionRecord record = new HouseAssetTransactionRecord();
         record.setUserId(userId);
         record.setAssetId(assetId);
-        record.setHouseTypeId(houseTypeId);
+        record.setHouseType(houseType);
         record.setState(state);
         record.setNote(note);
         record.setCreateTime(createTime);

@@ -94,6 +94,9 @@ public class HouseAppointment extends Model<HouseAppointment> {
     @ApiModelProperty(value = " 预约时间")
     private Date appointmentTime;
 
+    @ApiModelProperty(value = "预约结束时间")
+    private Date appointmentEndTime;
+
     @ApiModelProperty(value = " 结束时间")
     private Date closeTime;
 
@@ -112,6 +115,14 @@ public class HouseAppointment extends Model<HouseAppointment> {
     @ApiModelProperty(value = "保留字段---已使用，接收--DOB")
     private String fieldC;
 
+
+    public Date getAppointmentEndTime() {
+        return appointmentEndTime;
+    }
+
+    public void setAppointmentEndTime(Date appointmentEndTime) {
+        this.appointmentEndTime = appointmentEndTime;
+    }
 
     public Integer getConfirmStatus() {
         return confirmStatus;

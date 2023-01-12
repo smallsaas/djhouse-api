@@ -58,8 +58,8 @@ public class UserHouseAssetTransactionEndpoint {
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");
         }
 
-        if (entity.getAssetId()!=null && entity.getHouseTypeId()!=null){
-            throw new BusinessException(BusinessCode.BadRequest,"assetId和houseTypeId不能同时设置");
+        if (entity.getAssetId()!=null && entity.getHouseType()!=null){
+            throw new BusinessException(BusinessCode.BadRequest,"assetId和houseType不能同时设置");
         }
 
         if (entity.getEnStatus()!=null&&entity.getEnStatus().equals(HouseAssetTransactionStatus.getNameByState(HouseAssetTransaction.STATE_BUY))){
@@ -76,7 +76,7 @@ public class UserHouseAssetTransactionEndpoint {
             if (houseUserAssetMapper.selectOne(queryWrapper)==null){
                 throw new BusinessException(BusinessCode.NoPermission,"无权出售");
             }
-            entity.setHouseTypeId(null);
+            entity.setHouseType(null);
             entity.setState(HouseAssetTransaction.STATE_SELL);
         }else {
             throw new BusinessException(BusinessCode.BadRequest,"enStatus不在[BUY|SELL]");
@@ -122,7 +122,7 @@ public class UserHouseAssetTransactionEndpoint {
             throw new BusinessException(BusinessCode.NoPermission);
         }
 
-        if (entity.getAssetId()!=null && entity.getHouseTypeId()!=null){
+        if (entity.getAssetId()!=null && entity.getHouseType()!=null){
             throw new BusinessException(BusinessCode.BadRequest,"assetId和houseTypeId不能同时设置");
         }
 
@@ -140,7 +140,7 @@ public class UserHouseAssetTransactionEndpoint {
             if (houseUserAssetMapper.selectOne(queryWrapper)==null){
                 throw new BusinessException(BusinessCode.NoPermission,"无权出售");
             }
-            entity.setHouseTypeId(null);
+            entity.setHouseType(null);
             entity.setState(HouseAssetTransaction.STATE_SELL);
         }else {
             throw new BusinessException(BusinessCode.BadRequest,"enStatus不在[BUY|SELL]");
@@ -198,7 +198,7 @@ public class UserHouseAssetTransactionEndpoint {
 
                                               @RequestParam(name = "assetId", required = false) Long assetId,
 
-                                              @RequestParam(name = "houseTypeId", required = false) Long houseTypeId,
+                                              @RequestParam(name = "houseType", required = false) String houseType,
 
                                               @RequestParam(name = "state", required = false) Integer state,
 
@@ -229,7 +229,7 @@ public class UserHouseAssetTransactionEndpoint {
         HouseAssetTransactionRecord record = new HouseAssetTransactionRecord();
         record.setUserId(userId);
         record.setAssetId(assetId);
-        record.setHouseTypeId(houseTypeId);
+        record.setHouseType(houseType);
         record.setState(state);
         record.setNote(note);
         record.setCreateTime(createTime);

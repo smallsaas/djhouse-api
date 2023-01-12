@@ -11,6 +11,12 @@ import java.util.List;
  */
 public class HouseUserAssetRecord extends HouseUserAsset {
 
+
+    /**
+     * 是否出售
+     */
+    private Boolean isTransaction;
+
     private Boolean isExistRent;
 
     /**
@@ -68,6 +74,13 @@ public class HouseUserAssetRecord extends HouseUserAsset {
 
     private List<HouseUserNote> userNoteList;
 
+    public Boolean getTransaction() {
+        return isTransaction;
+    }
+
+    public void setTransaction(Boolean transaction) {
+        isTransaction = transaction;
+    }
 
     public Integer getAssetFlag() {
         return assetFlag;

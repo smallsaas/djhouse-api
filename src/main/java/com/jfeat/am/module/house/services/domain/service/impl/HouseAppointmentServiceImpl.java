@@ -7,8 +7,10 @@ import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.model.HouseAppointmentRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAppointmentService;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHouseAppointmentServiceImpl;
+import com.jfeat.crud.base.util.DateTimeKit;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -99,5 +101,34 @@ public class HouseAppointmentServiceImpl extends CRUDHouseAppointmentServiceImpl
         System.out.println("=========================");
         System.out.println(JWTKit.getUserId());
         return result;
+    }
+
+    @Override
+    public void formatTime(List<HouseAppointmentRecord> appointmentRecordList) {
+
+        SimpleDateFormat startFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+        SimpleDateFormat endTimeFormat = new SimpleDateFormat("HH:mm");
+
+        if (appointmentRecordList!=null&&appointmentRecordList.size()>0){
+            for (HouseAppointmentRecord houseAppointmentRecord : appointmentRecordList) {
+
+                houseAppointmentRecord.setSimpleTime(DateTimeKit.toTimeline(houseAppointmentRecord.getCreateTime()));
+
+                houseAppointmentRecord.setAppointmentTimeStamp(houseAppointmentRecord.getAppointmentTime().getTime());
+
+                houseAppointmentRecord.setAppointmentCreateTimeStamp(houseAppointmentRecord.getCreateTime().getTime());
+
+                if (houseAppointmentRecord.getAppointmentTime()!=null){
+                    houseAppointmentRecord.setAppointmentStrTime(startFormat.format(houseAppointmentRecord.getAppointmentTime()));
+                }
+
+                if (houseAppointmentRecord.getAppointmentEndTime()!=null){
+                    houseAppointmentRecord.setAppointmentEndTimeStr(endTimeFormat.format(houseAppointmentRecord.getAppointmentEndTime()));
+                }
+
+            }
+        }
+
     }
 }

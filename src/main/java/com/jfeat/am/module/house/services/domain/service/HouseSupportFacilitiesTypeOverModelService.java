@@ -11,4 +11,6 @@ import java.util.List;
  */
 public interface HouseSupportFacilitiesTypeOverModelService extends CRUDHouseSupportFacilitiesTypeOverModelService {
     List<HouseSupportFacilitiesTypeRecord> getHouseSupportFacilitiesTypeItem();
+
+    Integer deleteHouseSupportFacilitiesType(Long id);
 }

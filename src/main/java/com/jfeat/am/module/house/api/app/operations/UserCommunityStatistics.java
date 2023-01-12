@@ -78,7 +78,7 @@ public class UserCommunityStatistics {
         result.put("communityName",housePropertyCommunityModel.getCommunity());
 
         JSONObject houseNumber = new JSONObject();
-        houseNumber.put("房产数",houseStatistics.get(0));
+        houseNumber.put("房屋数",houseStatistics.get(0));
         result.put("houseNumber",houseNumber);
 
         JSONObject invalidHouse = new JSONObject();
@@ -105,9 +105,9 @@ public class UserCommunityStatistics {
         houseTypeNumber.put("户型数",houseStatistics.get(6));
         result.put("houseTypeNumber",houseTypeNumber);
 
-        JSONObject houseExchangeNumber = new JSONObject();
-        houseExchangeNumber.put("换房需求数",houseStatistics.get(7));
-        result.put("houseExchangeNumber",houseExchangeNumber);
+//        JSONObject houseExchangeNumber = new JSONObject();
+//        houseExchangeNumber.put("换房需求数",houseStatistics.get(7));
+//        result.put("houseExchangeNumber",houseExchangeNumber);
 
         JSONObject houseExchangeMatchNumber = new JSONObject();
         houseExchangeMatchNumber.put("换房记录数",houseStatistics.get(8));
@@ -124,6 +124,14 @@ public class UserCommunityStatistics {
         JSONObject supplier = new JSONObject();
         supplier.put("供应商数",houseStatistics.get(11));
         result.put("supplier",supplier);
+
+        JSONObject userAsset = new JSONObject();
+        userAsset.put("房产数",houseStatistics.get(12));
+        result.put("userAssetCount",userAsset);
+
+        JSONObject rentCount = new JSONObject();
+        rentCount.put("房源数",houseStatistics.get(13));
+        result.put("rentCount",rentCount);
 
 
         return SuccessTip.create(result);

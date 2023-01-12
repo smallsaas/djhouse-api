@@ -42,7 +42,7 @@ public class UserAgentAppointmentEndpoint {
         Date endDateTime = new Date();
 
         if (entity.getStartTimeStr()!=null && entity.getEndTimeStr()!=null){
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
             try {
                 Date startTime = simpleDateFormat.parse(entity.getStartTimeStr());
                 Date endTime = simpleDateFormat.parse(entity.getEndTimeStr());

@@ -116,16 +116,16 @@ public class LandlordManageEndpoint {
         }
 
 
-//        获取房东 房屋数量
-        List<HouseUserAssetModel> houseUserAssetModelList = queryHouseUserAssetDao.queryLandlordAssetNumber(null, null);
-        for (HouseUserAssetRecord houseUserAssetRecord : userAssetRecords) {
-            for (HouseUserAssetModel houseUserAssetModel : houseUserAssetModelList) {
-                if (houseUserAssetRecord.getId().equals(houseUserAssetModel.getUserId())) {
-                    houseUserAssetRecord.setAssetNumber(houseUserAssetModel.getAssetNumber());
-                }
-
-            }
-        }
+////        获取房东 房屋数量
+//        List<HouseUserAssetModel> houseUserAssetModelList = queryHouseUserAssetDao.queryLandlordAssetNumber(null, null);
+//        for (HouseUserAssetRecord houseUserAssetRecord : userAssetRecords) {
+//            for (HouseUserAssetModel houseUserAssetModel : houseUserAssetModelList) {
+//                if (houseUserAssetRecord.getId().equals(houseUserAssetModel.getUserId())) {
+//                    houseUserAssetRecord.setAssetNumber(houseUserAssetModel.getAssetNumber());
+//                }
+//
+//            }
+//        }
 
 
 //        查询是否出租房屋

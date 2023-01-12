@@ -6,15 +6,13 @@ import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentSupportFacilitiesDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
-import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
-import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
-import com.jfeat.am.module.house.services.domain.model.HouseRentSupportFacilitiesRecord;
-import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
+import com.jfeat.am.module.house.services.domain.model.*;
 import com.jfeat.am.module.house.services.domain.service.HouseEmailService;
 import com.jfeat.am.module.house.services.domain.service.HouseRentAssetService;
 import com.jfeat.am.module.house.services.domain.service.HouseRentLogService;
 import com.jfeat.am.module.house.services.domain.service.HouseRentSupportFacilitiesService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseRentAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHouseRentAssetServiceImpl;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseRentSupportFacilitiesMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
@@ -184,35 +182,34 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
              /*
         验证房子是否是用户的
          */
-            HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
-            houseUserAssetRecord.setAssetId(entity.getAssetId());
-            houseUserAssetRecord.setUserId(JWTKit.getUserId());
-            List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord
-                    ,null,null,null,null,null);
-            if (houseUserAssetRecordList==null || houseUserAssetRecordList.size()==0){
-                throw new BusinessException(BusinessCode.NoPermission,"没有找到房子,请重试");
-            }
-
-        /*
-        设置出租的 小区  户型 面积 房东
-         */
-
-            HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(entity.getAssetId());
-            entity.setArea(houseAssetModel.getArea());
-            entity.setCommunityId(houseAssetModel.getCommunityId());
-            entity.setHouseTypeId(houseAssetModel.getDesignModelId());
-            entity.setLandlordId(JWTKit.getUserId());
-            entity.setCommunityName(houseAssetModel.getCommunityName());
-
-            Long assetId = queryHouseAssetDaoList.get(0).getId();
 
             QueryWrapper<HouseUserAsset> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq(HouseUserAsset.ASSET_ID,assetId).eq(HouseUserAsset.USER_ID,userId);
+            queryWrapper.eq(HouseUserAsset.ASSET_ID,queryHouseAssetDaoList.get(0).getId()).eq(HouseUserAsset.USER_ID,userId);
             HouseUserAsset houseUserAsset = houseUserAssetMapper.selectOne(queryWrapper);
 
             if (houseUserAsset==null){
                 throw new BusinessException(BusinessCode.CodeBase,"该房子属于其他用户");
             }
+//            HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
+//            houseUserAssetRecord.setAssetId(queryHouseAssetDaoList.get(0).getId());
+//            houseUserAssetRecord.setUserId(JWTKit.getUserId());
+//            List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord
+//                    ,null,null,null,null,null);
+//            if (houseUserAssetRecordList==null || houseUserAssetRecordList.size()==0){
+//                throw new BusinessException(BusinessCode.NoPermission,"没有找到房子,请重试");
+//            }
+
+        /*
+        设置出租的 小区  户型 面积 房东
+         */
+
+//            HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(entity.getAssetId());
+            entity.setArea(queryHouseAssetDaoList.get(0).getArea());
+            entity.setCommunityId(queryHouseAssetDaoList.get(0).getCommunityId());
+            entity.setHouseTypeId(queryHouseAssetDaoList.get(0).getDesignModelId());
+            entity.setLandlordId(JWTKit.getUserId());
+            entity.setCommunityName(queryHouseAssetDaoList.get(0).getCommunityName());
+            entity.setToward(queryHouseAssetDaoList.get(0).getDirection());
             flag = true;
         }else {
             throw new BusinessException(BusinessCode.OutOfRange,"存在多个房屋");
@@ -247,6 +244,11 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
                 //            添加更新信息日志
                 houseRentLogService.addHouseRentLog(entity.getId(), HouseRentLogStatus.updateRentInfo.name());
 
+                entity.setCreateTime(houseRentAssetList.get(0).getCreateTime());
+                entity.setCreateTime(houseRentAssetList.get(0).getCreateTime());
+                entity.setStatus(houseRentAssetList.get(0).getStatus());
+                entity.setRentStatus(houseRentAssetList.get(0).getRentStatus());
+                entity.setServerId(houseRentAssetList.get(0).getServerId());
                 affected = houseRentAssetService.updateMaster(entity);
 
 
@@ -279,6 +281,14 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
         //            添加更新信息日志
         houseRentLogService.addHouseRentLog(entity.getId(), HouseRentLogStatus.updateRentInfo.name());
 
+
+        HouseRentAsset houseRentAsset = houseRentAssetMapper.selectById(entity.getId());
+        entity.setCreateTime(houseRentAsset.getCreateTime());
+        entity.setCreateTime(houseRentAsset.getCreateTime());
+        entity.setStatus(houseRentAsset.getStatus());
+        entity.setRentStatus(houseRentAsset.getRentStatus());
+        entity.setServerId(houseRentAsset.getServerId());
+
         affected =  houseRentAssetService.updateMaster(entity);
         if (entity.getAssetId()==null){
             return affected;
@@ -302,6 +312,12 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
     public int updateUserRentAssetNotAssetId(HouseRentAsset entity) {
         int affect = 0;
         Boolean flag = false;
+
+        HouseRentAsset houseRentAsset = houseRentAssetMapper.selectById(entity.getId());
+        entity.setCreateTime(houseRentAsset.getCreateTime());
+        entity.setStatus(houseRentAsset.getStatus());
+        entity.setRentStatus(houseRentAsset.getRentStatus());
+        entity.setServerId(houseRentAsset.getServerId());
 
         Long userId = JWTKit.getUserId();
         if (userId==null){
@@ -398,12 +414,74 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
                     }
 
                 }
-                sb.append(record.getTitle());
-                record.setTitle(sb.toString());
+                if (record.getTitle()!=null){
+                    sb.append(record.getTitle());
+                }
 
+                record.setTitle(sb.toString());
             }
 
         }
 
     }
+
+    @Override
+    public void setRentDescribe(HouseRentAsset houseRentAssetModel, List<HouseSupportFacilitiesTypeRecord> rentHouseSupportFacilitiesStatus) {
+
+        StringBuffer sb = new StringBuffer();
+
+
+        for (HouseSupportFacilitiesTypeRecord record:rentHouseSupportFacilitiesStatus){
+
+            if (record.getEnName().equals("rentDescription")&&record.getItems()!=null&&record.getItems().size()>0){
+
+                for (HouseSupportFacilities houseSupportFacilities:record.getItems()){
+                    if (houseSupportFacilities.getStatus()!=null&&houseSupportFacilities.getStatus()==1){
+                        sb.append(houseSupportFacilities.getTitle());
+                        sb.append(" ");
+                    }
+
+                }
+
+            }
+
+        }
+        if (houseRentAssetModel.getRentDescribe()!=null){
+            sb.append(houseRentAssetModel.getRentDescribe());
+        }
+        houseRentAssetModel.setRentDescribe(sb.toString());
+    }
+
+    @Override
+    public void setRentDescribe(List<HouseRentAssetRecord> houseRentAssetRecordList) {
+
+
+        if (houseRentAssetRecordList!=null && houseRentAssetRecordList.size()>0){
+
+            StringBuffer sb = new StringBuffer();
+            for (HouseRentAssetRecord record:houseRentAssetRecordList){
+
+                if (record.getHouseSupportFacilitiesList()!=null&&record.getHouseSupportFacilitiesList().size()>0){
+
+                    for (HouseSupportFacilities houseSupportFacilities:record.getHouseSupportFacilitiesList()){
+                        if (houseSupportFacilities.getTypeEnName().equals("rentDescription")){
+                            sb.append(houseSupportFacilities.getTitle());
+                            sb.append(" ");
+                        }
+
+                    }
+
+                }
+                if (record.getSubscribeStatus()!=null){
+                    sb.append(record.getRentDescribe());
+                }
+
+                record.setRentDescribe(sb.toString());
+            }
+
+        }
+
+    }
+
+
 }

@@ -13,4 +13,7 @@ import java.util.Map;
  */
 public interface HouseAppointmentService extends CRUDHouseAppointmentService {
     public List<Map<String,Object>> formatAppointmentList(List<HouseAppointmentRecord> appointmentRecordList);
+
+
+    void formatTime(List<HouseAppointmentRecord> appointmentRecordList);
 }

@@ -38,7 +38,7 @@ public class HouseAssetTransaction extends Model<HouseAssetTransaction> {
     private Long assetId;
 
     @ApiModelProperty(value = "户型id")
-    private Long houseTypeId;
+    private String houseType;
 
     @ApiModelProperty(value = "购买-0 出售-1")
     private Integer state;
@@ -52,6 +52,67 @@ public class HouseAssetTransaction extends Model<HouseAssetTransaction> {
     @ApiModelProperty(value = "更新时间")
     private Date updateTime;
 
+
+    private String issue;
+
+    private String building;
+
+
+    private String unit;
+
+    private Integer startFloor;
+
+    private Integer endFloor;
+
+    private String direction;
+
+    public String getIssue() {
+        return issue;
+    }
+
+    public void setIssue(String issue) {
+        this.issue = issue;
+    }
+
+    public String getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(String building) {
+        this.building = building;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public Integer getStartFloor() {
+        return startFloor;
+    }
+
+    public void setStartFloor(Integer startFloor) {
+        this.startFloor = startFloor;
+    }
+
+    public Integer getEndFloor() {
+        return endFloor;
+    }
+
+    public void setEndFloor(Integer endFloor) {
+        this.endFloor = endFloor;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
 
     @TableField(exist = false)
     @ApiModelProperty(value = "用户名")
@@ -165,13 +226,12 @@ public class HouseAssetTransaction extends Model<HouseAssetTransaction> {
         return this;
     }
 
-    public Long getHouseTypeId() {
-        return houseTypeId;
+    public String getHouseType() {
+        return houseType;
     }
 
-    public HouseAssetTransaction setHouseTypeId(Long houseTypeId) {
-        this.houseTypeId = houseTypeId;
-        return this;
+    public void setHouseType(String houseType) {
+        this.houseType = houseType;
     }
 
     public Integer getState() {
@@ -241,7 +301,7 @@ public class HouseAssetTransaction extends Model<HouseAssetTransaction> {
                 "id=" + id +
                 ", userId=" + userId +
                 ", assetId=" + assetId +
-                ", houseTypeId=" + houseTypeId +
+                ", houseTypeId=" + houseType +
                 ", state=" + state +
                 ", note=" + note +
                 ", createTime=" + createTime +

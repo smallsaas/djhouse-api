@@ -13,15 +13,13 @@ import com.jfeat.am.crud.tag.services.persistence.model.StockTag;
 import com.jfeat.am.crud.tag.services.persistence.model.StockTagRelation;
 import com.jfeat.am.module.appointment.services.gen.persistence.dao.AppointmentTimeMapper;
 import com.jfeat.am.module.appointment.services.gen.persistence.model.AppointmentTime;
-import com.jfeat.am.module.appointment.services.persistence.dao.AppointmentMapper;
 import com.jfeat.am.module.appointment.services.persistence.model.Appointment;
 import com.jfeat.am.module.house.services.definition.HouseRentLogStatus;
 import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao;
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
-import com.jfeat.am.module.house.services.domain.model.HouseAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseSupportFacilitiesTypeRecord;
 import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
@@ -30,8 +28,12 @@ import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseRentAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
-import com.jfeat.am.module.house.services.gen.persistence.model.*;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
+import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
 import com.jfeat.am.module.house.services.utility.Authentication;
+import com.jfeat.am.module.house.services.utility.DateTimeUtil;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
@@ -109,6 +111,8 @@ public class UserAgentRentManageEndpoint {
 
     @Resource
     HouseRentLogService houseRentLogService;
+
+
 
 
 
@@ -242,6 +246,7 @@ public class UserAgentRentManageEndpoint {
 
         }
 
+//        houseRentAssetService.setRentDescribe(houseRentAssetPage);
 
         page.setRecords(houseRentAssetPage);
 
@@ -333,7 +338,14 @@ public class UserAgentRentManageEndpoint {
     @GetMapping("/userRentDetails/{id}")
     public Tip getHouseRentAsset(@PathVariable Long id) {
         HouseRentAsset houseRentAssetModel = houseRentAssetService.queryMasterModel(queryHouseRentAssetDao, id);
+
+
         if (houseRentAssetModel != null) {
+
+//            设置状态
+            List<HouseSupportFacilitiesTypeRecord> rentHouseSupportFacilitiesStatus = houseSupportFacilitiesService.getRentHouseSupportFacilitiesStatus(houseRentAssetModel.getId(), houseSupportFacilitiesTypeOverModelService.getHouseSupportFacilitiesTypeItem());
+//            houseRentAssetService.setRentDescribe(houseRentAssetModel,rentHouseSupportFacilitiesStatus);
+
             HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(houseRentAssetModel.getAssetId());
             if (houseAssetModel != null) {
                 houseRentAssetModel.setHouseAssetModel(houseAssetModel);
@@ -348,10 +360,10 @@ public class UserAgentRentManageEndpoint {
                 }
             }
             JSONObject jsonObject = (JSONObject) JSONObject.toJSON(houseRentAssetModel);
-            if (houseAssetModel.getCommunityId() != null) {
+            if (houseAssetModel!=null&&houseAssetModel.getCommunityId() != null) {
                 jsonObject.put("facilities", houseSurroundFacilitiesTypeOverModelService.getCommunityFacilities(houseAssetModel.getCommunityId()));
             }
-            jsonObject.put("supportFacilities", houseSupportFacilitiesService.getRentHouseSupportFacilitiesStatus(houseRentAssetModel.getAssetId(), houseSupportFacilitiesTypeOverModelService.getHouseSupportFacilitiesTypeItem()));
+            jsonObject.put("supportFacilities",rentHouseSupportFacilitiesStatus);
             return SuccessTip.create(jsonObject);
         }
         return SuccessTip.create(houseRentAssetModel);
@@ -475,5 +487,62 @@ public class UserAgentRentManageEndpoint {
         houseRentLogService.addHouseRentLog(entity.getId(), HouseRentLogStatus.createRentInfo.name());
         return SuccessTip.create(affect);
     }
+
+
+//    删除出租屋
+    @DeleteMapping("/{id}")
+    public Tip deleteHouseRentAsset(@PathVariable Long id) {
+        Long userId = JWTKit.getUserId();
+        if (userId==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+        HouseRentAsset houseRentAsset =  houseRentAssetMapper.selectById(id);
+//        判断房东是否是本人
+        if (houseRentAsset==null){
+            throw new BusinessException(BusinessCode.CodeBase,"未找到改出租房屋");
+        }
+
+        //            记录删除日志
+        houseRentLogService.addHouseRentLog(id, HouseRentLogStatus.deleteRentInfo.name());
+
+        return SuccessTip.create(houseRentAssetService.deleteMaster(id));
+    }
+
+
+//    出租房屋
+
+    @PutMapping("/rentOut/{id}")
+    public Tip rentOut(@PathVariable("id")Long id,@RequestBody HouseRentAsset entity){
+
+        if (entity.getContractStartTime()==null||entity.getContractEndTime()==null){
+            throw new BusinessException(BusinessCode.BadRequest,"出租时间必填");
+        }
+        if (entity.getContractEndTime().before(entity.getContractStartTime())){
+            throw new BusinessException(BusinessCode.BadRequest,"出租结束时间不能大于出租开始时间");
+        }
+
+        HouseRentAsset houseRentAsset = houseRentAssetMapper.selectById(id);
+        houseRentAsset.setState(1);
+        houseRentAsset.setContractEndTime(entity.getContractEndTime());
+        houseRentAsset.setContractStartTime(entity.getContractStartTime());
+        houseRentAsset.setRentStatus(HouseRentAsset.RENT_STATUS_SOLD_OUT);
+        houseRentAsset.setContractTimeLimit(DateTimeUtil.getMonthDiff(entity.getContractStartTime(),entity.getContractEndTime()));
+        return SuccessTip.create(houseRentAssetMapper.updateById(houseRentAsset));
+
+    }
+
+//    收回出租屋
+    @PutMapping("/stopRent/{id}")
+    public Tip stopRent(@PathVariable("id")Long id){
+        HouseRentAsset houseRentAsset = houseRentAssetMapper.selectById(id);
+        houseRentAsset.setState(0);
+        houseRentAsset.setContractEndTime(null);
+        houseRentAsset.setContractStartTime(null);
+        houseRentAsset.setContractTimeLimit(null);
+        return SuccessTip.create(houseRentAssetMapper.updateById(houseRentAsset));
+    }
+
+
+//    已出租列表
 
 }

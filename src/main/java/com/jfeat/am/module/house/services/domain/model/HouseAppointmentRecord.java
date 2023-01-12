@@ -23,10 +23,40 @@ public class HouseAppointmentRecord extends HouseAppointment {
 
     private String appointmentStrTime;
 
+    private String appointmentEndTimeStr;
+
+    private String userRealName;
+
+    private String serverRealName;
+
     private String userAvatar;
 
     private String serverAvatar;
 
+
+    public String getUserRealName() {
+        return userRealName;
+    }
+
+    public void setUserRealName(String userRealName) {
+        this.userRealName = userRealName;
+    }
+
+    public String getServerRealName() {
+        return serverRealName;
+    }
+
+    public void setServerRealName(String serverRealName) {
+        this.serverRealName = serverRealName;
+    }
+
+    public String getAppointmentEndTimeStr() {
+        return appointmentEndTimeStr;
+    }
+
+    public void setAppointmentEndTimeStr(String appointmentEndTimeStr) {
+        this.appointmentEndTimeStr = appointmentEndTimeStr;
+    }
 
     public String getNowDate() {
         return nowDate;

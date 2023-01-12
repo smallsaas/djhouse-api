@@ -1,62 +1,33 @@
+package com.jfeat.am.module.house.api.app.sales;
 
-package com.jfeat.am.module.house.api.manager;
-
-
-import com.jfeat.crud.plus.META;
-import com.jfeat.am.core.jwt.JWTKit;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.common.annotation.Permission;
+import com.jfeat.am.module.house.api.permission.HouseSupportFacilitiesPermission;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseSupportFacilitiesDao;
+import com.jfeat.am.module.house.services.domain.model.HouseSupportFacilitiesRecord;
+import com.jfeat.am.module.house.services.domain.service.HouseSupportFacilitiesService;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseSupportFacilities;
+import com.jfeat.crud.base.annotation.BusinessLog;
+import com.jfeat.crud.base.exception.BusinessCode;
+import com.jfeat.crud.base.exception.BusinessException;
+import com.jfeat.crud.base.tips.SuccessTip;
+import com.jfeat.crud.base.tips.Tip;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.dao.DuplicateKeyException;
-import com.jfeat.am.module.house.services.domain.dao.QueryHouseSupportFacilitiesDao;
-import com.jfeat.crud.base.tips.SuccessTip;
-import com.jfeat.crud.base.request.Ids;
-import com.jfeat.crud.base.tips.Tip;
-import com.jfeat.crud.base.annotation.BusinessLog;
-import com.jfeat.crud.base.exception.BusinessCode;
-import com.jfeat.crud.base.exception.BusinessException;
-import com.jfeat.crud.plus.CRUDObject;
-import com.jfeat.crud.plus.DefaultFilterResult;
-import com.jfeat.am.module.house.api.permission.*;
-import com.jfeat.am.common.annotation.Permission;
-
-import java.math.BigDecimal;
-
-import com.jfeat.am.module.house.services.domain.service.*;
-import com.jfeat.am.module.house.services.domain.model.HouseSupportFacilitiesRecord;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseSupportFacilities;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Date;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONArray;
 
-/**
- * <p>
- * api
- * </p>
- *
- * @author Code generator
- * @since 2022-08-05
- */
 @RestController
 @Api("HouseSupportFacilities")
-@RequestMapping("/api/crud/house/houseSupportFacilities/houseSupportFacilitieses")
-public class HouseSupportFacilitiesEndpoint {
+@RequestMapping("/api/u/house/sales/houseSupportFacilities")
+public class HouseSupportFacilitiesManageEndpoint {
+
 
     @Resource
     HouseSupportFacilitiesService houseSupportFacilitiesService;
@@ -65,8 +36,6 @@ public class HouseSupportFacilitiesEndpoint {
     QueryHouseSupportFacilitiesDao queryHouseSupportFacilitiesDao;
 
 
-    @BusinessLog(name = "HouseSupportFacilities", value = "create HouseSupportFacilities")
-    @Permission(HouseSupportFacilitiesPermission.HOUSESUPPORTFACILITIES_NEW)
     @PostMapping
     @ApiOperation(value = "新建 HouseSupportFacilities", response = HouseSupportFacilities.class)
     public Tip createHouseSupportFacilities(@RequestBody HouseSupportFacilities entity) {
@@ -80,15 +49,14 @@ public class HouseSupportFacilitiesEndpoint {
         return SuccessTip.create(affected);
     }
 
-    @Permission(HouseSupportFacilitiesPermission.HOUSESUPPORTFACILITIES_VIEW)
+
     @GetMapping("/{id}")
     @ApiOperation(value = "查看 HouseSupportFacilities", response = HouseSupportFacilities.class)
     public Tip getHouseSupportFacilities(@PathVariable Long id) {
         return SuccessTip.create(houseSupportFacilitiesService.queryMasterModel(queryHouseSupportFacilitiesDao, id));
     }
 
-    @BusinessLog(name = "HouseSupportFacilities", value = "update HouseSupportFacilities")
-    @Permission(HouseSupportFacilitiesPermission.HOUSESUPPORTFACILITIES_EDIT)
+
     @PutMapping("/{id}")
     @ApiOperation(value = "修改 HouseSupportFacilities", response = HouseSupportFacilities.class)
     public Tip updateHouseSupportFacilities(@PathVariable Long id, @RequestBody HouseSupportFacilities entity) {
@@ -96,16 +64,14 @@ public class HouseSupportFacilitiesEndpoint {
         return SuccessTip.create(houseSupportFacilitiesService.updateMaster(entity));
     }
 
-    @BusinessLog(name = "HouseSupportFacilities", value = "delete HouseSupportFacilities")
-    @Permission(HouseSupportFacilitiesPermission.HOUSESUPPORTFACILITIES_DELETE)
+
     @DeleteMapping("/{id}")
     @ApiOperation("删除 HouseSupportFacilities")
     public Tip deleteHouseSupportFacilities(@PathVariable Long id) {
         return SuccessTip.create(houseSupportFacilitiesService.deleteMaster(id));
     }
 
-    @Permission(HouseSupportFacilitiesPermission.HOUSESUPPORTFACILITIES_VIEW)
-    @ApiOperation(value = "HouseSupportFacilities 列表信息", response = HouseSupportFacilitiesRecord.class)
+
     @GetMapping
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNum", dataType = "Integer"),
@@ -126,7 +92,7 @@ public class HouseSupportFacilitiesEndpoint {
                                                // end tag
                                                @RequestParam(name = "search", required = false) String search,
 
-                                               @RequestParam(name = "typeId", required = false) Long typeId,
+                                               @RequestParam(name = "typeId", required = true) Long typeId,
 
                                                @RequestParam(name = "title", required = false) String title,
 
@@ -145,8 +111,8 @@ public class HouseSupportFacilitiesEndpoint {
             }
             orderBy = "`" + orderBy + "`" + " " + sort;
         }
-        page.setCurrent(pageNum);
-        page.setSize(pageSize);
+//        page.setCurrent(pageNum);
+//        page.setSize(pageSize);
 
         HouseSupportFacilitiesRecord record = new HouseSupportFacilitiesRecord();
         record.setTypeId(typeId);
@@ -154,12 +120,11 @@ public class HouseSupportFacilitiesEndpoint {
         record.setIcon(icon);
 
 
-        List<HouseSupportFacilitiesRecord> houseSupportFacilitiesPage = queryHouseSupportFacilitiesDao.findHouseSupportFacilitiesPage(page, record, tag, search, orderBy, null, null);
+        List<HouseSupportFacilitiesRecord> houseSupportFacilitiesPage = queryHouseSupportFacilitiesDao.findHouseSupportFacilitiesPage(null, record, tag, search, orderBy, null, null);
 
 
-        page.setRecords(houseSupportFacilitiesPage);
+//        page.setRecords(houseSupportFacilitiesPage);
 
-        return SuccessTip.create(page);
+        return SuccessTip.create(houseSupportFacilitiesPage);
     }
 }
-

@@ -2,10 +2,33 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseAppointmentDao">
     <sql id="Base_Column_List">
-        t_house_appointment
-        .
-        id
-        , t_house_appointment.code, t_house_appointment.type_id AS typeId, t_house_appointment.type, t_house_appointment.user_id AS userId, t_house_appointment.user_phone AS userPhone, t_house_appointment.user_name AS userName, t_house_appointment.server_id AS serverId, t_house_appointment.server_name AS serverName, t_house_appointment.server_phone AS serverPhone, t_house_appointment.name, t_house_appointment.address_id AS addressId, t_house_appointment.address_name AS addressName, t_house_appointment.description, t_house_appointment.icon, t_house_appointment.status, t_house_appointment.fee, t_house_appointment.create_time AS createTime, t_house_appointment.appointment_time AS appointmentTime, t_house_appointment.close_time AS closeTime, t_house_appointment.payment_timestamp AS paymentTimestamp, t_house_appointment.payment_method AS paymentMethod, t_house_appointment.earliest_time AS earliestTime, t_house_appointment.latest_time AS latestTime, t_house_appointment.field_c AS fieldC
+        t_house_appointment.id,
+            t_house_appointment.code,
+            t_house_appointment.type_id AS typeId,
+            t_house_appointment.type,
+            t_house_appointment.user_id AS userId,
+            t_house_appointment.user_phone AS userPhone,
+            t_house_appointment.user_name AS userName,
+            t_house_appointment.server_id AS serverId,
+            t_house_appointment.server_name AS serverName,
+            t_house_appointment.server_phone AS serverPhone,
+            t_house_appointment.name,
+            t_house_appointment.address_id AS addressId,
+            t_house_appointment.address_name AS addressName,
+            t_house_appointment.description,
+            t_house_appointment.icon,
+            t_house_appointment.status,
+            t_house_appointment.fee,
+            t_house_appointment.create_time AS createTime,
+            t_house_appointment.appointment_time AS appointmentTime,
+            t_house_appointment.appointment_end_time AS appointmentEndTime,
+
+            t_house_appointment.close_time AS closeTime,
+            t_house_appointment.payment_timestamp AS paymentTimestamp,
+            t_house_appointment.payment_method AS paymentMethod,
+            t_house_appointment.earliest_time AS earliestTime,
+            t_house_appointment.latest_time AS latestTime,
+            t_house_appointment.field_c AS fieldC
     </sql>
 
 
@@ -101,7 +124,6 @@
             AND t_house_appointment.fee LIKE CONCAT('%',#{record.fee},'%')
         </if>
 
-
         <if test="record.createTime != null and record.createTime>0 ">
             AND t_house_appointment.create_time LIKE CONCAT('%',#{record.createTime},'%')
         </if>
@@ -167,11 +189,13 @@
         <result column="userPhone" property="userPhone" />
         <result column="userName" property="userName" />
         <result column="userAvatar" property="userAvatar" />
+        <result column="userRealName" property="userRealName" />
 
         <result column="server_id" property="serverId" />
         <result column="serverName" property="serverName" />
         <result column="serverPhone" property="serverPhone" />
         <result column="serverAvatar" property="serverAvatar" />
+        <result column="serverRealName" property="serverRealName" />
 
         <result column="name" property="name" />
         <result column="address_id" property="addressId" />
@@ -182,6 +206,7 @@
         <result column="fee" property="fee" />
         <result column="create_time" property="createTime" />
         <result column="appointment_time" property="appointmentTime" />
+        <result column="appointment_end_time" property="appointmentEndTime" />
         <result column="close_time" property="closeTime" />
         <result column="payment_timestamp" property="paymentTimestamp" />
         <result column="payment_method" property="paymentMethod" />
@@ -225,10 +250,12 @@
         t1.name AS serverName,
         t1.phone AS serverPhone,
         t1.avatar AS serverAvatar,
+            t1.real_name AS serverRealName,
 
         t2.name AS userName,
         t2.phone AS userPhone,
         t2.avatar AS userAvatar,
+        t2.real_name AS userRealName,
 
        t_house_rent_asset.id as rentId,
         t_house_rent_asset.asset_id AS assetId,
