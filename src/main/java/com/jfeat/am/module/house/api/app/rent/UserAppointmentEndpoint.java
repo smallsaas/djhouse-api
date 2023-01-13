@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.api.app.rent;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.core.model.EndUserTypeSetting;
@@ -20,6 +21,8 @@ import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.crud.base.util.DateTimeKit;
+import com.jfeat.users.account.services.domain.dao.QueryUserAccountDao;
+import com.jfeat.users.account.services.domain.model.UserAccountRecord;
 import com.jfeat.users.account.services.domain.service.UserAccountService;
 import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
 import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
@@ -31,10 +34,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/u/house/houseAppointment/houseAppointments")
@@ -63,6 +64,9 @@ public class UserAppointmentEndpoint {
 
     @Resource
     UserAccountService userAccountService;
+
+    @Resource
+    QueryUserAccountDao queryUserAccountDao;
 
 
     @BusinessLog(name = "HouseAppointment", value = "create HouseAppointment")
@@ -241,10 +245,7 @@ public class UserAppointmentEndpoint {
 
 //        填写
         List<HouseAppointmentRecord> houseAppointmentPage = queryHouseAppointmentDao.findHouseAppointmentPageDetail(page, record, tag, search, orderBy, null, null);
-        for (HouseAppointmentRecord houseAppointmentRecord : houseAppointmentPage) {
-            houseAppointmentRecord.setSimpleTime(DateTimeKit.toTimeline(houseAppointmentRecord.getCreateTime()));
-            houseAppointmentRecord.setAppointmentTimeStamp(houseAppointmentRecord.getAppointmentTime().getTime());
-        }
+        houseAppointmentService.formatTime(houseAppointmentPage);
         page.setRecords(houseAppointmentPage);
         return SuccessTip.create(page);
     }
@@ -314,7 +315,7 @@ public class UserAppointmentEndpoint {
         }
         record.setAppointmentStrTime(current);
 
-        List<HouseAppointmentRecord> houseAppointmentPage = queryHouseAppointmentDao.findHouseAppointmentPageDetail(page, record, null,null, null, null, null);
+        List<HouseAppointmentRecord> houseAppointmentPage = queryHouseAppointmentDao.findHouseAppointmentPageDetail(page, record, null, null, null, null, null);
 
         houseAppointmentService.formatTime(houseAppointmentPage);
 
@@ -322,18 +323,18 @@ public class UserAppointmentEndpoint {
     }
 
 
-//    预约确认功能
+    //    预约确认功能
     @GetMapping("/confirm/{status}")
     public Tip AppointmentConfirmList(Page<HouseAppointmentRecord> page,
                                       @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                       @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                       // end tag
                                       @RequestParam(name = "search", required = false) String search,
-                                      @PathVariable("status") String status){
+                                      @PathVariable("status") String status) {
 
         Long userId = JWTKit.getUserId();
-        if (userId==null){
-            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        if (userId == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "没有登录");
         }
 
 
@@ -342,28 +343,27 @@ public class UserAppointmentEndpoint {
 
         HouseAppointmentRecord record = new HouseAppointmentRecord();
 
-        if (status.equals("unconfirmed")){
+        if (status.equals("unconfirmed")) {
             record.setConfirmStatus(HouseAppointment.CONFIRM_STATUS_WAIT);
-        }else if (status.equals("confirmed")){
+        } else if (status.equals("confirmed")) {
             record.setConfirmStatus(HouseAppointment.CONFIRM_STATUS_CONFIRM);
 
-        }else if (status.equals("refused")){
+        } else if (status.equals("refused")) {
             record.setConfirmStatus(HouseAppointment.CONFIRM_STATUS_REFUSE);
-        }else {
-            throw new BusinessException(BusinessCode.OutOfRange,"未找到参数");
+        } else {
+            throw new BusinessException(BusinessCode.OutOfRange, "未找到参数");
         }
-
 
 
 //        设置身份
-        UserAccount userAccount =  userAccountMapper.selectById(userId);
-        List<Integer> typeList =  null;
-        if (userAccount.getType()!=null){
+        UserAccount userAccount = userAccountMapper.selectById(userId);
+        List<Integer> typeList = null;
+        if (userAccount.getType() != null) {
             typeList = userAccountService.getUserTypeList(userAccount.getType());
         }
-        if (typeList!=null && typeList.contains(EndUserTypeSetting.USER_TYPE_INTERMEDIARY)){
+        if (typeList != null && typeList.contains(EndUserTypeSetting.USER_TYPE_INTERMEDIARY)) {
             record.setServerId(userId);
-        }else {
+        } else {
             record.setUserId(userId);
         }
 
@@ -380,32 +380,215 @@ public class UserAppointmentEndpoint {
         return SuccessTip.create(page);
     }
 
-//    修改确认状态
+    //    修改确认状态
     @PutMapping("/confirm")
-    public Tip updateConfirmStatus(@RequestBody HouseAppointmentModel entity){
+    public Tip updateConfirmStatus(@RequestBody HouseAppointmentModel entity) {
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
         if (entity.getId() == null || "".equals(entity.getId())) {
             throw new BusinessException(BusinessCode.BadRequest, "id不能为空");
         }
-        if (entity.getConfirmStatus()==null){
-            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        if (entity.getConfirmStatus() == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "没有登录");
         }
 
-        List<Integer> confirmStatusRange = Arrays.asList(HouseAppointment.CONFIRM_STATUS_WAIT,HouseAppointment.CONFIRM_STATUS_CONFIRM,HouseAppointment.CONFIRM_STATUS_REFUSE);
+        List<Integer> confirmStatusRange = Arrays.asList(HouseAppointment.CONFIRM_STATUS_WAIT, HouseAppointment.CONFIRM_STATUS_CONFIRM, HouseAppointment.CONFIRM_STATUS_REFUSE);
 
-        if (!confirmStatusRange.contains(entity.getConfirmStatus())){
-            throw new BusinessException(BusinessCode.OutOfRange,"数值超出范围");
+        if (!confirmStatusRange.contains(entity.getConfirmStatus())) {
+            throw new BusinessException(BusinessCode.OutOfRange, "数值超出范围");
         }
 
         HouseAppointment houseAppointment = houseAppointmentMapper.selectById(entity.getId());
 
-        if (houseAppointment!=null){
+        if (houseAppointment != null) {
             houseAppointment.setConfirmStatus(entity.getConfirmStatus());
             return SuccessTip.create(houseAppointmentMapper.updateById(houseAppointment));
         }
         return SuccessTip.create();
-
     }
+
+
+    //    置业顾问查询被邀请的用户的预约列表
+    @ApiOperation(value = "HouseAppointment 列表信息", response = HouseAppointmentRecord.class)
+    @GetMapping("/invite/appointment")
+    public Tip getInviteAppointmentPage(Page<HouseAppointmentRecord> page,
+                                         @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                         @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+
+                                         @RequestParam(name = "depth",required = false,defaultValue = "0") Integer depth,
+                                         // for tag feature query
+                                         @RequestParam(name = "tag", required = false) String tag,
+                                         // end tag
+                                         @RequestParam(name = "search", required = false) String search,
+
+                                         @RequestParam(name = "code", required = false) String code,
+
+                                         @RequestParam(name = "typeId", required = false) Long typeId,
+
+                                         @RequestParam(name = "type", required = false) String type,
+
+
+                                         @RequestParam(name = "userPhone", required = false) String userPhone,
+
+                                         @RequestParam(name = "userName", required = false) String userName,
+
+                                         @RequestParam(name = "serverName", required = false) String serverName,
+
+                                         @RequestParam(name = "serverPhone", required = false) String serverPhone,
+
+                                         @RequestParam(name = "name", required = false) String name,
+
+                                         @RequestParam(name = "addressId", required = false) Long addressId,
+
+                                         @RequestParam(name = "addressName", required = false) String addressName,
+
+                                         @RequestParam(name = "description", required = false) String description,
+
+                                         @RequestParam(name = "icon", required = false) String icon,
+
+                                         @RequestParam(name = "status", required = false) String status,
+
+                                         @RequestParam(name = "fee", required = false) BigDecimal fee,
+
+                                         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                         @RequestParam(name = "createTime", required = false) Date createTime,
+
+                                         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                         @RequestParam(name = "appointmentTime", required = false) Date appointmentTime,
+
+                                         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                         @RequestParam(name = "closeTime", required = false) Date closeTime,
+
+                                         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                         @RequestParam(name = "paymentTimestamp", required = false) Date paymentTimestamp,
+
+                                         @RequestParam(name = "paymentMethod", required = false) String paymentMethod,
+
+                                         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                         @RequestParam(name = "earliestTime", required = false) Date earliestTime,
+
+                                         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                         @RequestParam(name = "latestTime", required = false) Date latestTime,
+                                         @RequestParam(name = "fieldC", required = false) String fieldC,
+                                         @RequestParam(name = "orderBy", required = false) String orderBy,
+                                         @RequestParam(name = "sort", required = false) String sort) {
+
+        Long userId =JWTKit.getUserId();
+
+        if (userId == null) {
+            throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
+        }
+
+        if (orderBy != null && orderBy.length() > 0) {
+            if (sort != null && sort.length() > 0) {
+                String sortPattern = "(ASC|DESC|asc|desc)";
+                if (!sort.matches(sortPattern)) {
+                    throw new BusinessException(BusinessCode.BadRequest.getCode(), "sort must be ASC or DESC");//此处异常类型根据实际情况而定
+                }
+            } else {
+                sort = "ASC";
+            }
+            orderBy = "`" + orderBy + "`" + " " + sort;
+        }
+
+
+
+        page.setCurrent(pageNum);
+        page.setSize(pageSize);
+
+        HouseAppointmentRecord record = new HouseAppointmentRecord();
+
+        record.setCode(code);
+        record.setTypeId(typeId);
+        record.setType(type);
+        record.setUserPhone(userPhone);
+        record.setUserName(userName);
+        record.setServerName(serverName);
+        record.setServerPhone(serverPhone);
+        record.setName(name);
+        record.setAddressId(addressId);
+        record.setAddressName(addressName);
+        record.setDescription(description);
+        record.setIcon(icon);
+
+//        设置状态
+        if ("notSet".equals(status)) {
+            record.setStatus(HouseAppointment.STATUS_NOT_SET);
+        } else if ("sign".equals(status)) {
+            record.setStatus(HouseAppointment.STATUS_Sign);
+        } else if ("miss".equals(status)) {
+            record.setStatus(HouseAppointment.STATUS_MISS);
+        } else if ("contact".equals(status)) {
+            record.setStatus(HouseAppointment.STATUS_CONTACT);
+        } else if ("looked".equals(status)) {
+            record.setStatus(HouseAppointment.STATUS_LOOKED);
+        } else if ("pending".equals(status)) {
+            record.setStatus(HouseAppointment.STATUS_PENDING);
+        }
+
+        record.setFee(fee);
+        record.setCreateTime(createTime);
+        record.setAppointmentTime(appointmentTime);
+        record.setCloseTime(closeTime);
+        record.setPaymentTimestamp(paymentTimestamp);
+        record.setPaymentMethod(paymentMethod);
+        record.setEarliestTime(earliestTime);
+        record.setLatestTime(latestTime);
+        record.setFieldC(fieldC);
+
+
+        List<HouseAppointmentRecord> houseAppointmentPage = new ArrayList<>();
+
+//        获取直接邀请人的预约记录
+        if (depth!=null&&depth==0){
+
+            QueryWrapper<UserAccount> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq(UserAccount.INVITOR_ID,userId);
+            List<UserAccount> userAccounts = userAccountMapper.selectList(queryWrapper);
+            List<Long> userIds = userAccounts.stream().map(UserAccount::getId).collect(Collectors.toList());
+            if (userIds!=null&&userIds.size()>0){
+
+                //                    去重
+                LinkedHashSet<Long> hashSet = new LinkedHashSet<>(userIds);
+                ArrayList<Long> listWithoutDuplicates = new ArrayList<>(hashSet);
+
+                houseAppointmentPage = queryHouseAppointmentDao.getInviteAppointmentPage(page, record,listWithoutDuplicates, tag, search, orderBy, null, null);
+
+            }
+
+            /**
+             * 获取邀请间接邀请人的预约记录
+             */
+        }else {
+            UserAccountRecord childInvite = queryUserAccountDao.getChildInvite(userId);
+            if (childInvite.getChildInviteList()!=null&&childInvite.getChildInviteList().size()>0){
+
+                List<UserAccountRecord> userAccountRecords = new ArrayList<>();
+//                获取全部间接邀请人记录
+                if (depth==null||depth<0){
+                    userAccountRecords = userAccountService.treeToList(childInvite.getChildInviteList(), null);
+                }else {
+//                    获取指定深度邀请人记录
+                    userAccountRecords = userAccountService.treeToList(childInvite.getChildInviteList(), depth);
+                }
+
+                if (userAccountRecords!=null&&userAccountRecords.size()>0){
+                    List<Long> userIds = userAccountRecords.stream().map(UserAccount::getId).collect(Collectors.toList());
+
+//                    去重
+                    LinkedHashSet<Long> hashSet = new LinkedHashSet<>(userIds);
+                    ArrayList<Long> listWithoutDuplicates = new ArrayList<>(hashSet);
+
+                    houseAppointmentPage = queryHouseAppointmentDao.getInviteAppointmentPage(page, record,listWithoutDuplicates, tag, search, orderBy, null, null);
+
+                }
+
+            }
+        }
+        houseAppointmentService.formatTime(houseAppointmentPage);
+        page.setRecords(houseAppointmentPage);
+        return SuccessTip.create(page);
+    }
+
 }

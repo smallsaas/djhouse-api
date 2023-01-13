@@ -2,7 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryHouseSupportFacilitiesDao">
     <sql id="Base_Column_List">
-        t_house_support_facilities.id, t_house_support_facilities.type_id AS typeId, t_house_support_facilities.title, t_house_support_facilities.icon
+        t_house_support_facilities.id,
+            t_house_support_facilities.type_id AS typeId,
+            t_house_support_facilities.title,
+            t_house_support_facilities.icon,
+             t_house_support_facilities.sort_num as sortNum
     </sql>
 
 
@@ -47,6 +51,7 @@
         <if test="endTime != null">
             <![CDATA[AND t_house_support_facilities.end_time <= DATE(#{endTime}]]>
         </if>
+        ORDER BY t_house_support_facilities.sort_num asc
         <!--
     <if test="search != null and search != ''">
         OR t_house_support_facilities.name LIKE CONCAT('%',#{search},'%')
@@ -58,7 +63,7 @@
         SELECT t_house_support_facilities.*
         FROM t_house_support_facilities
         WHERE t_house_support_facilities.type_id = #{typeId}
-        order By t_house_support_facilities.sort_num desc
+        ORDER BY t_house_support_facilities.sort_num asc
     </select>
 
 
@@ -73,7 +78,7 @@
                 JOIN t_house_support_facilities ON t_house_support_facilities.id = t_house_rent_support_facilities.facilities_id
                 JOIN t_house_support_facilities_type ON t_house_support_facilities_type.id = t_house_support_facilities.type_id
         WHERE t_house_rent_support_facilities.rent_id=#{rentId}
-        ORDER BY t_house_support_facilities.sort_num DESC
+        ORDER BY t_house_support_facilities.sort_num asc
     </select>
 
 </mapper>

@@ -17,4 +17,19 @@ public interface HouseSupportFacilitiesService extends CRUDHouseSupportFacilitie
 //    判断出租房屋家居设施清单勾选情况
 
     List<HouseSupportFacilitiesTypeRecord> getRentHouseSupportFacilitiesStatus(Long assetId, List<HouseSupportFacilitiesTypeRecord> list);
+
+    Integer deleteHouseSupportFacilities(Long id);
+
+
+    Integer setSortNum(Long id,String orderBy);
+
+    Integer getMaxSortNum(Long typeId);
+
+    Integer getMinSortNum(Long typeId);
+
+    Integer initSortNum();
+
+
+    void setStatus(Long typeId,List<HouseSupportFacilitiesRecord> houseSupportFacilitiesRecordList);
+
 }

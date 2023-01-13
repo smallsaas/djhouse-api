@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAppointment;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAppointmentModel;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +36,12 @@ public interface QueryHouseAppointmentDao extends QueryMasterDao<HouseAppointmen
     List<HouseAppointmentModel> queryMasterModelList(@Param("masterId") Object masterId);
 
     List<HouseAppointmentRecord> findHouseAppointmentPageDetail(Page<HouseAppointmentRecord> page, @Param("record") HouseAppointmentRecord record,
+                                                                @Param("tag") String tag,
+                                                                @Param("search") String search, @Param("orderBy") String orderBy,
+                                                                @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
+    List<HouseAppointmentRecord> getInviteAppointmentPage(Page<HouseAppointmentRecord> page, @Param("record") HouseAppointmentRecord record,
+                                                                @NotEmpty @Param("userIds") List<Long> userIds,
                                                                 @Param("tag") String tag,
                                                                 @Param("search") String search, @Param("orderBy") String orderBy,
                                                                 @Param("startTime") Date startTime, @Param("endTime") Date endTime);

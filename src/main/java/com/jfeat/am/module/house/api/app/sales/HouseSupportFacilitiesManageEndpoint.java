@@ -1,11 +1,14 @@
 package com.jfeat.am.module.house.api.app.sales;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.JsonObject;
 import com.jfeat.am.common.annotation.Permission;
 import com.jfeat.am.module.house.api.permission.HouseSupportFacilitiesPermission;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseSupportFacilitiesDao;
 import com.jfeat.am.module.house.services.domain.model.HouseSupportFacilitiesRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseSupportFacilitiesService;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseSupportFacilitiesMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseSupportFacilities;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.function.LongFunction;
 
 
 @RestController
@@ -35,11 +39,21 @@ public class HouseSupportFacilitiesManageEndpoint {
     @Resource
     QueryHouseSupportFacilitiesDao queryHouseSupportFacilitiesDao;
 
+    @Resource
+    HouseSupportFacilitiesMapper houseSupportFacilitiesMapper;
+
 
     @PostMapping
     @ApiOperation(value = "新建 HouseSupportFacilities", response = HouseSupportFacilities.class)
     public Tip createHouseSupportFacilities(@RequestBody HouseSupportFacilities entity) {
         Integer affected = 0;
+        Integer maxSortNum = houseSupportFacilitiesService.getMaxSortNum(entity.getTypeId());
+
+        if (maxSortNum==null){
+            maxSortNum=0;
+        }
+
+        entity.setSortNum(maxSortNum+1);
         try {
             affected = houseSupportFacilitiesService.createMaster(entity);
         } catch (DuplicateKeyException e) {
@@ -60,7 +74,10 @@ public class HouseSupportFacilitiesManageEndpoint {
     @PutMapping("/{id}")
     @ApiOperation(value = "修改 HouseSupportFacilities", response = HouseSupportFacilities.class)
     public Tip updateHouseSupportFacilities(@PathVariable Long id, @RequestBody HouseSupportFacilities entity) {
+
         entity.setId(id);
+        HouseSupportFacilities houseSupportFacilities = houseSupportFacilitiesMapper.selectById(id);
+        entity.setSortNum(houseSupportFacilities.getSortNum());
         return SuccessTip.create(houseSupportFacilitiesService.updateMaster(entity));
     }
 
@@ -68,9 +85,20 @@ public class HouseSupportFacilitiesManageEndpoint {
     @DeleteMapping("/{id}")
     @ApiOperation("删除 HouseSupportFacilities")
     public Tip deleteHouseSupportFacilities(@PathVariable Long id) {
-        return SuccessTip.create(houseSupportFacilitiesService.deleteMaster(id));
+        return SuccessTip.create(houseSupportFacilitiesService.deleteHouseSupportFacilities(id));
     }
 
+    @PostMapping("/init")
+    public Tip initSortNum(){
+        return SuccessTip.create(houseSupportFacilitiesService.initSortNum());
+    }
+
+    @PostMapping("/sort")
+    public Tip sortSupportFacilities(@RequestBody HouseSupportFacilitiesRecord entity){
+        Long id = entity.getId();
+        String orderBy = entity.getOperation();
+        return SuccessTip.create(houseSupportFacilitiesService.setSortNum(id,orderBy));
+    }
 
     @GetMapping
     @ApiImplicitParams({
@@ -121,9 +149,8 @@ public class HouseSupportFacilitiesManageEndpoint {
 
 
         List<HouseSupportFacilitiesRecord> houseSupportFacilitiesPage = queryHouseSupportFacilitiesDao.findHouseSupportFacilitiesPage(null, record, tag, search, orderBy, null, null);
-
-
 //        page.setRecords(houseSupportFacilitiesPage);
+        houseSupportFacilitiesService.setStatus(typeId,houseSupportFacilitiesPage);
 
         return SuccessTip.create(houseSupportFacilitiesPage);
     }
