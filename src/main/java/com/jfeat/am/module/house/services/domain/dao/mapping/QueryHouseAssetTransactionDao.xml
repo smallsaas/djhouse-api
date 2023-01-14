@@ -10,6 +10,7 @@
             t_house_asset_transaction.note,
             t_house_asset_transaction.create_time AS createTime,
             t_house_asset_transaction.update_time AS updateTime,
+            t_house_asset_transaction.hide AS hide,
 
             t_house_asset_transaction.issue,
             t_house_asset_transaction.building,
@@ -99,6 +100,7 @@
         <result column="note" property="note" />
         <result column="createTime" property="createTime" />
         <result column="updateTime" property="updateTime" />
+        <result column="hide" property="hide" />
 
         <result column="issue" property="issue" />
         <result column="building" property="building" />

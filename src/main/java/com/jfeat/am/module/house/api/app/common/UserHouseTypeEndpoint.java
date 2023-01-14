@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.api.app.common;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseDesignModelDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingUnitDao;
 import com.jfeat.am.module.house.services.domain.model.HousePropertyBuildingUnitRecord;

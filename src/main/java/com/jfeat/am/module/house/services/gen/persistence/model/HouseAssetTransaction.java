@@ -66,6 +66,16 @@ public class HouseAssetTransaction extends Model<HouseAssetTransaction> {
 
     private String direction;
 
+    private Integer hide;
+
+    public Integer getHide() {
+        return hide;
+    }
+
+    public void setHide(Integer hide) {
+        this.hide = hide;
+    }
+
     public String getIssue() {
         return issue;
     }
@@ -285,6 +295,8 @@ public class HouseAssetTransaction extends Model<HouseAssetTransaction> {
     public static final String CREATE_TIME = "create_time";
 
     public static final String UPDATE_TIME = "update_time";
+
+    public static final String HIDE = "hide";
 
     public static final Integer STATE_BUY=0;
 
