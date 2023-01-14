@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.api.app.operations;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.notice.services.definition.NoticeStatus;
@@ -215,4 +216,35 @@ public class NoticeManageEndpoint {
         return SuccessTip.create(noticeMapper.deleteById(id));
     }
 
+    @PutMapping("/setNoticeStick/{id}")
+    public Tip setNoticeStick(@PathVariable("id") Long id){
+        Notice notice = queryNoticeDao.selectById(id);
+        QueryWrapper<Notice> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc(Notice.SORT_NUM).last("limit 1");
+        Notice maxNotice =  noticeMapper.selectOne(queryWrapper);
+
+        if (notice!=null){
+            notice.setStick(Notice.STICK_TOP);
+            if (maxNotice!=null && notice.getSortNum()!=null){
+                notice.setSortNum(maxNotice.getSortNum()+1);
+            }else {
+                notice.setSortNum(1);
+            }
+            notice.setStick(Notice.STICK_TOP);
+            return SuccessTip.create(noticeMapper.updateById(notice));
+        }
+        return SuccessTip.create();
+    }
+
+    @PutMapping("/cancelNoticeStick/{id}")
+    public Tip cancelNoticeStick(@PathVariable("id") Long id){
+        Notice notice = queryNoticeDao.selectById(id);
+        if (notice!=null){
+            notice.setStick(Notice.STICK_TOP);
+            notice.setSortNum(1);
+            notice.setStick(Notice.STICK_NOT_TOP);
+            return SuccessTip.create(noticeMapper.updateById(notice));
+        }
+        return SuccessTip.create();
+    }
 }

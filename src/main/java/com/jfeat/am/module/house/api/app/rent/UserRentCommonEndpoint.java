@@ -139,6 +139,8 @@ public class UserRentCommonEndpoint {
 
                                        @RequestParam(name = "communityId", required = false) Long communityId,
 
+                                       @RequestParam(name = "communityName", required = false) String communityName,
+
                                        @RequestParam(name = "houseTypeId", required = false) Long houseTypeId,
                                        @RequestParam(name = "houseType", required = false) String houseType,
 
@@ -208,6 +210,7 @@ public class UserRentCommonEndpoint {
         record.setHouseType(houseType);
         record.setLandlordRealName(landlordRealName);
         record.setLandlordName(landlordName);
+        record.setCommunityName(communityName);
 
 
         List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPageDetails(page, record, tag, search, orderBy, null, null);

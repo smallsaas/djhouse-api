@@ -57,6 +57,9 @@ public class HouseAsset extends Model<HouseAsset> {
     private String houseNumber;
 
 
+    private BigDecimal assetArea;
+
+
     @ApiModelProperty(value = "社区Id")
     @TableField(exist = false)
     private Long communityId;
@@ -143,6 +146,13 @@ public class HouseAsset extends Model<HouseAsset> {
     private Long exchangeRequestId;
 
 
+    public BigDecimal getAssetArea() {
+        return assetArea;
+    }
+
+    public void setAssetArea(BigDecimal assetArea) {
+        this.assetArea = assetArea;
+    }
 
     public BigDecimal getRealArea() {
         return realArea;

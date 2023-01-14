@@ -287,6 +287,10 @@
             AND t_house_property_community.id =#{record.communityId}
         </if>
 
+        <if test="record.communityName != null and record.communityName!='' ">
+            AND t_house_rent_asset.community_name LIKE CONCAT('%',#{record.communityName},'%')
+        </if>
+
 
         <if test="record.houseTypeId != null and record.houseTypeId>0 ">
             AND t_house_design_model.id =#{record.houseTypeId}
@@ -307,11 +311,13 @@
 
 
 
+
+
         <if test="record.landlordId != null and record.landlordId>0 ">
             AND t_house_rent_asset.landlord_id =#{record.landlordId}
         </if>
         <if test="record.area != null and record.area>0 ">
-            AND t_house_design_model.area LIKE CONCAT('%',#{record.area},'%')
+            AND t_house_rent_asset.area LIKE CONCAT('%',#{record.area},'%')
         </if>
         <if test="record.rate != null and record.rate>=0 ">
             AND t_house_rent_asset.rate LIKE CONCAT('%',#{record.rate},'%')

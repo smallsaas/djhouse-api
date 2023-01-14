@@ -190,14 +190,14 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
             if (houseUserAsset==null){
                 throw new BusinessException(BusinessCode.CodeBase,"该房子属于其他用户");
             }
-//            HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
-//            houseUserAssetRecord.setAssetId(queryHouseAssetDaoList.get(0).getId());
-//            houseUserAssetRecord.setUserId(JWTKit.getUserId());
-//            List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord
-//                    ,null,null,null,null,null);
-//            if (houseUserAssetRecordList==null || houseUserAssetRecordList.size()==0){
-//                throw new BusinessException(BusinessCode.NoPermission,"没有找到房子,请重试");
-//            }
+            HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
+            houseUserAssetRecord.setAssetId(queryHouseAssetDaoList.get(0).getId());
+            houseUserAssetRecord.setUserId(JWTKit.getUserId());
+            List<HouseUserAssetRecord> houseUserAssetRecordList = queryHouseUserAssetDao.findHouseUserAssetPage(null,houseUserAssetRecord
+                    ,null,null,null,null,null);
+            if (houseUserAssetRecordList==null || houseUserAssetRecordList.size()==0){
+                throw new BusinessException(BusinessCode.NoPermission,"没有找到房子,请重试");
+            }
 
         /*
         设置出租的 小区  户型 面积 房东
@@ -208,6 +208,7 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
             entity.setCommunityId(queryHouseAssetDaoList.get(0).getCommunityId());
             entity.setHouseTypeId(queryHouseAssetDaoList.get(0).getDesignModelId());
             entity.setLandlordId(JWTKit.getUserId());
+            entity.setAssetId(queryHouseAssetDaoList.get(0).getId());
             entity.setCommunityName(queryHouseAssetDaoList.get(0).getCommunityName());
             entity.setToward(queryHouseAssetDaoList.get(0).getDirection());
             flag = true;
@@ -290,9 +291,7 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
         entity.setServerId(houseRentAsset.getServerId());
 
         affected =  houseRentAssetService.updateMaster(entity);
-        if (entity.getAssetId()==null){
-            return affected;
-        }
+
 
         if (affected>0 && entity.getSupportFacilitiesList()!=null && entity.getSupportFacilitiesList().size()>0){
             QueryWrapper<HouseRentSupportFacilities> queryWrapper = new QueryWrapper<>();
@@ -455,7 +454,6 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
     @Override
     public void setRentDescribe(List<HouseRentAssetRecord> houseRentAssetRecordList) {
 
-
         if (houseRentAssetRecordList!=null && houseRentAssetRecordList.size()>0){
 
             StringBuffer sb = new StringBuffer();
@@ -468,7 +466,6 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
                             sb.append(houseSupportFacilities.getTitle());
                             sb.append(" ");
                         }
-
                     }
 
                 }

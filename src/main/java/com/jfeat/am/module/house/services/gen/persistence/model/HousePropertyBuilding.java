@@ -69,6 +69,16 @@ public class HousePropertyBuilding  extends Model<HousePropertyBuilding> impleme
 
     private Integer issue;
 
+    private String buildingNumber;
+
+    public String getBuildingNumber() {
+        return buildingNumber;
+    }
+
+    public void setBuildingNumber(String buildingNumber) {
+        this.buildingNumber = buildingNumber;
+    }
+
     @TableField(exist = false)
     private Integer houseTypeNumber;
 

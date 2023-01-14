@@ -3,9 +3,11 @@ package com.jfeat.am.module.house.api.app.common;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseDesignModelMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingUnitMapper;
+import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseDesignModel;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
@@ -16,10 +18,7 @@ import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import org.apache.poi.ss.formula.functions.T;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -42,6 +41,9 @@ public class HouseAssetBaseInfoEndpoint {
 
     @Resource
     UserCommunityAsset userCommunityAsset;
+
+    @Resource
+    HouseAssetMapper houseAssetMapper;
 
 //    获取户型列表
     @GetMapping("/houseType/name")
@@ -119,6 +121,20 @@ public class HouseAssetBaseInfoEndpoint {
         QueryWrapper<HousePropertyBuildingUnit> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(HousePropertyBuildingUnit.BUILDING_ID,buildingId);
         return SuccessTip.create(housePropertyBuildingUnitMapper.selectList(queryWrapper));
+    }
+
+
+//    获取房屋详情
+    @GetMapping("/asset/{id}")
+    public Tip getAssetInfoById(@PathVariable Long id){
+        return SuccessTip.create(houseAssetMapper.selectById(id));
+    }
+
+    @PutMapping("/asset/{id}")
+    public Tip updateAssetInfoById(@PathVariable("id")Long id, HouseAsset entity){
+
+        entity.setId(id);
+        return SuccessTip.create(houseAssetMapper.updateById(entity));
     }
 
 }
