@@ -41,7 +41,6 @@ public class UserHouseAssetTransactionEndpoint {
     @Resource
     QueryHouseAssetTransactionDao queryHouseAssetTransactionDao;
 
-
     @Resource
     HouseAssetTransactionMapper houseAssetTransactionMapper;
 

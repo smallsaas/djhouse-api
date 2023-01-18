@@ -10,8 +10,8 @@
             t_house_asset_transaction.note,
             t_house_asset_transaction.create_time AS createTime,
             t_house_asset_transaction.update_time AS updateTime,
-            t_house_asset_transaction.hide AS hide,
 
+            t_house_asset_transaction.hide AS hide,
             t_house_asset_transaction.issue,
             t_house_asset_transaction.building,
             t_house_asset_transaction.unit ,
@@ -100,8 +100,9 @@
         <result column="note" property="note" />
         <result column="createTime" property="createTime" />
         <result column="updateTime" property="updateTime" />
-        <result column="hide" property="hide" />
+        <result column="endLoginTime" property="endLoginTime" />
 
+        <result column="hide" property="hide" />
         <result column="issue" property="issue" />
         <result column="building" property="building" />
         <result column="unit" property="unit" />
@@ -120,7 +121,7 @@
     <select id="findHouseAssetTransactionPageDetail" resultMap="HouseAssetTransactionMap"
             parameterType="HouseAssetTransactionRecord">
         SELECT
-        <include refid="Base_Column_List"/>,t_end_user.name as userName,t_end_user.phone as userPhone,t_end_user.real_name as userRealName
+        <include refid="Base_Column_List"/>,t_end_user.name as userName,t_end_user.phone as userPhone,t_end_user.real_name as userRealName,t_end_user.end_login_time as endLoginTime
 
 
         FROM t_house_asset_transaction

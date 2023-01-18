@@ -52,21 +52,37 @@ public class HouseAssetTransaction extends Model<HouseAssetTransaction> {
     @ApiModelProperty(value = "更新时间")
     private Date updateTime;
 
-
+    // 期数
     private String issue;
 
+    // 楼栋
     private String building;
 
-
+    // 单元
     private String unit;
 
+    // 楼栋区间 - 开始楼栋
     private Integer startFloor;
 
+    // 楼栋区间 - 结束楼栋
     private Integer endFloor;
 
+    // 朝向
     private String direction;
 
+    // 是否隐藏楼栋
     private Integer hide;
+
+    // 出售 - 自定义楼层
+    private String customFloor;
+
+    public String getCustomFloor() {
+        return customFloor;
+    }
+
+    public void setCustomFloor(String customFloor) {
+        this.customFloor = customFloor;
+    }
 
     public Integer getHide() {
         return hide;
@@ -152,6 +168,15 @@ public class HouseAssetTransaction extends Model<HouseAssetTransaction> {
     @ApiModelProperty(value = "户型")
     private HouseDesignModel houseDesignModel;
 
+    private Date endLoginTime;
+
+    public Date getEndLoginTime() {
+        return endLoginTime;
+    }
+
+    public void setEndLoginTime(Date endLoginTime) {
+        this.endLoginTime = endLoginTime;
+    }
 
     public String getUserName() {
         return userName;
@@ -297,6 +322,8 @@ public class HouseAssetTransaction extends Model<HouseAssetTransaction> {
     public static final String UPDATE_TIME = "update_time";
 
     public static final String HIDE = "hide";
+
+    public static final String CUSTOM_FLOOR = "custom_floor";
 
     public static final Integer STATE_BUY=0;
 
