@@ -22,17 +22,16 @@
         t_house_rent_asset.shelves_time AS shelvesTime,
         t_house_rent_asset.rate AS rate,
         t_house_rent_asset.house_number AS houseNumber,
-         t_house_rent_asset.floor AS floor,
-         t_house_rent_asset.toward AS toward,
-         t_house_rent_asset.building_code AS buildingCode,
-         t_house_rent_asset.community_name AS communityName,
-         t_house_rent_asset.configuration_status AS configurationStatus,
+        t_house_rent_asset.floor AS floor,
+        t_house_rent_asset.toward AS toward,
+        t_house_rent_asset.building_code AS buildingCode,
+        t_house_rent_asset.community_name AS communityName,
+        t_house_rent_asset.configuration_status AS configurationStatus,
         t_house_rent_asset.custom_images_list AS customimageslist,
-
-            t_house_rent_asset.state AS state,
-            t_house_rent_asset.contract_start_time AS contractStartTime,
-            t_house_rent_asset.contract_end_time AS contractEndTime,
-            t_house_rent_asset.contract_time_limit AS contractTimeLimit,
+        t_house_rent_asset.state AS state,
+        t_house_rent_asset.contract_start_time AS contractStartTime,
+        t_house_rent_asset.contract_end_time AS contractEndTime,
+        t_house_rent_asset.contract_time_limit AS contractTimeLimit,
 
         t_end_user.name As serverName,
         t_end_user.phone AS serverPhone,
@@ -189,6 +188,10 @@
         <result column="contract_end_time" property="contractEndTime"/>
         <result column="contract_time_limit" property="contractTimeLimit"/>
 
+        <result column="userId" property="userId" />
+        <result column="username" property="username" />
+        <result column="userAvatar" property="userAvatar" />
+
         <association property="houseSupportFacilitiesList" select="com.jfeat.am.module.house.services.domain.dao.QueryHouseSupportFacilitiesDao.querySupportFacilitiesByRentId" column="id">
         </association>
 
@@ -235,29 +238,32 @@
         t_house_asset.house_type_id AS houseTypeId,
 
         t_house_property_building.cad_picture AS cadPicture,
-        t_house_property_building.code       AS buildingCode,
-
+        t_house_property_building.code AS buildingCode,
         t_house_property_building_unit.direction AS direction,
 
-        t_house_property_community.id        AS communityId,
+        t_house_property_community.id AS communityId,
         t_house_property_community.community AS communityName,
         t_house_property_community.address AS address,
 
         t_house_design_model.id AS designModelId,
         t_house_design_model.house_type AS houseType,
         t_house_design_model.house_type_picture AS houseTypePicture,
+
         t_house_vr_picture.vr_picture AS vrPicture,
-        t_house_vr_picture.link                  AS vrLink,
-        t_house_vr_picture.snapshot              AS vrSnapshot,
-        t_house_design_model.area AS houseTypeArea
+        t_house_vr_picture.link AS vrLink,
+        t_house_vr_picture.snapshot AS vrSnapshot,
 
+        t_house_design_model.area AS houseTypeArea,
 
+        loadord.id AS userId,
+        loadord.name AS username,
+        loadord.avatar AS userAvatar
     </sql>
+
     <!--    添加列表详情-->
     <select id="findHouseRentAssetPageDetails" resultMap="HouseRentAssetMap" parameterType="HouseRentAssetRecord">
         SELECT
         <include refid="houseRentSql"></include>
-
 
         FROM t_house_rent_asset
         LEFT JOIN t_end_user as loadord ON loadord.id = t_house_rent_asset.landlord_id
@@ -269,9 +275,7 @@
         left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
         left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
 
-
         WHERE 1=1
-
 
         <if test="record.id != null and record.id>0 ">
             AND t_house_rent_asset.id =#{record.id}

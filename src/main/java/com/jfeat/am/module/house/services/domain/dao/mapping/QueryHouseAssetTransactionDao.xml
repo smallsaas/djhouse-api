@@ -100,7 +100,6 @@
         <result column="note" property="note" />
         <result column="createTime" property="createTime" />
         <result column="updateTime" property="updateTime" />
-        <result column="endLoginTime" property="endLoginTime" />
 
         <result column="hide" property="hide" />
         <result column="issue" property="issue" />

@@ -168,6 +168,8 @@ public class HouseAssetTransaction extends Model<HouseAssetTransaction> {
     @ApiModelProperty(value = "户型")
     private HouseDesignModel houseDesignModel;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "最后登录时间")
     private Date endLoginTime;
 
     public Date getEndLoginTime() {
