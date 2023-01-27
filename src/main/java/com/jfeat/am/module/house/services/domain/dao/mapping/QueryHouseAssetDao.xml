@@ -389,6 +389,7 @@
                t_house_property_building.cad_picture    AS cadPicture,
                t_house_property_building.code           AS buildingCode,
                t_house_property_building_unit.direction AS direction,
+               t_house_property_building_unit.unit_code AS unit,
                t_house_property_building.issue          as issue,
 
                t_house_property_community.id            AS communityId,

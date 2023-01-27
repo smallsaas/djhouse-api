@@ -56,7 +56,6 @@ public class HouseAsset extends Model<HouseAsset> {
     @ApiModelProperty(value = "门牌编号")
     private String houseNumber;
 
-
     private BigDecimal assetArea;
 
 
@@ -145,6 +144,16 @@ public class HouseAsset extends Model<HouseAsset> {
     @TableField(exist = false)
     private Long exchangeRequestId;
 
+    @TableField(exist = false)
+    private String unit;
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
 
     public BigDecimal getAssetArea() {
         return assetArea;
