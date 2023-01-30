@@ -18,10 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -95,12 +92,21 @@ public class UserInvitationRank {
 
         jsonArray.sort(Comparator.comparing(obj -> ((JSONObject) obj).getIntValue("number")).reversed());
 
+        // 根据需求只取前20位
+        JSONArray resultJson = new JSONArray();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            resultJson.add(jsonArray.get(i));
+            if (i == 19) {
+                break;
+            }
+        }
+
         for (int i=0;i<jsonArray.size();i++){
             JSONObject json  = jsonArray.getJSONObject(i);
             json.put("rank",i+1);
         }
 
 
-        return SuccessTip.create(jsonArray);
+        return SuccessTip.create(resultJson);
     }
 }

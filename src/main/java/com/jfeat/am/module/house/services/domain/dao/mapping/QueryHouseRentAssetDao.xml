@@ -191,6 +191,7 @@
         <result column="userId" property="userId" />
         <result column="username" property="username" />
         <result column="userAvatar" property="userAvatar" />
+        <result column="userPhone" property="userPhone" />
 
         <association property="houseSupportFacilitiesList" select="com.jfeat.am.module.house.services.domain.dao.QueryHouseSupportFacilitiesDao.querySupportFacilitiesByRentId" column="id">
         </association>
@@ -257,7 +258,8 @@
 
         loadord.id AS userId,
         loadord.name AS username,
-        loadord.avatar AS userAvatar
+        loadord.avatar AS userAvatar,
+        loadord.phone AS userPhone
     </sql>
 
     <!--    添加列表详情-->

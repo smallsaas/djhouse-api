@@ -34,6 +34,17 @@ public class HouseRentAssetRecord extends HouseRentAsset {
     // 用户头像
     private String userAvatar;
 
+    // 用户电话
+    private String userPhone;
+
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
+    }
+
     public Long getUserId() {
         return userId;
     }
