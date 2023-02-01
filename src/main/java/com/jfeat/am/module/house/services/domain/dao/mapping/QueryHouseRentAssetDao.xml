@@ -193,6 +193,8 @@
         <result column="userAvatar" property="userAvatar" />
         <result column="userPhone" property="userPhone" />
 
+        <result column="houseTypeDescription" property="houseTypeDescription" />
+
         <association property="houseSupportFacilitiesList" select="com.jfeat.am.module.house.services.domain.dao.QueryHouseSupportFacilitiesDao.querySupportFacilitiesByRentId" column="id">
         </association>
 
@@ -248,6 +250,7 @@
 
         t_house_design_model.id AS designModelId,
         t_house_design_model.house_type AS houseType,
+        t_house_design_model.description AS houseTypeDescription,
         t_house_design_model.house_type_picture AS houseTypePicture,
 
         t_house_vr_picture.vr_picture AS vrPicture,
