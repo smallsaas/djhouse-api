@@ -1,5 +1,8 @@
 package com.jfeat.am.module.house.services.gen.persistence.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.swagger.annotations.ApiModel;
@@ -22,6 +25,7 @@ public class HouseAssetTransactionIntention extends Model<HouseAssetTransactionI
     private static final long serialVersionUID = 1L;
 
     // 自增id
+    @TableId(value = "id",type = IdType.AUTO)
     private Long id;
 
     // 房屋买卖记录id
