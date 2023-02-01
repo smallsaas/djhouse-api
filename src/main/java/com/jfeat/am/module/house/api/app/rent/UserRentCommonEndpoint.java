@@ -291,6 +291,15 @@ public class UserRentCommonEndpoint {
                 if (houseSubscribe!=null){
                     houseRentAssetModel.setSubscribeStatus(true);
                 }
+
+//                是否有预约
+                QueryWrapper<HouseAppointment> appointmentQueryWrapper = new QueryWrapper<>();
+                appointmentQueryWrapper.eq(HouseAppointment.USER_ID,userId).eq(HouseAppointment.ADDRESS_ID,id);
+                List<HouseAppointment> houseAppointments = houseAppointmentMapper.selectList(appointmentQueryWrapper);
+                if (houseAppointments!=null&&houseAppointments.size()>0){
+                    houseRentAssetModel.setUserAppointment(true);
+                }
+
             }
 
             HouseAssetModel houseAssetModel = queryHouseAssetDao.queryMasterModel(houseRentAssetModel.getAssetId());
