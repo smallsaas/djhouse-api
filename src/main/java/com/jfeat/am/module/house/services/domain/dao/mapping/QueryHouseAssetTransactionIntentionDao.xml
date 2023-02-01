@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com/jfeat/am/module/house/services/domain/dao/QueryHouseAssetTransactionIntentionDao">
+    <sql id="Base_column">
+        `t_house_asset_transaction_intention`.`id`,
+        `t_house_asset_transaction_intention`.`transaction_id` AS transactionId,
+        `t_house_asset_transaction_intention`.`user_id` AS userId,
+        `t_house_asset_transaction_intention`.`note`
+    </sql>
+
+</mapper>

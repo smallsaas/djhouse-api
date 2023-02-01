@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 /**
- * @description: 房屋买卖-用户感兴趣意向记录表`t_house_asset_transaction_intention`实体类
+ * @description: 房屋买卖-用户"有意向"记录表，`t_house_asset_transaction_intention`实体类
  * @project: djhouse-api
  * @version: 1.0
  * @date: 2023/1/30 11:37
