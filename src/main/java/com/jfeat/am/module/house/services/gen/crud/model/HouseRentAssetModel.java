@@ -14,9 +14,15 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
  */
 public class HouseRentAssetModel extends HouseRentAsset{
 
+//    用户是否预约
+    private Boolean userAppointment;
 
 
+    public Boolean getUserAppointment() {
+        return userAppointment;
+    }
 
-
-
+    public void setUserAppointment(Boolean userAppointment) {
+        this.userAppointment = userAppointment;
+    }
 }
