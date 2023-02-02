@@ -19,7 +19,7 @@
             t_house_asset_transaction.start_floor AS startFloor,
             t_house_asset_transaction.end_floor AS endFloor,
             t_house_asset_transaction.direction,
-            t_house_asset_transaction.`price`
+            t_house_asset_transaction.price
     </sql>
 
 
@@ -182,6 +182,15 @@
     -->
         ORDER BY t_house_asset_transaction. create_time DESC,t_house_asset_transaction.update_time DESC
 
+    </select>
+
+    <select id="listPriceOfTransaction" resultType="BigDecimal">
+        SELECT
+            `price`
+        FROM
+            `t_house_asset_transaction`
+        WHERE
+            `price` > 0.00
     </select>
 
 
