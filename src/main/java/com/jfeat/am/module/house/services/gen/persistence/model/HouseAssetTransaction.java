@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -75,6 +76,17 @@ public class HouseAssetTransaction extends Model<HouseAssetTransaction> {
 
     // 出售 - 自定义楼层
     private String customFloor;
+
+    // 价格
+    private BigDecimal price;
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
     public String getCustomFloor() {
         return customFloor;

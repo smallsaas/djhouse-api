@@ -15,7 +15,7 @@
 
     <insert id="saveTransactionIntention" >
         INSERT IGNORE INTO
-            <include refid="table_name" />
+            `t_house_asset_transaction_intention`
         VALUES
             (
             id,
@@ -24,5 +24,32 @@
             #{transactionIntention.note}
             )
     </insert>
+
+    <select id="existsTransactionIntention" resultType="Boolean">
+        SELECT EXISTS(
+            SELECT
+            <include refid="Base_column" />
+            FROM
+            `t_house_asset_transaction_intention`
+            <where>
+                <if test="transactionIntention.id != null">
+                    AND `t_house_asset_transaction_intention`.`id` = #{transactionIntention.id}
+                </if>
+
+                <if test="transactionIntention.transactionId != null">
+                    AND `t_house_asset_transaction_intention`.`transaction_id` = #{transactionIntention.transactionId}
+                </if>
+
+                <if test="transactionIntention.userId != null">
+                    AND `t_house_asset_transaction_intention`.`user_id` = #{transactionIntention.userId}
+                </if>
+
+                <if test="transactionIntention.note != null and transactionIntention.note != ''">
+                    AND `t_house_asset_transaction_intention`.`note` = #{transactionIntention.note}
+                </if>
+            </where>
+
+                   )
+    </select>
 
 </mapper>

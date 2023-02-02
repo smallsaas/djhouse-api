@@ -12,4 +12,6 @@ import com.jfeat.am.module.house.services.domain.model.HouseAssetTransactionInte
 public interface HouseAssetTransactionIntentionService {
 
     Integer saveTransactionIntention(HouseAssetTransactionIntentionRecord transactionIntention);
+
+    Boolean existsTransactionIntention(HouseAssetTransactionIntentionRecord transactionIntention);
 }

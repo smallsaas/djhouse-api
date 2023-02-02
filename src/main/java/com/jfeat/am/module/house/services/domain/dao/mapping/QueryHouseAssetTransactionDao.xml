@@ -17,8 +17,9 @@
             t_house_asset_transaction.building,
             t_house_asset_transaction.unit ,
             t_house_asset_transaction.start_floor AS startFloor,
-             t_house_asset_transaction.end_floor AS endFloor,
-             t_house_asset_transaction.direction
+            t_house_asset_transaction.end_floor AS endFloor,
+            t_house_asset_transaction.direction,
+            t_house_asset_transaction.`price`
     </sql>
 
 
@@ -110,6 +111,7 @@
         <result column="endFloor" property="endFloor" />
         <result column="direction" property="direction" />
         <result column="customFloor" property="customFloor" />
+        <result column="price" property="price" />
 
 
         <result column="userPhone" property="userPhone" />

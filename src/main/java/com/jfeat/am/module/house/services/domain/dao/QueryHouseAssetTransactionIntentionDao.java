@@ -15,4 +15,6 @@ import org.apache.ibatis.annotations.Param;
 public interface QueryHouseAssetTransactionIntentionDao extends QueryMasterDao<HouseAssetTransactionIntention> {
 
     Integer saveTransactionIntention(@Param("transactionIntention") HouseAssetTransactionIntentionRecord transactionIntention);
+
+    Boolean existsTransactionIntention(@Param("transactionIntention") HouseAssetTransactionIntentionRecord transactionIntention);
 }

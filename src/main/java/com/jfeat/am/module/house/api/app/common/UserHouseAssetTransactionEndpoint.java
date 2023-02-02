@@ -6,7 +6,9 @@ import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.definition.HouseAssetTransactionStatus;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetTransactionDao;
+import com.jfeat.am.module.house.services.domain.model.HouseAssetTransactionIntentionRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetTransactionRecord;
+import com.jfeat.am.module.house.services.domain.service.HouseAssetTransactionIntentionService;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetTransactionService;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetTransactionMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
@@ -37,6 +39,9 @@ public class UserHouseAssetTransactionEndpoint {
 
     @Resource
     HouseAssetTransactionService houseAssetTransactionService;
+
+    @Resource
+    HouseAssetTransactionIntentionService houseAssetTransactionIntentionService;
 
     @Resource
     QueryHouseAssetTransactionDao queryHouseAssetTransactionDao;
@@ -211,6 +216,7 @@ public class UserHouseAssetTransactionEndpoint {
                                               @RequestParam(name = "orderBy", required = false) String orderBy,
                                               @RequestParam(name = "sort", required = false) String sort) {
 
+        // 判断排序参数
         if (orderBy != null && orderBy.length() > 0) {
             if (sort != null && sort.length() > 0) {
                 String sortPattern = "(ASC|DESC|asc|desc)";
@@ -222,6 +228,8 @@ public class UserHouseAssetTransactionEndpoint {
             }
             orderBy = "`" + orderBy + "`" + " " + sort;
         }
+
+        // 分页
         page.setCurrent(pageNum);
         page.setSize(pageSize);
 
@@ -234,8 +242,17 @@ public class UserHouseAssetTransactionEndpoint {
         record.setCreateTime(createTime);
         record.setUpdateTime(updateTime);
 
-
+        // 查询transaction所有记录
         List<HouseAssetTransactionRecord> houseAssetTransactionPage = queryHouseAssetTransactionDao.findHouseAssetTransactionPageDetail(page, record, tag, search, orderBy, null, null);
+        // 查询该用户是否已经关注了订单
+        HouseAssetTransactionIntentionRecord transactionIntention = new HouseAssetTransactionIntentionRecord();
+        if (userId == null) userId = JWTKit.getUserId();
+        for (HouseAssetTransactionRecord transaction : houseAssetTransactionPage) {
+            transactionIntention.setTransactionId(transaction.getId());
+            transactionIntention.setUserId(userId);
+            Boolean existsFollow =  houseAssetTransactionIntentionService.existsTransactionIntention(transactionIntention);
+            transaction.setExistsFollow(existsFollow);
+        }
 
         houseAssetTransactionService.setStatus(houseAssetTransactionPage);
 
