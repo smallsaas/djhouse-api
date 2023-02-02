@@ -21,9 +21,19 @@ public class HouseRentAssetRecord extends HouseRentAsset {
 
     private String houseType;
 
+    private String houseTypeDescription;
+
     private String landlordName;
 
     private String landlordRealName;
+
+    public String getHouseTypeDescription() {
+        return houseTypeDescription;
+    }
+
+    public void setHouseTypeDescription(String houseTypeDescription) {
+        this.houseTypeDescription = houseTypeDescription;
+    }
 
     // 用户id
     private Long userId;
