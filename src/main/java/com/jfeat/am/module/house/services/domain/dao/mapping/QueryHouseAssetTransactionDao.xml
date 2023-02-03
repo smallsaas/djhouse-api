@@ -190,7 +190,7 @@
         FROM
             `t_house_asset_transaction`
         WHERE
-            `price` > 0.00
+            `state` = 1 AND `price` > 0.00
     </select>
 
 

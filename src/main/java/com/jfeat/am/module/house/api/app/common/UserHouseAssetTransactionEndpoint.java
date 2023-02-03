@@ -260,4 +260,9 @@ public class UserHouseAssetTransactionEndpoint {
 
         return SuccessTip.create(page);
     }
+
+    @GetMapping("/priceList")
+    public Tip queryPriceList() {
+        return SuccessTip.create(houseAssetTransactionService.listPriceOfTransaction());
+    }
 }

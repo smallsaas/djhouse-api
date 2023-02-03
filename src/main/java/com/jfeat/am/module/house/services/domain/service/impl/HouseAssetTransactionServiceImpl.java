@@ -1,11 +1,14 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
 import com.jfeat.am.module.house.services.definition.HouseAssetTransactionStatus;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetTransactionDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetTransactionRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetTransactionService;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHouseAssetTransactionServiceImpl;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetTransaction;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -19,6 +22,9 @@ import java.util.List;
 
 @Service("houseAssetTransactionService")
 public class HouseAssetTransactionServiceImpl extends CRUDHouseAssetTransactionServiceImpl implements HouseAssetTransactionService {
+
+    @Resource
+    QueryHouseAssetTransactionDao queryHouseAssetTransactionDao;
 
     @Override
     protected String entityName() {
@@ -61,5 +67,10 @@ public class HouseAssetTransactionServiceImpl extends CRUDHouseAssetTransactionS
                 houseAssetTransaction.setCnStatus(cnStatus);
             }
         }
+    }
+
+    @Override
+    public List<BigDecimal> listPriceOfTransaction() {
+        return queryHouseAssetTransactionDao.listPriceOfTransaction();
     }
 }
