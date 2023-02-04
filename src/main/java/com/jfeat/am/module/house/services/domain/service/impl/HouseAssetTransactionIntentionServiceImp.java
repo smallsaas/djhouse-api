@@ -2,12 +2,15 @@ package com.jfeat.am.module.house.services.domain.service.impl;
 
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetTransactionIntentionDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetTransactionIntentionRecord;
+import com.jfeat.am.module.house.services.domain.service.EndpointUserService;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetTransactionIntentionService;
+import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +25,9 @@ public class HouseAssetTransactionIntentionServiceImp implements HouseAssetTrans
 
     @Resource
     QueryHouseAssetTransactionIntentionDao queryHouseAssetTransactionIntentionDao;
+
+    @Resource
+    EndpointUserService endpointUserService;
 
     @Override
     public Integer saveTransactionIntention(HouseAssetTransactionIntentionRecord transactionIntention) {
@@ -38,7 +44,19 @@ public class HouseAssetTransactionIntentionServiceImp implements HouseAssetTrans
     }
 
     @Override
-    public List<HouseAssetTransactionIntentionRecord> listUser(Long transactionId) {
-        return queryHouseAssetTransactionIntentionDao.listUser(transactionId);
+    public List<EndpointUserModel> listUser(Long transactionId) {
+
+        // 获取 transactionId下的所有userId
+        List<HouseAssetTransactionIntentionRecord>  TransactionIntentionList = queryHouseAssetTransactionIntentionDao.listUser(transactionId);
+
+        // 循环获取每个用户信息
+        List<EndpointUserModel> userList = new ArrayList<>();
+        for (int i = 0; i < TransactionIntentionList.size(); i++) {
+            if (TransactionIntentionList.get(i).getUserId() != null) {
+               userList.add(endpointUserService.listUser(TransactionIntentionList.get(i).getUserId()));
+            }
+        }
+
+        return userList;
     }
 }

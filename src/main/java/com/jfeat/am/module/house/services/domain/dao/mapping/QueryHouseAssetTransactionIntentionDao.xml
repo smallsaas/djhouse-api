@@ -10,16 +10,9 @@
         `t_house_asset_transaction_intention`.`id`,
         `t_house_asset_transaction_intention`.`transaction_id` AS transactionId,
         `t_house_asset_transaction_intention`.`user_id` AS userId,
-        `t_house_asset_transaction_intention`.`note`
+        `t_house_asset_transaction_intention`.`note`,
+        `t_house_asset_transaction_intention`.`status`
     </sql>
-
-    <resultMap id="listUserMap" type="HouseAssetTransactionIntentionRecord">
-        <id column="id" property="id"/>
-        <result column="transaction_id" property="transactionId" />
-        <result column="user_id" property="userId" />
-        <result column="note" property="note" />
-        <collection property="userList" column="id" ofType="EndpointUserModel" select="com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao.queryMasterModel"/>
-    </resultMap>
 
     <insert id="saveTransactionIntention" >
         INSERT IGNORE INTO
@@ -29,7 +22,8 @@
             id,
             #{transactionIntention.transactionId},
             #{transactionIntention.userId},
-            #{transactionIntention.note}
+            #{transactionIntention.note},
+            status
             )
     </insert>
 
@@ -60,7 +54,7 @@
                    )
     </select>
     
-    <select id="listUser" resultType="listUserMap">
+    <select id="listUser" resultType="HouseAssetTransactionIntentionRecord">
         SELECT 
             <include refid="Base_column" />
         FROM

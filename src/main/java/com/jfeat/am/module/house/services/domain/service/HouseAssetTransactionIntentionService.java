@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.services.domain.service;
 
 import com.jfeat.am.module.house.services.domain.model.HouseAssetTransactionIntentionRecord;
+import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 
 import java.util.List;
 
@@ -22,5 +23,5 @@ public interface HouseAssetTransactionIntentionService {
      * @param transactionId
      * @return
      */
-    List<HouseAssetTransactionIntentionRecord> listUser(Long transactionId);
+    List<EndpointUserModel>  listUser(Long transactionId);
 }

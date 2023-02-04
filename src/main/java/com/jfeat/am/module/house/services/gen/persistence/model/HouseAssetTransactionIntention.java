@@ -40,6 +40,17 @@ public class HouseAssetTransactionIntention extends Model<HouseAssetTransactionI
     @ApiModelProperty(value = "备注")
     private String note;
 
+    // 是否开启
+    @ApiModelProperty(value = "是否开启")
+    private Integer status;
+
+    public Integer getStatus() {
+        return status;
+    }
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }
@@ -71,15 +82,5 @@ public class HouseAssetTransactionIntention extends Model<HouseAssetTransactionI
     @Override
     protected Serializable pkVal() {
         return this.id;
-    }
-
-    @Override
-    public String toString() {
-        return "HouseAssetTransactionIntention{" +
-                "id=" + id +
-                ", TransactionId=" + TransactionId +
-                ", userId=" + userId +
-                ", note='" + note + '\'' +
-                '}';
     }
 }
