@@ -1,6 +1,9 @@
 package com.jfeat.am.module.house.services.domain.model;
 
+import com.jfeat.am.module.house.services.gen.persistence.model.EndpointUser;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetTransactionIntention;
+
+import java.util.List;
 
 /**
  * @description: HouseAssetTransactionIntention封装类
@@ -13,4 +16,14 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetTransa
  */
 public class HouseAssetTransactionIntentionRecord extends HouseAssetTransactionIntention {
 
+    // 用户列表
+    private List<EndpointUser> userList;
+
+    public List<EndpointUser> getUserList() {
+        return userList;
+    }
+
+    public void setUserList(List<EndpointUser> userList) {
+        this.userList = userList;
+    }
 }

@@ -40,4 +40,9 @@ public class UserHouseAssetTransactionIntentionEndpoint {
 
         return SuccessTip.create(affected);
     }
+
+    @GetMapping("/transactionId")
+    public Tip queryUser(@PathVariable Long transactionId) {
+        return SuccessTip.create(transactionIntentionService.listUser(transactionId));
+    }
 }

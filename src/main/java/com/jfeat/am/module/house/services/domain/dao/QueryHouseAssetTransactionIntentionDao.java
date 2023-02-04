@@ -5,6 +5,8 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetTransa
 import com.jfeat.crud.plus.QueryMasterDao;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * @description: 房屋买卖-用户"有意向"记录表，`t_house_asset_transaction_intention`mapper
  * @project: djhouse-api
@@ -17,4 +19,11 @@ public interface QueryHouseAssetTransactionIntentionDao extends QueryMasterDao<H
     Integer saveTransactionIntention(@Param("transactionIntention") HouseAssetTransactionIntentionRecord transactionIntention);
 
     Boolean existsTransactionIntention(@Param("transactionIntention") HouseAssetTransactionIntentionRecord transactionIntention);
+
+    /**
+     * 根据 transactionId 获取用户列表
+     * @param transactionId
+     * @return
+     */
+    List<HouseAssetTransactionIntentionRecord> listUser(@Param("transactionId") Long transactionId);
 }

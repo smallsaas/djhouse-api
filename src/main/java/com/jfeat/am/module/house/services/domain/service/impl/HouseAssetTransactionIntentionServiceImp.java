@@ -8,6 +8,7 @@ import com.jfeat.crud.base.exception.BusinessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @description: 房屋买卖-用户"有意向"记录表，`t_house_asset_transaction_intention`service
@@ -34,5 +35,10 @@ public class HouseAssetTransactionIntentionServiceImp implements HouseAssetTrans
             transactionIntention.getUserId() == null
         ) throw new BusinessException(BusinessCode.InvalidKey,"无意义查询，请检查是否缺失必要参数：id、TransactionId、UserId");
         return queryHouseAssetTransactionIntentionDao.existsTransactionIntention(transactionIntention);
+    }
+
+    @Override
+    public List<HouseAssetTransactionIntentionRecord> listUser(Long transactionId) {
+        return queryHouseAssetTransactionIntentionDao.listUser(transactionId);
     }
 }
