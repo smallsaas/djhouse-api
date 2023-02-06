@@ -44,4 +44,8 @@ public interface QueryHouseAssetTransactionDao extends QueryMasterDao<HouseAsset
      * 查询所有价格（price） > 0.00的记录
      */
     List<BigDecimal> listPriceOfTransaction();
+
+    List<HouseAssetTransactionRecord> listTransaction(@Param("userId") Long userId);
+
+    Integer updateDisplay(@Param("transaction") HouseAssetTransactionRecord transaction);
 }

@@ -73,4 +73,14 @@ public class HouseAssetTransactionServiceImpl extends CRUDHouseAssetTransactionS
     public List<BigDecimal> listPriceOfTransaction() {
         return queryHouseAssetTransactionDao.listPriceOfTransaction();
     }
+
+    @Override
+    public List<HouseAssetTransactionRecord> listTransaction(Long userId) {
+        return queryHouseAssetTransactionDao.listTransaction(userId);
+    }
+
+    @Override
+    public Integer updateDisplay(HouseAssetTransactionRecord transaction) {
+        return queryHouseAssetTransactionDao.updateDisplay(transaction);
+    }
 }

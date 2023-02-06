@@ -63,4 +63,13 @@
             `transaction_id` = #{transactionId}
     </select>
 
+    <select id="countUser" resultType="Integer">
+        SELECT
+            COUNT(`user_id`)
+        FROM
+            `t_house_asset_transaction_intention`
+        WHERE
+            `transaction_id` = #{transactionId}
+    </select>
+
 </mapper>

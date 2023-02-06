@@ -10,6 +10,16 @@ public class HouseAssetTransactionRecord extends HouseAssetTransaction{
     // 是否已关注
     private Boolean existsFollow;
 
+    // 关注数
+    private Integer followNumber;
+
+    public Integer getFollowNumber() {
+        return followNumber;
+    }
+    public void setFollowNumber(Integer followNumber) {
+        this.followNumber = followNumber;
+    }
+
     public Boolean getExistsFollow() {
        return this.existsFollow;
     }

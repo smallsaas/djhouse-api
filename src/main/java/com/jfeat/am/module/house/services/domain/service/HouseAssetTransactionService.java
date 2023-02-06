@@ -20,4 +20,17 @@ public interface HouseAssetTransactionService extends CRUDHouseAssetTransactionS
      * @return 价格列表
      */
     List<BigDecimal> listPriceOfTransaction();
+
+    /**
+     * 获取我的所有房屋转让记录
+     * @param userId
+     * @return
+     */
+    List<HouseAssetTransactionRecord> listTransaction(Long userId);
+
+    /**
+     * 修改transaction.display(是否显示字段)，1=显示，0=不显示
+     * @return
+     */
+    Integer updateDisplay(HouseAssetTransactionRecord transaction);
 }

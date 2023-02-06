@@ -26,4 +26,6 @@ public interface QueryHouseAssetTransactionIntentionDao extends QueryMasterDao<H
      * @return
      */
     List<HouseAssetTransactionIntentionRecord> listUser(@Param("transactionId") Long transactionId);
+
+    Integer countUser(@Param("transactionId") Long transactionId);
 }

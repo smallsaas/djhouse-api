@@ -80,6 +80,16 @@ public class HouseAssetTransaction extends Model<HouseAssetTransaction> {
     // 价格
     private BigDecimal price;
 
+    // 是否显示
+    private Integer display;
+
+    public Integer getDisplay() {
+        return display;
+    }
+    public void setDisplay(Integer display) {
+        this.display = display;
+    }
+
     public BigDecimal getPrice() {
         return price;
     }

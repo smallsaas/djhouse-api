@@ -19,7 +19,8 @@
             t_house_asset_transaction.start_floor AS startFloor,
             t_house_asset_transaction.end_floor AS endFloor,
             t_house_asset_transaction.direction,
-            t_house_asset_transaction.price
+            t_house_asset_transaction.price,
+            t_house_asset_transaction.display
     </sql>
 
 
@@ -112,12 +113,14 @@
         <result column="direction" property="direction" />
         <result column="customFloor" property="customFloor" />
         <result column="price" property="price" />
+        <result column="display" property="display"/>
 
 
         <result column="userPhone" property="userPhone" />
         <result column="userRealName" property="userRealName" />
         <result column="userName" property="userName" />
         <association property="houseAsset" select="com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao.queryHouseAssetById" column="assetId"></association>
+        <collection property="followNumber" select="com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetTransactionIntentionDao.countUser" column="id"/>
     </resultMap>
 
 
@@ -133,6 +136,9 @@
 
         WHERE 1=1
 
+        <if test="record.display != null">
+            AND t_house_asset_transaction.display = #{record.display}
+        </if>
 
         <if test="record.id != null and record.id>0 ">
             AND t_house_asset_transaction.id = #{record.id}
@@ -181,7 +187,6 @@
     </if>
     -->
         ORDER BY t_house_asset_transaction. create_time DESC,t_house_asset_transaction.update_time DESC
-
     </select>
 
     <select id="listPriceOfTransaction" resultType="BigDecimal">
@@ -193,5 +198,25 @@
             `state` = 1 AND `price` > 0.00
     </select>
 
+    <select id="listTransaction" resultMap="HouseAssetTransactionMap" >
+        SELECT
+            <include refid="Base_Column_List"/>,`t_end_user`.`name` as userName,`t_end_user`.`phone` as userPhone,`t_end_user`.`real_name` as userRealName,`t_end_user`.`end_login_time` as endLoginTime
+
+        FROM
+            `t_house_asset_transaction`
+        JOIN
+            `t_end_user` ON `t_end_user`.`id` = `t_house_asset_transaction`.`user_id`
+        WHERE
+            `t_house_asset_transaction`.`user_id` = #{userId}
+    </select>
+
+    <update id="updateDisplay">
+        UPDATE
+            `t_house_asset_transaction`
+        SET
+            `display` = #{transaction.display}
+        WHERE
+            `t_house_asset_transaction`.`id` = #{transaction.id} AND `t_house_asset_transaction`.`user_id` = #{transaction.userId}
+    </update>
 
 </mapper>

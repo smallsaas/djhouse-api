@@ -3,6 +3,7 @@ package com.jfeat.am.module.house.api.app.common;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.core.model.EndUserTypeSetting;
 import com.jfeat.am.module.house.services.definition.HouseAssetTransactionStatus;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetTransactionDao;
@@ -18,6 +19,9 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.users.account.services.domain.service.UserAccountService;
+import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
+import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -51,6 +55,11 @@ public class UserHouseAssetTransactionEndpoint {
 
     @Resource
     HouseUserAssetMapper houseUserAssetMapper;
+
+    @Resource
+    UserAccountMapper userAccountMapper;
+    @Resource
+    UserAccountService userAccountService;
 
 
     @PostMapping
@@ -241,9 +250,91 @@ public class UserHouseAssetTransactionEndpoint {
         record.setNote(note);
         record.setCreateTime(createTime);
         record.setUpdateTime(updateTime);
+        // 设置 display(是否显示) = 1,该方法内只需要返回display = 1的记录
+        record.setDisplay(1);
 
         // 查询transaction所有记录
         List<HouseAssetTransactionRecord> houseAssetTransactionPage = queryHouseAssetTransactionDao.findHouseAssetTransactionPageDetail(page, record, tag, search, orderBy, null, null);
+
+        // 查询该用户是否已经关注了订单
+        HouseAssetTransactionIntentionRecord transactionIntention = new HouseAssetTransactionIntentionRecord();
+        if (userId == null) userId = JWTKit.getUserId();
+        for (HouseAssetTransactionRecord transaction : houseAssetTransactionPage) {
+            transactionIntention.setTransactionId(transaction.getId());
+            transactionIntention.setUserId(userId);
+            Boolean existsFollow =  houseAssetTransactionIntentionService.existsTransactionIntention(transactionIntention);
+            transaction.setExistsFollow(existsFollow);
+        }
+
+        houseAssetTransactionService.setStatus(houseAssetTransactionPage);
+
+        page.setRecords(houseAssetTransactionPage);
+
+        return SuccessTip.create(page);
+    }
+
+    @GetMapping("/sales")
+    public Tip queryTransactionPage(Page<HouseAssetTransactionRecord> page,
+                                    @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                    @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                    // for tag feature query
+                                    @RequestParam(name = "tag", required = false) String tag,
+                                    // end tag
+                                    @RequestParam(name = "search", required = false) String search,
+
+                                    @RequestParam(name = "userId", required = false) Long userId,
+
+                                    @RequestParam(name = "assetId", required = false) Long assetId,
+
+                                    @RequestParam(name = "houseType", required = false) String houseType,
+
+                                    @RequestParam(name = "state", required = false) Integer state,
+
+                                    @RequestParam(name = "note", required = false) String note,
+
+                                    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                        @RequestParam(name = "createTime", required = false) Date createTime,
+
+                                    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                        @RequestParam(name = "updateTime", required = false) Date updateTime,
+                                    @RequestParam(name = "orderBy", required = false) String orderBy,
+                                    @RequestParam(name = "sort", required = false) String sort) {
+
+        // 销售权限判断
+        Integer userType = JWTKit.getType();
+        if (userType == null) throw new BusinessException(BusinessCode.AuthorizationError,"用户类型为null");
+        List<Integer> typeList = userAccountService.getUserTypeList(userType);
+        if (!(typeList.contains(EndUserTypeSetting.USER_TYPE_SALES))) throw new BusinessException(BusinessCode.NoPermission,"没有销售权限");
+
+        // 判断排序参数
+        if (orderBy != null && orderBy.length() > 0) {
+            if (sort != null && sort.length() > 0) {
+                String sortPattern = "(ASC|DESC|asc|desc)";
+                if (!sort.matches(sortPattern)) {
+                    throw new BusinessException(BusinessCode.BadRequest.getCode(), "sort must be ASC or DESC");//此处异常类型根据实际情况而定
+                }
+            } else {
+                sort = "ASC";
+            }
+            orderBy = "`" + orderBy + "`" + " " + sort;
+        }
+
+        // 分页
+        page.setCurrent(pageNum);
+        page.setSize(pageSize);
+
+        HouseAssetTransactionRecord record = new HouseAssetTransactionRecord();
+        record.setUserId(userId);
+        record.setAssetId(assetId);
+        record.setHouseType(houseType);
+        record.setState(state);
+        record.setNote(note);
+        record.setCreateTime(createTime);
+        record.setUpdateTime(updateTime);
+
+        // 查询transaction所有记录
+        List<HouseAssetTransactionRecord> houseAssetTransactionPage = queryHouseAssetTransactionDao.findHouseAssetTransactionPageDetail(page, record, tag, search, orderBy, null, null);
+
         // 查询该用户是否已经关注了订单
         HouseAssetTransactionIntentionRecord transactionIntention = new HouseAssetTransactionIntentionRecord();
         if (userId == null) userId = JWTKit.getUserId();
@@ -264,5 +355,42 @@ public class UserHouseAssetTransactionEndpoint {
     @GetMapping("/priceList")
     public Tip queryPriceList() {
         return SuccessTip.create(houseAssetTransactionService.listPriceOfTransaction());
+    }
+
+    @GetMapping("/myTransactions")
+    public Tip queryMyTransactions() {
+        // 从token中获取id
+        Long userId = JWTKit.getUserId();
+        if (userId==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+
+
+        // 获取我的记录
+        List<HouseAssetTransactionRecord> myTransactions = houseAssetTransactionService.listTransaction(userId);
+        /**
+         * 根据state判断状态，需求 or 转让
+         * 该方法有非常大的优化空间，可根据state就可以直接判断状态，可是因为前端对接的时候已经使用了cnStatus，enStatus这两个字段，
+         * 所以为了先不影响前端使用继续使用该方法，后续可在前端修改逻辑后去掉此方法
+         */
+        houseAssetTransactionService.setStatus(myTransactions);
+
+        return SuccessTip.create(myTransactions);
+    }
+
+    @PostMapping("/updateTransactionDisplay/{transactionId}")
+    public Tip updateTransactionDisplay(@PathVariable Long transactionId,@RequestBody HouseAssetTransactionRecord transaction) {
+        Long userId = JWTKit.getUserId();
+        if (userId==null) throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        if (transaction.getDisplay() == null || (transaction.getDisplay() != 1 && transaction.getDisplay() != 0) ) throw new BusinessException(BusinessCode.BadRequest,"display不能为空，并且值只能为1 或者 0");
+
+        // 封装参数
+        transaction.setId(transactionId);
+        transaction.setUserId(userId);
+
+        Integer affected =  houseAssetTransactionService.updateDisplay(transaction);
+        if (affected < 1) throw new BusinessException(BusinessCode.DatabaseUpdateError,"更新失败");
+
+        return SuccessTip.create(affected);
     }
 }
