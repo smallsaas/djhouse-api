@@ -41,6 +41,12 @@ public class UserHouseAssetTransactionIntentionEndpoint {
         return SuccessTip.create(affected);
     }
 
+    /**
+     * 返回指定订单的关注用户
+     *
+     * @param transactionId 要查询的订单id
+     * @return 用户列表
+     */
     @GetMapping("/{transactionId}")
     public Tip queryUser(@PathVariable Long transactionId) {
         return SuccessTip.create(transactionIntentionService.listUser(transactionId));

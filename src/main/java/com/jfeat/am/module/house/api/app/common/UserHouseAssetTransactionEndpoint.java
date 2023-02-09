@@ -207,7 +207,8 @@ public class UserHouseAssetTransactionEndpoint {
                                               // end tag
                                               @RequestParam(name = "search", required = false) String search,
 
-                                              @RequestParam(name = "userId", required = false) Long userId,
+                                              // 该方法不再提供userId的插叙
+//                                              @RequestParam(name = "userId", required = false) Long userId,
 
                                               @RequestParam(name = "assetId", required = false) Long assetId,
 
@@ -243,6 +244,8 @@ public class UserHouseAssetTransactionEndpoint {
         page.setSize(pageSize);
 
         HouseAssetTransactionRecord record = new HouseAssetTransactionRecord();
+        // 该方法默认获取非当前用户的记录
+        Long userId = JWTKit.getUserId();
         record.setUserId(userId);
         record.setAssetId(assetId);
         record.setHouseType(houseType);
@@ -258,7 +261,6 @@ public class UserHouseAssetTransactionEndpoint {
 
         // 查询该用户是否已经关注了订单
         HouseAssetTransactionIntentionRecord transactionIntention = new HouseAssetTransactionIntentionRecord();
-        if (userId == null) userId = JWTKit.getUserId();
         for (HouseAssetTransactionRecord transaction : houseAssetTransactionPage) {
             transactionIntention.setTransactionId(transaction.getId());
             transactionIntention.setUserId(userId);
@@ -282,7 +284,7 @@ public class UserHouseAssetTransactionEndpoint {
                                     // end tag
                                     @RequestParam(name = "search", required = false) String search,
 
-                                    @RequestParam(name = "userId", required = false) Long userId,
+//                                    @RequestParam(name = "userId", required = false) Long userId,
 
                                     @RequestParam(name = "assetId", required = false) Long assetId,
 
@@ -324,7 +326,7 @@ public class UserHouseAssetTransactionEndpoint {
         page.setSize(pageSize);
 
         HouseAssetTransactionRecord record = new HouseAssetTransactionRecord();
-        record.setUserId(userId);
+//        record.setUserId(userId);
         record.setAssetId(assetId);
         record.setHouseType(houseType);
         record.setState(state);
@@ -337,7 +339,7 @@ public class UserHouseAssetTransactionEndpoint {
 
         // 查询该用户是否已经关注了订单
         HouseAssetTransactionIntentionRecord transactionIntention = new HouseAssetTransactionIntentionRecord();
-        if (userId == null) userId = JWTKit.getUserId();
+        Long userId = JWTKit.getUserId();
         for (HouseAssetTransactionRecord transaction : houseAssetTransactionPage) {
             transactionIntention.setTransactionId(transaction.getId());
             transactionIntention.setUserId(userId);
