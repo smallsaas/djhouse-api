@@ -244,7 +244,7 @@ public class UserHouseAssetTransactionEndpoint {
         page.setSize(pageSize);
 
         HouseAssetTransactionRecord record = new HouseAssetTransactionRecord();
-        // 该方法默认获取非当前用户的记录
+        // 该方法默认获取非当前用户的订单记录
         Long userId = JWTKit.getUserId();
         record.setUserId(userId);
         record.setAssetId(assetId);
