@@ -46,8 +46,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -167,7 +166,8 @@ public class UserAgentRentManageEndpoint {
                                        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                        @RequestParam(name = "shelvesTime", required = false) Date shelvesTime,
                                        @RequestParam(name = "orderBy", required = false) String orderBy,
-                                       @RequestParam(name = "sort", required = false) String sort) {
+                                       @RequestParam(name = "sort", required = false) String sort,
+                                       @RequestParam(name = "additionalQuery", required = false, defaultValue = "false") Boolean additionalQuery) {
 
 
         if (JWTKit.getUserId() == null) {
@@ -190,18 +190,51 @@ public class UserAgentRentManageEndpoint {
         record.setLandlordName(landlordName);
         record.setLandlordRealName(landlordRealName);
 
-
+        // 查询当前访问用户信息
         UserAccount userAccount = userAccountMapper.selectById(JWTKit.getUserId());
         List<Integer> typeList = null;
+        // 获取用户类型列表
         if (userAccount.getType() != null) {
             typeList = userAccountService.getUserTypeList(userAccount.getType());
         }
+        // 判断类型是否有销售
+        // 是销售则查询所有房源
         if (typeList != null && typeList.contains(EndUserTypeSetting.USER_TYPE_SALES)) {
             record.setServerId(null);
         } else {
+        // 不是销售，只能查看自己的房源
             record.setServerId(JWTKit.getUserId());
         }
 
+        /**
+         * 判断是否使用精准查询
+         *
+         * 精准查询是从前端设置，并缓存在redis中的字段值，如果使用则从redis中取出使用
+         */
+        // 判断additionalQuery是否为true
+        if (additionalQuery) {
+            Map<Object,Object> accurateFields =  houseRentAssetService.listAccurateField();
+            if (accurateFields.size() > 0) {
+                Iterator<Map.Entry<Object,Object>> entries = accurateFields.entrySet().iterator();
+                while (entries.hasNext()) {
+                    Map.Entry<Object,Object> entry = entries.next();
+                    // 如果值为""空串，无需再做判断，结束此次循环
+                    if ("".equals(entry.getValue())) continue;
+                    // 判断 楼栋，单元，朝向，楼层
+                    if ("buildings".equals(entry.getKey())) {
+                        record.setBuildings(String.valueOf(entry.getValue()).split(","));
+                    } else if ("units".equals(entry.getKey())) {
+                        record.setUnits(String.valueOf(entry.getValue()).split(","));
+                    } else if ("towards".equals(entry.getKey())) {
+                        record.setTowards(String.valueOf(entry.getValue()).split(","));
+                    } else if ("startFloor".equals(entry.getKey())) {
+                        record.setStartFloor(Integer.valueOf(String.valueOf(entry.getValue())));
+                    } else if ("endFloor".equals(entry.getKey())) {
+                        record.setEndFloor(Integer.valueOf(String.valueOf(entry.getValue())));
+                    }
+                }
+            }
+        }
 
         record.setCover(cover);
         record.setTitle(title);
@@ -252,6 +285,28 @@ public class UserAgentRentManageEndpoint {
 
         System.out.println("统计时间" + (System.currentTimeMillis() - start));
         return SuccessTip.create(page);
+    }
+
+    /**
+     * 保存精准查询的参数到redis[0]
+     *
+     * @param accurateField: 字符串键值对map集合，要求key和value都为字符串
+     * @return  null
+     */
+    @PostMapping
+    public Tip updateAccurateFields(@RequestBody Map<String,String> accurateField) {
+        houseRentAssetService.saveAccurateQueryField(accurateField);
+        return SuccessTip.create();
+    }
+
+    /**
+     * 从redis中获取精准查询字段
+     *
+     * @return
+     */
+    @GetMapping("/getAccurateFields")
+    public Tip queryAccurateFields() {
+        return SuccessTip.create(houseRentAssetService.listAccurateField());
     }
 
 

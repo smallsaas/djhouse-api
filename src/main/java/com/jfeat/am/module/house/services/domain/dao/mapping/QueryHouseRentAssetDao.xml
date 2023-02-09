@@ -282,15 +282,34 @@
 
         WHERE 1=1
 
+        <!-- 精准查询，精准查询为list，动态循环插入 -->
+        <!-- 楼栋 -->
+        <if test="record.buildings != null and record.buildings.length >0">
+            AND
+                <foreach collection="record.buildings" item="item" open="(" separator="OR" close=")">
+                    `t_house_rent_asset`.`building_code` LIKE CONCAT('%',#{item},'%')
+                </foreach>
+        </if>
+        <!-- 朝向 -->
+        <if test="record.towards != null and record.towards.length > 0">
+            AND
+                <foreach collection="record.towards" item="item" open="(" separator="OR" close=")">
+                    `t_house_rent_asset`.`toward` LIKE CONCAT('%',#{item},'%')
+                </foreach>
+        </if>
+        <!-- 楼层 -->
+        <if test="record.startFloor != null and record.endFloor != null and record.startFloor lte record.startFloor">
+            AND (`t_house_rent_asset`.`floor` BETWEEN #{record.startFloor} AND #{record.endFloor})
+        </if>
+
+
         <if test="record.id != null and record.id>0 ">
             AND t_house_rent_asset.id =#{record.id}
         </if>
 
-
         <if test="record.assetId != null and record.assetId>0 ">
             AND t_house_rent_asset.asset_id =#{record.assetId}
         </if>
-
 
         <if test="record.communityId != null and record.communityId>0 ">
             AND t_house_property_community.id =#{record.communityId}
@@ -300,7 +319,6 @@
             AND t_house_rent_asset.community_name LIKE CONCAT('%',#{record.communityName},'%')
         </if>
 
-
         <if test="record.houseTypeId != null and record.houseTypeId>0 ">
             AND t_house_design_model.id =#{record.houseTypeId}
         </if>
@@ -308,7 +326,6 @@
         <if test="record.houseType != null and record.houseType!='' ">
             AND t_house_design_model.description LIKE CONCAT('%',#{record.houseType},'%')
         </if>
-
 
         <if test="record.landlordName != null and record.landlordName!='' ">
             AND loadord.name LIKE CONCAT('%',#{record.landlordName},'%')
@@ -318,13 +335,10 @@
             AND loadord.realName LIKE CONCAT('%',#{record.landlordRealName},'%')
         </if>
 
-
-
-
-
         <if test="record.landlordId != null and record.landlordId>0 ">
             AND t_house_rent_asset.landlord_id =#{record.landlordId}
         </if>
+
         <if test="record.area != null and record.area>0 ">
             AND t_house_rent_asset.area LIKE CONCAT('%',#{record.area},'%')
         </if>
@@ -332,11 +346,9 @@
             AND t_house_rent_asset.rate LIKE CONCAT('%',#{record.rate},'%')
         </if>
 
-
         <if test="record.introducePicture != null and record.introducePicture!= ''">
             AND t_house_rent_asset.introduce_picture LIKE CONCAT('%',#{record.introducePicture},'%')
         </if>
-
 
         <if test="record.serverId != null and record.serverId>0 ">
             AND t_house_rent_asset.server_id =#{record.serverId}
@@ -357,19 +369,17 @@
             AND t_house_rent_asset.rent_describe LIKE CONCAT('%',#{record.rentDescribe},'%')
         </if>
 
-
         <if test="record.rentStatus != null and record.rentStatus>0 ">
             AND t_house_rent_asset.rent_status LIKE CONCAT('%',#{record.rentStatus},'%')
         </if>
+
         <if test="record.note != null and record.note!= ''">
             AND t_house_rent_asset.note LIKE CONCAT('%',#{record.note},'%')
         </if>
 
-
         <if test="record.rentTime != null and record.rentTime>0 ">
             AND t_house_rent_asset.rent_time LIKE CONCAT('%',#{record.rentTime},'%')
         </if>
-
 
         <if test="record.shelvesTime != null and record.shelvesTime>0 ">
             AND t_house_rent_asset.shelves_time LIKE CONCAT('%',#{record.shelvesTime},'%')
