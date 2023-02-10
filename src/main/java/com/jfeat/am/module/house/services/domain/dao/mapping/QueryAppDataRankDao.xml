@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.QueryAppDataRankDao">
+
+    <sql id="Base_Column_List">
+        t_house_rent_asset.server_id
+    </sql>
+
+    <select id="findHouseRentAssetPage" resultType="HouseRentAssetRecord">
+        SELECT `server_id`, COUNT(`server_id`) as number,
+               `t_end_user`.`id` as userId, `t_end_user`.`name` as username,
+               `t_end_user`.`avatar` as userAvatar, `t_end_user`.`phone` as userPhone
+        FROM `t_house_rent_asset`
+        JOIN `t_end_user`
+        ON `server_id` = `t_end_user`.`id`
+        WHERE `t_end_user`.org_id = #{orgId}
+        <if test="search != null and search != ''">
+            AND t_end_user.name LIKE CONCAT('%',#{search},'%')
+        </if>
+        GROUP BY `server_id`
+        ORDER BY number DESC
+    </select>
+
+</mapper>

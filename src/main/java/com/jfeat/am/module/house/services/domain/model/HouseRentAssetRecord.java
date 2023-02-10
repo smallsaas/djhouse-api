@@ -27,6 +27,10 @@ public class HouseRentAssetRecord extends HouseRentAsset {
 
     private String landlordRealName;
 
+    private Integer number;
+
+    private Integer rank;
+
     public String getHouseTypeDescription() {
         return houseTypeDescription;
     }
@@ -117,5 +121,21 @@ public class HouseRentAssetRecord extends HouseRentAsset {
 
     public void setHouseAssetModel(HouseAssetModel houseAssetModel) {
         this.houseAssetModel = houseAssetModel;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 }

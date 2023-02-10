@@ -6,12 +6,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.module.house.services.domain.dao.QueryAppDataRankDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
-import com.jfeat.am.module.house.services.domain.model.HouseApplicationOperationsRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseRentAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
 import com.jfeat.am.module.house.services.utility.TenantUtility;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +43,9 @@ public class AppDataRankEndpoint {
     QueryHouseUserAssetDao queryHouseUserAssetDao;
 
     @Resource
+    QueryAppDataRankDao queryAppDataRankDao;
+
+    @Resource
     TenantUtility tenantUtility;
 
     /**
@@ -50,8 +54,14 @@ public class AppDataRankEndpoint {
      * @return
      */
     @GetMapping
-    public Tip getSaleRankList(@RequestParam(value = "search",required = false) String search){
+    public Tip getSaleRankList(
+            Page<HouseRentAssetRecord> page,
+            @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+            @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "search",required = false) String search
+    ){
 
+        Integer rank=1;
         Long userId = JWTKit.getUserId();
         if (userId==null){
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");
@@ -78,7 +88,6 @@ public class AppDataRankEndpoint {
         List<Map<String, Object>> maps = houseRentAssetMapper.selectMaps(rentAssetQueryWrapper);
 
         JSONArray jsonArray = new JSONArray();
-        Integer rank=1;
         for (Map<String,Object> map:maps){
             for (UserAccount userAccount:userAccountList){
                 if (userAccount.getId().equals((Long) map.get("server_id"))){
@@ -97,6 +106,20 @@ public class AppDataRankEndpoint {
             }
 
         }
+
+//        page.setCurrent(pageNum);
+//        page.setSize(pageSize);
+//        //分页处理
+//        List<HouseRentAssetRecord> houseRentAssetRecords = queryAppDataRankDao.findHouseRentAssetPage(page, orgId, search);
+//
+//        ///
+//        for (HouseRentAssetRecord item:houseRentAssetRecords){
+//            item.setRank(rank+=1);
+//        }
+//
+//
+//        page.setRecords(houseRentAssetRecords);
+//        return SuccessTip.create(page);
         return SuccessTip.create(jsonArray);
     }
 
