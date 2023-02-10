@@ -25,12 +25,14 @@ import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import io.swagger.models.auth.In;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -71,6 +73,9 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
 
     @Resource
     HouseRentLogService houseRentLogService;
+
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
 
     @Override
     protected String entityName() {
@@ -478,6 +483,35 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
 
         }
 
+    }
+
+    /**
+     * 插入值到redis[0]中，如果存在则覆盖，如果不存在则加入
+     *
+     * @param field 字段map: { "字段名" ："字段值"}
+     */
+    @Override
+    public void saveAccurateQueryField(Map<String, String> field) {
+        // 精准查询字段的key
+        String key = "accurate";
+        // opsForHash().putAll 以map集合的形式添加,没有的话插入，有的话覆盖
+        try {
+            stringRedisTemplate.opsForHash().putAll(key,field);
+        } catch (BusinessException businessException) {
+            throw new BusinessException(BusinessCode.DatabaseInsertError, "redis插入异常");
+        }
+    }
+
+    /**
+     * 在redis[0]中获取精准查询字段
+     *
+     * @return
+     */
+    @Override
+    public Map<Object,Object> listAccurateField() {
+        // 精准查询字段的key
+        String key = "accurate";
+        return stringRedisTemplate.opsForHash().entries(key);
     }
 
 

@@ -3,10 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>house</artifactId>
     <version>1.0.0</version>
-
 
     <parent>
         <groupId>com.jfeat</groupId>
@@ -17,22 +15,21 @@
 
     <properties>
         <skipStandalone>true</skipStandalone>
-
         <crud-dev.version>0.0.2</crud-dev.version>
     </properties>
 
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>javax.validation</groupId>-->
-<!--            <artifactId>validation-api</artifactId>-->
-<!--            <version>2.0.1.Final</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.jfeat</groupId>-->
-<!--            <artifactId>crud-dev</artifactId>-->
-<!--            <version>${crud-dev.version}</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>javax.validation</groupId>-->
+        <!--            <artifactId>validation-api</artifactId>-->
+        <!--            <version>2.0.1.Final</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.jfeat</groupId>-->
+        <!--            <artifactId>crud-dev</artifactId>-->
+        <!--            <version>${crud-dev.version}</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>crud-tag</artifactId>
@@ -44,8 +41,6 @@
             <artifactId>pom-dev-devops</artifactId>
             <version>0.0.1</version>
         </dependency>
-
-
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -64,7 +59,6 @@
             <artifactId>uaas</artifactId>
             <version>4.0.0</version>
         </dependency>
-
 
         <dependency>
             <groupId>com.jfeat</groupId>
@@ -103,28 +97,28 @@
             <version>1.2.0</version>
         </dependency>
 
-<!--        Excel导入导出-->
+        <!--        Excel导入导出-->
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>zero-io-excel</artifactId>
             <version>1.2.0</version>
         </dependency>
 
-<!--        pdf导入导出-->
+        <!--        pdf导入导出-->
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>zero-io-pdf</artifactId>
             <version>1.2.0</version>
         </dependency>
 
-<!--        统计-->
+        <!--        统计-->
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>statistic</artifactId>
             <version>1.3.0</version>
         </dependency>
 
-<!--        日记-->
+        <!--        日记-->
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>dev-logs</artifactId>
@@ -154,13 +148,12 @@
             <artifactId>spring-kafka</artifactId>
         </dependency>
 
-<!--        代表事项-->
+        <!--        代办事项-->
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>user-task</artifactId>
             <version>1.0.0</version>
         </dependency>
-
 
         <dependency>
             <groupId>com.jfeat</groupId>
@@ -168,13 +161,11 @@
             <version>1.0.0</version>
         </dependency>
 
-
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>blacklist</artifactId>
             <version>1.0.0</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -187,6 +178,32 @@
             <artifactId>poi-ooxml</artifactId>
             <version>3.17</version>
         </dependency>
+
+        <!-- 测试 -->
+<!--        <dependency>-->
+<!--            <groupId>junit</groupId>-->
+<!--            <artifactId>junit</artifactId>-->
+<!--            <version>4.13.1</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.mockito</groupId>-->
+<!--            <artifactId>mockito-core</artifactId>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.powermock</groupId>-->
+<!--            <artifactId>powermock-module-junit4</artifactId>-->
+<!--            <version>2.0.9</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.powermock</groupId>-->
+<!--            <artifactId>powermock-api-mockito2</artifactId>-->
+<!--            <version>2.0.9</version>-->
+<!--        </dependency>-->
 
     </dependencies>
 

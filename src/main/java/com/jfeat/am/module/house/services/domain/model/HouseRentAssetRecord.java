@@ -51,10 +51,49 @@ public class HouseRentAssetRecord extends HouseRentAsset {
     // 用户电话
     private String userPhone;
 
+    /**
+     * 精准查询字段，该字段值会从redis中获取
+     */
+    private String[] buildings; // 楼栋号列表
+    private String[] units; // 单元列表
+    private String[] towards; // 朝向列表
+    private Integer startFloor; // 开始楼层
+    private Integer endFloor; // 结束楼层
+
+    public String[] getBuildings() {
+        return buildings;
+    }
+    public void setBuildings(String[] buildings) {
+        this.buildings = buildings;
+    }
+    public String[] getUnits() {
+        return units;
+    }
+    public void setUnits(String[] units) {
+        this.units = units;
+    }
+    public String[] getTowards() {
+        return towards;
+    }
+    public void setTowards(String[] towards) {
+        this.towards = towards;
+    }
+    public Integer getStartFloor() {
+        return startFloor;
+    }
+    public void setStartFloor(Integer startFloor) {
+        this.startFloor = startFloor;
+    }
+    public Integer getEndFloor() {
+        return endFloor;
+    }
+    public void setEndFloor(Integer endFloor) {
+        this.endFloor = endFloor;
+    }
+
     public String getUserPhone() {
         return userPhone;
     }
-
     public void setUserPhone(String userPhone) {
         this.userPhone = userPhone;
     }
@@ -62,7 +101,6 @@ public class HouseRentAssetRecord extends HouseRentAsset {
     public Long getUserId() {
         return userId;
     }
-
     public void setUserId(Long userId) {
         this.userId = userId;
     }
@@ -70,7 +108,6 @@ public class HouseRentAssetRecord extends HouseRentAsset {
     public String getUsername() {
         return username;
     }
-
     public void setUsername(String username) {
         this.username = username;
     }

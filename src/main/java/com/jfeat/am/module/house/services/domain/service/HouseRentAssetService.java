@@ -7,6 +7,7 @@ import com.jfeat.am.module.house.services.gen.crud.service.CRUDHouseRentAssetSer
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by vincent on 2017/10/19.
@@ -28,5 +29,18 @@ public interface HouseRentAssetService extends CRUDHouseRentAssetService {
 
 
     void setRentDescribe(List<HouseRentAssetRecord> houseRentAssetRecordList);
+
+    /**
+     * 插入值到redis[0]中，如果存在则覆盖，如果不存在则加入
+     * @param field 字段map: { "字段名" ："字段值"}
+     */
+    void saveAccurateQueryField(Map<String,String> field);
+
+    /**
+     * 在redis[0]中获取精准查询字段
+     *
+     * @return
+     */
+    Map<Object,Object> listAccurateField();
 
 }

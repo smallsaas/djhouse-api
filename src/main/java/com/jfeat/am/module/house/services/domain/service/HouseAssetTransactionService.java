@@ -24,13 +24,13 @@ public interface HouseAssetTransactionService extends CRUDHouseAssetTransactionS
     /**
      * 获取我的所有房屋转让记录
      * @param userId
-     * @return
+     * @return 我的记录列表
      */
     List<HouseAssetTransactionRecord> listTransaction(Long userId);
 
     /**
      * 修改transaction.display(是否显示字段)，1=显示，0=不显示
-     * @return
+     * @return 修改条目数
      */
     Integer updateDisplay(HouseAssetTransactionRecord transaction);
 }

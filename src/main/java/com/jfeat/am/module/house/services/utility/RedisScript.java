@@ -15,8 +15,7 @@ public class RedisScript {
     @Resource
     StringRedisTemplate stringRedisTemplate;
 
-
-
+    // 清除户型房号的所有缓存
     public int delRidesData(String pattern){
         Set<String> keys =  stringRedisTemplate.keys(pattern);
         System.out.println(pattern);
@@ -32,8 +31,12 @@ public class RedisScript {
         return affect;
     }
 
+    // 拼接一个户型房号key
     public String getBuildingFloorsKey(Long communityId,Long buildingId,Integer floors){
         String key = "communityId".concat(String.valueOf(communityId)).concat(":").concat("buildingId").concat(String.valueOf(buildingId)).concat(":").concat("floor").concat(String.valueOf(floors));
         return key;
     }
+
+
+
 }
