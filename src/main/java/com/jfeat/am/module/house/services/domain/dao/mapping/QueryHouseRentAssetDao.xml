@@ -290,6 +290,13 @@
                     `t_house_rent_asset`.`building_code` LIKE CONCAT('%',#{item},'%')
                 </foreach>
         </if>
+        <!-- 单元 -->
+        <if test="record.units != null and record.units.length > 0">
+            AND
+                <foreach collection="record.units" item="item" open="(" separator="OR" close=")" >
+                    `t_house_property_building_unit`.`unit_code` LIKE CONCAT('___',#{item})
+                </foreach>
+        </if>
         <!-- 朝向 -->
         <if test="record.towards != null and record.towards.length > 0">
             AND
