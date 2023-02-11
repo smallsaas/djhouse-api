@@ -141,7 +141,7 @@ public class UserAgentRentManageEndpoint {
 
                                        @RequestParam(name = "introducePicture", required = false) String introducePicture,
 
-//                                       @RequestParam(name = "serverId", required = false) Long serverId,
+                                       @RequestParam(name = "serverId", required = false) Long serverId,
 
                                        @RequestParam(name = "cover", required = false) String cover,
 
