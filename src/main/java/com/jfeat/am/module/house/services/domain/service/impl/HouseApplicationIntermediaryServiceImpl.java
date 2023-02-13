@@ -8,8 +8,10 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseApplication
 import com.jfeat.users.account.services.domain.service.UserAccountService;
 import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
 import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.apache.commons.lang3.StringUtils.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -56,8 +58,12 @@ public class HouseApplicationIntermediaryServiceImpl extends CRUDHouseApplicatio
                     if (!userTypeList.contains(EndUserTypeSetting.USER_TYPE_INTERMEDIARY)){
                         userTypeList.add(EndUserTypeSetting.USER_TYPE_INTERMEDIARY);
                         userAccount.setType(userAccountService.getUserTypeByList(userTypeList));
-                        affect+=userAccountMapper.updateById(userAccount);
                     }
+
+                    // 将置业顾问表中的phone存入end_user表中的contact字段（工作电话）
+                    if (houseApplicationIntermediary.getPhone() != null && StringUtils.isNotBlank(houseApplicationIntermediary.getPhone()))
+                    userAccount.setContact(houseApplicationIntermediary.getPhone());
+                    affect+=userAccountMapper.updateById(userAccount);
                 }
 
             }

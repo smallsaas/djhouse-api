@@ -8,4 +8,5 @@ import com.jfeat.am.module.house.services.gen.crud.service.CRUDHouseApplicationO
 public interface HouseApplicationOperationsService extends CRUDHouseApplicationOperationsService {
 
     int passApplicationOperations(Long id);
+
 }
