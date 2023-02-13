@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
-import com.jfeat.am.module.house.services.domain.dao.QueryAppDataRankDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
 import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,9 +41,6 @@ public class AppDataRankEndpoint {
     QueryHouseUserAssetDao queryHouseUserAssetDao;
 
     @Resource
-    QueryAppDataRankDao queryAppDataRankDao;
-
-    @Resource
     TenantUtility tenantUtility;
 
     /**
@@ -55,9 +50,6 @@ public class AppDataRankEndpoint {
      */
     @GetMapping
     public Tip getSaleRankList(
-            Page<HouseRentAssetRecord> page,
-            @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-            @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "search",required = false) String search
     ){
 
@@ -107,19 +99,6 @@ public class AppDataRankEndpoint {
 
         }
 
-//        page.setCurrent(pageNum);
-//        page.setSize(pageSize);
-//        //分页处理
-//        List<HouseRentAssetRecord> houseRentAssetRecords = queryAppDataRankDao.findHouseRentAssetPage(page, orgId, search);
-//
-//        ///
-//        for (HouseRentAssetRecord item:houseRentAssetRecords){
-//            item.setRank(rank+=1);
-//        }
-//
-//
-//        page.setRecords(houseRentAssetRecords);
-//        return SuccessTip.create(page);
         return SuccessTip.create(jsonArray);
     }
 

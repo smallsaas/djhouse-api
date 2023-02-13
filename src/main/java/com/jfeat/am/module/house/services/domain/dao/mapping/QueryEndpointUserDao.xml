@@ -16,7 +16,8 @@
             t_end_user.email_validated AS emailValidated, t_end_user.phone_validated AS phoneValidated,
             t_end_user.org_id AS orgId, t_end_user.tag, t_end_user.category_tag AS categoryTag,
             t_end_user.is_compere AS isCompere, t_end_user.is_register AS isRegister, t_end_user.type,
-            t_end_user.sys_user_id AS sysUserId, t_end_user.vendor,t_end_user.end_login_time As endLoginTime
+            t_end_user.sys_user_id AS sysUserId, t_end_user.vendor,t_end_user.end_login_time As endLoginTime,
+            t_end_user.contact
     </sql>
 
     <sql id="QueryOwnedOrgIds">
