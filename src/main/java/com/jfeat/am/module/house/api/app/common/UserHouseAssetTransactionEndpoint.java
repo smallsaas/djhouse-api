@@ -390,6 +390,7 @@ public class UserHouseAssetTransactionEndpoint {
         transaction.setId(transactionId);
         transaction.setUserId(userId);
 
+        // 更新显示状态
         Integer affected =  houseAssetTransactionService.updateDisplay(transaction);
         if (affected < 1) throw new BusinessException(BusinessCode.DatabaseUpdateError,"更新失败");
 
