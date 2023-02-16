@@ -174,7 +174,8 @@ public class UserAppointmentEndpoint {
 
                                          @RequestParam(name = "fieldC", required = false) String fieldC,
                                          @RequestParam(name = "orderBy", required = false) String orderBy,
-                                         @RequestParam(name = "sort", required = false) String sort) {
+                                         @RequestParam(name = "sort", required = false) String sort
+                                         ) {
 
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
@@ -195,8 +196,10 @@ public class UserAppointmentEndpoint {
         page.setSize(pageSize);
 
         HouseAppointmentRecord record = new HouseAppointmentRecord();
-//        判读是否事中介
-        if (authentication.verifyIntermediary(JWTKit.getUserId())) {
+//        直接传置业顾问id
+        if(serverId != null && !serverId.equals("") ) {
+            record.setServerId(serverId);
+        } else if (authentication.verifyIntermediary(JWTKit.getUserId())) {//        判读是否事中介
             record.setServerId(JWTKit.getUserId());
         } else {
             record.setUserId(JWTKit.getUserId());
