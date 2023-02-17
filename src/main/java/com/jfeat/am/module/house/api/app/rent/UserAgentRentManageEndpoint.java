@@ -1,9 +1,12 @@
 package com.jfeat.am.module.house.api.app.rent;
 
 
+import cn.hutool.jwt.JWT;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.core.model.EndUserTypeSetting;
@@ -193,13 +196,15 @@ public class UserAgentRentManageEndpoint {
         // 查询当前访问用户信息
         UserAccount userAccount = userAccountMapper.selectById(JWTKit.getUserId());
         List<Integer> typeList = null;
+
         // 获取用户类型列表
         if (userAccount.getType() != null) {
             typeList = userAccountService.getUserTypeList(userAccount.getType());
         }
-        // 判断类型是否有销售
+
+        // 判断请求进来的用户类型是否有销售
         // 是销售则查询所有房源
-        if (typeList != null && typeList.contains(EndUserTypeSetting.USER_TYPE_SALES)) {
+        if (typeList != null && typeList.contains(EndUserTypeSetting.USER_TYPE_INTERMEDIARY)) {
             record.setServerId(null);
         } else {
         // 不是销售，只能查看自己的房源
@@ -208,7 +213,6 @@ public class UserAgentRentManageEndpoint {
 
         /**
          * 判断是否使用精准查询
-         *
          * 精准查询是从前端设置，并缓存在redis中的字段值，如果使用则从redis中取出使用
          */
         // 判断additionalQuery是否为true
@@ -598,6 +602,38 @@ public class UserAgentRentManageEndpoint {
     }
 
 
-//    已出租列表
+    /**
+     * 销售 更新 指定房源的置业顾问
+     *
+     * @param params json: {serverId: ?}
+     * @return
+     */
+    @PutMapping("/changeAdviser/{id}")
+    public Tip updateAdviser(@PathVariable Long id, @RequestBody JSONObject params) {
+
+        // 查询当前访问用户信息,判断用户权限
+        UserAccount userAccount = userAccountMapper.selectById(JWTKit.getUserId());
+        // 获取用户类型列表
+        if (userAccount.getType() != null) {
+            List<Integer> typeList = userAccountService.getUserTypeList(userAccount.getType());
+            // 判断请求进来的用户类型是否有销售，不是销售则没有权限进行操作
+            if (typeList == null && !(typeList.contains(EndUserTypeSetting.USER_TYPE_INTERMEDIARY))) {
+                throw new BusinessException(BusinessCode.NoPermission,"您没有该权限");
+            }
+        }
+
+        // 参数判断
+        Long serverId = params.getLong("serverId");
+        if (serverId == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"缺少serverId");
+        // 判断该serverId是否是置业顾问
+
+
+        // 执行更新
+        Integer affect =  houseRentAssetService.updateServerId(id,serverId);
+        if (affect == null || affect == 0) throw new BusinessException(BusinessCode.DatabaseUpdateError,"更新失败");
+
+        return SuccessTip.create();
+    }
+
 
 }

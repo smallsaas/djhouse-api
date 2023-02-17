@@ -514,5 +514,21 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
         return stringRedisTemplate.opsForHash().entries(key);
     }
 
+    /**
+     * 更新房源的serverId
+     * @param id 房源id
+     * @param serverId 置业顾问id
+     * @return 更新条目数
+     */
+    @Transactional
+    @Override
+    public Integer updateServerId(Long id,Long serverId) {
+        HouseRentAssetRecord houseRentAsset = new HouseRentAssetRecord();
+        houseRentAsset.setId(id);
+        houseRentAsset.setServerId(serverId);
+        Integer affect = queryHouseRentAssetDao.updateById(houseRentAsset);
+        return affect;
+    }
+
 
 }

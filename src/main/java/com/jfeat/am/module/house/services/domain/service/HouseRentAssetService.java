@@ -43,4 +43,12 @@ public interface HouseRentAssetService extends CRUDHouseRentAssetService {
      */
     Map<Object,Object> listAccurateField();
 
+    /**
+     * 更新房源的serverId
+     * @param id 房源id
+     * @param serverId 置业顾问id
+     * @return 更新条目数
+     */
+    Integer updateServerId(Long id,Long serverId);
+
 }

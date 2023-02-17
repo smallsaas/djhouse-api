@@ -282,7 +282,7 @@
 
         WHERE 1=1
 
-        <!-- 精准查询，精准查询为list，动态循环插入 -->
+        <!-- 精准查询，精准查询字段在list内，动态循环插入 -->
         <!-- 楼栋 -->
         <if test="record.buildings != null and record.buildings.length >0">
             AND
