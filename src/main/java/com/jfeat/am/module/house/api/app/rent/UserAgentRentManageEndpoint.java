@@ -44,6 +44,7 @@ import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.users.account.services.domain.service.UserAccountService;
 import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
 import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,6 +52,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/api/u/house/rent/agentRentManage")
@@ -113,6 +115,9 @@ public class UserAgentRentManageEndpoint {
 
     @Resource
     HouseRentLogService houseRentLogService;
+
+    @Resource
+    EndpointUserService endpointUserService;
 
 
 
@@ -611,28 +616,34 @@ public class UserAgentRentManageEndpoint {
     @PutMapping("/changeAdviser/{id}")
     public Tip updateAdviser(@PathVariable Long id, @RequestBody JSONObject params) {
 
-        // 查询当前访问用户信息,判断用户权限
-        UserAccount userAccount = userAccountMapper.selectById(JWTKit.getUserId());
-        // 获取用户类型列表
-        if (userAccount.getType() != null) {
-            List<Integer> typeList = userAccountService.getUserTypeList(userAccount.getType());
-            // 判断请求进来的用户类型是否有销售，不是销售则没有权限进行操作
-            if (typeList == null && !(typeList.contains(EndUserTypeSetting.USER_TYPE_INTERMEDIARY))) {
-                throw new BusinessException(BusinessCode.NoPermission,"您没有该权限");
-            }
-        }
-
-        // 参数判断
+        // 判断是否存在serverId
         Long serverId = params.getLong("serverId");
         if (serverId == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"缺少serverId");
-        // 判断该serverId是否是置业顾问
-
 
         // 执行更新
-        Integer affect =  houseRentAssetService.updateServerId(id,serverId);
-        if (affect == null || affect == 0) throw new BusinessException(BusinessCode.DatabaseUpdateError,"更新失败");
+        int affected =  houseRentAssetService.updateServerId(id,serverId);
 
-        return SuccessTip.create();
+        return SuccessTip.create(affected);
+    }
+
+    /**
+     * 销售 更换 置业顾问的联系电话contact
+     * @param id 用户id
+     * @param params JSONObject {"contact": "要替换的联系电话"}
+     * @return
+     */
+    @PutMapping("/updateContact/{id}")
+    public Tip salesUpdateIntermediaryContact(@PathVariable Long id, @RequestBody JSONObject params) {
+
+        // 判断contact
+        String contact = params.getString("contact");
+        if (contact == null || StringUtils.isBlank(contact)) throw new BusinessException(BusinessCode.EmptyNotAllowed,"contact cannot null");
+        if (contact.length() > 11) throw new BusinessException(BusinessCode.OutOfRange,"请输入正确的手机号");
+
+        // 执行更新
+        int affected = endpointUserService.salesUpdateIntermediaryContact(id,contact);
+
+        return SuccessTip.create(affected);
     }
 
 

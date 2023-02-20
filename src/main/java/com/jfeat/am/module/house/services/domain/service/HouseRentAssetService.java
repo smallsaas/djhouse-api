@@ -49,6 +49,6 @@ public interface HouseRentAssetService extends CRUDHouseRentAssetService {
      * @param serverId 置业顾问id
      * @return 更新条目数
      */
-    Integer updateServerId(Long id,Long serverId);
+    int updateServerId(Long id,Long serverId);
 
 }

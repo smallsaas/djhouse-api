@@ -11,4 +11,13 @@ import java.util.List;
 public interface EndpointUserService extends CRUDEndpointUserService {
 
     EndpointUserModel listUser(Long id);
+
+    /**
+     * 销售 修改 置业顾问的联系电话
+     *
+     * @param id 置业顾问的id
+     * @param contact 修改后的联系电话
+     * @return
+     */
+    int salesUpdateIntermediaryContact(Long id,String contact);
 }

@@ -125,6 +125,7 @@ public class EndpointUser extends Model<EndpointUser> {
 
     private Date endLoginTime;
 
+    // 置业顾问联系电话
     private String contact;
 
     public String getContact() {

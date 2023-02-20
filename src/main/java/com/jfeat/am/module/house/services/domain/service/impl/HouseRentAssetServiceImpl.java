@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.am.core.model.EndUserTypeSetting;
 import com.jfeat.am.module.house.services.definition.HouseRentLogStatus;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseRentAssetDao;
@@ -23,7 +24,11 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
+import com.jfeat.users.account.services.domain.service.UserAccountService;
+import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
+import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
 import io.swagger.models.auth.In;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -76,6 +81,12 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
 
     @Resource
     StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    UserAccountMapper userAccountMapper;
+
+    @Resource
+    UserAccountService userAccountService;
 
     @Override
     protected String entityName() {
@@ -522,12 +533,42 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
      */
     @Transactional
     @Override
-    public Integer updateServerId(Long id,Long serverId) {
+    public int updateServerId(Long id,Long serverId) {
+        // 查询当前访问用户信息,判断用户权限
+        UserAccount userAccount = userAccountMapper.selectById(JWTKit.getUserId());
+        if (userAccount == null) throw new BusinessException(BusinessCode.UserNotExisted,"无效用户");
+        // 获取用户类型列表
+        if (userAccount.getType() != null) {
+            List<Integer> userTypeList = userAccountService.getUserTypeList(userAccount.getType());
+            // 判断请求进来的用户类型是否有销售，不是销售则没有权限进行操作
+            if (userTypeList == null || !(userTypeList.contains(EndUserTypeSetting.USER_TYPE_SALES))) {
+                throw new BusinessException(BusinessCode.NoPermission,"您没有该权限");
+            }
+        }
+
+        // 判断该serverId，确认是否是置业顾问
+        if (serverId == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"serviceId cannot null");
+        UserAccount serverAccount = userAccountMapper.selectById(serverId);
+        if (serverAccount == null) throw new BusinessException(BusinessCode.UserNotExisted,"无效用户");
+
+        // 获取该serverId用户类型列表
+        if (serverAccount.getType() != null) {
+            List<Integer> serverTypeList = userAccountService.getUserTypeList(serverAccount.getType());
+            // 判断该serverId是否有置业顾问权限，不是置业顾问则不允许更新
+            if (serverTypeList == null || !(serverTypeList.contains(EndUserTypeSetting.USER_TYPE_INTERMEDIARY))) {
+                throw new BusinessException(BusinessCode.NoPermission,"该serverId还不是置业顾问");
+            }
+        }
+
+        // 执行更新
         HouseRentAssetRecord houseRentAsset = new HouseRentAssetRecord();
         houseRentAsset.setId(id);
         houseRentAsset.setServerId(serverId);
-        Integer affect = queryHouseRentAssetDao.updateById(houseRentAsset);
-        return affect;
+        int affected = queryHouseRentAssetDao.updateById(houseRentAsset);
+
+        if (affected < 1) throw new BusinessException(BusinessCode.DatabaseUpdateError,"更新失败");
+
+        return affected;
     }
 
 
