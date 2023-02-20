@@ -566,7 +566,7 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
         houseRentAsset.setServerId(serverId);
         int affected = queryHouseRentAssetDao.updateById(houseRentAsset);
 
-        if (affected < 1) throw new BusinessException(BusinessCode.DatabaseUpdateError,"更新失败");
+        if (affected < 1) throw new BusinessException(BusinessCode.DatabaseUpdateError,"更新失败,请检查房源id" + id + "的房源是否存在");
 
         return affected;
     }
