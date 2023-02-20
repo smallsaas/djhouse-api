@@ -1,7 +1,9 @@
 package com.jfeat.am.module.house.services.domain.service;
 
+import com.jfeat.am.module.house.services.domain.model.EndpointUserRecord;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.crud.service.CRUDEndpointUserService;
+import com.jfeat.am.module.house.services.gen.persistence.model.EndpointUser;
 
 import java.util.List;
 
@@ -20,4 +22,13 @@ public interface EndpointUserService extends CRUDEndpointUserService {
      * @return
      */
     int salesUpdateIntermediaryContact(Long id,String contact);
+
+    /**
+     * 获取置业顾问信息
+     * 如果请求用户没有销售权限 或 置业顾问id实际参数为非置业顾问都会抛出异常
+     *
+     * @param id 置业顾问id
+     * @return
+     */
+    EndpointUser salesGetIntermediaryInfo(Long id);
 }

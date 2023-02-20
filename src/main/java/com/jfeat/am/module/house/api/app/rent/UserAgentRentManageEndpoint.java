@@ -31,10 +31,7 @@ import com.jfeat.am.module.house.services.gen.persistence.dao.HouseAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HousePropertyBuildingMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseRentAssetMapper;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseUserAssetMapper;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
-import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuilding;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
-import com.jfeat.am.module.house.services.gen.persistence.model.HouseUserAsset;
+import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.am.module.house.services.utility.Authentication;
 import com.jfeat.am.module.house.services.utility.DateTimeUtil;
 import com.jfeat.crud.base.exception.BusinessCode;
@@ -645,6 +642,22 @@ public class UserAgentRentManageEndpoint {
 
         return SuccessTip.create(affected);
     }
+
+    /**
+     * 销售获取置业顾问信息
+     *
+     * @param id 置业顾问id
+     * @return 置业顾问信息
+     */
+    @GetMapping("/getIntermediary/{id}")
+    public Tip salesGetIntermediaryInfo(@PathVariable Long id) {
+
+        EndpointUser intermediary = endpointUserService.salesGetIntermediaryInfo(id);
+
+        return SuccessTip.create(intermediary);
+    }
+
+
 
 
 }
