@@ -534,6 +534,17 @@ public class EndpointUser extends Model<EndpointUser> {
 
     public static final String VENDOR = "vendor";
 
+    // 配合dynamic-page前端框架使用的参数，代表 置业顾问id
+    private Long subValue;
+
+    public Long getSubValue() {
+        return subValue;
+    }
+
+    public void setSubValue(Long subValue) {
+        this.subValue = subValue;
+    }
+
     public Date getOrgUpdateTime() {
         return orgUpdateTime;
     }

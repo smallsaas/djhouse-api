@@ -172,8 +172,8 @@ public class UserAgentRentManageEndpoint {
                                        @RequestParam(name = "shelvesTime", required = false) Date shelvesTime,
                                        @RequestParam(name = "orderBy", required = false) String orderBy,
                                        @RequestParam(name = "sort", required = false) String sort,
-                                       @RequestParam(name = "additionalQuery", required = false, defaultValue = "false") Boolean additionalQuery,
-                                       @RequestParam(name = "subValue", required = false) Long subValue) {
+                                       @RequestParam(name = "additionalQuery", required = false, defaultValue = "false") Boolean additionalQuery
+                                       ) {
 
 
         if (JWTKit.getUserId() == null) {
@@ -265,8 +265,6 @@ public class UserAgentRentManageEndpoint {
         List<StockTagRelation> stockTagRelations = stockTagRelationMapper.selectList(stockTagRelationQueryWrapper);
 
         for (HouseRentAssetRecord houseRentAssetRecord : houseRentAssetPage) {
-            // 配合dynamic-page前端框架使用的参数，这里代表置业顾问id
-            if (subValue != null) houseRentAssetRecord.setSubValue(subValue);
             JSONObject resultJson = new JSONObject();
             JSONArray jsonArray = new JSONArray();
             for (StockTagRelation stockTagRelation : stockTagRelations) {

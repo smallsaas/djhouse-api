@@ -67,7 +67,8 @@ public class UserAccountManageEndpoint {
             @PathVariable("appid") String appid,
             @RequestParam(name = "phone", required = false) String phone,
             @RequestParam(name = "type", required = false) Integer type,
-            @RequestParam(value = "search",required = false) String search) {
+            @RequestParam(value = "search",required = false) String search,
+            @RequestParam(name = "subValue", required = false) Long subValue) {
 
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
@@ -100,10 +101,12 @@ public class UserAccountManageEndpoint {
                 continue;
             }
 
+            // 配合dynamic-page前端框架使用的参数，这里代表置业顾问id
 //            将用户类型 转为list 返回个前端
             List<Integer> userTypeList = userAccountService.getUserTypeList(userRecordList.get(i).getType());
             if (userRecordList != null && userRecordList.size() > 0) {
                 userRecordList.get(i).setTypeList(userTypeList);
+                if (subValue != null) userRecordList.get(i).setSubValue(subValue);
             }
 
         }
