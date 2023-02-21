@@ -658,6 +658,10 @@ public class UserAgentRentManageEndpoint {
         return SuccessTip.create(intermediary);
     }
 
+    // 变更已出租，未出租状态
+
+    // 更新合同 -合同开始时间 -合同结束时间
+
 
 
 
