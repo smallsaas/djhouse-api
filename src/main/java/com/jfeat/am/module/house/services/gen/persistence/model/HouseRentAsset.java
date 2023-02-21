@@ -155,8 +155,18 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     private String serverName;
 
     @TableField(exist = false)
+    private String serverContact;
+
+    @TableField(exist = false)
     private String serverAvatar;
 
+    public String getServerContact() {
+        return serverContact;
+    }
+
+    public void setServerContact(String serverContact) {
+        this.serverContact = serverContact;
+    }
 
     public Integer getContractTimeLimit() {
         return contractTimeLimit;

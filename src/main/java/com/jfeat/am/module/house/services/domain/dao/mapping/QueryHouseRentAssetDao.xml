@@ -165,6 +165,10 @@
         <result column="area" property="area"/>
         <result column="introduce_picture" property="introducePicture"/>
         <result column="server_id" property="serverId"/>
+        <result column="serverName" property="serverName"/>
+        <result column="serverPhone" property="serverPhone"/>
+        <result column="serverContact" property="serverContact"/>
+        <result column="serverAvatar" property="serverAvatar"/>
         <result column="cover" property="cover"/>
         <result column="title" property="title"/>
         <result column="price" property="price"/>
@@ -262,7 +266,12 @@
         loadord.id AS userId,
         loadord.name AS username,
         loadord.avatar AS userAvatar,
-        loadord.phone AS userPhone
+        loadord.phone AS userPhone,
+
+        service.name AS serverName,
+        service.phone AS serverPhone,
+        service.contact AS serverContact,
+        service.avatar AS serverAvatar
     </sql>
 
     <!--    添加列表详情-->
