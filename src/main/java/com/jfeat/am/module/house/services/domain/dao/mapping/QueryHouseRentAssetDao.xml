@@ -41,7 +41,7 @@
 
 
     <select id="queryMasterModel" resultType="HouseRentAssetModel">
-        SELECT t_house_rent_asset.*,t_end_user.name as landlordName,t_end_user.real_name as landlordRealName, t_end_user.avatar as landlordAvatar,t_end_user.phone as landlordPhone
+        SELECT t_house_rent_asset.*,t_end_user.name as landlordName,t_end_user.real_name as landlordRealName, t_end_user.avatar as landlordAvatar,t_end_user.phone as landlordPhone, t_end_user.contact
         FROM t_house_rent_asset
         JOIN t_end_user on t_end_user.id = t_house_rent_asset.landlord_id
         WHERE t_house_rent_asset.id = #{id}

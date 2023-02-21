@@ -31,6 +31,17 @@ public class HouseRentAssetRecord extends HouseRentAsset {
 
     private Integer rank;
 
+    // 配合dynamic-page前端框架使用的参数，代表 置业顾问id
+    private Long subValue;
+
+    public Long getSubValue() {
+        return subValue;
+    }
+
+    public void setSubValue(Long subValue) {
+        this.subValue = subValue;
+    }
+
     public String getHouseTypeDescription() {
         return houseTypeDescription;
     }

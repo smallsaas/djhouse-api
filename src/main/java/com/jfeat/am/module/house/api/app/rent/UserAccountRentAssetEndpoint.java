@@ -450,6 +450,7 @@ public class UserAccountRentAssetEndpoint {
                                        @RequestParam(name = "orderBy", required = false) String orderBy,
                                        @RequestParam(name = "sort", required = false) String sort) {
 
+        // 排序
         if (orderBy != null && orderBy.length() > 0) {
             if (sort != null && sort.length() > 0) {
                 String sortPattern = "(ASC|DESC|asc|desc)";
@@ -477,6 +478,7 @@ public class UserAccountRentAssetEndpoint {
         record.setPrice(price);
         record.setSlide(slide);
         record.setRentDescribe(describe);
+        // 只获取rentstatus = 2的记录，就是已上架的房源
         record.setRentStatus(HouseRentAsset.RENT_STATUS_SHELVES);
         record.setNote(note);
         record.setRentTime(rentTime);
@@ -541,5 +543,7 @@ public class UserAccountRentAssetEndpoint {
 
         return SuccessTip.create(page);
     }
+
+
 
 }
