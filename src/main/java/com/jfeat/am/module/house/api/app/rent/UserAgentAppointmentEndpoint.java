@@ -122,10 +122,13 @@ public class UserAgentAppointmentEndpoint {
 
     //    预约时间段列表
     @GetMapping
-    public Tip getAppointmentTimeList(@RequestParam(value = "category",required = false) String category) {
-        Long userId = JWTKit.getUserId();
+    public Tip getAppointmentTimeList(@RequestParam(value = "category",required = false) String category,
+                                      @RequestParam(name = "userId",required = false) Long userId) {
         if (userId == null) {
-            throw new BusinessException(BusinessCode.NoPermission, "没有登录");
+            userId = JWTKit.getUserId();
+            if (userId == null) {
+                throw new BusinessException(BusinessCode.NoPermission, "没有登录");
+            }
         }
 
         QueryWrapper<AppointmentTime> appointmentTimeQueryWrapper = new QueryWrapper<>();
