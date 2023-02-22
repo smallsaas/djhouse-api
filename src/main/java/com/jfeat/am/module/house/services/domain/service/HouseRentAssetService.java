@@ -6,6 +6,7 @@ import com.jfeat.am.module.house.services.gen.crud.model.HouseRentAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.service.CRUDHouseRentAssetService;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseRentAsset;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -50,5 +51,13 @@ public interface HouseRentAssetService extends CRUDHouseRentAssetService {
      * @return 更新条目数
      */
     int updateServerId(Long id,Long serverId);
+
+    /**
+     * 销售 更新房源出租状态
+     * @param id 房源id
+     * @param state 出租状态
+     * @return 更新条目数
+     */
+    int salesUpdateState(Long id,Integer state,Date startDate,Date endDate);
 
 }

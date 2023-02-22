@@ -127,10 +127,10 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
     @TableField( updateStrategy = FieldStrategy.IGNORED)
     private Integer state;
 
-    @TableField( updateStrategy = FieldStrategy.IGNORED)
+//    @TableField( updateStrategy = FieldStrategy.IGNORED)
     private Date contractStartTime;
 
-    @TableField( updateStrategy = FieldStrategy.IGNORED)
+//    @TableField( updateStrategy = FieldStrategy.IGNORED)
     private Date contractEndTime;
 
 

@@ -658,9 +658,26 @@ public class UserAgentRentManageEndpoint {
         return SuccessTip.create(intermediary);
     }
 
-    // 变更已出租，未出租状态
+    /**
+     * 销售 变更已出租状态，并添加合同时间（可选）
+     * @param id 房源id
+     * @param params {"state": "出租状态",""}
+     * @return
+     */
+    @PutMapping("/updateState/{id}")
+    public Tip salesUpdateState(@PathVariable Long id,@RequestBody JSONObject params) {
 
-    // 更新合同 -合同开始时间 -合同结束时间
+        // 参数判断
+        // state 不允许为空
+        Integer state = params.getInteger("state");
+        if (state == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"state cannot null");
+        // startDate,endDate允许为空
+        Date startDate = params.getDate("startDate");
+        Date endDate = params.getDate("endDate");
+
+        return SuccessTip.create(houseRentAssetService.salesUpdateState(id,state,startDate,endDate));
+    }
+
 
 
 

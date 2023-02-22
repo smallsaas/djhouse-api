@@ -542,7 +542,7 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
             List<Integer> userTypeList = userAccountService.getUserTypeList(userAccount.getType());
             // 判断请求进来的用户类型是否有销售，不是销售则没有权限进行操作
             if (userTypeList == null || !(userTypeList.contains(EndUserTypeSetting.USER_TYPE_SALES))) {
-                throw new BusinessException(BusinessCode.NoPermission,"您没有该权限");
+                throw new BusinessException(BusinessCode.NoPermission,"您不是销售");
             }
         }
 
@@ -567,6 +567,49 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
         int affected = queryHouseRentAssetDao.updateById(houseRentAsset);
 
         if (affected < 1) throw new BusinessException(BusinessCode.DatabaseUpdateError,"更新失败,请检查房源id" + id + "的房源是否存在");
+
+        return affected;
+    }
+
+    /**
+     * 销售 更新房源出租状态
+     *
+     * @param id    房源id
+     * @param state 出租状态
+     * @return 更新条目数
+     */
+    @Override
+    public int salesUpdateState(Long id, Integer state,Date startDate,Date endDate) {
+
+        // 判断请求用户是否是销售
+        UserAccount userAccount = userAccountMapper.selectById(JWTKit.getUserId());
+        if (userAccount == null) throw new BusinessException(BusinessCode.UserNotExisted,"无效用户");
+        // 获取用户类型列表
+        if (userAccount.getType() != null) {
+            List<Integer> userTypeList = userAccountService.getUserTypeList(userAccount.getType());
+            // 判断请求进来的用户类型是否有销售，不是销售则没有权限进行操作
+            if (userTypeList == null || !(userTypeList.contains(EndUserTypeSetting.USER_TYPE_SALES))) {
+                throw new BusinessException(BusinessCode.NoPermission,"您不是销售");
+            }
+        }
+
+        // 判断id,id不能为空，id为空无意义操作
+        if (id == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"id cannot null");
+
+        // state 只能是 1 或 0
+        Integer one = 1;
+        Integer zero = 0;
+        if (!(one.equals(state)) && !(zero.equals(state))) throw new BusinessException(BusinessCode.BadRequest,"state只能为1或者0");
+
+        // 封装实体类
+        HouseRentAsset rentAsset = new HouseRentAsset();
+        rentAsset.setId(id);
+        rentAsset.setState(state);
+        rentAsset.setContractStartTime(startDate);
+        rentAsset.setContractEndTime(endDate);
+
+        // 执行更新
+        int affected = queryHouseRentAssetDao.updateById(rentAsset);
 
         return affected;
     }
