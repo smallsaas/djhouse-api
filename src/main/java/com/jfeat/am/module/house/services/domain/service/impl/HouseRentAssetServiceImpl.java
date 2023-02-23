@@ -611,8 +611,6 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
         HouseRentAsset rentAsset = new HouseRentAsset();
         rentAsset.setId(id);
         rentAsset.setState(state);
-        rentAsset.setContractStartTime(startDate);
-        rentAsset.setContractEndTime(endDate);
         // 计算开始日期和结束日期的间隔，以月为单位
         if (startDate != null && endDate != null) {
             // SimpleDateFormat非线程安全,放弃使用
@@ -627,6 +625,8 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
             int intervalDay = (int) ChronoUnit.DAYS.between(start,end);
             Integer interval = Math.round(intervalDay / 30f);
             rentAsset.setContractTimeLimit(interval);
+            rentAsset.setContractStartTime(startDate);
+            rentAsset.setContractEndTime(endDate);
         }
 
         // 执行更新

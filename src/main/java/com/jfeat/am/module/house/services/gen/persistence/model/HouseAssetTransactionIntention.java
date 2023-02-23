@@ -18,7 +18,7 @@ import java.io.Serializable;
  * @author: hhhhhtao
  */
 @TableName("t_house_asset_transaction_intention")
-@ApiModel(value = "HouseAssetTransactionIntention对象", description = "")
+@ApiModel(value = "HouseAssetTransactionIntention对象", description = "HouseAssetTransactionIntention实体类")
 public class HouseAssetTransactionIntention extends Model<HouseAssetTransactionIntention> {
 
     // 序列化id
