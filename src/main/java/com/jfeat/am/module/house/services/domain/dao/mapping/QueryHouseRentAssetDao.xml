@@ -187,7 +187,7 @@
         <result column="configuration_status" property="configurationStatus"/>
         <result column="custom_images_list" property="customImagesList"/>
 
-        <result column="state" property="customImagesList"/>
+        <result column="state" property="state"/>
         <result column="contract_start_time" property="contractStartTime"/>
         <result column="contract_end_time" property="contractEndTime"/>
         <result column="contract_time_limit" property="contractTimeLimit"/>
@@ -351,9 +351,19 @@
             AND loadord.realName LIKE CONCAT('%',#{record.landlordRealName},'%')
         </if>
 
-        <if test="record.landlordId != null and record.landlordId>0 ">
-            AND t_house_rent_asset.landlord_id =#{record.landlordId}
-        </if>
+        <!--如果不是根据用户查询，则过滤掉已出租的房子-->
+        <choose>
+            <when test="record.landlordId != null">
+                AND t_house_rent_asset.landlord_id =#{record.landlordId}
+            </when>
+            <otherwise>
+                AND t_house_rent_asset.state != 1
+            </otherwise>
+        </choose>
+
+<!--        <if test="record.landlordId != null and record.landlordId>0 ">-->
+<!--            AND t_house_rent_asset.landlord_id =#{record.landlordId}-->
+<!--        </if>-->
 
         <if test="record.area != null and record.area>0 ">
             AND t_house_rent_asset.area LIKE CONCAT('%',#{record.area},'%')

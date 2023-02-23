@@ -611,7 +611,8 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
         HouseRentAsset rentAsset = new HouseRentAsset();
         rentAsset.setId(id);
         rentAsset.setState(state);
-        // 计算开始日期和结束日期的间隔，以月为单位
+        rentAsset.setRentStatus(1);
+        // 判断是否需要更新租期开始日期和结束日期并计算开始日期和结束日期的间隔，以月为单位
         if (startDate != null && endDate != null) {
             // SimpleDateFormat非线程安全,放弃使用
             //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

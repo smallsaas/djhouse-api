@@ -124,7 +124,7 @@ public class HouseRentAsset extends Model<HouseRentAsset> {
 
     private String customImagesList;
 
-    @TableField( updateStrategy = FieldStrategy.IGNORED)
+//    @TableField( updateStrategy = FieldStrategy.IGNORED)
     private Integer state;
 
 //    @TableField( updateStrategy = FieldStrategy.IGNORED)
