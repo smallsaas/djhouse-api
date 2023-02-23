@@ -35,6 +35,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -607,6 +613,21 @@ public class HouseRentAssetServiceImpl extends CRUDHouseRentAssetServiceImpl imp
         rentAsset.setState(state);
         rentAsset.setContractStartTime(startDate);
         rentAsset.setContractEndTime(endDate);
+        // 计算开始日期和结束日期的间隔，以月为单位
+        if (startDate != null && endDate != null) {
+            // SimpleDateFormat非线程安全,放弃使用
+            //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            // dateTimeFormatter线程安全
+            //DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime start = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime end = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            // 比较两个日期的大小，如果start 比 end小则报错
+            if (start.compareTo(end) == 1) throw new BusinessException(BusinessCode.BadRequest,"结束日期小于开始日期");
+            int intervalDay = (int) ChronoUnit.DAYS.between(start,end);
+            Integer interval = Math.round(intervalDay / 30f);
+            rentAsset.setContractTimeLimit(interval);
+        }
 
         // 执行更新
         int affected = queryHouseRentAssetDao.updateById(rentAsset);
