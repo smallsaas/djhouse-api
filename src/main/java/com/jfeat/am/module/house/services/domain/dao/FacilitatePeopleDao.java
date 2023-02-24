@@ -1,5 +1,11 @@
 package com.jfeat.am.module.house.services.domain.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.module.house.services.domain.model.FacilitatePeopleRecord;
+import com.jfeat.am.module.house.services.gen.persistence.model.FacilitatePeople;
+import org.apache.ibatis.annotations.Param;
+
 /**
  * @description: TODO
  * @project: djhouse-api
@@ -7,5 +13,9 @@ package com.jfeat.am.module.house.services.domain.dao;
  * @date: 2023/2/23 18:21
  * @author: hhhhhtao
  */
-public interface FacilitatePeopleDao {
+public interface FacilitatePeopleDao extends BaseMapper<FacilitatePeople> {
+
+    FacilitatePeopleRecord getFacilitatePeople(Integer id);
+
+    Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeople> page, @Param("facilitatePeople") FacilitatePeople facilitatePeople);
 }

@@ -2,4 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jfeat.am.module.house.services.domain.dao.FacilitatePeopleDao">
 
+    <sql id="FacilitatePeopleRecord_Field">
+        t_house_facilitate_people.id,
+        t_house_facilitate_people.server_name,
+        t_house_facilitate_people.linkman_name,
+        t_house_facilitate_people.contact_number,
+        t_house_facilitate_people.notes
+    </sql>
+
+    <select id="findFacilitatePeople" resultType="facilitatePeopleRecord">
+        SELECT
+            <include refid="FacilitatePeopleRecord_Field" />
+        FROM
+            t_house_facilitate_people
+        <where>
+            <if test="facilitatePeople.serverName != null and facilitatePeople.serverName != ''">
+                AND t_house_facilitate_people.server_name LIKE CONCAT("%",#{facilitatePeople.serverName},"%")
+            </if>
+        </where>
+    </select>
+
+    <select id="getFacilitatePeople" resultType="FacilitatePeopleRecord">
+        SELECT
+            <include refid="FacilitatePeopleRecord_Field" />
+        FROM
+            t_house_facilitate_people
+        WHERE
+            t_house_facilitate_people.id = #{id}
+    </select>
 </mapper>

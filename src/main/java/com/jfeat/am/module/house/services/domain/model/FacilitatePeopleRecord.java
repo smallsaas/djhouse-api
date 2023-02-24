@@ -1,26 +1,17 @@
-package com.jfeat.am.module.house.services.gen.persistence.model;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
-
-import java.io.Serializable;
+package com.jfeat.am.module.house.services.domain.model;
 
 /**
- * @description: t_house_facilitate_people表的实体类
+ * @description: FacilitatePeople DTO
  * @project: djhouse-api
  * @version: 1.0
- * @date: 2023/2/23 16:22
+ * @date: 2023/2/24 10:28
  * @author: hhhhhtao
  */
-@TableName("t_house_facilitate_people")
-public class FacilitatePeople extends Model<FacilitatePeople> {
+public class FacilitatePeopleRecord {
 
     private static final long serialVersionUID = 1L;
 
     // 主键
-    @TableId(type = IdType.AUTO)
     private Integer id;
 
     // 服务名
@@ -35,12 +26,11 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
     // 备注
     private String notes;
 
-    // 状态
-    private Boolean status;
 
     public Integer getId() {
         return id;
     }
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -48,6 +38,7 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
     public String getServerName() {
         return serverName;
     }
+
     public void setServerName(String serverName) {
         this.serverName = serverName;
     }
@@ -55,6 +46,7 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
     public String getLinkmanName() {
         return linkmanName;
     }
+
     public void setLinkmanName(String linkmanName) {
         this.linkmanName = linkmanName;
     }
@@ -62,6 +54,7 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
     public String getContactNumber() {
         return contactNumber;
     }
+
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
     }
@@ -69,19 +62,8 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
     public String getNotes() {
         return notes;
     }
+
     public void setNotes(String notes) {
         this.notes = notes;
-    }
-
-    public Boolean getStatus() {
-        return status;
-    }
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
-
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
     }
 }
