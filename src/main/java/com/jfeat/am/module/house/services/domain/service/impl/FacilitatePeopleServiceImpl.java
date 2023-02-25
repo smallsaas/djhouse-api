@@ -40,9 +40,6 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
         // QueryWrapper<FacilitatePeople> facilitatePeopleQueryWrapper = new QueryWrapper<>();
         // if(serverName != null) facilitatePeopleQueryWrapper.like("server_name",serverName);
 
-        // 判断用户是否拥有社区管理员权限
-        if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权限");
-
         FacilitatePeople facilitatePeople = new FacilitatePeople();
         if (serverName != null) facilitatePeople.setServerName(serverName);
 
@@ -78,7 +75,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
         if (serverName == null || serverName.length() > 10)
             throw new BusinessException(BusinessCode.BadRequest,"serverName cannot null and length cannot greater than 10");
         String contactNumber = facilitatePeopleRecord.getContactNumber();
-        if (contactNumber == null || contactNumber.length() != 11)
+        if (contactNumber != null && contactNumber.length() != 11)
             throw new BusinessException(BusinessCode.BadRequest,"contactNumber Break the rules");
 
         // DTO 转换 DO
