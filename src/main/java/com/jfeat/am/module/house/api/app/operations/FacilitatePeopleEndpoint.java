@@ -29,7 +29,7 @@ public class FacilitatePeopleEndpoint {
                                     @RequestParam(name = "pageSize",required = false,defaultValue = "10") Integer pageSize,
                                     @RequestParam(name = "serverName",required = false) String serverName) {
 
-        Page<FacilitatePeople> page = new Page<>();
+        Page<FacilitatePeopleRecord> page = new Page<>();
         page.setCurrent(pageNum);
         page.setSize(pageSize);
 
@@ -43,10 +43,36 @@ public class FacilitatePeopleEndpoint {
         return SuccessTip.create(facilitatePeopleService.getFacilitatePeople(id));
     }
 
+    /**
+     * 以下属于管理员操作，均需社区管理员权限才可访问
+     */
     @PostMapping()
     public Tip saveFacilitatePeople(@RequestBody FacilitatePeopleRecord facilitatePeopleRecord) {
 
         return SuccessTip.create(facilitatePeopleService.saveFacilitatePeople(facilitatePeopleRecord));
+    }
+
+    @GetMapping("/management")
+    public Tip managementFindFacilitatePeople(@RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                              @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                              @RequestParam(name = "serverName", required = false) String serverName) {
+
+        Page<FacilitatePeople> page = new Page<>();
+        page.setCurrent(pageNum);
+        page.setSize(pageSize);
+
+        return SuccessTip.create(facilitatePeopleService.managementFindFacilitatePeople(page,serverName));
+    }
+
+    /**
+     * 关闭某条便民服务
+     * @param id 便民服务记录id
+     * @return
+     */
+    @PutMapping("/close")
+    public Tip closeFindFacilitatePeople(@PathVariable Integer id) {
+        
+        return SuccessTip.create();
     }
 
 }

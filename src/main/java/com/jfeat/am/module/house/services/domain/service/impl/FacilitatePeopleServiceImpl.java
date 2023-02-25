@@ -10,6 +10,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.FacilitatePeople
 import com.jfeat.am.module.house.services.utility.UserAccountUtility;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     UserAccountUtility userAccountUtility;
 
     @Override
-    public Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeople> page,String serverName) {
+    public Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeopleRecord> page,String serverName) {
 
         // 参数封装
         // 目前没有找到在使用DTO 和 DO 的情况下使用baseMapper，先注释掉
@@ -44,6 +45,14 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
         if (serverName != null) facilitatePeople.setServerName(serverName);
 
         return facilitatePeopleDao.findFacilitatePeople(page,facilitatePeople);
+    }
+
+    @Override
+    public Page<FacilitatePeople> managementFindFacilitatePeople(Page<FacilitatePeople> page,String serverName) {
+
+         QueryWrapper<FacilitatePeople> facilitatePeopleQueryWrapper = new QueryWrapper<>();
+         if (serverName != null && StringUtils.isNotBlank(serverName)) facilitatePeopleQueryWrapper.like("server_name",serverName);
+         return facilitatePeopleDao.selectPage(page,facilitatePeopleQueryWrapper);
     }
 
     @Override
