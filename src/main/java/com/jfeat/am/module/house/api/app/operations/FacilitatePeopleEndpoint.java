@@ -71,7 +71,7 @@ public class FacilitatePeopleEndpoint {
      */
     @PutMapping("/close")
     public Tip closeFindFacilitatePeople(@PathVariable Integer id) {
-        
+
         return SuccessTip.create();
     }
 
