@@ -17,7 +17,7 @@ public interface FacilitatePeopleService {
 
     Page<FacilitatePeople> managementFindFacilitatePeople(Page<FacilitatePeople> page,String serverName);
 
-    FacilitatePeopleRecord getFacilitatePeople(Integer id);
+    FacilitatePeople getFacilitatePeople(Integer id);
 
     int updateFacilitatePeople(FacilitatePeople facilitatePeople);
 

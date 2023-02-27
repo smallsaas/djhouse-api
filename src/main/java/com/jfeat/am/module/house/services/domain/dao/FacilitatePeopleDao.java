@@ -15,7 +15,7 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface FacilitatePeopleDao extends BaseMapper<FacilitatePeople> {
 
-    FacilitatePeopleRecord getFacilitatePeople(Integer id);
+    FacilitatePeople getFacilitatePeople(Integer id);
 
     Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeopleRecord> page, @Param("facilitatePeople") FacilitatePeople facilitatePeople);
 }

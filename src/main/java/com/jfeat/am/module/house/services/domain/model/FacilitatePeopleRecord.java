@@ -26,6 +26,15 @@ public class FacilitatePeopleRecord {
     // 备注
     private String notes;
 
+    // 微信号
+    private String wechat;
+
+    public String getWechat() {
+        return wechat;
+    }
+    public void setWechat(String wechat) {
+        this.wechat = wechat;
+    }
 
     public Integer getId() {
         return id;

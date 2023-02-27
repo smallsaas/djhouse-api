@@ -7,7 +7,8 @@
         t_house_facilitate_people.server_name,
         t_house_facilitate_people.linkman_name,
         t_house_facilitate_people.contact_number,
-        t_house_facilitate_people.notes
+        t_house_facilitate_people.notes,
+        t_house_facilitate_people.wechat
     </sql>
 
     <select id="findFacilitatePeople" resultType="facilitatePeopleRecord">
@@ -22,7 +23,7 @@
         </where>
     </select>
 
-    <select id="getFacilitatePeople" resultType="FacilitatePeopleRecord">
+    <select id="getFacilitatePeople" resultType="FacilitatePeople">
         SELECT
             <include refid="FacilitatePeopleRecord_Field" />
         FROM

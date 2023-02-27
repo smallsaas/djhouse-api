@@ -53,7 +53,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     }
 
     @Override
-    public FacilitatePeopleRecord getFacilitatePeople(Integer id) {
+    public FacilitatePeople getFacilitatePeople(Integer id) {
 
         // 判断用户是否拥有社区管理员权限
         if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
@@ -83,32 +83,45 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
         // 如果参数为 "" 空串，则修改为null,不写入数据库
         // 服务名
         if (StringUtils.isBlank(facilitatePeople.getServerName()) || facilitatePeople.getServerName().length() > FacilitatePeople.SERVER_NAME_LENGTH) throw new BusinessException(BusinessCode.BadRequest,"serverName cannot null and length cannot greater than 10");
+
+        // 联系电话和微信号只能有一个为空
+        if (StringUtils.isBlank(facilitatePeople.getContactNumber()) && StringUtils.isBlank(facilitatePeople.getWechat())) throw new BusinessException(BusinessCode.BadRequest,"contactNumber和wechat不能同时为空");
+
         // 联系电话
-        if (StringUtils.isNotBlank(facilitatePeople.getContactNumber()) && facilitatePeople.getContactNumber().length() != FacilitatePeople.CONTACT_NUMBER_LENGTH) {
-            throw new BusinessException(BusinessCode.BadRequest,"contactNumber Break the rules");
-        } else {
+        if (StringUtils.isBlank(facilitatePeople.getContactNumber())) {
             facilitatePeople.setContactNumber(null);
+        } else if (facilitatePeople.getContactNumber().length() != FacilitatePeople.CONTACT_NUMBER_LENGTH) {
+            throw new BusinessException(BusinessCode.BadRequest,"contactNumber Break the rules");
         }
+
+        // 微信号
+        if (StringUtils.isBlank(facilitatePeople.getWechat())) {
+            facilitatePeople.setWechat(null);
+        } else if (facilitatePeople.getWechat().length() > FacilitatePeople.WECHAT_LENGTH) {
+            throw new BusinessException(BusinessCode.OutOfRange, "wechat length cannot greater than " + FacilitatePeople.WECHAT_LENGTH);
+        }
+
         // 联系人
-        if (StringUtils.isNotBlank(facilitatePeople.getLinkmanName()) && facilitatePeople.getLinkmanName().length() > FacilitatePeople.LINKMAN_NAME_LENGTH) {
-            throw new BusinessException(BusinessCode.OutOfRange, "linkmanName length cannot greater than" + FacilitatePeople.LINKMAN_NAME_LENGTH);
-        } else {
+        if (StringUtils.isBlank(facilitatePeople.getLinkmanName())) {
             facilitatePeople.setLinkmanName(null);
+        } else if (facilitatePeople.getLinkmanName().length() > FacilitatePeople.LINKMAN_NAME_LENGTH) {
+            throw new BusinessException(BusinessCode.OutOfRange, "linkmanName length cannot greater than " + FacilitatePeople.LINKMAN_NAME_LENGTH);
         }
+
         // 备注
-        if (StringUtils.isNotBlank(facilitatePeople.getNotes()) && facilitatePeople.getNotes().length() > FacilitatePeople.NOTES_LENGTH) {
-            throw new BusinessException(BusinessCode.OutOfRange, "notes length cannot greater than" + FacilitatePeople.NOTES_LENGTH);
-        } else {
+        if (StringUtils.isBlank(facilitatePeople.getNotes())) {
             facilitatePeople.setNotes(null);
+        } else if (facilitatePeople.getNotes().length() > FacilitatePeople.NOTES_LENGTH) {
+            throw new BusinessException(BusinessCode.OutOfRange, "notes length cannot greater than " + FacilitatePeople.NOTES_LENGTH);
         }
+
         // 将serverName也一并加入到tags中，搜索只匹配tags即可
-        if (StringUtils.isNotBlank(facilitatePeople.getTags()) && facilitatePeople.getTags().length() > FacilitatePeople.TAGS_LENGTH) {
-            throw new BusinessException(BusinessCode.OutOfRange,"tags length cannot greater than" + FacilitatePeople.TAGS_LENGTH);
-        } else if (StringUtils.isNotBlank(facilitatePeople.getTags())) {
-            facilitatePeople.setTags(facilitatePeople.getServerName() + "," + facilitatePeople.getTags());
-        } else {
-            facilitatePeople.setTags(facilitatePeople.getServerName());
+        if (StringUtils.isBlank(facilitatePeople.getTags())) {
+            facilitatePeople.setTags(null);
+        } else if (facilitatePeople.getTags().length() > FacilitatePeople.TAGS_LENGTH) {
+            throw new BusinessException(BusinessCode.OutOfRange,"tags length cannot greater than " + FacilitatePeople.TAGS_LENGTH);
         }
+
         // status数据库默认为1,该插入方法暂时不允许修改status
         facilitatePeople.setStatus(null);
 

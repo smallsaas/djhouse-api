@@ -34,6 +34,9 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
     // 联系电话
     private String contactNumber;
 
+    // 微信号
+    private String wechat;
+
     // 备注
     private String notes;
 
@@ -42,7 +45,6 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
 
     // 状态
     private Boolean status;
-
 
     public Integer getId() {
         return id;
@@ -72,6 +74,13 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
         this.contactNumber = contactNumber;
     }
 
+    public String getWechat() {
+        return wechat;
+    }
+    public void setWechat(String wechat) {
+        this.wechat = wechat;
+    }
+
     public String getNotes() {
         return notes;
     }
@@ -97,6 +106,7 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
     public static final int SERVER_NAME_LENGTH = 10;
     public static final int LINKMAN_NAME_LENGTH = 5;
     public static final int CONTACT_NUMBER_LENGTH = 11;
+    public static final int WECHAT_LENGTH = 20;
     public static final int NOTES_LENGTH = 50;
     public static final int TAGS_LENGTH = 30;
 
