@@ -19,9 +19,9 @@ public interface FacilitatePeopleService {
 
     FacilitatePeopleRecord getFacilitatePeople(Integer id);
 
-    int updateFacilitatePeople(FacilitatePeopleRecord facilitatePeopleRecord);
+    int updateFacilitatePeople(FacilitatePeople facilitatePeople);
 
-    int saveFacilitatePeople(FacilitatePeopleRecord facilitatePeopleRecord);
+    int saveFacilitatePeople(FacilitatePeople facilitatePeople);
 
     int removeFacilitatePeople(Integer id);
 }

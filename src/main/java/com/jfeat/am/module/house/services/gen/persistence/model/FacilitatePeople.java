@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -35,8 +37,12 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
     // 备注
     private String notes;
 
+    // 标签
+    private String tags;
+
     // 状态
     private Boolean status;
+
 
     public Integer getId() {
         return id;
@@ -73,12 +79,26 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
         this.notes = notes;
     }
 
+    public String getTags() {
+        return tags;
+    }
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
     public Boolean getStatus() {
         return status;
     }
     public void setStatus(Boolean status) {
         this.status = status;
     }
+
+    // 每个属性的长度
+    public static final int SERVER_NAME_LENGTH = 10;
+    public static final int LINKMAN_NAME_LENGTH = 5;
+    public static final int CONTACT_NUMBER_LENGTH = 11;
+    public static final int NOTES_LENGTH = 50;
+    public static final int TAGS_LENGTH = 30;
 
     @Override
     protected Serializable pkVal() {

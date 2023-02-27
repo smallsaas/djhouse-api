@@ -47,9 +47,9 @@ public class FacilitatePeopleEndpoint {
      * 以下属于管理员操作，均需社区管理员权限才可访问
      */
     @PostMapping()
-    public Tip saveFacilitatePeople(@RequestBody FacilitatePeopleRecord facilitatePeopleRecord) {
+    public Tip saveFacilitatePeople(@RequestBody FacilitatePeople facilitatePeople) {
 
-        return SuccessTip.create(facilitatePeopleService.saveFacilitatePeople(facilitatePeopleRecord));
+        return SuccessTip.create(facilitatePeopleService.saveFacilitatePeople(facilitatePeople));
     }
 
     @GetMapping("/management")

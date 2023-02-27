@@ -11,6 +11,7 @@ import com.jfeat.am.module.house.services.utility.UserAccountUtility;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.util.StringUtil;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,10 +38,6 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     public Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeopleRecord> page,String serverName) {
 
         // 参数封装
-        // 目前没有找到在使用DTO 和 DO 的情况下使用baseMapper，先注释掉
-        // QueryWrapper<FacilitatePeople> facilitatePeopleQueryWrapper = new QueryWrapper<>();
-        // if(serverName != null) facilitatePeopleQueryWrapper.like("server_name",serverName);
-
         FacilitatePeople facilitatePeople = new FacilitatePeople();
         if (serverName != null) facilitatePeople.setServerName(serverName);
 
@@ -68,31 +65,52 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     }
 
     @Override
-    public int updateFacilitatePeople(FacilitatePeopleRecord facilitatePeopleRecord) {
+    public int updateFacilitatePeople(FacilitatePeople facilitatePeople) {
+        // 判断用户是否拥有社区管理员权限
+        if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+
         return 0;
     }
 
     @Transactional
     @Override
-    public int saveFacilitatePeople(FacilitatePeopleRecord facilitatePeopleRecord) {
+    public int saveFacilitatePeople(FacilitatePeople facilitatePeople) {
 
         // 判断用户是否拥有社区管理员权限
         if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
 
         // 参数校验
-        String serverName = facilitatePeopleRecord.getServerName();
-        if (serverName == null || serverName.length() > 10)
-            throw new BusinessException(BusinessCode.BadRequest,"serverName cannot null and length cannot greater than 10");
-        String contactNumber = facilitatePeopleRecord.getContactNumber();
-        if (contactNumber != null && contactNumber.length() != 11)
+        // 如果参数为 "" 空串，则修改为null,不写入数据库
+        // 服务名
+        if (StringUtils.isBlank(facilitatePeople.getServerName()) || facilitatePeople.getServerName().length() > FacilitatePeople.SERVER_NAME_LENGTH) throw new BusinessException(BusinessCode.BadRequest,"serverName cannot null and length cannot greater than 10");
+        // 联系电话
+        if (StringUtils.isNotBlank(facilitatePeople.getContactNumber()) && facilitatePeople.getContactNumber().length() != FacilitatePeople.CONTACT_NUMBER_LENGTH) {
             throw new BusinessException(BusinessCode.BadRequest,"contactNumber Break the rules");
-
-        // DTO 转换 DO
-        FacilitatePeople facilitatePeople = new FacilitatePeople();
-        facilitatePeople.setServerName(facilitatePeopleRecord.getServerName());
-        facilitatePeople.setLinkmanName(facilitatePeopleRecord.getLinkmanName());
-        facilitatePeople.setContactNumber(facilitatePeopleRecord.getContactNumber());
-        facilitatePeople.setNotes(facilitatePeopleRecord.getNotes());
+        } else {
+            facilitatePeople.setContactNumber(null);
+        }
+        // 联系人
+        if (StringUtils.isNotBlank(facilitatePeople.getLinkmanName()) && facilitatePeople.getLinkmanName().length() > FacilitatePeople.LINKMAN_NAME_LENGTH) {
+            throw new BusinessException(BusinessCode.OutOfRange, "linkmanName length cannot greater than" + FacilitatePeople.LINKMAN_NAME_LENGTH);
+        } else {
+            facilitatePeople.setLinkmanName(null);
+        }
+        // 备注
+        if (StringUtils.isNotBlank(facilitatePeople.getNotes()) && facilitatePeople.getNotes().length() > FacilitatePeople.NOTES_LENGTH) {
+            throw new BusinessException(BusinessCode.OutOfRange, "notes length cannot greater than" + FacilitatePeople.NOTES_LENGTH);
+        } else {
+            facilitatePeople.setNotes(null);
+        }
+        // 将serverName也一并加入到tags中，搜索只匹配tags即可
+        if (StringUtils.isNotBlank(facilitatePeople.getTags()) && facilitatePeople.getTags().length() > FacilitatePeople.TAGS_LENGTH) {
+            throw new BusinessException(BusinessCode.OutOfRange,"tags length cannot greater than" + FacilitatePeople.TAGS_LENGTH);
+        } else if (StringUtils.isNotBlank(facilitatePeople.getTags())) {
+            facilitatePeople.setTags(facilitatePeople.getServerName() + "," + facilitatePeople.getTags());
+        } else {
+            facilitatePeople.setTags(facilitatePeople.getServerName());
+        }
+        // status数据库默认为1,该插入方法暂时不允许修改status
+        facilitatePeople.setStatus(null);
 
         // 执行baseMapper.insert
         int affected = facilitatePeopleDao.insert(facilitatePeople);
