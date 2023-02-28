@@ -23,5 +23,19 @@ public interface FacilitatePeopleService {
 
     int saveFacilitatePeople(FacilitatePeople facilitatePeople);
 
+    /**
+     * 开放指定便民服务
+     * @param id
+     * @return
+     */
+    int updateFacilitatePeopleOfStatusOpen(Integer id);
+
+    /**
+     * 关闭指定便民服务
+     * @param id
+     * @return
+     */
+    int updateFacilitatePeopleOfStatusClose(Integer id);
+
     int removeFacilitatePeople(Integer id);
 }

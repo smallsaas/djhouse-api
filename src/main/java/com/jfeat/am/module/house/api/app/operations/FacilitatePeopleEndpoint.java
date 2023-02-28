@@ -37,15 +37,15 @@ public class FacilitatePeopleEndpoint {
 
     }
 
+    /**
+     * 以下属于管理员操作，均需社区管理员权限才可访问
+     */
     @GetMapping("/{id}")
     public Tip getFacilitatePeople(@PathVariable Integer id) {
 
         return SuccessTip.create(facilitatePeopleService.getFacilitatePeople(id));
     }
 
-    /**
-     * 以下属于管理员操作，均需社区管理员权限才可访问
-     */
     @PostMapping()
     public Tip saveFacilitatePeople(@RequestBody FacilitatePeople facilitatePeople) {
 
@@ -64,15 +64,32 @@ public class FacilitatePeopleEndpoint {
         return SuccessTip.create(facilitatePeopleService.managementFindFacilitatePeople(page,serverName));
     }
 
+    @PutMapping()
+    public Tip updateFacilitatePeople(@RequestBody FacilitatePeople facilitatePeople) {
+
+        return SuccessTip.create(facilitatePeopleService.updateFacilitatePeople(facilitatePeople));
+    }
+
     /**
-     * 关闭某条便民服务
+     * 关闭指定便民服务
      * @param id 便民服务记录id
      * @return
      */
-    @PutMapping("/close")
-    public Tip closeFindFacilitatePeople(@PathVariable Integer id) {
+    @PutMapping("/close/{id}")
+    public Tip closeFacilitatePeople(@PathVariable Integer id) {
 
-        return SuccessTip.create();
+        return SuccessTip.create(facilitatePeopleService.updateFacilitatePeopleOfStatusClose(id));
+    }
+
+    /**
+     * 开启指定便民服务
+     * @param id
+     * @return
+     */
+    @PutMapping("/open/{id}")
+    public Tip openFacilitatePeople(@PathVariable Integer id) {
+
+        return SuccessTip.create(facilitatePeopleService.updateFacilitatePeopleOfStatusOpen(id));
     }
 
 }

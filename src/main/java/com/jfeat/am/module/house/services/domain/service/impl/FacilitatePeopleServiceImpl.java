@@ -69,7 +69,60 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
         // 判断用户是否拥有社区管理员权限
         if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
 
-        return 0;
+        // 参数校验,除id以外的参数如果为 "" 空串，则修改为null,不写入数据库
+        // id
+        if (facilitatePeople.getId() == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"id cannot null");
+
+        // 服务名
+        if (StringUtils.isBlank(facilitatePeople.getServerName()) || facilitatePeople.getServerName().length() > FacilitatePeople.SERVER_NAME_LENGTH) throw new BusinessException(BusinessCode.BadRequest,"serverName cannot null and length cannot greater than 10");
+
+        // 联系电话和微信号只能有一个为空
+        if (StringUtils.isBlank(facilitatePeople.getContactNumber()) && StringUtils.isBlank(facilitatePeople.getWechat())) throw new BusinessException(BusinessCode.BadRequest,"contactNumber和wechat不能同时为空");
+
+        // 联系电话
+        if (StringUtils.isBlank(facilitatePeople.getContactNumber())) {
+            facilitatePeople.setContactNumber(null);
+        } else if (facilitatePeople.getContactNumber().length() != FacilitatePeople.CONTACT_NUMBER_LENGTH) {
+            throw new BusinessException(BusinessCode.BadRequest,"contactNumber Break the rules");
+        }
+
+        // 微信号
+        if (StringUtils.isBlank(facilitatePeople.getWechat())) {
+            facilitatePeople.setWechat(null);
+        } else if (facilitatePeople.getWechat().length() > FacilitatePeople.WECHAT_LENGTH) {
+            throw new BusinessException(BusinessCode.OutOfRange, "wechat length cannot greater than " + FacilitatePeople.WECHAT_LENGTH);
+        }
+
+        // 联系人
+        if (StringUtils.isBlank(facilitatePeople.getLinkmanName())) {
+            facilitatePeople.setLinkmanName(null);
+        } else if (facilitatePeople.getLinkmanName().length() > FacilitatePeople.LINKMAN_NAME_LENGTH) {
+            throw new BusinessException(BusinessCode.OutOfRange, "linkmanName length cannot greater than " + FacilitatePeople.LINKMAN_NAME_LENGTH);
+        }
+
+        // 备注
+        if (StringUtils.isBlank(facilitatePeople.getNotes())) {
+            facilitatePeople.setNotes(null);
+        } else if (facilitatePeople.getNotes().length() > FacilitatePeople.NOTES_LENGTH) {
+            throw new BusinessException(BusinessCode.OutOfRange, "notes length cannot greater than " + FacilitatePeople.NOTES_LENGTH);
+        }
+
+        // 服务标签
+        if (StringUtils.isBlank(facilitatePeople.getTags())) {
+            facilitatePeople.setTags(null);
+        } else if (facilitatePeople.getTags().length() > FacilitatePeople.TAGS_LENGTH) {
+            throw new BusinessException(BusinessCode.OutOfRange,"tags length cannot greater than " + FacilitatePeople.TAGS_LENGTH);
+        }
+
+        // status数据库默认为1,该插入方法暂时不允许修改status
+        facilitatePeople.setStatus(null);
+
+        // 执行
+        int affected = facilitatePeopleDao.updateById(facilitatePeople);
+        if (affected < 1) throw new BusinessException(BusinessCode.DatabaseUpdateError,"更新失败,请检查该id是否存在");
+
+        return affected;
+
     }
 
     @Transactional
@@ -115,7 +168,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
             throw new BusinessException(BusinessCode.OutOfRange, "notes length cannot greater than " + FacilitatePeople.NOTES_LENGTH);
         }
 
-        // 将serverName也一并加入到tags中，搜索只匹配tags即可
+        // 服务标签
         if (StringUtils.isBlank(facilitatePeople.getTags())) {
             facilitatePeople.setTags(null);
         } else if (facilitatePeople.getTags().length() > FacilitatePeople.TAGS_LENGTH) {
@@ -127,7 +180,54 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
 
         // 执行baseMapper.insert
         int affected = facilitatePeopleDao.insert(facilitatePeople);
-        if (affected != 1) throw new BusinessException(BusinessCode.DatabaseInsertError,"插入失败");
+        if (affected < 1) throw new BusinessException(BusinessCode.DatabaseInsertError,"插入失败");
+
+        return affected;
+    }
+
+    /**
+     * 开放指定便民服务
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public int updateFacilitatePeopleOfStatusOpen(Integer id) {
+
+        // 判断用户是否拥有社区管理员权限
+        if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+
+        if (id == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"id cannot null");
+
+        FacilitatePeople facilitatePeople = new FacilitatePeople();
+        facilitatePeople.setId(id);
+        facilitatePeople.setStatus(true);
+
+        int affected = facilitatePeopleDao.updateById(facilitatePeople);
+        if (affected < 1) throw new BusinessException(BusinessCode.DatabaseUpdateError,"更新失败");
+
+        return affected;
+    }
+
+    /**
+     * 关闭指定便民服务
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public int updateFacilitatePeopleOfStatusClose(Integer id) {
+        // 判断用户是否拥有社区管理员权限
+        if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+
+        if (id == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"id cannot null");
+
+        FacilitatePeople facilitatePeople = new FacilitatePeople();
+        facilitatePeople.setId(id);
+        facilitatePeople.setStatus(false);
+
+        int affected = facilitatePeopleDao.updateById(facilitatePeople);
+        if (affected < 1) throw new BusinessException(BusinessCode.DatabaseUpdateError,"更新失败");
 
         return affected;
     }

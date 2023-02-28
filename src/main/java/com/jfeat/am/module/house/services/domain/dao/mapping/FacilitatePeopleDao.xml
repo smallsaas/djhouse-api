@@ -17,6 +17,8 @@
         FROM
             t_house_facilitate_people
         <where>
+            t_house_facilitate_people.status = 1
+
             <if test="facilitatePeople.serverName != null and facilitatePeople.serverName != ''">
                 AND t_house_facilitate_people.server_name LIKE CONCAT("%",#{facilitatePeople.serverName},"%")
             </if>

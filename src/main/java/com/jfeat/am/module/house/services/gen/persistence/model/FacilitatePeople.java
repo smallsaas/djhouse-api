@@ -108,7 +108,7 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
     public static final int CONTACT_NUMBER_LENGTH = 11;
     public static final int WECHAT_LENGTH = 20;
     public static final int NOTES_LENGTH = 50;
-    public static final int TAGS_LENGTH = 30;
+    public static final int TAGS_LENGTH = 10;
 
     @Override
     protected Serializable pkVal() {
