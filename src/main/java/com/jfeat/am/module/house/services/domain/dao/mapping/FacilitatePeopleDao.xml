@@ -23,6 +23,8 @@
                 AND t_house_facilitate_people.server_name LIKE CONCAT("%",#{facilitatePeople.serverName},"%")
             </if>
         </where>
+
+        order by t_house_facilitate_people.create_date_time desc
     </select>
 
     <select id="getFacilitatePeople" resultType="FacilitatePeople">

@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @description: TODO
@@ -48,7 +50,11 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     public Page<FacilitatePeople> managementFindFacilitatePeople(Page<FacilitatePeople> page,String serverName) {
 
          QueryWrapper<FacilitatePeople> facilitatePeopleQueryWrapper = new QueryWrapper<>();
-         if (serverName != null && StringUtils.isNotBlank(serverName)) facilitatePeopleQueryWrapper.like("server_name",serverName);
+         facilitatePeopleQueryWrapper.orderByDesc("create_date_time");
+         if (serverName != null && StringUtils.isNotBlank(serverName)) {
+             facilitatePeopleQueryWrapper.like("server_name",serverName);
+         }
+         
          return facilitatePeopleDao.selectPage(page,facilitatePeopleQueryWrapper);
     }
 
@@ -175,7 +181,12 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
             throw new BusinessException(BusinessCode.OutOfRange,"tags length cannot greater than " + FacilitatePeople.TAGS_LENGTH);
         }
 
-        // status数据库默认为1,该插入方法暂时不允许修改status
+        // 创建时间，不允许用户自定义
+            // 格式化器
+            // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        facilitatePeople.setCreateDateTime(LocalDateTime.now());
+
+        // status数据库默认为1,该插入方法不允许用户自定义
         facilitatePeople.setStatus(null);
 
         // 执行baseMapper.insert

@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @description: t_house_facilitate_people表的实体类
@@ -45,6 +46,17 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
 
     // 状态
     private Boolean status;
+
+    // 创建时间
+    private LocalDateTime createDateTime;
+
+    public LocalDateTime getCreateDateTime() {
+        return createDateTime;
+    }
+
+    public void setCreateDateTime(LocalDateTime createDateTime) {
+        this.createDateTime = createDateTime;
+    }
 
     public Integer getId() {
         return id;
