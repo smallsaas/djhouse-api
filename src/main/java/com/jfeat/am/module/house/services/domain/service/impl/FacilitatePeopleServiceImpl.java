@@ -37,24 +37,20 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     UserAccountUtility userAccountUtility;
 
     @Override
-    public Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeopleRecord> page,String serverName) {
+    public Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeopleRecord> page,String search) {
 
-        // 参数封装
-        FacilitatePeople facilitatePeople = new FacilitatePeople();
-        if (serverName != null) facilitatePeople.setServerName(serverName);
-
-        return facilitatePeopleDao.findFacilitatePeople(page,facilitatePeople);
+        return facilitatePeopleDao.findFacilitatePeople(page,search);
     }
 
     @Override
-    public Page<FacilitatePeople> managementFindFacilitatePeople(Page<FacilitatePeople> page,String serverName) {
+    public Page<FacilitatePeople> managementFindFacilitatePeople(Page<FacilitatePeople> page,String search) {
 
          QueryWrapper<FacilitatePeople> facilitatePeopleQueryWrapper = new QueryWrapper<>();
          facilitatePeopleQueryWrapper.orderByDesc("create_date_time");
-         if (serverName != null && StringUtils.isNotBlank(serverName)) {
-             facilitatePeopleQueryWrapper.like("server_name",serverName);
+         if (search != null && StringUtils.isNotBlank(search)) {
+             facilitatePeopleQueryWrapper.like("server_name",search).or().like("tags",search);
          }
-         
+
          return facilitatePeopleDao.selectPage(page,facilitatePeopleQueryWrapper);
     }
 
@@ -62,7 +58,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     public FacilitatePeople getFacilitatePeople(Integer id) {
 
         // 判断用户是否拥有社区管理员权限
-        if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+        if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_OPERATION))) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
 
         // 参数校验
         if (id == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"id cannot null");
@@ -73,7 +69,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     @Override
     public int updateFacilitatePeople(FacilitatePeople facilitatePeople) {
         // 判断用户是否拥有社区管理员权限
-        if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+        if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_OPERATION))) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
 
         // 参数校验,除id以外的参数如果为 "" 空串，则修改为null,不写入数据库
         // id
@@ -136,7 +132,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     public int saveFacilitatePeople(FacilitatePeople facilitatePeople) {
 
         // 判断用户是否拥有社区管理员权限
-        if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+        if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_OPERATION))) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
 
         // 参数校验
         // 如果参数为 "" 空串，则修改为null,不写入数据库
@@ -206,7 +202,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     public int updateFacilitatePeopleOfStatusOpen(Integer id) {
 
         // 判断用户是否拥有社区管理员权限
-        if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+        if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_OPERATION))) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
 
         if (id == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"id cannot null");
 
@@ -229,7 +225,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     @Override
     public int updateFacilitatePeopleOfStatusClose(Integer id) {
         // 判断用户是否拥有社区管理员权限
-        if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+        if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_OPERATION))) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
 
         if (id == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"id cannot null");
 

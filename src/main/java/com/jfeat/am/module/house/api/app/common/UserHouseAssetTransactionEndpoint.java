@@ -166,21 +166,21 @@ public class UserHouseAssetTransactionEndpoint {
         return SuccessTip.create(houseAssetTransactionService.updateMaster(entity));
     }
 
-    @DeleteMapping("/{id}")
-    @ApiOperation("删除 HouseAssetTransaction")
-    public Tip deleteHouseAssetTransaction(@PathVariable Long id) {
-        Long userId = JWTKit.getUserId();
-        if (userId==null){
-            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
-        }
-
-        HouseAssetTransaction houseAssetTransaction = houseAssetTransactionMapper.selectById(id);
-        if (houseAssetTransaction==null||!houseAssetTransaction.getUserId().equals(userId)){
-            throw new BusinessException(BusinessCode.NoPermission);
-        }
-
-        return SuccessTip.create(houseAssetTransactionService.deleteMaster(id));
-    }
+//    @DeleteMapping("/{id}")
+//    @ApiOperation("删除 HouseAssetTransaction")
+//    public Tip deleteHouseAssetTransaction(@PathVariable Long id) {
+//        Long userId = JWTKit.getUserId();
+//        if (userId==null){
+//            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+//        }
+//
+//        HouseAssetTransaction houseAssetTransaction = houseAssetTransactionMapper.selectById(id);
+//        if (houseAssetTransaction==null||!houseAssetTransaction.getUserId().equals(userId)){
+//            throw new BusinessException(BusinessCode.NoPermission);
+//        }
+//
+//        return SuccessTip.create(houseAssetTransactionService.deleteMaster(id));
+//    }
 
 
     @GetMapping
@@ -247,6 +247,10 @@ public class UserHouseAssetTransactionEndpoint {
         // 该方法默认获取非当前用户的订单记录
         Long userId = JWTKit.getUserId();
         record.setUserId(userId);
+        // 获取当前用户社区，只查询当前用户的社区房屋转让信息
+        Long community = JWTKit.getOrgId();
+        if (community == null) throw new BusinessException(BusinessCode.NoPermission,"当前用户缺少了社区信息");
+        record.setCommunity(community);
         record.setAssetId(assetId);
         record.setHouseType(houseType);
         record.setState(state);
@@ -395,5 +399,11 @@ public class UserHouseAssetTransactionEndpoint {
         if (affected < 1) throw new BusinessException(BusinessCode.DatabaseUpdateError,"更新失败");
 
         return SuccessTip.create(affected);
+    }
+
+    @DeleteMapping("/{id}")
+    public Tip removeTransaction(@PathVariable Long id) {
+
+        return SuccessTip.create(houseAssetTransactionService.removeTransaction(id));
     }
 }

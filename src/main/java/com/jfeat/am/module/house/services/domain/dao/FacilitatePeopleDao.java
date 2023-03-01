@@ -17,5 +17,5 @@ public interface FacilitatePeopleDao extends BaseMapper<FacilitatePeople> {
 
     FacilitatePeople getFacilitatePeople(Integer id);
 
-    Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeopleRecord> page, @Param("facilitatePeople") FacilitatePeople facilitatePeople);
+    Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeopleRecord> page, @Param("search") String search);
 }

@@ -27,13 +27,13 @@ public class FacilitatePeopleEndpoint {
     @GetMapping()
     public Tip findFacilitatePeople(@RequestParam(name = "pageNum",required = false,defaultValue = "1") Integer pageNum,
                                     @RequestParam(name = "pageSize",required = false,defaultValue = "10") Integer pageSize,
-                                    @RequestParam(name = "serverName",required = false) String serverName) {
+                                    @RequestParam(name = "search",required = false) String search) {
 
         Page<FacilitatePeopleRecord> page = new Page<>();
         page.setCurrent(pageNum);
         page.setSize(pageSize);
 
-        return SuccessTip.create(facilitatePeopleService.findFacilitatePeople(page,serverName));
+        return SuccessTip.create(facilitatePeopleService.findFacilitatePeople(page,search));
 
     }
 
@@ -55,13 +55,13 @@ public class FacilitatePeopleEndpoint {
     @GetMapping("/management")
     public Tip managementFindFacilitatePeople(@RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                               @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                                              @RequestParam(name = "serverName", required = false) String serverName) {
+                                              @RequestParam(name = "search", required = false) String search) {
 
         Page<FacilitatePeople> page = new Page<>();
         page.setCurrent(pageNum);
         page.setSize(pageSize);
 
-        return SuccessTip.create(facilitatePeopleService.managementFindFacilitatePeople(page,serverName));
+        return SuccessTip.create(facilitatePeopleService.managementFindFacilitatePeople(page,search));
     }
 
     @PutMapping()

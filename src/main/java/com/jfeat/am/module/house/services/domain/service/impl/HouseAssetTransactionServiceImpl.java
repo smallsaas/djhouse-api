@@ -1,10 +1,15 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
+import com.jfeat.am.core.model.EndUserTypeSetting;
 import com.jfeat.am.module.house.services.definition.HouseAssetTransactionStatus;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetTransactionDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetTransactionRecord;
+import com.jfeat.am.module.house.services.domain.service.HouseAssetTransactionIntentionService;
 import com.jfeat.am.module.house.services.domain.service.HouseAssetTransactionService;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHouseAssetTransactionServiceImpl;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetTransaction;
+import com.jfeat.am.module.house.services.utility.UserAccountUtility;
+import com.jfeat.crud.base.exception.BusinessCode;
+import com.jfeat.crud.base.exception.BusinessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,7 +29,13 @@ import java.util.List;
 public class HouseAssetTransactionServiceImpl extends CRUDHouseAssetTransactionServiceImpl implements HouseAssetTransactionService {
 
     @Resource
+    UserAccountUtility userAccountUtility;
+
+    @Resource
     QueryHouseAssetTransactionDao queryHouseAssetTransactionDao;
+
+    @Resource
+    HouseAssetTransactionIntentionService houseAssetTransactionIntentionService;
 
     @Override
     protected String entityName() {
@@ -82,5 +93,26 @@ public class HouseAssetTransactionServiceImpl extends CRUDHouseAssetTransactionS
     @Override
     public Integer updateDisplay(HouseAssetTransactionRecord transaction) {
         return queryHouseAssetTransactionDao.updateDisplay(transaction);
+    }
+
+    /**
+     * 删除转让记录
+     *
+     * @param id 记录id
+     * @return
+     */
+    @Override
+    public int removeTransaction(Long id) {
+
+        // 判断是否拥有销售权限
+        if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_SALES))) throw new BusinessException(BusinessCode.NoPermission,"没有销售权限");
+
+        // 执行删除
+        int affected = queryHouseAssetTransactionDao.deleteById(id);
+        if (affected < 1) throw new BusinessException(BusinessCode.DatabaseDeleteError,"没有id为" + id + "的记录");
+        // 删除 关注记录
+        affected += houseAssetTransactionIntentionService.removeTransactionIntention(id);
+
+        return affected;
     }
 }

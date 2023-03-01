@@ -19,8 +19,12 @@
         <where>
             t_house_facilitate_people.status = 1
 
-            <if test="facilitatePeople.serverName != null and facilitatePeople.serverName != ''">
-                AND t_house_facilitate_people.server_name LIKE CONCAT("%",#{facilitatePeople.serverName},"%")
+            <if test="search != null and search != ''">
+                AND (
+                t_house_facilitate_people.server_name LIKE CONCAT("%",#{search},"%")
+                OR
+                t_house_facilitate_people.tags LIKE CONCAT("%",#{search},"%")
+                )
             </if>
         </where>
 

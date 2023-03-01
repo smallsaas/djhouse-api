@@ -24,4 +24,11 @@ public interface HouseAssetTransactionIntentionService {
      * @return
      */
     List<EndpointUserModel>  listUser(Long transactionId);
+
+    /**
+     * 根据transactionId删除记录，会有多条记录
+     * @param transactionId
+     * @return
+     */
+    int removeTransactionIntention(Long transactionId);
 }

@@ -33,4 +33,11 @@ public interface HouseAssetTransactionService extends CRUDHouseAssetTransactionS
      * @return 修改条目数
      */
     Integer updateDisplay(HouseAssetTransactionRecord transaction);
+
+    /**
+     * 删除转让记录
+     * @param id 记录id
+     * @return
+     */
+    int removeTransaction(Long id);
 }

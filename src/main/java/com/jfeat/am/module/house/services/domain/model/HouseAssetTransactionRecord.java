@@ -13,6 +13,16 @@ public class HouseAssetTransactionRecord extends HouseAssetTransaction{
     // 关注数
     private Integer followNumber;
 
+    // 社区，该社区信息从发表的用户中获取
+    private Long community;
+
+    public Long getCommunity() {
+        return community;
+    }
+    public void setCommunity(Long community) {
+        this.community = community;
+    }
+
     public Integer getFollowNumber() {
         return followNumber;
     }

@@ -136,6 +136,10 @@
 
         WHERE 1=1
 
+        <if test="record.community != null">
+            AND t_end_user.org_id = #{record.community}
+        </if>
+
         <if test="record.display != null">
             AND t_house_asset_transaction.display = #{record.display}
         </if>
