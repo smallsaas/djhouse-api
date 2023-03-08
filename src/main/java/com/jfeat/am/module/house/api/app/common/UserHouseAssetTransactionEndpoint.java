@@ -166,7 +166,7 @@ public class UserHouseAssetTransactionEndpoint {
         return SuccessTip.create(houseAssetTransactionService.updateTransaction(entity));
     }
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/{id}")
     @ApiOperation("删除 HouseAssetTransaction")
     public Tip deleteHouseAssetTransaction(@PathVariable Long id) {
         // 判断用户是否已注册
@@ -403,7 +403,7 @@ public class UserHouseAssetTransactionEndpoint {
         return SuccessTip.create(affected);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/sale/{id}")
     public Tip removeTransaction(@PathVariable Long id) {
 
         return SuccessTip.create(houseAssetTransactionService.removeTransaction(id));
