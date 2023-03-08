@@ -40,4 +40,6 @@ public interface HouseAssetTransactionService extends CRUDHouseAssetTransactionS
      * @return
      */
     int removeTransaction(Long id);
+
+    int updateTransaction(HouseAssetTransaction transaction);
 }

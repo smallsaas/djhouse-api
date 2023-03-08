@@ -115,4 +115,13 @@ public class HouseAssetTransactionServiceImpl extends CRUDHouseAssetTransactionS
 
         return affected;
     }
+
+    @Override
+    public int updateTransaction(HouseAssetTransaction transaction) {
+
+        // 执行更新
+        int affected = queryHouseAssetTransactionDao.updateById(transaction);
+        if (affected < 1) throw new BusinessException(BusinessCode.DatabaseUpdateError,"update fail");
+        return affected;
+    }
 }

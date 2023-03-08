@@ -126,6 +126,7 @@ public class UserHouseAssetTransactionEndpoint {
     @ApiOperation(value = "修改 HouseAssetTransaction", response = HouseAssetTransaction.class)
     public Tip updateHouseAssetTransaction(@PathVariable Long id, @RequestBody HouseAssetTransaction entity) {
 
+        // 从参数判断
         Long userId = JWTKit.getUserId();
         if (userId==null){
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");
@@ -159,28 +160,29 @@ public class UserHouseAssetTransactionEndpoint {
             throw new BusinessException(BusinessCode.BadRequest,"enStatus不在[BUY|SELL]");
         }
 
-
-
+        // 执行更新
         entity.setId(id);
         entity.setUserId(userId);
-        return SuccessTip.create(houseAssetTransactionService.updateMaster(entity));
+        return SuccessTip.create(houseAssetTransactionService.updateTransaction(entity));
     }
 
-//    @DeleteMapping("/{id}")
-//    @ApiOperation("删除 HouseAssetTransaction")
-//    public Tip deleteHouseAssetTransaction(@PathVariable Long id) {
-//        Long userId = JWTKit.getUserId();
-//        if (userId==null){
-//            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
-//        }
-//
-//        HouseAssetTransaction houseAssetTransaction = houseAssetTransactionMapper.selectById(id);
-//        if (houseAssetTransaction==null||!houseAssetTransaction.getUserId().equals(userId)){
-//            throw new BusinessException(BusinessCode.NoPermission);
-//        }
-//
-//        return SuccessTip.create(houseAssetTransactionService.deleteMaster(id));
-//    }
+    @DeleteMapping("/user/{id}")
+    @ApiOperation("删除 HouseAssetTransaction")
+    public Tip deleteHouseAssetTransaction(@PathVariable Long id) {
+        // 判断用户是否已注册
+        Long userId = JWTKit.getUserId();
+        if (userId==null){
+            throw new BusinessException(BusinessCode.NoPermission,"没有登录");
+        }
+        // 判断是否是用户本人
+        HouseAssetTransaction houseAssetTransaction = houseAssetTransactionMapper.selectById(id);
+        if (houseAssetTransaction==null||!houseAssetTransaction.getUserId().equals(userId)){
+            throw new BusinessException(BusinessCode.NoPermission);
+        }
+
+        // 执行删除
+        return SuccessTip.create(houseAssetTransactionService.deleteMaster(id));
+    }
 
 
     @GetMapping
@@ -376,7 +378,7 @@ public class UserHouseAssetTransactionEndpoint {
         List<HouseAssetTransactionRecord> myTransactions = houseAssetTransactionService.listTransaction(userId);
         /**
          * 根据state判断状态，需求 or 转让
-         * 该方法有非常大的优化空间，可根据state就可以直接判断状态，可是因为前端对接的时候已经使用了cnStatus，enStatus这两个字段，
+         * 可根据state就可以直接判断状态，可是因为前端对接的时候已经使用了cnStatus，enStatus这两个字段,
          * 所以为了先不影响前端使用继续使用该方法，后续可在前端修改逻辑后去掉此方法
          */
         houseAssetTransactionService.setStatus(myTransactions);
