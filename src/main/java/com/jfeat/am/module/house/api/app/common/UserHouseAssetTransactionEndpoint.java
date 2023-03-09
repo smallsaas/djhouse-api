@@ -379,7 +379,7 @@ public class UserHouseAssetTransactionEndpoint {
         /**
          * 根据state判断状态，需求 or 转让
          * 可根据state就可以直接判断状态，可是因为前端对接的时候已经使用了cnStatus，enStatus这两个字段,
-         * 所以为了先不影响前端使用继续使用该方法，后续可在前端修改逻辑后去掉此方法
+         * 所以为了不影响前端的使用继续使用该方法
          */
         houseAssetTransactionService.setStatus(myTransactions);
 
