@@ -6,6 +6,7 @@ import com.jfeat.am.module.house.services.domain.service.FacilitatePeopleService
 import com.jfeat.am.module.house.services.gen.persistence.model.FacilitatePeople;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import io.swagger.models.auth.In;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -90,6 +91,12 @@ public class FacilitatePeopleEndpoint {
     public Tip openFacilitatePeople(@PathVariable Integer id) {
 
         return SuccessTip.create(facilitatePeopleService.updateFacilitatePeopleOfStatusOpen(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public Tip removeFacilitatePeople(@PathVariable(name = "id") Integer id) {
+
+        return SuccessTip.create(facilitatePeopleService.removeFacilitatePeople(id));
     }
 
 }

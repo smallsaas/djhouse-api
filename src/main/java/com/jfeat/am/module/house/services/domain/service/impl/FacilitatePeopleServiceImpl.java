@@ -241,6 +241,10 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
 
     @Override
     public int removeFacilitatePeople(Integer id) {
-        return 0;
+
+        // 社区管理员权限判断
+        if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_OPERATION))) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+
+        return facilitatePeopleDao.deleteById(id);
     }
 }

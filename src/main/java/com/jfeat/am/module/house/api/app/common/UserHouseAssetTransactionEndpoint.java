@@ -248,7 +248,7 @@ public class UserHouseAssetTransactionEndpoint {
         HouseAssetTransactionRecord record = new HouseAssetTransactionRecord();
         // 该方法默认获取非当前用户的订单记录
         Long userId = JWTKit.getUserId();
-        record.setUserId(userId);
+//        record.setUserId(userId);
         // 获取当前用户社区，只查询当前用户的社区房屋转让信息
         Long community = JWTKit.getOrgId();
         if (community == null) throw new BusinessException(BusinessCode.NoPermission,"当前用户缺少了社区信息");

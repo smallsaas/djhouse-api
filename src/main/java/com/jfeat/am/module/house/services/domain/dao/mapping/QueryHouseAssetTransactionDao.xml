@@ -148,11 +148,10 @@
             AND t_house_asset_transaction.id = #{record.id}
         </if>
 
-
-        <if test="record.userId != null and record.userId > 0 ">
-            AND t_house_asset_transaction.user_id != #{record.userId}
-        </if>
-
+<!-- 不获取指定用户的记录 -->
+<!--        <if test="record.userId != null and record.userId > 0 ">-->
+<!--            AND t_house_asset_transaction.user_id != #{record.userId}-->
+<!--        </if>-->
 
         <if test="record.assetId != null and record.assetId>0 ">
             AND t_house_asset_transaction.asset_id =#{record.assetId}
