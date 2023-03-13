@@ -189,7 +189,7 @@
         OR t_house_asset_transaction.name LIKE CONCAT('%',#{search},'%')
     </if>
     -->
-        ORDER BY t_house_asset_transaction. create_time DESC,t_house_asset_transaction.update_time DESC
+        ORDER BY t_house_asset_transaction.update_time DESC, t_house_asset_transaction. create_time DESC
     </select>
 
     <select id="listPriceOfTransaction" resultType="BigDecimal">

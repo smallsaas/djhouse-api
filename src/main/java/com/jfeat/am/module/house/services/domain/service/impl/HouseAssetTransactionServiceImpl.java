@@ -1,4 +1,5 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.jfeat.am.core.model.EndUserTypeSetting;
 import com.jfeat.am.module.house.services.definition.HouseAssetTransactionStatus;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetTransactionDao;
@@ -10,10 +11,13 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetTransa
 import com.jfeat.am.module.house.services.utility.UserAccountUtility;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -119,9 +123,44 @@ public class HouseAssetTransactionServiceImpl extends CRUDHouseAssetTransactionS
     @Override
     public int updateTransaction(HouseAssetTransaction transaction) {
 
+        // 更新条件构造器
+        UpdateWrapper<HouseAssetTransaction> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id",transaction.getId());
+
+        // 如果更新的是SELL的记录
+        if (StringUtils.isNotBlank(transaction.getEnStatus()) && "SELL".equals(transaction.getEnStatus())) {
+            if (transaction.getHide() == null) {
+                updateWrapper.set("hide",0);
+                updateWrapper.set("custom_floor",null);
+            }
+        }
+
         // 执行更新
-        int affected = queryHouseAssetTransactionDao.updateById(transaction);
+        int affected = queryHouseAssetTransactionDao.update(transaction,updateWrapper);
         if (affected < 1) throw new BusinessException(BusinessCode.DatabaseUpdateError,"update fail");
+        return affected;
+    }
+
+    /**
+     * 刷新转让记录
+     *
+     * @param id 要刷新的记录id
+     * @return
+     */
+    @Override
+    public int renovateTransaction(Long id) {
+
+        if (id == null) {
+            throw new BusinessException(BusinessCode.EmptyNotAllowed,"id cannot null");
+        }
+
+        HouseAssetTransaction transaction = new HouseAssetTransaction();
+        transaction.setId(id);
+        transaction.setUpdateTime(new Date());
+
+        int affected = queryHouseAssetTransactionDao.updateById(transaction);
+        if (affected < 1) throw new BusinessException(BusinessCode.DatabaseUpdateError,"刷新失败");
+
         return affected;
     }
 }

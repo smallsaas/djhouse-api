@@ -408,4 +408,10 @@ public class UserHouseAssetTransactionEndpoint {
 
         return SuccessTip.create(houseAssetTransactionService.removeTransaction(id));
     }
+
+    @PutMapping("/renovate/{id}")
+    public Tip renovateTransaction(@PathVariable(name = "id") Long id) {
+
+        return SuccessTip.create(houseAssetTransactionService.renovateTransaction(id));
+    }
 }
