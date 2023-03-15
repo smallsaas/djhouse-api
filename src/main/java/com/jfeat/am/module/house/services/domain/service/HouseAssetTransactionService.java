@@ -49,4 +49,11 @@ public interface HouseAssetTransactionService extends CRUDHouseAssetTransactionS
      * @return
      */
     int renovateTransaction(Long id);
+
+    /**
+     * 下架距离最新更新时间已经过了一个月的记录
+     *
+     * @return 下架条目数
+     */
+    int pulledOffShelvesTransaction();
 }

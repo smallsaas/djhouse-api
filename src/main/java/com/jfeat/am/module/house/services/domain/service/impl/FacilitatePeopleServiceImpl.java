@@ -140,7 +140,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
         if (StringUtils.isBlank(facilitatePeople.getServerName()) || facilitatePeople.getServerName().length() > FacilitatePeople.SERVER_NAME_LENGTH) throw new BusinessException(BusinessCode.BadRequest,"serverName cannot null and length cannot greater than 10");
 
         // 联系电话和微信号只能有一个为空
-        if (StringUtils.isBlank(facilitatePeople.getContactNumber()) && StringUtils.isBlank(facilitatePeople.getWechat())) throw new BusinessException(BusinessCode.BadRequest,"contactNumber和wechat不能同时为空");
+//        if (StringUtils.isBlank(facilitatePeople.getContactNumber()) && StringUtils.isBlank(facilitatePeople.getWechat())) throw new BusinessException(BusinessCode.BadRequest,"contactNumber和wechat不能同时为空");
 
         // 联系电话
         if (StringUtils.isBlank(facilitatePeople.getContactNumber())) {
@@ -177,12 +177,12 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
             throw new BusinessException(BusinessCode.OutOfRange,"tags length cannot greater than " + FacilitatePeople.TAGS_LENGTH);
         }
 
-        // 创建时间，不允许用户自定义
+        // 创建时间
             // 格式化器
             // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         facilitatePeople.setCreateDateTime(LocalDateTime.now());
 
-        // status数据库默认为1,该插入方法不允许用户自定义
+        // status数据库默认为1
         facilitatePeople.setStatus(null);
 
         // 执行baseMapper.insert

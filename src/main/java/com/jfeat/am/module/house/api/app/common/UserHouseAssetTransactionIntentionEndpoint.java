@@ -51,6 +51,17 @@ public class UserHouseAssetTransactionIntentionEndpoint {
     }
 
     /**
+     *
+     * @param transactionId
+     * @return
+     */
+    @DeleteMapping("/{transactionId}")
+    public Tip cancelIntention(@PathVariable(name = "transactionId") Long transactionId){
+
+        return SuccessTip.create(transactionIntentionService.cancelIntention(transactionId));
+    }
+
+    /**
      * 返回指定订单的关注用户
      *
      * @param transactionId 要查询的订单id

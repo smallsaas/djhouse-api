@@ -7,6 +7,7 @@ import com.jfeat.crud.plus.QueryMasterDao;
 import org.apache.ibatis.annotations.Param;
 import com.jfeat.am.module.house.services.gen.persistence.model.HouseAssetTransaction;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetTransactionModel;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -45,7 +46,11 @@ public interface QueryHouseAssetTransactionDao extends QueryMasterDao<HouseAsset
      */
     List<BigDecimal> listPriceOfTransaction();
 
-    List<HouseAssetTransactionRecord> listTransaction(@Param("userId") Long userId);
+    List<HouseAssetTransactionRecord> listTransactionByUserId(@Param("userId") Long userId);
 
     Integer updateDisplay(@Param("transaction") HouseAssetTransactionRecord transaction);
+
+    List<HouseAssetTransaction> listTransaction();
+
+    int updateDisplayById(@Param("id") Long id);
 }

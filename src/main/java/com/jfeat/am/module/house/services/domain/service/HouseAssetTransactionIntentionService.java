@@ -30,5 +30,14 @@ public interface HouseAssetTransactionIntentionService {
      * @param transactionId
      * @return
      */
-    int removeTransactionIntention(Long transactionId);
+    int removeTransactionIntentions(Long transactionId);
+
+    /**
+     * 根据transactionId，userId删除意向记录，userId会从请求用户的token中获取
+     *
+     * @param transactionId 转让记录的id
+     * @return
+     */
+    int cancelIntention(Long transactionId);
+
 }

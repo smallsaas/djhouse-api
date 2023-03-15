@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetTransactionIntentionDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetTransactionIntentionRecord;
 import com.jfeat.am.module.house.services.domain.service.EndpointUserService;
@@ -69,11 +70,32 @@ public class HouseAssetTransactionIntentionServiceImp implements HouseAssetTrans
      * @return
      */
     @Override
-    public int removeTransactionIntention(Long transactionId) {
+    public int removeTransactionIntentions(Long transactionId) {
 
         QueryWrapper<HouseAssetTransactionIntention> wrapper = new QueryWrapper<>();
         wrapper.eq("transaction_id",transactionId);
         int affected = queryHouseAssetTransactionIntentionDao.delete(wrapper);
+
+        return affected;
+    }
+
+    /**
+     * 根据transactionId，userId删除意向记录，userId会从请求用户的token中获取
+     *
+     * @param transactionId 转让记录的id
+     * @return
+     */
+    @Override
+    public int cancelIntention(Long transactionId) {
+
+        Long userId = JWTKit.getUserId();
+        if (userId == null) throw new BusinessException(BusinessCode.NoPermission,"用户未登录");
+
+        QueryWrapper<HouseAssetTransactionIntention> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("transaction_id",transactionId).eq("user_id",userId);
+
+        int affected = queryHouseAssetTransactionIntentionDao.delete(queryWrapper);
+        if (affected < 1) throw new BusinessException(BusinessCode.DatabaseDeleteError,"取消意向失败");
 
         return affected;
     }
