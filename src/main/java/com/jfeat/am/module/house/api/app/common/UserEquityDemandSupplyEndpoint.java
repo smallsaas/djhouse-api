@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.service.HouseEmailService;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseEquityDemandSupplyMapper;
+import com.jfeat.am.uaas.system.services.domain.service.SysUserService;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
@@ -42,6 +43,9 @@ public class UserEquityDemandSupplyEndpoint {
 
     @Resource
     HouseEquityDemandSupplyMapper houseEquityDemandSupplyMapper;
+
+    @Resource
+    SysUserService sysUserService;
 
 
     /*
