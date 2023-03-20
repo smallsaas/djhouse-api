@@ -23,9 +23,14 @@ public class TimedTask {
     @Resource
     HouseAssetTransactionService transactionService; // 房屋转让服务类
 
+    /**
+     * 房屋转让功能模块 - 每天凌晨一点执行，查询全表判断是否已达到下架要求
+     * 下架要求：updateTime已经超过一个月的记录，如果updateTime为null,则判断createTime
+     */
     @Scheduled(cron = "0 0 1 * * ?")
     public void carryOutPulledOffShelvesTransaction() {
         int affected = transactionService.pulledOffShelvesTransaction();
         logger.info("执行房屋转让记录的超时下架任务，共下架：" + affected );
     }
+
 }
