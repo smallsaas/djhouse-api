@@ -66,6 +66,13 @@
             <version>1.1.0</version>
         </dependency>
 
+        <!-- 供应商模块 -->
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>vms</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
         <!--  中文获取拼音   -->
         <dependency>
             <groupId>com.belerweb</groupId>

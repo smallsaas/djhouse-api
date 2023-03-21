@@ -14,6 +14,8 @@ import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.persistence.dao.EndpointUserMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.EndpointUser;
 import com.jfeat.am.module.house.services.utility.Authentication;
+import com.jfeat.am.module.kehai.services.domain.service.VenderOverModelService;
+import com.jfeat.am.module.kehai.services.gen.persistence.model.Vender;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
@@ -54,6 +56,10 @@ public class UserAccountManageEndpoint {
 
     @Resource
     UserAccountService userAccountService;
+
+    // 供应商服务类
+    @Resource
+    VenderOverModelService venderService;
 
     /*
     返回最近注册的10个用户 提供电话查询
@@ -127,33 +133,50 @@ public class UserAccountManageEndpoint {
             @PathVariable("id") Long id,
             @RequestBody EndpointUser entity) {
 
-         /*
-        验证用户是否是运营身份
-         */
+        // 验证发送请求的用户是否是运营身份
         if (entity.getTypeList() == null && entity.getTypeList().size() > 0) {
             throw new BusinessException(BusinessCode.EmptyNotAllowed, "typeList不能为空");
         }
 
+        // 查询id对应的用户信息
         EndpointUserModel endpointUserModel = queryEndpointUserDao.queryMasterModel(id);
 
-//        前端可以修改的权限列表
-        List<Integer> modifyAble = Arrays.asList(EndUserTypeSetting.USER_TYPE_LANDLORD,
-                EndUserTypeSetting.USER_TYPE_EXPERIENCE,EndUserTypeSetting.USER_TYPE_SUPPLIER,EndUserTypeSetting.USER_TYPE_INTERMEDIARY,
-                EndUserTypeSetting.USER_TYPE_OPERATION,EndUserTypeSetting.USER_TYPE_SALES,
-                EndUserTypeSetting.USER_TYPE_RESIDENTS,EndUserTypeSetting.USER_TYPE_INVESTOR,EndUserTypeSetting.USER_TYPE_BRAND
-                ,EndUserTypeSetting.USER_TYPE_GROUP_MEMBER ,EndUserTypeSetting.USER_TYPE_DEVELOPER ,EndUserTypeSetting.USER_TYPE_TEAM_LEADER
+        // 初始化前端可以修改的权限列表
+        List<Integer> modifyAble = Arrays.asList(
+                EndUserTypeSetting.USER_TYPE_LANDLORD,       // 房东
+                EndUserTypeSetting.USER_TYPE_EXPERIENCE,     // 体验用户
+                EndUserTypeSetting.USER_TYPE_SUPPLIER,       // 供应商
+                EndUserTypeSetting.USER_TYPE_INTERMEDIARY,   // 中介
+                EndUserTypeSetting.USER_TYPE_OPERATION,      // 运维
+                EndUserTypeSetting.USER_TYPE_SALES,          // 销售
+                EndUserTypeSetting.USER_TYPE_RESIDENTS,      // 社区居民
+                EndUserTypeSetting.USER_TYPE_INVESTOR,       // 投资商
+                EndUserTypeSetting.USER_TYPE_BRAND,          // 品牌商
+                EndUserTypeSetting.USER_TYPE_GROUP_MEMBER ,  // 团友
+                EndUserTypeSetting.USER_TYPE_DEVELOPER ,     // 开发者
+                EndUserTypeSetting.USER_TYPE_TEAM_LEADER     // 团长
         );
 
-//        用户原来拥护的所有权限
+        // 该id用户原来拥护的所有权限
         List<Integer> userTypeList = userAccountService.getUserTypeList(endpointUserModel.getType());
-
-//        去除可修改的权限
+        // 去除可修改的权限
         List<Integer> terminalType = userTypeList.stream().filter(item->!modifyAble.contains(item)).collect(Collectors.toList());
 
         if (endpointUserModel != null) {
-            /*
-            将list的用户类型 转回int存储会数据库
-             */
+            // 如果添加了供应商权限则将该用户加入供应商表
+            if (entity.getTypeList() != null && entity.getTypeList().size() > 0 && entity.getTypeList().contains(EndUserTypeSetting.USER_TYPE_SUPPLIER)) {
+                if (StringUtils.isBlank(endpointUserModel.getName())) throw new BusinessException(BusinessCode.EmptyNotAllowed,"如果要设为供应商，用户的name不能为空");
+                if (endpointUserModel.getOrgId() == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"如果要设为供应商，用户的orgId不能为空");
+
+                Vender vender = new Vender();
+                vender.setUserId(endpointUserModel.getId());
+                vender.setName(endpointUserModel.getName());
+                vender.setOrgId(endpointUserModel.getOrgId());
+                int affected = venderService.save(vender);
+                if (affected == 0) throw new BusinessException(BusinessCode.DatabaseInsertError,"供应商设置失败");
+            }
+
+            // 将list的用户类型 转回int存储回数据库
             terminalType.addAll(entity.getTypeList());
             Integer userType = userAccountService.getUserTypeByList(terminalType);
             endpointUserModel.setType(userType);
