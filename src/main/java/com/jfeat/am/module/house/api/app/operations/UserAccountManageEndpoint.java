@@ -6,6 +6,7 @@ import com.jfeat.am.common.annotation.EndUserPermission;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.core.model.EndUserTypeSetting;
 import com.jfeat.am.core.model.UserTypeEnum;
+import com.jfeat.am.module.frontproduct.services.domain.service.FrontProductService;
 import com.jfeat.am.module.house.services.domain.dao.QueryEndpointUserDao;
 import com.jfeat.am.module.house.services.domain.model.EndpointUserRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseApplicationIntermediaryRecord;
@@ -14,6 +15,7 @@ import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
 import com.jfeat.am.module.house.services.gen.persistence.dao.EndpointUserMapper;
 import com.jfeat.am.module.house.services.gen.persistence.model.EndpointUser;
 import com.jfeat.am.module.house.services.utility.Authentication;
+import com.jfeat.am.module.house.services.utility.UserAccountUtility;
 import com.jfeat.am.module.kehai.services.domain.service.VenderOverModelService;
 import com.jfeat.am.module.kehai.services.gen.persistence.model.Vender;
 import com.jfeat.crud.base.exception.BusinessCode;
@@ -60,6 +62,12 @@ public class UserAccountManageEndpoint {
     // 供应商服务类
     @Resource
     VenderOverModelService venderService;
+
+    @Resource
+    UserAccountUtility userAccountUtility;
+
+    @Resource
+    FrontProductService productService;
 
     /*
     返回最近注册的10个用户 提供电话查询
@@ -133,7 +141,13 @@ public class UserAccountManageEndpoint {
             @PathVariable("id") Long id,
             @RequestBody EndpointUser entity) {
 
-        // 验证发送请求的用户是否是运营身份
+        // 验证发送请求的用户是否是拥有社区管理员或运维权限
+        if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_OPERATION))
+            && !(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER))) {
+            throw new BusinessException(BusinessCode.NoPermission,"没有运维或社区管理员权限");
+        }
+
+        // 参数判断
         if (entity.getTypeList() == null && entity.getTypeList().size() > 0) {
             throw new BusinessException(BusinessCode.EmptyNotAllowed, "typeList不能为空");
         }
@@ -163,8 +177,8 @@ public class UserAccountManageEndpoint {
         List<Integer> terminalType = userTypeList.stream().filter(item->!modifyAble.contains(item)).collect(Collectors.toList());
 
         if (endpointUserModel != null) {
-            // 如果添加了供应商权限则将该用户加入供应商表
-            if (entity.getTypeList() != null && entity.getTypeList().size() > 0 && entity.getTypeList().contains(EndUserTypeSetting.USER_TYPE_SUPPLIER)) {
+            // 如果用户原本没有供应商权限，添加了供应商权限则将该用户加入供应商表
+            if (!(userTypeList.contains(EndUserTypeSetting.USER_TYPE_SUPPLIER)) && entity.getTypeList().contains(EndUserTypeSetting.USER_TYPE_SUPPLIER)) {
                 if (StringUtils.isBlank(endpointUserModel.getName())) throw new BusinessException(BusinessCode.EmptyNotAllowed,"如果要设为供应商，用户的name不能为空");
                 if (endpointUserModel.getOrgId() == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"如果要设为供应商，用户的orgId不能为空");
 
@@ -174,6 +188,21 @@ public class UserAccountManageEndpoint {
                 vender.setOrgId(endpointUserModel.getOrgId());
                 int affected = venderService.save(vender);
                 if (affected == 0) throw new BusinessException(BusinessCode.DatabaseInsertError,"供应商设置失败");
+            /*
+             * 判断是否是取消用户供应商身份
+             * 判断逻辑：用户原本拥有供应商身份，但是更新的身份中没有，则是取消该用户的供应商身份
+             */
+            } else if (userTypeList.contains(EndUserTypeSetting.USER_TYPE_SUPPLIER) && !(entity.getTypeList().contains(EndUserTypeSetting.USER_TYPE_SUPPLIER))) {
+                Long userId = JWTKit.getUserId();
+                // 根据userId获取供应商
+                Vender supplier = venderService.getIdByUserId(userId);
+                if (supplier != null) {
+                    // 去除绑定了该供应商的产品的supplier_id(供应商id)
+                    productService.updateBySupplierId(supplier.getId());
+                    // 上面的 judgementJurisdiction 方法内部已做了非空判断，这里不再做userId的非空判断
+                    int affected = venderService.removeByUserId(userId);
+                    if (affected == 0) throw new BusinessException(BusinessCode.DatabaseDeleteError,"供应商权限取消失败");
+                }
             }
 
             // 将list的用户类型 转回int存储回数据库
