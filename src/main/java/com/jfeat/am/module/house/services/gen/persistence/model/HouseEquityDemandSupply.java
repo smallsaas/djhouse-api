@@ -51,9 +51,9 @@ public class HouseEquityDemandSupply extends Model<HouseEquityDemandSupply> {
     private String phoneNumber;
 
 
-    @ApiModelProperty("用户名")
-    @TableField(exist = false)
-    private String username;
+//    @ApiModelProperty("用户名")
+//    @TableField(exist = false)
+//    private String username;
 
     @ApiModelProperty("真实姓名")
     @TableField(exist = false)
@@ -126,13 +126,13 @@ public class HouseEquityDemandSupply extends Model<HouseEquityDemandSupply> {
         return this;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
+//    public String getUsername() {
+//        return username;
+//    }
+//
+//    public void setUsername(String username) {
+//        this.username = username;
+//    }
 
     public String getUserAvatar() {
         return userAvatar;

@@ -23,6 +23,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -216,10 +217,10 @@ public class UserEquityDemandSupplyEndpoint {
                     houseEquityDemandSupply.setSimpleTime(DateTimeKit.toTimeline(houseEquityDemandSupply.getCreateTime()));
                 }
 
-                String name  = houseEquityDemandSupply.getUsername();
-                if (name!=null&&!("".equals(name))){
-                   houseEquityDemandSupply.setUsername(name.substring(0,1).concat("*"));
-                }
+//                String name  = houseEquityDemandSupply.getUsername();
+//                if (name!=null&&!("".equals(name))){
+//                    houseEquityDemandSupply.setUsername(name.substring(0,1).concat("*"));
+//                }
                 houseEquityDemandSupply.setUserAvatar(null);
                 String number = houseEquityDemandSupply.getPhoneNumber();
                 if (number!=null && number.length()>=3){
