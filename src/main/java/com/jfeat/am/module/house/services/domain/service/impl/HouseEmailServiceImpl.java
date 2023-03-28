@@ -392,7 +392,7 @@ public class HouseEmailServiceImpl implements HouseEmailService {
         WorkTaskModel workTaskModel = new WorkTaskModel();
         // 接手项目后，此处报错，task表中并没有这个字段，因为之后的方法也有使用该值，所以先在表上添加
          workTaskModel.setQueueId(taskQueue.getId());
-        // task表中priority不允许为空，优先级 0 1 2 从低到高，此处先行使用2
+        // task表中priority不允许为空，优先级 0 1 2 从低到高，目前并不知道优先级的含义，此处先行使用2
         workTaskModel.setPriority(2);
         workTaskModel.setTaskName(taskName);
         workTaskModel.setTaskNumber(snpoolService.getSerial("TD"));
