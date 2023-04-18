@@ -37,7 +37,7 @@ public class UserAccountUtility {
      * 判断用户权限
      *
      * @param userType 权限类型
-     * @return 是否符合
+     * @return boolean 拥有权限：true,没有权限：false
      */
     public Boolean judgementJurisdiction(Integer userType) {
 
