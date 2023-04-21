@@ -4,8 +4,11 @@ import com.jfeat.am.module.house.services.utility.HttpClientUtil;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 
 /**
@@ -16,8 +19,12 @@ import java.util.ArrayList;
  * @author: hhhhhtao
  */
 
-@SpringBootTest(classes = AmApplication.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = AmApplication.class,webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class WeChatMiniProgramMessageTest {
+
+    @Resource
+    WeChatMiniProgramMessage weChatMiniProgramMessage;
 
     /**
      * 测试获取接口调用凭据
@@ -26,7 +33,15 @@ public class WeChatMiniProgramMessageTest {
      */
     @Test
     public void should_returnHttpEntity_when_getAccessToken() {
-        String result = WeChatMiniProgramMessage.getAccessToken();
+        String result =  weChatMiniProgramMessage.getAccessToken();
         System.out.println(result);
+    }
+
+    /**
+     * 测试发送微信订阅消息
+     */
+    @Test
+    public void should_retuanHttpEntity_when_sendMessage() {
+//        weChatMiniProgramMessage.sendMessage();
     }
 }
