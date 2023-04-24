@@ -244,6 +244,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- 微信小程序发送消息工具 -->
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>zero-io-wechat-message</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
     </dependencies>
 
 
