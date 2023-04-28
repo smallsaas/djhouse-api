@@ -9,6 +9,7 @@ import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
 import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.gen.crud.model.EndpointUserModel;
+import com.jfeat.am.module.house.services.gen.crud.model.HouseUserAssetModel;
 import com.jfeat.am.module.house.services.gen.persistence.dao.*;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
 import com.jfeat.am.module.house.services.utility.TenantUtility;
@@ -636,11 +637,12 @@ public class UserHouseAssetEndpoint {
             return SuccessTip.create();
         }
 
-        HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
-        userAssetRecord.setUserId(JWTKit.getUserId());
-        userAssetRecord.setCommunityId(communityId);
-        List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, null, null, null, null, null);
-
+//        HouseUserAssetRecord userAssetRecord = new HouseUserAssetRecord();
+//        userAssetRecord.setUserId(JWTKit.getUserId());
+//        userAssetRecord.setCommunityId(communityId);
+//        List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.findHouseUserAssetPage(null, userAssetRecord, null, null, null, null, null);
+        Long userId = JWTKit.getUserId();
+        List<HouseUserAssetRecord> houseUserAssets = queryHouseUserAssetDao.pageMyHouse(userId,communityId);
 
         // 查询匹配到的房屋
         QueryWrapper<HouseAssetMatchLog> matchLogQueryWrapper = new QueryWrapper<>();
@@ -753,5 +755,38 @@ public class UserHouseAssetEndpoint {
 
         }
         return SuccessTip.create(affect);
+    }
+
+
+    @PutMapping("/moveHouseAsset")
+    public Tip userMoveHouseAssetSequence(@RequestBody JSONObject params) {
+        // 参数判断
+        Long id = params.getLong("id");
+        if (id == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"id cannot null");
+        Integer direction = params.getInteger("direction");
+        if (direction == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"direction cannot null");
+
+        // 获取用户信息
+        Long userId = JWTKit.getUserId();
+        HouseUserAssetModel userAssetModel = queryHouseUserAssetDao.queryMasterModel(id);
+        if (userAssetModel == null) {
+            logger.error("没有找到该房产记录,用户id：" + userId + "，房产id：" + id);
+            throw new BusinessException(BusinessCode.CodeBase);
+        }
+        // 获取社区信息（不太明白这样写的用意是什么，但是为了不重写一个方法导致多个方法混乱，所以直接调用已有方法获取）
+        Long communityId = null;
+        HouseUserCommunityStatusRecord communityStatusRecord = new HouseUserCommunityStatusRecord();
+        communityStatusRecord.setUserId(userId);
+        List<HouseUserCommunityStatusRecord> communityStatusRecordList = queryHouseUserCommunityStatusDao.findHouseUserCommunityStatusPage(null, communityStatusRecord, null, null, null, null, null);
+        if (communityStatusRecordList != null && communityStatusRecordList.size() == 1) {
+            communityId = communityStatusRecordList.get(0).getCommunityId();
+        }
+        if (communityId == null) {
+            logger.error("社区信息获取失败，用户id：" + userId);
+            throw new BusinessException(BusinessCode.CodeBase);
+        }
+
+        // 执行变更排序
+        return SuccessTip.create(houseUserAssetService.updateMyHouseSequence(userId,communityId,id,direction));
     }
 }

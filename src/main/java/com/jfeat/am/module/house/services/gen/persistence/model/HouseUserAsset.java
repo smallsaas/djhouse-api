@@ -174,6 +174,15 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @TableField(exist = false)
     private Integer assetNumber;
 
+    @ApiModelProperty("房东房产排序")
+    private Integer sequenceNum;
+
+    public Integer getSequenceNum() {
+        return sequenceNum;
+    }
+    public void setSequenceNum(Integer sequenceNum) {
+        this.sequenceNum = sequenceNum;
+    }
 
     public Long getHouseTypeId() {
         return houseTypeId;

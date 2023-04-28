@@ -4,22 +4,29 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetMatchLogDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetMatchLogHistoryDao;
+import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetExchangeRequestRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseAssetMatchLogRecord;
+import com.jfeat.am.module.house.services.domain.model.HouseRentAssetRecord;
 import com.jfeat.am.module.house.services.domain.model.HouseUserAssetRecord;
 import com.jfeat.am.module.house.services.domain.service.HouseUserAssetService;
 import com.jfeat.am.module.house.services.gen.crud.model.HouseAssetModel;
 import com.jfeat.am.module.house.services.gen.crud.service.impl.CRUDHouseUserAssetServiceImpl;
 import com.jfeat.am.module.house.services.gen.persistence.dao.*;
 import com.jfeat.am.module.house.services.gen.persistence.model.*;
+import com.jfeat.crud.base.exception.BusinessCode;
+import com.jfeat.crud.base.exception.BusinessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.annotation.Resource;
+import java.beans.Transient;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,6 +71,9 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
 
     @Resource
     QueryHouseAssetMatchLogHistoryDao queryHouseAssetMatchLogHistoryDao;
+
+    @Resource
+    QueryHouseUserAssetDao houseUserAssetDao;
 
 
     @Override
@@ -368,5 +378,112 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
 
         }
 
+    }
+
+    /**
+     * 设定用户"我的回迁房"的默认排序，有利于之后的排序等操作
+     *
+     * @return
+     */
+    @Transactional
+    @Override
+    public int setDefaultSequenceNumber(Long userId,Long communityId) {
+
+        // 受影响的行数
+        int affected = 0;
+
+        // 1、获取该用户所有的回迁房
+        List<HouseUserAsset> userAssets = houseUserAssetDao.listUserAssetByUserId(userId,communityId);
+        // 2、根据列表的下标进行排序，设定sequence_num字段
+        for (int i = 0; i < userAssets.size(); i++) {
+            HouseUserAsset userAsset =  userAssets.get(i);
+            // 封装所需要更新的数据
+            HouseUserAsset param = new HouseUserAsset();
+            param.setId(userAsset.getId());
+            param.setSequenceNum(i);
+            // 写入数据库
+            affected += houseUserAssetDao.updateById(param);
+        }
+        // 3、设定成功返回条目数
+        return affected;
+    }
+
+    /**
+     * 变更"我的回迁房"的排序
+     *
+     * @param userId 用户id
+     * @param communityId 用户社区id
+     * @param id 要移动的房产记录的id
+     * @param direction 上移/下移 1=上移，0=下移
+     * @return
+     */
+    @Transactional
+    @Override
+    public List<HouseUserAssetRecord> updateMyHouseSequence(Long userId,Long communityId,Long id,Integer direction) {
+
+        final Integer UP = 1; // 上升
+        final Integer DOWN = 0; // 下降
+
+        // direction只允许1和0两个参数
+        if (direction != 1 && direction != 0) {
+            logger.error("参数direction超出范围，只能为1或者0，目前的值是：" + direction);
+            throw new BusinessException(BusinessCode.BadRequest,"参数有误");
+        }
+
+        // 因为这是新加的功能，以前的sequence_num数据为空，为了兼容性，每次都进行重新赋值sequence_num（后续可优化）
+        setDefaultSequenceNumber(userId,communityId);
+
+        // 要移动的房子
+        HouseUserAsset moveHouse = new HouseUserAsset();
+        moveHouse.setId(id);
+        // 被移动的房子
+        HouseUserAsset beForcedMoveHouse = new HouseUserAsset();
+
+        // 获取该用户所有的回迁房
+        List<HouseUserAsset> userAssets = houseUserAssetDao.listUserAssetByUserId(userId,communityId);
+        // 受影响行数
+        int affected = 0;
+        // 获取要移动的房子的排序号
+        for (int i = 0; i < userAssets.size(); i++) {
+            if (id.equals(userAssets.get(i).getId())) {
+                // 并且判断是上移还是下移，然后获取对应的需要被迫移动的房产
+                if (direction == UP) {
+                    // 判断移动的id是否是第一个，如果是，则不允许上移
+                    if (userAssets.get(i).getSequenceNum() == 0) {
+                        logger.error("不允许上移，移动的房产id：" + id + "排序号：" + userAssets.get(i).getSequenceNum());
+                        throw new BusinessException(BusinessCode.CodeBase);
+                    }
+                    // 获取被移动的房产id
+                    beForcedMoveHouse.setId(userAssets.get(i - 1).getId());
+                    // 获取移动和被移动房产的新排序号
+                    moveHouse.setSequenceNum(userAssets.get(i).getSequenceNum() - 1);
+                    beForcedMoveHouse.setSequenceNum(userAssets.get(i - 1).getSequenceNum() + 1);
+                } else if (direction == DOWN) {
+                    // 判断移动的id是否是最后一个，如果是，则不允许下移
+                    if (userAssets.get(i).getSequenceNum() == userAssets.size() - 1) {
+                        logger.error("不允许下移，移动的房产id：" + id + "排序号：" + userAssets.get(i).getSequenceNum());
+                        throw new BusinessException(BusinessCode.CodeBase);
+                    }
+                    // 获取被移动的房产id
+                    beForcedMoveHouse.setId(userAssets.get(i + 1).getId());
+                    // 获取移动和被移动房产的新排序号
+                    moveHouse.setSequenceNum(userAssets.get(i).getSequenceNum() + 1);
+                    beForcedMoveHouse.setSequenceNum(userAssets.get(i + 1).getSequenceNum() - 1);
+                }
+
+                // 执行更新
+                UpdateWrapper<HouseUserAsset> updateWrapper = new UpdateWrapper();
+                affected += houseUserAssetDao.updateById(moveHouse);
+                affected += houseUserAssetDao.updateById(beForcedMoveHouse);
+                break;
+            }
+        }
+
+        if (affected != 2) throw new BusinessException(BusinessCode.DatabaseUpdateError,"排序失败");
+        logger.error("用户：" + userId + (direction == 1 ? "上移" : "下移") + "我的回迁房失败，排序房产的id：" + id);
+
+        // 获取"我的回迁房"并返回
+        List<HouseUserAssetRecord> myHouses = houseUserAssetDao.pageMyHouse(userId,communityId);
+        return myHouses;
     }
 }

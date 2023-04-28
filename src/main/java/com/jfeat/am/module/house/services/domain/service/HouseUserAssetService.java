@@ -27,4 +27,30 @@ public interface HouseUserAssetService extends CRUDHouseUserAssetService {
     int deleteUserAsset(Long userId,Long assetId);
 
     void setUserAssetArea(List<HouseUserAssetRecord> recordList);
+
+
+    /**
+     *
+     */
+    /**
+     * 设定用户"我的回迁房"的默认排序，有利于之后的排序等操作
+     *
+     * @param userId 用户id
+     * @param communityId 用户所在社区id
+     * @return
+     */
+    int setDefaultSequenceNumber(Long userId,Long communityId);
+
+    /**
+     * 变更"我的回迁房"的排序
+     *
+     * @param userId 用户id
+     * @param communityId 用户社区id
+     * @param id 要移动的房产记录的id
+     * @param direction 上移/下移 1=上移，0=下移
+     * @return
+     */
+    List<HouseUserAssetRecord> updateMyHouseSequence(Long userId,Long communityId,Long id,Integer direction);
+
+
 }

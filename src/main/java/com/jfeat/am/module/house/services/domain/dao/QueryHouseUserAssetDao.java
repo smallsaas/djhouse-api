@@ -76,6 +76,21 @@ public interface QueryHouseUserAssetDao extends QueryMasterDao<HouseUserAsset> {
                                                   @Param("search") String search, @Param("orderBy") String orderBy,
                                                   @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
+    /**
+     * 获取用户的所有回迁房
+     *
+     * @param userId 用户id
+     * @return 房产列表
+     */
+    List<HouseUserAsset> listUserAssetByUserId(@Param("userId") Long userId,@Param("communityId") Long communityId);
 
+    /**
+     * 查询"我的回迁房"，根据sequence_num排序
+     *
+     * @param userId 用户id
+     * @param communityId 用户社区
+     * @return
+     */
+    List<HouseUserAssetRecord> pageMyHouse(@Param("userId") Long userId,@Param("communityId") Long communityId);
 
 }
