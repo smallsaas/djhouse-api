@@ -12,7 +12,10 @@
         t_house_user_asset.user_type AS userType,
         t_house_user_asset.locked,
         t_house_user_asset.unlike,
-
+        t_house_user_asset.sequence_num AS sequenceNum,
+        t_house_user_asset.electricity_number AS electricityNumber,
+        t_house_user_asset.water_number AS waterNumber,
+        t_house_user_asset.gas_number AS gasNumber,
 
         t_house_asset.house_number AS roomNumber,
         t_house_asset.floor AS floor,
@@ -45,6 +48,22 @@
         t_end_user.phone AS userPhone,
         t_end_user.avatar AS userAvatar,
         t_end_user.real_name AS realName
+    </sql>
+    <sql id="HOUSE_USER_ASSET_FIELDS">
+        t_house_user_asset.`id`,
+        t_house_user_asset.`user_id` AS userId,
+        t_house_user_asset.`asset_id` AS assetId,
+        t_house_user_asset.`trust` AS trust,
+        t_house_user_asset.`create_time` AS createTime,
+        t_house_user_asset.`note` AS note,
+        t_house_user_asset.`final_flag` AS finalFlag,
+        t_house_user_asset.`user_type` AS userType,
+        t_house_user_asset.`locked`,
+        t_house_user_asset.`unlike`,
+        t_house_user_asset.`sequence_num` AS sequenceNum,
+        t_house_user_asset.`electricity_number` AS electricityNumber,
+        t_house_user_asset.`water_number` AS waterNumber,
+        t_house_user_asset.`gas_number` AS gasNumber
     </sql>
 
 
@@ -482,7 +501,10 @@
             t_house_user_asset.user_type AS userType,
             t_house_user_asset.locked,
             t_house_user_asset.unlike,
-            t_house_user_asset.sequence_num AS sequenceNum
+            t_house_user_asset.sequence_num AS sequenceNum,
+            t_house_user_asset.electricity_number AS electricityNumber,
+            t_house_user_asset.water_number AS waterNumber,
+            t_house_user_asset.gas_number AS gasNumber
 
         FROM t_house_user_asset
         JOIN t_house_asset ON t_house_asset.id = t_house_user_asset.asset_id
@@ -512,6 +534,32 @@
             t_house_user_asset.user_id =#{userId}
             AND t_house_property_community.id = #{communityId}
             ORDER BY t_house_user_asset.`sequence_num`
+    </select>
+
+    <select id="getUserAssetRecordById" resultType="HouseUserAssetRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+        FROM t_house_user_asset
+        JOIN t_house_asset ON t_house_asset.id = t_house_user_asset.asset_id
+        JOIN t_house_property_building ON t_house_property_building.id = t_house_asset.building_id
+        JOIN t_house_property_community ON t_house_property_community.id=t_house_property_building.community_id
+        left JOIN t_house_property_building_unit ON t_house_property_building_unit.id = t_house_asset.unit_id
+        left JOIN t_house_design_model ON t_house_property_building_unit.design_model_id=t_house_design_model.id
+        left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
+        JOIN t_end_user ON t_end_user.id = t_house_user_asset.user_id
+
+        WHERE
+        t_house_user_asset.id = #{id}
+    </select>
+
+    <select id="getUserAssetById" resultType="HouseUserAsset">
+        select
+            <include refid="HOUSE_USER_ASSET_FIELDS" />
+        FROM
+            t_house_user_asset
+        WHERE
+            `id` = #{id}
     </select>
 
 </mapper>

@@ -757,7 +757,7 @@ public class UserHouseAssetEndpoint {
         return SuccessTip.create(affect);
     }
 
-
+    @ApiOperation(value = "上下排序我的回迁房",httpMethod = "PUT")
     @PutMapping("/moveHouseAsset")
     public Tip userMoveHouseAssetSequence(@RequestBody JSONObject params) {
         // 参数判断
@@ -788,5 +788,25 @@ public class UserHouseAssetEndpoint {
 
         // 执行变更排序
         return SuccessTip.create(houseUserAssetService.updateMyHouseSequence(userId,communityId,id,direction));
+    }
+
+
+    @ApiOperation(value = "更新我的回迁房的水电编号", httpMethod = "PUT")
+    @PutMapping("house-water-electricity")
+    public Tip updateMyHouseWaterElectricityNumber(@RequestBody HouseUserAsset houseUserAsset) {
+        // 获取参数，只获取必要参数即可
+        Long userId = JWTKit.getUserId();
+        if (userId == null) throw new BusinessException(BusinessCode.UserNotExisted,"用户不存在");
+        // 用户房产id
+        Long id = houseUserAsset.getId();
+        if (id == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"id cannot null");
+        // 水编号
+        String waterNumber = houseUserAsset.getWaterNumber();
+        // 电编号
+        String electricityNumber = houseUserAsset.getElectricityNumber();
+        // 燃气编号
+        String gasNumber = houseUserAsset.getGasNumber();
+
+        return SuccessTip.create(houseUserAssetService.updateMyHouseWaterElectricity(id,userId,waterNumber,electricityNumber,gasNumber));
     }
 }

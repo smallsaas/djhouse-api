@@ -177,6 +177,36 @@ public class HouseUserAsset extends Model<HouseUserAsset> {
     @ApiModelProperty("房东房产排序")
     private Integer sequenceNum;
 
+    @ApiModelProperty("房屋电费编号")
+    private String electricityNumber;
+
+    @ApiModelProperty("房屋水费编号")
+    private String waterNumber;
+
+    @ApiModelProperty("房屋燃气编号")
+    private String gasNumber;
+
+    public String getElectricityNumber() {
+        return electricityNumber;
+    }
+    public void setElectricityNumber(String electricityNumber) {
+        this.electricityNumber = electricityNumber;
+    }
+
+    public String getWaterNumber() {
+        return waterNumber;
+    }
+    public void setWaterNumber(String waterNumber) {
+        this.waterNumber = waterNumber;
+    }
+
+    public String getGasNumber() {
+        return gasNumber;
+    }
+    public void setGasNumber(String gasNumber) {
+        this.gasNumber = gasNumber;
+    }
+
     public Integer getSequenceNum() {
         return sequenceNum;
     }
