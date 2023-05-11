@@ -40,9 +40,18 @@ public interface FacilitatePeopleService {
     int removeFacilitatePeople(Integer id);
 
     /**
-     * 便民服务拨打电话数加一
+     * 指定便民服务的拨打电话数加一
+     * 添加成功返回当前拨打次数，失败返回null
      *
      * @param id 便民服务id
      */
-    void addFacilitatePeoPleDialQuantity(Long id);
+    String addFacilitatePeoPleDialFrequency(Integer id);
+
+    /**
+     * 获取指定便民服务拨打电话数
+     *
+     * @param id 便民服务id
+     * @return
+     */
+    String getFacilitatePeoPleDialFrequency(Integer id);
 }

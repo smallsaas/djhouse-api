@@ -3,6 +3,7 @@ package com.jfeat.am.module.house.services.domain.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.model.EndUserTypeSetting;
+import com.jfeat.am.module.house.services.constants.CacheConst;
 import com.jfeat.am.module.house.services.domain.dao.FacilitatePeopleDao;
 import com.jfeat.am.module.house.services.domain.model.FacilitatePeopleRecord;
 import com.jfeat.am.module.house.services.domain.service.FacilitatePeopleService;
@@ -13,6 +14,8 @@ import com.jfeat.crud.base.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.util.StringUtil;
 import org.hibernate.validator.constraints.Length;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @description: TODO
@@ -31,6 +36,8 @@ import java.time.format.DateTimeFormatter;
 @Service("facilitatePeople")
 public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
 
+    private static final Logger logger = LoggerFactory.getLogger(FacilitatePeopleServiceImpl.class);
+
     @Resource
     FacilitatePeopleDao facilitatePeopleDao;
 
@@ -40,7 +47,16 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     @Override
     public Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeopleRecord> page, String search) {
 
-        return facilitatePeopleDao.findFacilitatePeople(page, search);
+        Page<FacilitatePeopleRecord> facilitatePeoplePage = facilitatePeopleDao.findFacilitatePeople(page, search);
+        // 获取便民服务拨打次数
+        facilitatePeoplePage.getRecords().stream()
+                .map(facilitatePeople -> {
+                    facilitatePeople.setFrequency(getFacilitatePeoPleDialFrequency(facilitatePeople.getId()));
+                    return facilitatePeople;
+                })
+                .collect(Collectors.toList());
+
+        return facilitatePeoplePage;
     }
 
     @Override
@@ -236,12 +252,30 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
 
     /**
      * 便民服务拨打电话数加一
+     * 添加成功返回当前拨打次数
      *
      * @param id 便民服务id
      */
     @Override
-    public void addFacilitatePeoPleDialQuantity(Long id) {
+    public String addFacilitatePeoPleDialFrequency(Integer id) {
 
-//        stringRedisTemplate.opsForValue().increment();
+        // increment：获取指定key的值进行加1，如果没有对应的key则会创建，默认值为0
+        stringRedisTemplate.opsForValue().increment(CacheConst.getFacilitatePeopleRedisKey(id), CacheConst.FACILITATE_PEOPLE_ONCE_ADD_NUMBER);
+
+        return stringRedisTemplate.opsForValue().get(CacheConst.getFacilitatePeopleRedisKey(id));
+    }
+
+    /**
+     * 获取指定便民服务拨打电话数
+     *
+     * @param id 便民服务id
+     * @return
+     */
+    @Override
+    public String getFacilitatePeoPleDialFrequency(Integer id) {
+        String frequency = stringRedisTemplate.opsForValue().get(CacheConst.getFacilitatePeopleRedisKey(id));
+        // 如果没有该key则交由 addFacilitatePeoPleDialQuantity() 去创建
+        if (frequency == null) frequency = addFacilitatePeoPleDialFrequency(id);
+        return frequency;
     }
 }
