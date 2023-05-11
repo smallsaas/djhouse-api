@@ -10,4 +10,6 @@ package com.jfeat.am.module.house.services.constants;
 public final class AuthorizationConst {
 
     private AuthorizationConst() {};
+
+    public static final Long masterId = 61L;
 }

@@ -2,6 +2,7 @@
 package com.jfeat.am.module.house.api.manager;
 
 
+import com.jfeat.am.module.house.services.constants.AuthorizationConst;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -147,8 +148,15 @@ public class HouseVrTypeEndpoint {
 
         HouseVrTypeRecord record = new HouseVrTypeRecord();
         record.setName(name);
+
+        System.out.println(JWTKit.getUserId());
+        System.out.println(JWTKit.getAccount());
+
         if (META.enabledSaas()) {
-            record.setOrgId(JWTKit.getOrgId());
+            if(JWTKit.getUserId().equals(AuthorizationConst.masterId)){
+            }else{
+                record.setOrgId(JWTKit.getOrgId());
+            }
         }
 
 

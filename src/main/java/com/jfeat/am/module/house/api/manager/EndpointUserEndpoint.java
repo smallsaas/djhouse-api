@@ -2,6 +2,7 @@
 package com.jfeat.am.module.house.api.manager;
 
 
+import com.jfeat.am.module.house.services.constants.AuthorizationConst;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
 import com.jfeat.crud.plus.META;
@@ -265,7 +266,10 @@ public class EndpointUserEndpoint {
         record.setEmailValidated(emailValidated);
         record.setPhoneValidated(phoneValidated);
         if (META.enabledSaas()) {
-            record.setOrgId(JWTKit.getOrgId());
+            if(JWTKit.getUserId().equals(AuthorizationConst.masterId)){
+            }else{
+                record.setOrgId(JWTKit.getOrgId());
+            }
         }
         record.setTag(tag);
         record.setCategoryTag(categoryTag);
@@ -274,7 +278,6 @@ public class EndpointUserEndpoint {
         record.setType(type);
         record.setSysUserId(sysUserId);
         record.setVendor(vendor);
-
 
         List<EndpointUserRecord> endUserPage = queryEndpointUserDao.findEndUserPage(page, record, tag, search, orderBy, null, null);
 
