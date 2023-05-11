@@ -29,6 +29,9 @@ public class FacilitatePeopleRecord {
     // 微信号
     private String wechat;
 
+    // 电话拨打次数
+    private String frequency;
+
     public String getWechat() {
         return wechat;
     }
@@ -39,7 +42,6 @@ public class FacilitatePeopleRecord {
     public Integer getId() {
         return id;
     }
-
     public void setId(Integer id) {
         this.id = id;
     }
@@ -47,7 +49,6 @@ public class FacilitatePeopleRecord {
     public String getServerName() {
         return serverName;
     }
-
     public void setServerName(String serverName) {
         this.serverName = serverName;
     }
@@ -55,7 +56,6 @@ public class FacilitatePeopleRecord {
     public String getLinkmanName() {
         return linkmanName;
     }
-
     public void setLinkmanName(String linkmanName) {
         this.linkmanName = linkmanName;
     }
@@ -63,7 +63,6 @@ public class FacilitatePeopleRecord {
     public String getContactNumber() {
         return contactNumber;
     }
-
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
     }
@@ -71,8 +70,14 @@ public class FacilitatePeopleRecord {
     public String getNotes() {
         return notes;
     }
-
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public String getFrequency() {
+        return frequency;
+    }
+    public void setFrequency(String frequency) {
+        this.frequency = frequency;
     }
 }

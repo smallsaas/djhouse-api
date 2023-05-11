@@ -1,7 +1,7 @@
 package com.jfeat.am.module.house.services.constants;
 
 /**
- * @description: TODO
+ * @description: 权限业务常量
  * @project: djhouse-api
  * @version: 1.0
  * @date: 2023/5/11 12:23
