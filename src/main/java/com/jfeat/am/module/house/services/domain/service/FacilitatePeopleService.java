@@ -38,4 +38,11 @@ public interface FacilitatePeopleService {
     int updateFacilitatePeopleOfStatusClose(Integer id);
 
     int removeFacilitatePeople(Integer id);
+
+    /**
+     * 便民服务拨打电话数加一
+     *
+     * @param id 便民服务id
+     */
+    void addFacilitatePeoPleDialQuantity(Long id);
 }
