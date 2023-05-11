@@ -2,6 +2,7 @@
 package com.jfeat.am.module.house.api.manager;
 
 
+import com.jfeat.am.module.house.services.constants.AuthorizationConst;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -57,8 +58,6 @@ import com.alibaba.fastjson.JSONArray;
 @Api("HouseVrType")
 @RequestMapping("/api/crud/house/houseVrType/houseVrTypes")
 public class HouseVrTypeEndpoint {
-
-    private static final int masterId = 61;
 
     @Resource
     HouseVrTypeService houseVrTypeService;
@@ -154,7 +153,7 @@ public class HouseVrTypeEndpoint {
         System.out.println(JWTKit.getAccount());
 
         if (META.enabledSaas()) {
-            if(JWTKit.getUserId().equals(masterId)){
+            if(JWTKit.getUserId().equals(AuthorizationConst.masterId)){
             }else{
                 record.setOrgId(JWTKit.getOrgId());
             }

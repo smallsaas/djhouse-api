@@ -2,6 +2,7 @@
 package com.jfeat.am.module.house.api.manager;
 
 
+import com.jfeat.am.module.house.services.constants.AuthorizationConst;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
 import com.jfeat.crud.plus.META;
@@ -48,8 +49,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/crud/house/endUser/endUsers")
 public class EndpointUserEndpoint {
-
-    private static final int masterId = 61;
 
     @Resource
     EndpointUserService endpointUserService;
@@ -267,7 +266,7 @@ public class EndpointUserEndpoint {
         record.setEmailValidated(emailValidated);
         record.setPhoneValidated(phoneValidated);
         if (META.enabledSaas()) {
-            if(JWTKit.getUserId().equals(masterId)){
+            if(JWTKit.getUserId().equals(AuthorizationConst.masterId)){
             }else{
                 record.setOrgId(JWTKit.getOrgId());
             }
