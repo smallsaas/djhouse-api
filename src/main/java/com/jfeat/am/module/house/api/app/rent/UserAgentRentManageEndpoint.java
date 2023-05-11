@@ -216,7 +216,7 @@ public class UserAgentRentManageEndpoint {
 
         /**
          * 判断是否使用精准查询
-         * 精准查询是缓存在redis中的字段值，如果使用则从redis中取出使用
+         * 精准查询的字段值缓存在redis中，如果使用则从redis中取出使用
          */
         // 判断additionalQuery是否为true
         if (additionalQuery) {

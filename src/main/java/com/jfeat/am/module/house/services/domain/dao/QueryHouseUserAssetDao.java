@@ -40,11 +40,7 @@ public interface QueryHouseUserAssetDao extends QueryMasterDao<HouseUserAsset> {
     List<HouseUserAssetModel> queryMasterModelList(@Param("masterId") Object masterId);
 
 
-
     int updateUserAssetByUserIdAndAsset(@Param("userId") Long userId, @Param("assetId") Long assetId, @Param("entity") HouseUserAsset entity);
-
-
-
 
 
     HouseUserAsset queryHouseUserAssetByAssetId(@Param("assetId") Long assetId);
@@ -55,12 +51,12 @@ public interface QueryHouseUserAssetDao extends QueryMasterDao<HouseUserAsset> {
                                                  @Param("search") String search, @Param("orderBy") String orderBy,
                                                  @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
-    List<HouseUserAssetModel> queryLandlordAssetNumber(@Param("userId")Long userId,@Param("orgId") Long orgId);
+    List<HouseUserAssetModel> queryLandlordAssetNumber(@Param("userId") Long userId, @Param("orgId") Long orgId);
 
-//    子查询画像
-    List<HouseUserTag> queryHouseUserTagList(@Param("userId")Long userId);
+    //    子查询画像
+    List<HouseUserTag> queryHouseUserTagList(@Param("userId") Long userId);
 
-//    子查询备注
+    //    子查询备注
     List<HouseUserNote> queryHouseUserNoteList(@Param("userId") Long userId);
 
 
@@ -68,7 +64,7 @@ public interface QueryHouseUserAssetDao extends QueryMasterDao<HouseUserAsset> {
                                                                 @Param("search") String search);
 
     List<HouseUserAssetRecord> queryUserAccountList(Page<HouseUserAssetRecord> page, @Param("record") HouseUserAssetRecord record,
-                                                 @Param("search") String search);
+                                                    @Param("search") String search);
 
 
     List<HouseUserAssetRecord> queryUserAssetRank(Page<HouseUserAssetRecord> page, @Param("record") HouseUserAssetRecord record,
@@ -76,6 +72,37 @@ public interface QueryHouseUserAssetDao extends QueryMasterDao<HouseUserAsset> {
                                                   @Param("search") String search, @Param("orderBy") String orderBy,
                                                   @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
+    /**
+     * 获取用户的所有回迁房
+     *
+     * @param userId 用户id
+     * @return 房产列表
+     */
+    List<HouseUserAsset> listUserAssetByUserId(@Param("userId") Long userId, @Param("communityId") Long communityId);
 
+    /**
+     * 查询"我的回迁房"，根据sequence_num排序
+     *
+     * @param userId      用户id
+     * @param communityId 用户社区
+     * @return
+     */
+    List<HouseUserAssetRecord> pageMyHouse(@Param("userId") Long userId, @Param("communityId") Long communityId);
+
+    /**
+     * 根据id获取 houseUserAssetRecord
+     *
+     * @param id 用户房产记录id
+     * @return
+     */
+    HouseUserAssetRecord getUserAssetRecordById(@Param("id") Long id);
+
+    /**
+     * 根据id获取 houseUserAsset
+     *
+     * @param id 用户房产记录id
+     * @return
+     */
+    HouseUserAsset getUserAssetById(@Param("id") Long id);
 
 }

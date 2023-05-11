@@ -13,7 +13,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.FacilitatePeople
  */
 public interface FacilitatePeopleService {
 
-    Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeopleRecord> page,String serverName);
+    Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeopleRecord> page,String search);
 
     Page<FacilitatePeople> managementFindFacilitatePeople(Page<FacilitatePeople> page,String serverName);
 

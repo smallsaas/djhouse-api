@@ -357,18 +357,4 @@ public class HouseAssetTransaction extends Model<HouseAssetTransaction> {
     protected Serializable pkVal() {
         return this.id;
     }
-
-    @Override
-    public String toString() {
-        return "HouseAssetTransaction{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", assetId=" + assetId +
-                ", houseTypeId=" + houseType +
-                ", state=" + state +
-                ", note=" + note +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                "}";
-    }
 }

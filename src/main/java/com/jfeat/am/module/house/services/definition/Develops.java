@@ -9,7 +9,6 @@ public class Develops {
 
     private String dataBaseVersion;
 
-
     public Boolean getTenantData() {
         return tenantData;
     }

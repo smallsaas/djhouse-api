@@ -136,6 +136,10 @@
 
         WHERE 1=1
 
+        <if test="record.community != null">
+            AND t_end_user.org_id = #{record.community}
+        </if>
+
         <if test="record.display != null">
             AND t_house_asset_transaction.display = #{record.display}
         </if>
@@ -144,11 +148,10 @@
             AND t_house_asset_transaction.id = #{record.id}
         </if>
 
-
-        <if test="record.userId != null and record.userId > 0 ">
-            AND t_house_asset_transaction.user_id != #{record.userId}
-        </if>
-
+<!-- 不获取指定用户的记录 -->
+<!--        <if test="record.userId != null and record.userId > 0 ">-->
+<!--            AND t_house_asset_transaction.user_id != #{record.userId}-->
+<!--        </if>-->
 
         <if test="record.assetId != null and record.assetId>0 ">
             AND t_house_asset_transaction.asset_id =#{record.assetId}
@@ -186,7 +189,7 @@
         OR t_house_asset_transaction.name LIKE CONCAT('%',#{search},'%')
     </if>
     -->
-        ORDER BY t_house_asset_transaction. create_time DESC,t_house_asset_transaction.update_time DESC
+        ORDER BY t_house_asset_transaction.update_time DESC, t_house_asset_transaction. create_time DESC
     </select>
 
     <select id="listPriceOfTransaction" resultType="BigDecimal">
@@ -198,7 +201,7 @@
             `state` = 1 AND `price` > 0.00
     </select>
 
-    <select id="listTransaction" resultMap="HouseAssetTransactionMap" >
+    <select id="listTransactionByUserId" resultMap="HouseAssetTransactionMap" >
         SELECT
             <include refid="Base_Column_List"/>,`t_end_user`.`name` as userName,`t_end_user`.`phone` as userPhone,`t_end_user`.`real_name` as userRealName,`t_end_user`.`end_login_time` as endLoginTime
 
@@ -217,6 +220,24 @@
             `display` = #{transaction.display}
         WHERE
             `t_house_asset_transaction`.`id` = #{transaction.id} AND `t_house_asset_transaction`.`user_id` = #{transaction.userId}
+    </update>
+    
+    <select id="listTransaction" resultType="HouseAssetTransaction">
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            `t_house_asset_transaction`
+        WHERE
+            `t_house_asset_transaction`.`display` = 1
+    </select>
+
+    <update id="updateDisplayById">
+        UPDATE
+            `t_house_asset_transaction`
+        SET
+            `display` = 0
+        WHERE
+            `id` = #{id}
     </update>
 
 </mapper>

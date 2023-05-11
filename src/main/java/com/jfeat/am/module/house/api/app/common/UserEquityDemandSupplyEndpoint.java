@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.am.module.house.services.domain.service.HouseEmailService;
 import com.jfeat.am.module.house.services.gen.persistence.dao.HouseEquityDemandSupplyMapper;
+import com.jfeat.am.uaas.system.services.domain.service.SysUserService;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
@@ -22,6 +23,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -42,6 +44,9 @@ public class UserEquityDemandSupplyEndpoint {
 
     @Resource
     HouseEquityDemandSupplyMapper houseEquityDemandSupplyMapper;
+
+    @Resource
+    SysUserService sysUserService;
 
 
     /*
@@ -212,10 +217,10 @@ public class UserEquityDemandSupplyEndpoint {
                     houseEquityDemandSupply.setSimpleTime(DateTimeKit.toTimeline(houseEquityDemandSupply.getCreateTime()));
                 }
 
-                String name  = houseEquityDemandSupply.getUsername();
-                if (name!=null&&!("".equals(name))){
-                   houseEquityDemandSupply.setUsername(name.substring(0,1).concat("*"));
-                }
+//                String name  = houseEquityDemandSupply.getUsername();
+//                if (name!=null&&!("".equals(name))){
+//                    houseEquityDemandSupply.setUsername(name.substring(0,1).concat("*"));
+//                }
                 houseEquityDemandSupply.setUserAvatar(null);
                 String number = houseEquityDemandSupply.getPhoneNumber();
                 if (number!=null && number.length()>=3){

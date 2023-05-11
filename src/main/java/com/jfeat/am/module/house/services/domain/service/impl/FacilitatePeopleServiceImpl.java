@@ -37,24 +37,20 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     UserAccountUtility userAccountUtility;
 
     @Override
-    public Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeopleRecord> page,String serverName) {
+    public Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeopleRecord> page,String search) {
 
-        // 参数封装
-        FacilitatePeople facilitatePeople = new FacilitatePeople();
-        if (serverName != null) facilitatePeople.setServerName(serverName);
-
-        return facilitatePeopleDao.findFacilitatePeople(page,facilitatePeople);
+        return facilitatePeopleDao.findFacilitatePeople(page,search);
     }
 
     @Override
-    public Page<FacilitatePeople> managementFindFacilitatePeople(Page<FacilitatePeople> page,String serverName) {
+    public Page<FacilitatePeople> managementFindFacilitatePeople(Page<FacilitatePeople> page,String search) {
 
          QueryWrapper<FacilitatePeople> facilitatePeopleQueryWrapper = new QueryWrapper<>();
          facilitatePeopleQueryWrapper.orderByDesc("create_date_time");
-         if (serverName != null && StringUtils.isNotBlank(serverName)) {
-             facilitatePeopleQueryWrapper.like("server_name",serverName);
+         if (search != null && StringUtils.isNotBlank(search)) {
+             facilitatePeopleQueryWrapper.like("server_name",search).or().like("tags",search);
          }
-         
+
          return facilitatePeopleDao.selectPage(page,facilitatePeopleQueryWrapper);
     }
 
@@ -62,7 +58,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     public FacilitatePeople getFacilitatePeople(Integer id) {
 
         // 判断用户是否拥有社区管理员权限
-        if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+        if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_OPERATION))) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
 
         // 参数校验
         if (id == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"id cannot null");
@@ -73,7 +69,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     @Override
     public int updateFacilitatePeople(FacilitatePeople facilitatePeople) {
         // 判断用户是否拥有社区管理员权限
-        if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+        if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_OPERATION))) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
 
         // 参数校验,除id以外的参数如果为 "" 空串，则修改为null,不写入数据库
         // id
@@ -136,7 +132,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     public int saveFacilitatePeople(FacilitatePeople facilitatePeople) {
 
         // 判断用户是否拥有社区管理员权限
-        if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+        if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_OPERATION))) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
 
         // 参数校验
         // 如果参数为 "" 空串，则修改为null,不写入数据库
@@ -144,7 +140,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
         if (StringUtils.isBlank(facilitatePeople.getServerName()) || facilitatePeople.getServerName().length() > FacilitatePeople.SERVER_NAME_LENGTH) throw new BusinessException(BusinessCode.BadRequest,"serverName cannot null and length cannot greater than 10");
 
         // 联系电话和微信号只能有一个为空
-        if (StringUtils.isBlank(facilitatePeople.getContactNumber()) && StringUtils.isBlank(facilitatePeople.getWechat())) throw new BusinessException(BusinessCode.BadRequest,"contactNumber和wechat不能同时为空");
+//        if (StringUtils.isBlank(facilitatePeople.getContactNumber()) && StringUtils.isBlank(facilitatePeople.getWechat())) throw new BusinessException(BusinessCode.BadRequest,"contactNumber和wechat不能同时为空");
 
         // 联系电话
         if (StringUtils.isBlank(facilitatePeople.getContactNumber())) {
@@ -181,12 +177,12 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
             throw new BusinessException(BusinessCode.OutOfRange,"tags length cannot greater than " + FacilitatePeople.TAGS_LENGTH);
         }
 
-        // 创建时间，不允许用户自定义
+        // 创建时间
             // 格式化器
             // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         facilitatePeople.setCreateDateTime(LocalDateTime.now());
 
-        // status数据库默认为1,该插入方法不允许用户自定义
+        // status数据库默认为1
         facilitatePeople.setStatus(null);
 
         // 执行baseMapper.insert
@@ -206,7 +202,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     public int updateFacilitatePeopleOfStatusOpen(Integer id) {
 
         // 判断用户是否拥有社区管理员权限
-        if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+        if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_OPERATION))) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
 
         if (id == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"id cannot null");
 
@@ -229,7 +225,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     @Override
     public int updateFacilitatePeopleOfStatusClose(Integer id) {
         // 判断用户是否拥有社区管理员权限
-        if (userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_TENANT_MANAGER)) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+        if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_OPERATION))) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
 
         if (id == null) throw new BusinessException(BusinessCode.EmptyNotAllowed,"id cannot null");
 
@@ -245,6 +241,10 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
 
     @Override
     public int removeFacilitatePeople(Integer id) {
-        return 0;
+
+        // 社区管理员权限判断
+        if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_OPERATION))) throw new BusinessException(BusinessCode.NoPermission,"没有社区管理权");
+
+        return facilitatePeopleDao.deleteById(id);
     }
 }

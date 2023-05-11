@@ -16,6 +16,7 @@
     <properties>
         <skipStandalone>true</skipStandalone>
         <crud-dev.version>0.0.2</crud-dev.version>
+        <skipTest>true</skipTest>
     </properties>
 
     <dependencies>
@@ -64,6 +65,13 @@
             <groupId>com.jfeat</groupId>
             <artifactId>notice-service</artifactId>
             <version>1.1.0</version>
+        </dependency>
+
+        <!-- 供应商模块 -->
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>vms</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <!--  中文获取拼音   -->
@@ -223,6 +231,27 @@
 <!--            <version>2.0.9</version>-->
 <!--        </dependency>-->
 
+        <!-- Apache HttpClient5 -->
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.2.1</version>
+        </dependency>
+
+        <!-- 单元测试 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- 微信小程序发送消息工具 -->
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>zero-io-wechat-message</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
     </dependencies>
 
 
@@ -296,6 +325,16 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- mvn 生命周期的测试阶段的插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <!-- 默认跳过测试 -->
+                <configuration>
+                    <skip>${skipTest}</skip>
+                </configuration>
             </plugin>
 
         </plugins>

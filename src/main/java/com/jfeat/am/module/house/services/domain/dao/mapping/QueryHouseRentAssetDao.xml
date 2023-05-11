@@ -291,6 +291,14 @@
 
         WHERE 1=1
 
+        <!-- 过滤掉已出租的房子 -->
+        AND t_house_rent_asset.state != 1
+
+        <!-- 用户查询 -->
+        <if test="record.landlordId != null">
+            AND t_house_rent_asset.landlord_id =#{record.landlordId}
+        </if>
+
         <!-- 精准查询，精准查询字段在list内，动态循环插入 -->
         <!-- 楼栋 -->
         <if test="record.buildings != null and record.buildings.length >0">
@@ -350,20 +358,6 @@
         <if test="record.landlordRealName != null and record.landlordRealName!='' ">
             AND loadord.realName LIKE CONCAT('%',#{record.landlordRealName},'%')
         </if>
-
-        <!--如果不是根据用户查询，则过滤掉已出租的房子-->
-        <choose>
-            <when test="record.landlordId != null">
-                AND t_house_rent_asset.landlord_id =#{record.landlordId}
-            </when>
-            <otherwise>
-                AND t_house_rent_asset.state != 1
-            </otherwise>
-        </choose>
-
-<!--        <if test="record.landlordId != null and record.landlordId>0 ">-->
-<!--            AND t_house_rent_asset.landlord_id =#{record.landlordId}-->
-<!--        </if>-->
 
         <if test="record.area != null and record.area>0 ">
             AND t_house_rent_asset.area LIKE CONCAT('%',#{record.area},'%')

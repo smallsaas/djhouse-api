@@ -126,6 +126,7 @@ public class UserHouseAssetTransactionEndpoint {
     @ApiOperation(value = "修改 HouseAssetTransaction", response = HouseAssetTransaction.class)
     public Tip updateHouseAssetTransaction(@PathVariable Long id, @RequestBody HouseAssetTransaction entity) {
 
+        // 从参数判断
         Long userId = JWTKit.getUserId();
         if (userId==null){
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");
@@ -159,26 +160,27 @@ public class UserHouseAssetTransactionEndpoint {
             throw new BusinessException(BusinessCode.BadRequest,"enStatus不在[BUY|SELL]");
         }
 
-
-
+        // 执行更新
         entity.setId(id);
         entity.setUserId(userId);
-        return SuccessTip.create(houseAssetTransactionService.updateMaster(entity));
+        return SuccessTip.create(houseAssetTransactionService.updateTransaction(entity));
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation("删除 HouseAssetTransaction")
     public Tip deleteHouseAssetTransaction(@PathVariable Long id) {
+        // 判断用户是否已注册
         Long userId = JWTKit.getUserId();
         if (userId==null){
             throw new BusinessException(BusinessCode.NoPermission,"没有登录");
         }
-
+        // 判断是否是用户本人
         HouseAssetTransaction houseAssetTransaction = houseAssetTransactionMapper.selectById(id);
         if (houseAssetTransaction==null||!houseAssetTransaction.getUserId().equals(userId)){
             throw new BusinessException(BusinessCode.NoPermission);
         }
 
+        // 执行删除
         return SuccessTip.create(houseAssetTransactionService.deleteMaster(id));
     }
 
@@ -246,7 +248,11 @@ public class UserHouseAssetTransactionEndpoint {
         HouseAssetTransactionRecord record = new HouseAssetTransactionRecord();
         // 该方法默认获取非当前用户的订单记录
         Long userId = JWTKit.getUserId();
-        record.setUserId(userId);
+//        record.setUserId(userId);
+        // 获取当前用户社区，只查询当前用户的社区房屋转让信息
+        Long community = JWTKit.getOrgId();
+        if (community == null) throw new BusinessException(BusinessCode.NoPermission,"当前用户缺少了社区信息");
+        record.setCommunity(community);
         record.setAssetId(assetId);
         record.setHouseType(houseType);
         record.setState(state);
@@ -372,8 +378,8 @@ public class UserHouseAssetTransactionEndpoint {
         List<HouseAssetTransactionRecord> myTransactions = houseAssetTransactionService.listTransaction(userId);
         /**
          * 根据state判断状态，需求 or 转让
-         * 该方法有非常大的优化空间，可根据state就可以直接判断状态，可是因为前端对接的时候已经使用了cnStatus，enStatus这两个字段，
-         * 所以为了先不影响前端使用继续使用该方法，后续可在前端修改逻辑后去掉此方法
+         * 可根据state就可以直接判断状态，可是因为前端对接的时候已经使用了cnStatus，enStatus这两个字段,
+         * 所以为了不影响前端的使用继续使用该方法
          */
         houseAssetTransactionService.setStatus(myTransactions);
 
@@ -395,5 +401,17 @@ public class UserHouseAssetTransactionEndpoint {
         if (affected < 1) throw new BusinessException(BusinessCode.DatabaseUpdateError,"更新失败");
 
         return SuccessTip.create(affected);
+    }
+
+    @DeleteMapping("/sale/{id}")
+    public Tip removeTransaction(@PathVariable Long id) {
+
+        return SuccessTip.create(houseAssetTransactionService.removeTransaction(id));
+    }
+
+    @PutMapping("/renovate/{id}")
+    public Tip renovateTransaction(@PathVariable(name = "id") Long id) {
+
+        return SuccessTip.create(houseAssetTransactionService.renovateTransaction(id));
     }
 }
