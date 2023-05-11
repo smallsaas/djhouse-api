@@ -118,7 +118,8 @@ public class HouseVrPictureEndpoint {
             @ApiImplicitParam(name = "vrPicture", dataType = "String"),
             @ApiImplicitParam(name = "snapshot", dataType = "String"),
             @ApiImplicitParam(name = "orderBy", dataType = "String"),
-            @ApiImplicitParam(name = "sort", dataType = "String")
+            @ApiImplicitParam(name = "sort", dataType = "String"),
+            @ApiImplicitParam(name = "type", dataType = "Long")
     })
     public Tip queryHouseVrPicturePage(Page<HouseVrPictureRecord> page,
                                        @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
@@ -141,7 +142,9 @@ public class HouseVrPictureEndpoint {
                                        @RequestParam(name = "typeOption", required = false) String typeOption,
                                        @RequestParam(name = "note", required = false) String note,
                                        @RequestParam(name = "orderBy", required = false) String orderBy,
-                                       @RequestParam(name = "sort", required = false) String sort) {
+                                       @RequestParam(name = "sort", required = false) String sort,
+                                       @RequestParam(name = "type", required = false) Long type
+                                       ) {
 
         if (orderBy != null && orderBy.length() > 0) {
             if (sort != null && sort.length() > 0) {
@@ -167,6 +170,7 @@ public class HouseVrPictureEndpoint {
         record.setStyle(style);
         record.setTypeOption(typeOption);
         record.setNote(note);
+        record.setTypeId(type);
 
 
         List<HouseVrPictureRecord> houseVrPicturePage = queryHouseVrPictureDao.findHouseVrPicturePage(page, record, tag, search, orderBy, null, null);

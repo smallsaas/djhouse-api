@@ -49,6 +49,8 @@ import java.util.List;
 @RequestMapping("/api/crud/house/endUser/endUsers")
 public class EndpointUserEndpoint {
 
+    private static final int masterId = 61;
+
     @Resource
     EndpointUserService endpointUserService;
 
@@ -265,7 +267,10 @@ public class EndpointUserEndpoint {
         record.setEmailValidated(emailValidated);
         record.setPhoneValidated(phoneValidated);
         if (META.enabledSaas()) {
-            record.setOrgId(JWTKit.getOrgId());
+            if(JWTKit.getUserId().equals(masterId)){
+            }else{
+                record.setOrgId(JWTKit.getOrgId());
+            }
         }
         record.setTag(tag);
         record.setCategoryTag(categoryTag);
@@ -274,7 +279,6 @@ public class EndpointUserEndpoint {
         record.setType(type);
         record.setSysUserId(sysUserId);
         record.setVendor(vendor);
-
 
         List<EndpointUserRecord> endUserPage = queryEndpointUserDao.findEndUserPage(page, record, tag, search, orderBy, null, null);
 

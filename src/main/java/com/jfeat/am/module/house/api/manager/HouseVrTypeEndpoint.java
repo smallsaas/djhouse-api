@@ -58,6 +58,8 @@ import com.alibaba.fastjson.JSONArray;
 @RequestMapping("/api/crud/house/houseVrType/houseVrTypes")
 public class HouseVrTypeEndpoint {
 
+    private static final int masterId = 61;
+
     @Resource
     HouseVrTypeService houseVrTypeService;
 
@@ -147,8 +149,15 @@ public class HouseVrTypeEndpoint {
 
         HouseVrTypeRecord record = new HouseVrTypeRecord();
         record.setName(name);
+
+        System.out.println(JWTKit.getUserId());
+        System.out.println(JWTKit.getAccount());
+
         if (META.enabledSaas()) {
-            record.setOrgId(JWTKit.getOrgId());
+            if(JWTKit.getUserId().equals(masterId)){
+            }else{
+                record.setOrgId(JWTKit.getOrgId());
+            }
         }
 
 
