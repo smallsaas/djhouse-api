@@ -251,6 +251,20 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     }
 
     /**
+     * 初始化便民服务的拨打电话次数
+     *
+     * @param id 便民服务id
+     * @return
+     */
+    @Override
+    public String initializationFacilitatePeoPleDialFrequency(Integer id) {
+
+        stringRedisTemplate.opsForValue().set(CacheConst.getFacilitatePeopleRedisKey(id),CacheConst.FACILITATE_PEOPLE_INITIALIZATION_NUMBER);
+
+        return stringRedisTemplate.opsForValue().get(CacheConst.getFacilitatePeopleRedisKey(id));
+    }
+
+    /**
      * 便民服务拨打电话数加一
      * 添加成功返回当前拨打次数
      *
@@ -275,7 +289,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     public String getFacilitatePeoPleDialFrequency(Integer id) {
         String frequency = stringRedisTemplate.opsForValue().get(CacheConst.getFacilitatePeopleRedisKey(id));
         // 如果没有该key则交由 addFacilitatePeoPleDialQuantity() 去创建
-        if (frequency == null) frequency = addFacilitatePeoPleDialFrequency(id);
+        if (frequency == null) frequency = initializationFacilitatePeoPleDialFrequency(id);
         return frequency;
     }
 }

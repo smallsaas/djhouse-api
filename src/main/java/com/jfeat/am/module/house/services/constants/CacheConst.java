@@ -11,7 +11,9 @@ public final class CacheConst {
 
     // 便民服务拨打数redis key前缀
     private static final String FACILITATE_PEOPLE_REDIS_KEY_PREFIX = "facilitatePeople";
-    // 便民服务拨打数每次添加数
+    // 便民服务拨打次数的初始化数
+    public static final String FACILITATE_PEOPLE_INITIALIZATION_NUMBER = "0";
+    // 便民服务拨打次数每次添加数
     public static final long FACILITATE_PEOPLE_ONCE_ADD_NUMBER = 1;
 
     /**

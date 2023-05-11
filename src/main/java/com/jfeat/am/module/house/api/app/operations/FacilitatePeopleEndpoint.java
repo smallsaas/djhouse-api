@@ -53,6 +53,18 @@ public class FacilitatePeopleEndpoint {
     }
 
     /**
+     * 指定便民服务的拨打次数 + 1
+     *
+     * @param id 便民服务id
+     * @return 当前的次数
+     */
+    @PutMapping("/addFrequency/{id}")
+    public Tip addFacilitatePeoPleDialFrequency(@PathVariable("id") Integer id) {
+
+        return SuccessTip.create(facilitatePeopleService.addFacilitatePeoPleDialFrequency(id));
+    }
+
+    /**
      * 以下属于管理员操作，均需社区管理员权限才可访问
      */
 
@@ -167,7 +179,7 @@ public class FacilitatePeopleEndpoint {
      * @return
      */
     @DeleteMapping("/{id}")
-    public Tip removeFacilitatePeople(@PathVariable(name = "id") Integer id) {
+    public Tip removeFacilitatePeople(@PathVariable("id") Integer id) {
 
         // 社区管理员权限判断
         if (!(userAccountUtility.judgementJurisdiction(EndUserTypeSetting.USER_TYPE_OPERATION)))

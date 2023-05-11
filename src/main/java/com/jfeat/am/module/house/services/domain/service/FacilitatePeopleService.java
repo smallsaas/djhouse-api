@@ -40,6 +40,14 @@ public interface FacilitatePeopleService {
     int removeFacilitatePeople(Integer id);
 
     /**
+     * 初始化便民服务的拨打电话次数
+     *
+     * @param id 便民服务id
+     * @return
+     */
+    String initializationFacilitatePeoPleDialFrequency(Integer id);
+
+    /**
      * 指定便民服务的拨打电话数加一
      * 添加成功返回当前拨打次数，失败返回null
      *
@@ -54,4 +62,6 @@ public interface FacilitatePeopleService {
      * @return
      */
     String getFacilitatePeoPleDialFrequency(Integer id);
+
+
 }
