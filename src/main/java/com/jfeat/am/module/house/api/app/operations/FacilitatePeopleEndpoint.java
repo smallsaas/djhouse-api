@@ -53,20 +53,6 @@ public class FacilitatePeopleEndpoint {
     }
 
     /**
-     * 便民服务的拨打数加一
-     *
-     * @param id 便民服务id
-     * @return
-     */
-    @PutMapping("")
-    public Tip addFacilitatePeoPleDialQuantity(@PathVariable(value = "id") Long id) {
-
-
-
-        return null;
-    }
-
-    /**
      * 以下属于管理员操作，均需社区管理员权限才可访问
      */
 
