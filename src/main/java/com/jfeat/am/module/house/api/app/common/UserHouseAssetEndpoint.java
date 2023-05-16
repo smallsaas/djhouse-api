@@ -773,7 +773,7 @@ public class UserHouseAssetEndpoint {
             logger.error("没有找到该房产记录,用户id：" + userId + "，房产id：" + id);
             throw new BusinessException(BusinessCode.CodeBase);
         }
-        // 获取社区信息（不太明白这样写的用意是什么，但是为了不重写一个方法导致多个方法混乱，所以直接调用已有方法获取）
+        // 获取社区信息
         Long communityId = null;
         HouseUserCommunityStatusRecord communityStatusRecord = new HouseUserCommunityStatusRecord();
         communityStatusRecord.setUserId(userId);

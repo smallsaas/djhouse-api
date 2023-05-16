@@ -398,7 +398,6 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
             HouseUserAsset param = new HouseUserAsset();
             param.setId(userAsset.getId());
             param.setSequenceNum(i);
-            // 写入数据库
             affected += houseUserAssetDao.updateById(param);
         }
         // 3、设定成功返回条目数
@@ -427,7 +426,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
             throw new BusinessException(BusinessCode.BadRequest, "参数有误");
         }
 
-        // 因为这是新加的功能，以前的sequence_num数据为空，为了兼容性，每次都进行重新赋值sequence_num（后续可优化）
+        // 因为这是新加的功能，以前的sequence_num数据为空，为了兼容性，每次都进行重新赋值sequence_num
         setDefaultSequenceNumber(userId, communityId);
 
         // 要移动的房子
