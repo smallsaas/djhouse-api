@@ -10,15 +10,19 @@
         t_house_vr_picture.star,
         t_house_vr_picture.bedrooms,
         t_house_vr_picture.style,
-        t_house_vr_picture.type_option AS typeOption,
         t_house_vr_picture.note,
-        t_house_vr_picture.status
+        t_house_vr_picture.status,
+        t_house_vr_picture.type_id AS typeId,
+        t_house_vr_type.name AS typeName
     </sql>
 
 
     <select id="queryMasterModel" resultType="HouseVrPictureModel">
-        SELECT t_house_vr_picture.*
+        SELECT t_house_vr_picture.*,
+               t_house_vr_type.name AS typeName
         FROM t_house_vr_picture
+        LEFT JOIN `t_house_vr_type`
+        on `t_house_vr_picture`.type_id = `t_house_vr_type`.id
         WHERE t_house_vr_picture.id = #{id}
         GROUP BY t_house_vr_picture.id
     </select>
@@ -30,7 +34,8 @@
 
 
         FROM t_house_vr_picture
-
+        LEFT JOIN `t_house_vr_type`
+        on `t_house_vr_picture`.type_id = `t_house_vr_type`.id
 
         WHERE 1=1
 

@@ -141,7 +141,7 @@ public class UserAssetComplaintEndpoint {
 
     @GetMapping("/clash/{id}")
     @ApiOperation(value = "查看 HouseAssetComplaint", response = HouseAssetComplaint.class)
-    @EndUserPermission({EndUserTypeSetting.USER_TYPE_TENANT_MANAGER_STRING,EndUserTypeSetting.USER_TYPE_ADMIN_STRING})
+    @EndUserPermission({EndUserTypeSetting.USER_TYPE_OPERATION_STRING,EndUserTypeSetting.USER_TYPE_ADMIN_STRING})
     public Tip getHouseAssetComplaint(@PathVariable Long id) {
          /*
         验证用户是否是运营身份
@@ -260,9 +260,12 @@ public class UserAssetComplaintEndpoint {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
         }
 
-        if (entity.getClashCertificate() == null || "".equals(entity.getClashCertificate())) {
-            throw new BusinessException(BusinessCode.CodeBase, "证明材料需要上传");
-        }
+        /*
+        * 取消申请材料必填
+        * */
+//        if (entity.getClashCertificate() == null || "".equals(entity.getClashCertificate())) {
+//            throw new BusinessException(BusinessCode.CodeBase, "证明材料需要上传");
+//        }
 
         HouseAssetComplaint houseAssetComplaint = queryHouseAssetComplaintDao.queryMasterModel(id);
         if (houseAssetComplaint != null) {

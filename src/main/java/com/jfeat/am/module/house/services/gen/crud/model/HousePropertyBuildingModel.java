@@ -20,11 +20,22 @@ public class HousePropertyBuildingModel extends HousePropertyBuilding{
     // houseAsset
     private List<HouseAsset> items;
 
+    private String communityName;
+
     public List<HouseAsset> getItems() {
         return this.items;
     }
 
     public void setItems(List<HouseAsset> items) {
         this.items = items;
+    }
+
+
+    public String getCommunityName() {
+        return communityName;
+    }
+
+    public void setCommunityName(String communityName) {
+        this.communityName = communityName;
     }
 }

@@ -86,7 +86,7 @@ public class EndpointUserEndpoint {
     @GetMapping("/{id}")
     @ApiOperation(value = "查看 EndpointUser", response = EndpointUser.class)
     public Tip getEndUser(@PathVariable Long id) {
-        EndpointUser endpointUser =  endpointUserService.queryMasterModel(queryEndpointUserDao, id);
+        EndpointUser endpointUser =  endpointUserService.listUser(id);
         if (endpointUser!=null){
             HouseUserAssetRecord houseUserAssetRecord = new HouseUserAssetRecord();
             houseUserAssetRecord.setUserId(id);

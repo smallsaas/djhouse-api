@@ -25,9 +25,11 @@
 
 
     <select id="queryMasterModel" resultType="HousePropertyBuildingModel">
-        SELECT t_house_property_building.*
+        SELECT t_house_property_building.*, t_house_property_community.community AS communityName
         FROM t_house_property_building
-        WHERE t_house_property_building.id = #{id}
+        LEFT JOIN t_house_property_community
+        ON t_house_property_building.community_id = t_house_property_community.id
+        WHERE t_house_property_building.id = 92
         GROUP BY t_house_property_building.id
     </select>
 
