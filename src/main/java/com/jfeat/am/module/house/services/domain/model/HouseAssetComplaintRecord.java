@@ -30,6 +30,8 @@ public class HouseAssetComplaintRecord extends HouseAssetComplaint {
     private String userPhone;
     private String userAvatar;
 
+    private String solveStatusStr;
+
 
     public String getRealName() {
         return realName;
@@ -94,5 +96,14 @@ public class HouseAssetComplaintRecord extends HouseAssetComplaint {
 
     public void setUserAvatar(String userAvatar) {
         this.userAvatar = userAvatar;
+    }
+
+
+    public String getSolveStatusStr() {
+        return solveStatusStr;
+    }
+
+    public void setSolveStatusStr(String solveStatusStr) {
+        this.solveStatusStr = solveStatusStr;
     }
 }
