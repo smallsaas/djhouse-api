@@ -53,7 +53,7 @@ public class FacilitatePeopleEndpoint {
     }
 
     /**
-     * 指定便民服务的拨打次数 + 1
+     * 增加指定便民服务的拨打次数
      *
      * @param id 便民服务id
      * @return 当前的次数
