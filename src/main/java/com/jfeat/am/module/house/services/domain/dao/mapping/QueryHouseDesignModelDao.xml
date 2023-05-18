@@ -31,7 +31,8 @@
         SELECT t_house_design_model.*,
                t_house_vr_picture.vr_picture  AS vrPicture,
                t_house_vr_picture.link AS vrLink,
-               t_house_vr_picture.snapshot AS vrSnapshot
+               t_house_vr_picture.snapshot AS vrSnapshot,
+               t_house_vr_picture.name AS vrName
         FROM t_house_design_model
                  left join t_house_vr_picture on t_house_vr_picture.id = t_house_design_model.vr_id
         WHERE t_house_design_model.id = #{id}

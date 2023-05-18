@@ -43,4 +43,13 @@ public interface QueryHousePropertyBuildingUnitDao extends QueryMasterDao<HouseP
 
     List<HousePropertyBuildingUnitRecord> queryUnitListByCommunityId(Page<HousePropertyBuildingUnitRecord> page,@RequestParam("communityId")Long communityId);
 
+
+    /*
+     * Query entity list by page
+     */
+    List<HousePropertyBuildingUnitRecord> findHousePropertyBuildingUnitPageToWeb(Page<HousePropertyBuildingUnitRecord> page, @Param("record") HousePropertyBuildingUnitRecord record,
+                                                                            @Param("tag") String tag,
+                                                                            @Param("search") String search, @Param("orderBy") String orderBy,
+                                                                            @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
 }

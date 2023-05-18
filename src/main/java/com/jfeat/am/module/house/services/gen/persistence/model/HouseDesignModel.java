@@ -163,6 +163,8 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
     @ApiModelProperty(value = "房间窗高度度")
     private BigDecimal fourthRoomWindowHight;
 
+    @ApiModelProperty(value = "vr名称")
+    private String vrName;
 
 
     public String getTag() {
@@ -554,6 +556,15 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getVrName() {
+        return vrName;
+    }
+
+    public HouseDesignModel setVrName(String vrName) {
+        this.vrName = vrName;
+        return this;
     }
 
     public static final String ID = "id";

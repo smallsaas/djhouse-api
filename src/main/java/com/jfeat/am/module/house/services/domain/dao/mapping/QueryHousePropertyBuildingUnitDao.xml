@@ -95,6 +95,7 @@
              </if>
         <if test="entity.buildingId != null and entity.BuildingId>0">
             , t_house_property_community.community AS communityName
+            , t_house_property_community.id AS communityId
             , t_house_property_building.`code`     As buildingCode
         </if>
 
@@ -133,6 +134,37 @@
                           LEFT JOIN t_house_design_model ON t_house_design_model.id = t_house_property_building_unit.design_model_id
                           LEFT JOIN t_house_vr_picture ON t_house_vr_picture.id = t_house_design_model.vr_id
         WHERE t_house_property_community.id=1
+    </select>
+
+    <select id="findHousePropertyBuildingUnitPageToWeb" resultType="HousePropertyBuildingUnitRecord"
+            parameterType="HousePropertyBuildingUnitRecord">
+        SELECT
+            <include refid="Base_Column_List"/>,
+        t_house_property_community.community AS communityName,
+        t_house_property_community.id AS communityId,
+        t_house_property_building.`code`     As buildingCode
+
+        FROM t_house_property_building_unit
+        LEFT JOIN t_house_design_model ON t_house_property_building_unit.design_model_id = t_house_design_model.id
+
+        JOIN t_house_property_building
+        ON t_house_property_building_unit.building_id = t_house_property_building.id
+        JOIN t_house_property_community
+        ON t_house_property_building.community_id = t_house_property_community.id
+
+        <where>
+            <if test="record.communityId != null and record.communityId>0 ">
+                AND t_house_property_community.id =#{record.communityId}
+            </if>
+
+            <if test="search != null and search != ''">
+                OR t_house_property_building_unit.unit_code LIKE CONCAT('%',#{search},'%')
+                OR t_house_property_building.`code` LIKE CONCAT('%',#{search},'%')
+            </if>
+        </where>
+
+
+
     </select>
 
 </mapper>
