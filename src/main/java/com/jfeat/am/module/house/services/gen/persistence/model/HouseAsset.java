@@ -47,6 +47,9 @@ public class HouseAsset extends Model<HouseAsset> {
     @ApiModelProperty(value = "资产类型")
     private Integer assetType;
 
+    @TableField(exist = false)
+    private String assetTypeStr;
+
     @ApiModelProperty(value = "0-无效房子 1-平房  2-复式房")
     private Integer assetFlag;
 
@@ -147,12 +150,23 @@ public class HouseAsset extends Model<HouseAsset> {
     @TableField(exist = false)
     private String unit;
 
+    @TableField(exist = false)
+    private String unitCode;
+
     public String getUnit() {
         return unit;
     }
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public String getUnitCode() {
+        return unitCode;
+    }
+
+    public void setUnitCode(String unitCode) {
+        this.unitCode = unitCode;
     }
 
     public BigDecimal getAssetArea() {
@@ -346,6 +360,15 @@ public class HouseAsset extends Model<HouseAsset> {
     public void setAssetType(Integer assetType) {
         this.assetType = assetType;
     }
+
+    public String getAssetTypeStr() {
+        return assetTypeStr;
+    }
+
+    public void setAssetTypeStr(String assetTypeStr) {
+        this.assetTypeStr = assetTypeStr;
+    }
+
 
     public String getAddress() {
         return address;

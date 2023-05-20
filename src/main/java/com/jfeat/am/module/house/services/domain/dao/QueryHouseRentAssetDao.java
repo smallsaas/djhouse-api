@@ -24,6 +24,16 @@ public interface QueryHouseRentAssetDao extends QueryMasterDao<HouseRentAsset> {
                                                       @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
     /*
+     * Query entity list by page
+     */
+    List<HouseRentAssetRecord> findHouseRentAssetPageToWeb(Page<HouseRentAssetRecord> page, @Param("record") HouseRentAssetRecord record,
+                                                      @Param("tag") String tag,
+                                                      @Param("search") String search, @Param("orderBy") String orderBy,
+                                                      @Param("startTime") Date startTime, @Param("endTime") Date endTime,
+                                                           @Param("landlordSearch") String landlordSearch,
+                                                           @Param("serverSearch") String serverSearch);
+
+    /*
      * Query entity model for details
      */
     HouseRentAssetModel queryMasterModel(@Param("id") Long id);

@@ -41,9 +41,15 @@
 
 
     <select id="queryMasterModel" resultType="HouseRentAssetModel">
-        SELECT t_house_rent_asset.*,t_end_user.name as landlordName,t_end_user.real_name as landlordRealName, t_end_user.avatar as landlordAvatar,t_end_user.phone as landlordPhone, t_end_user.contact
+        SELECT t_house_rent_asset.*,t_end_user.name as landlordName,t_end_user.real_name as landlordRealName, t_end_user.avatar as landlordAvatar,t_end_user.phone as landlordPhone, t_end_user.contact,
+
+        serverManager.name as serverName,
+        serverManager.avatar as serverdAvatar,
+        serverManager.phone as serverPhone
+
         FROM t_house_rent_asset
         JOIN t_end_user on t_end_user.id = t_house_rent_asset.landlord_id
+        JOIN t_end_user AS serverManager on serverManager.id = t_house_rent_asset.server_id
         WHERE t_house_rent_asset.id = #{id}
         GROUP BY t_house_rent_asset.id
     </select>
@@ -51,8 +57,11 @@
 
     <select id="findHouseRentAssetPage" resultType="HouseRentAssetRecord" parameterType="HouseRentAssetRecord">
         SELECT
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>,
 
+        loadord.name As landlordName,
+        loadord.phone AS landlordPhone,
+        loadord.avatar AS landlordAvatar
 
         FROM t_house_rent_asset
         LEFT JOIN t_end_user ON t_end_user.id = t_house_rent_asset.server_id
@@ -149,11 +158,132 @@
         <if test="endTime != null">
             <![CDATA[AND t_house_rent_asset.end_time <= DATE(#{endTime}]]>
         </if>
-        <!--
-    <if test="search != null and search != ''">
-        OR t_house_rent_asset.name LIKE CONCAT('%',#{search},'%')
-    </if>
-    -->
+
+    </select>
+
+    <select id="findHouseRentAssetPageToWeb" resultType="HouseRentAssetRecord" parameterType="HouseRentAssetRecord">
+        SELECT
+        <include refid="Base_Column_List"/>,
+
+        loadord.name As landlordName,
+        loadord.phone AS landlordPhone,
+        loadord.avatar AS landlordAvatar
+
+        FROM t_house_rent_asset
+        LEFT JOIN t_end_user ON t_end_user.id = t_house_rent_asset.server_id
+        LEFT JOIN t_end_user as loadord ON loadord.id = t_house_rent_asset.landlord_id
+
+        --         WHERE 1=1
+
+        <where>
+
+            <if test="record.id != null and record.id>0 ">
+                AND t_house_rent_asset.id = #{record.id}
+            </if>
+
+
+            <if test="record.landlordName != null and record.landlordName!='' ">
+                AND loadord.name LIKE CONCAT('%',#{record.landlordName},'%')
+            </if>
+
+            <if test="record.landlordRealName != null and record.landlordRealName!='' ">
+                AND loadord.realName LIKE CONCAT('%',#{record.landlordRealName},'%')
+            </if>
+
+
+            <if test="record.assetId != null and record.assetId>0 ">
+                AND t_house_rent_asset.asset_id =#{record.assetId}
+            </if>
+
+
+            <if test="record.communityId != null and record.communityId>0 ">
+                AND t_house_rent_asset.community_id =#{record.communityId}
+            </if>
+
+
+            <if test="record.houseTypeId != null and record.houseTypeId>0 ">
+                AND t_house_rent_asset.house_type_id =#{record.houseTypeId}
+            </if>
+
+
+            <if test="record.landlordId != null and record.landlordId>0 ">
+                AND t_house_rent_asset.landlord_id =#{record.landlordId}
+            </if>
+            <if test="record.area != null and record.area>0 ">
+                AND t_house_rent_asset.area LIKE CONCAT('%',#{record.area},'%')
+            </if>
+            <if test="record.rate != null and record.rate>=0 ">
+                AND t_house_rent_asset.rate LIKE CONCAT('%',#{record.rate},'%')
+            </if>
+
+
+            <if test="record.introducePicture != null and record.introducePicture!= ''">
+                AND t_house_rent_asset.introduce_picture LIKE CONCAT('%',#{record.introducePicture},'%')
+            </if>
+
+
+            <if test="record.serverId != null and record.serverId>0 ">
+                AND t_house_rent_asset.server_id =#{record.serverId}
+            </if>
+            <if test="record.cover != null and record.cover!= ''">
+                AND t_house_rent_asset.cover LIKE CONCAT('%',#{record.cover},'%')
+            </if>
+            <if test="record.title != null and record.title!= ''">
+                AND t_house_rent_asset.title LIKE CONCAT('%',#{record.title},'%')
+            </if>
+            <if test="record.price != null and record.price>0 ">
+                AND t_house_rent_asset.price LIKE CONCAT('%',#{record.price},'%')
+            </if>
+            <if test="record.slide != null and record.slide!= ''">
+                AND t_house_rent_asset.slide LIKE CONCAT('%',#{record.slide},'%')
+            </if>
+            <if test="record.rentDescribe != null and record.rentDescribe!= ''">
+                AND t_house_rent_asset.rent_describe LIKE CONCAT('%',#{record.rentDescribe},'%')
+            </if>
+
+
+            <if test="record.rentStatus != null and record.rentStatus>0 ">
+                AND t_house_rent_asset.rent_status LIKE CONCAT('%',#{record.rentStatus},'%')
+            </if>
+            <if test="record.note != null and record.note!= ''">
+                AND t_house_rent_asset.note LIKE CONCAT('%',#{record.note},'%')
+            </if>
+
+
+            <if test="record.rentTime != null and record.rentTime>0 ">
+                AND t_house_rent_asset.rent_time LIKE CONCAT('%',#{record.rentTime},'%')
+            </if>
+
+
+            <if test="record.shelvesTime != null and record.shelvesTime>0 ">
+                AND t_house_rent_asset.shelves_time LIKE CONCAT('%',#{record.shelvesTime},'%')
+            </if>
+
+            <if test="startTime != null">
+                <![CDATA[AND t_house_rent_asset.start_time >= DATE(#{startTime})]]>
+            </if>
+            <if test="endTime != null">
+                <![CDATA[AND t_house_rent_asset.end_time <= DATE(#{endTime}]]>
+            </if>
+
+            <if test="search != null and search != ''">
+                OR t_house_rent_asset.rent_describe LIKE CONCAT('%',#{search},'%')
+                OR t_house_rent_asset.price LIKE CONCAT('%',#{search},'%')
+                OR t_house_rent_asset.rate LIKE CONCAT('%',#{search},'%')
+                OR t_house_rent_asset.area LIKE CONCAT('%',#{search},'%')
+            </if>
+
+            <if test="landlordSearch != null and landlordSearch != ''">
+                OR loadord.name LIKE CONCAT('%',#{landlordSearch},'%')
+                OR loadord.phone LIKE CONCAT('%',#{landlordSearch},'%')
+            </if>
+
+            <if test="serverSearch != null and serverSearch != ''">
+                OR t_end_user.name LIKE CONCAT('%',#{serverSearch},'%')
+                OR t_end_user.phone LIKE CONCAT('%',#{serverSearch},'%')
+            </if>
+
+        </where>
     </select>
 
     <resultMap id="HouseRentAssetMap" type="HouseRentAssetRecord">
