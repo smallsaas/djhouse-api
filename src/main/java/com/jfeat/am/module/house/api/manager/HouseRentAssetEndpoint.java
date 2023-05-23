@@ -216,9 +216,8 @@ public class HouseRentAssetEndpoint {
         record.setLandlordRealName(landlordRealName);
 
 
-        List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPage(page, record, tag, search, orderBy, null, null);
-//        List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPageToWeb(page, record, tag, search, orderBy, null, null, landlordSearch, serverSearch);
-
+//        List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPage(page, record, tag, search, orderBy, null, null);
+        List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPageToWeb(page, record, tag, search, orderBy, null, null, landlordSearch, serverSearch);
 
         page.setRecords(houseRentAssetPage);
 

@@ -173,8 +173,6 @@
         LEFT JOIN t_end_user ON t_end_user.id = t_house_rent_asset.server_id
         LEFT JOIN t_end_user as loadord ON loadord.id = t_house_rent_asset.landlord_id
 
-        --         WHERE 1=1
-
         <where>
 
             <if test="record.id != null and record.id>0 ">
@@ -189,7 +187,6 @@
             <if test="record.landlordRealName != null and record.landlordRealName!='' ">
                 AND loadord.realName LIKE CONCAT('%',#{record.landlordRealName},'%')
             </if>
-
 
             <if test="record.assetId != null and record.assetId>0 ">
                 AND t_house_rent_asset.asset_id =#{record.assetId}
@@ -267,20 +264,20 @@
             </if>
 
             <if test="search != null and search != ''">
-                OR t_house_rent_asset.rent_describe LIKE CONCAT('%',#{search},'%')
+               AND ( t_house_rent_asset.rent_describe LIKE CONCAT('%',#{search},'%')
                 OR t_house_rent_asset.price LIKE CONCAT('%',#{search},'%')
                 OR t_house_rent_asset.rate LIKE CONCAT('%',#{search},'%')
-                OR t_house_rent_asset.area LIKE CONCAT('%',#{search},'%')
+                OR t_house_rent_asset.area LIKE CONCAT('%',#{search},'%') )
             </if>
 
             <if test="landlordSearch != null and landlordSearch != ''">
-                OR loadord.name LIKE CONCAT('%',#{landlordSearch},'%')
-                OR loadord.phone LIKE CONCAT('%',#{landlordSearch},'%')
+                AND ( loadord.name LIKE CONCAT('%',#{landlordSearch},'%')
+                OR loadord.phone LIKE CONCAT('%',#{landlordSearch},'%') )
             </if>
 
             <if test="serverSearch != null and serverSearch != ''">
-                OR t_end_user.name LIKE CONCAT('%',#{serverSearch},'%')
-                OR t_end_user.phone LIKE CONCAT('%',#{serverSearch},'%')
+                AND (  t_end_user.name LIKE CONCAT('%',#{serverSearch},'%')
+                OR t_end_user.phone LIKE CONCAT('%',#{serverSearch},'%') )
             </if>
 
         </where>
