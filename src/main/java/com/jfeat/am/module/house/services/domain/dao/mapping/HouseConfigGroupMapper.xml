@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.HouseConfigGroupMapper">
+
+    <sql id="Base_Column_List">
+        `t_house_config_group`.`id`,
+        `t_house_config_group`.`group_key`,
+        `t_house_config_group`.`group_name`,
+        `t_house_config_group`.`explain`
+    </sql>
+
+    <resultMap id="HouseConfigGroupDTOResultMap" type="HouseConfigGroupDTO">
+        <id column="id" property="id" />
+        <result column="group_key" property="groupKey" />
+        <result column="group_name" property="groupName" />
+        <result column="explain" property="explain" />
+        <collection property="houseConfigs" ofType="HouseConfig" column="group_name" select="com.jfeat.am.module.house.services.domain.dao.HouseConfigMapper.listHouseConfig" />
+    </resultMap>
+
+    <select id="listHouseConfigGroupDTO" resultMap="HouseConfigGroupDTOResultMap">
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            `t_house_config_group`
+    </select>
+
+</mapper>

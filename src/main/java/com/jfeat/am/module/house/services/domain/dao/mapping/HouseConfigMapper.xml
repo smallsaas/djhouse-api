@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.house.services.domain.dao.HouseConfigMapper">
+
+    <sql id="Base_Column_List">
+        `t_house_config`.`id`,
+        `t_house_config`.`field_group_name`,
+        `t_house_config`.`field_key`,
+        `t_house_config`.`field_name`,
+        `t_house_config`.`field_value`,
+        `t_house_config`.`field_value_type`,
+        `t_house_config`.`status`,
+        `t_house_config`.`explain`
+    </sql>
+
+    <resultMap id="houseConfigResultMap" type="HouseConfig">
+        <id column="id" property="id"/>
+        <result column="field_group_name" property="fieldGroupName" />
+        <result column="field_key" property="fieldKey" />
+        <result column="field_name" property="fieldName" />
+        <result column="field_value" property="fieldValue" />
+        <result column="field_value_type" property="fieldValueType" />
+        <result column="status" property="status" />
+        <result column="explain" property="explain" />
+    </resultMap>
+
+    <select id="listHouseConfig" resultMap="houseConfigResultMap" >
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            `t_house_config`
+        WHERE
+            `field_group_name` = #{fieldGroupName}
+    </select>
+
+</mapper>
