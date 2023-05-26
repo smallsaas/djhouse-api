@@ -24,7 +24,7 @@
         <result column="explain" property="explain" />
     </resultMap>
 
-    <select id="listHouseConfig" resultMap="houseConfigResultMap" >
+    <select id="list" resultMap="houseConfigResultMap" >
         SELECT
             <include refid="Base_Column_List" />
         FROM
@@ -32,5 +32,23 @@
         WHERE
             `field_group_name` = #{fieldGroupName}
     </select>
+
+    <select id="getById" resultMap="houseConfigResultMap" >
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            `t_house_config`
+        WHERE
+            `id` = #{id}
+    </select>
+
+    <update id="updateFieldValueById">
+        UPDATE
+            `t_house_config`
+        SET
+            `field_value` = #{fieldValue}
+        WHERE
+            `id` = #{id}
+    </update>
 
 </mapper>

@@ -14,7 +14,7 @@
         <result column="group_key" property="groupKey" />
         <result column="group_name" property="groupName" />
         <result column="explain" property="explain" />
-        <collection property="houseConfigs" ofType="HouseConfig" column="group_name" select="com.jfeat.am.module.house.services.domain.dao.HouseConfigMapper.listHouseConfig" />
+        <collection property="houseConfigs" ofType="HouseConfig" column="group_name" select="com.jfeat.am.module.house.services.domain.dao.HouseConfigMapper.list" />
     </resultMap>
 
     <select id="listHouseConfigGroupDTO" resultMap="HouseConfigGroupDTOResultMap">
