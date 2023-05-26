@@ -11,5 +11,5 @@ public final class AuthorizationConst {
 
     private AuthorizationConst() {};
 
-    public static final Long masterId = 61L;
+    public static final String masterAccount = "admin";
 }

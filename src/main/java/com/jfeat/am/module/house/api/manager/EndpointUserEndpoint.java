@@ -266,7 +266,7 @@ public class EndpointUserEndpoint {
         record.setEmailValidated(emailValidated);
         record.setPhoneValidated(phoneValidated);
         if (META.enabledSaas()) {
-            if(JWTKit.getUserId().equals(AuthorizationConst.masterId)){
+            if(JWTKit.getAccount().equals(AuthorizationConst.masterAccount)){
             }else{
                 record.setOrgId(JWTKit.getOrgId());
             }

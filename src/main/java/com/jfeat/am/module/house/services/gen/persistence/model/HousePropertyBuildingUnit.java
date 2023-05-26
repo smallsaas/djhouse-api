@@ -81,6 +81,9 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
     private String communityName;
 
     @TableField(exist = false)
+    private Long communityId;
+
+    @TableField(exist = false)
     private String buildingCode;
 
     @TableField(exist = false)
@@ -156,6 +159,14 @@ public class HousePropertyBuildingUnit extends Model<HousePropertyBuildingUnit> 
 
     public void setCommunityName(String communityName) {
         this.communityName = communityName;
+    }
+
+    public Long getCommunityId() {
+        return communityId;
+    }
+
+    public void setCommunityId(Long communityId) {
+        this.communityId = communityId;
     }
 
     public String getBuildingCode() {

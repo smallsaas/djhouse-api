@@ -110,7 +110,6 @@ public class HouseRentAssetEndpoint {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNum", dataType = "Integer"),
             @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
-            @ApiImplicitParam(name = "search", dataType = "String"),
             @ApiImplicitParam(name = "id", dataType = "Long"),
             @ApiImplicitParam(name = "assetId", dataType = "Long"),
             @ApiImplicitParam(name = "communityId", dataType = "Long"),
@@ -129,7 +128,10 @@ public class HouseRentAssetEndpoint {
             @ApiImplicitParam(name = "rentTime", dataType = "Date"),
             @ApiImplicitParam(name = "shelvesTime", dataType = "Date"),
             @ApiImplicitParam(name = "orderBy", dataType = "String"),
-            @ApiImplicitParam(name = "sort", dataType = "String")
+            @ApiImplicitParam(name = "sort", dataType = "String"),
+            @ApiImplicitParam(name = "search", dataType = "String"),
+            @ApiImplicitParam(name = "landlordSearch", dataType = "String"),
+            @ApiImplicitParam(name = "serverSearch", dataType = "String")
     })
     public Tip queryHouseRentAssetPage(Page<HouseRentAssetRecord> page,
                                        @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
@@ -137,7 +139,6 @@ public class HouseRentAssetEndpoint {
                                        // for tag feature query
                                        @RequestParam(name = "tag", required = false) String tag,
                                        // end tag
-                                       @RequestParam(name = "search", required = false) String search,
 
                                        @RequestParam(name = "assetId", required = false) Long assetId,
 
@@ -175,7 +176,10 @@ public class HouseRentAssetEndpoint {
                                        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                        @RequestParam(name = "shelvesTime", required = false) Date shelvesTime,
                                        @RequestParam(name = "orderBy", required = false) String orderBy,
-                                       @RequestParam(name = "sort", required = false) String sort) {
+                                       @RequestParam(name = "sort", required = false) String sort,
+                                       @RequestParam(name = "search", required = false) String search,
+                                       @RequestParam(name = "landlordSearch", required = false) String landlordSearch,
+                                       @RequestParam(name = "serverSearch", required = false) String serverSearch) {
 
         if (orderBy != null && orderBy.length() > 0) {
             if (sort != null && sort.length() > 0) {
@@ -212,8 +216,8 @@ public class HouseRentAssetEndpoint {
         record.setLandlordRealName(landlordRealName);
 
 
-        List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPage(page, record, tag, search, orderBy, null, null);
-
+//        List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPage(page, record, tag, search, orderBy, null, null);
+        List<HouseRentAssetRecord> houseRentAssetPage = queryHouseRentAssetDao.findHouseRentAssetPageToWeb(page, record, tag, search, orderBy, null, null, landlordSearch, serverSearch);
 
         page.setRecords(houseRentAssetPage);
 

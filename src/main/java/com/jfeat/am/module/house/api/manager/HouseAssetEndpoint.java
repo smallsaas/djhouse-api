@@ -40,6 +40,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseAsset;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -84,7 +85,9 @@ public class HouseAssetEndpoint {
     @GetMapping("/{id}")
     @ApiOperation(value = "查看 HouseAsset", response = HouseAsset.class)
     public Tip getHouseAsset(@PathVariable Long id) {
-        return SuccessTip.create(houseAssetService.queryMasterModel(queryHouseAssetDao, id));
+        HouseAsset houseAsset = houseAssetService.queryMasterModel(queryHouseAssetDao, id);
+        houseAsset.setAssetTypeStr(houseAsset.getAssetType().toString());
+        return SuccessTip.create(houseAsset);
     }
 
     @BusinessLog(name = "HouseAsset", value = "update HouseAsset")
@@ -172,7 +175,15 @@ public class HouseAssetEndpoint {
         record.setCommunityName(communityName);
         System.out.println(buildingCode);
         List<HouseAssetRecord> houseAssetPage = queryHouseAssetDao.findHouseAssetPage(page, record, tag, search, orderBy, null, null);
-        page.setRecords(houseAssetPage);
+
+        List<HouseAssetRecord> newHouseAssetPage = new ArrayList<>();
+
+        for (HouseAssetRecord houseAssetRecord : houseAssetPage) {
+            houseAssetRecord.setAssetTypeStr(houseAssetRecord.getAssetType().toString());
+            newHouseAssetPage.add(houseAssetRecord);
+        }
+
+        page.setRecords(newHouseAssetPage);
 
         return SuccessTip.create(page);
     }

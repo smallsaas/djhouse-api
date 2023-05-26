@@ -1,6 +1,7 @@
 package com.jfeat.am.module.house.services.domain.model;
 
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Created by Code generator on 2022-06-09
@@ -25,4 +26,5 @@ public class HousePropertyBuildingUnitRecord extends HousePropertyBuildingUnit {
     public void setVrPicture(String vrPicture) {
         this.vrPicture = vrPicture;
     }
+
 }

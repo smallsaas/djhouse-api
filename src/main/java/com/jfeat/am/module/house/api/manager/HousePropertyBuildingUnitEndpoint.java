@@ -133,6 +133,8 @@ public class HousePropertyBuildingUnitEndpoint {
 
                                                   @RequestParam(name = "designModelId", required = false) Long designModelId,
 
+                                                  @RequestParam(name = "communityId", required = false) Long communityId,
+
                                                   @RequestParam(name = "unitCode", required = false) String unitCode,
                                                   @RequestParam(name = "orderBy", required = false) String orderBy,
                                                   @RequestParam(name = "sort", required = false) String sort) {
@@ -155,6 +157,7 @@ public class HousePropertyBuildingUnitEndpoint {
         record.setBuildingId(buildingId);
         record.setDesignModelId(designModelId);
         record.setUnitCode(unitCode);
+        record.setCommunityId(communityId);
 
 
         List<HousePropertyBuildingUnitRecord> housePropertyBuildingUnitPage = queryHousePropertyBuildingUnitDao.findHousePropertyBuildingUnitPage(page, record, tag, search, orderBy, null, null);
@@ -171,6 +174,67 @@ public class HousePropertyBuildingUnitEndpoint {
         }
         page.setRecords(housePropertyBuildingUnitPage);
 
+        return SuccessTip.create(page);
+    }
+
+    @Permission(HousePropertyBuildingUnitPermission.HOUSEPROPERTYBUILDINGUNIT_VIEW)
+    @ApiOperation(value = "HousePropertyBuildingUnit 列表信息", response = HousePropertyBuildingUnitRecord.class)
+    @GetMapping("/toWeb")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNum", dataType = "Integer"),
+            @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
+            @ApiImplicitParam(name = "search", dataType = "String"),
+            @ApiImplicitParam(name = "id", dataType = "Long"),
+            @ApiImplicitParam(name = "buildingId", dataType = "Long"),
+            @ApiImplicitParam(name = "designModelId", dataType = "Long"),
+            @ApiImplicitParam(name = "unitCode", dataType = "String"),
+            @ApiImplicitParam(name = "orderBy", dataType = "String"),
+            @ApiImplicitParam(name = "sort", dataType = "String"),
+            @ApiImplicitParam(name = "communityId", dataType = "Long")
+    })
+    public Tip queryHousePropertyBuildingUnitPageToWeb(Page<HousePropertyBuildingUnitRecord> page,
+                                                  @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                                  @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                                  // for tag feature query
+                                                  @RequestParam(name = "tag", required = false) String tag,
+                                                  // end tag
+                                                  @RequestParam(name = "search", required = false) String search,
+
+                                                  @RequestParam(name = "buildingId", required = false) Long buildingId,
+
+                                                  @RequestParam(name = "designModelId", required = false) Long designModelId,
+
+                                                  @RequestParam(name = "communityId", required = false) Long communityId,
+
+                                                  @RequestParam(name = "unitCode", required = false) String unitCode,
+                                                  @RequestParam(name = "orderBy", required = false) String orderBy,
+                                                  @RequestParam(name = "sort", required = false) String sort
+                                                       ) {
+
+        if (orderBy != null && orderBy.length() > 0) {
+            if (sort != null && sort.length() > 0) {
+                String sortPattern = "(ASC|DESC|asc|desc)";
+                if (!sort.matches(sortPattern)) {
+                    throw new BusinessException(BusinessCode.BadRequest.getCode(), "sort must be ASC or DESC");//此处异常类型根据实际情况而定
+                }
+            } else {
+                sort = "ASC";
+            }
+            orderBy = "`" + orderBy + "`" + " " + sort;
+        }
+        page.setCurrent(pageNum);
+        page.setSize(pageSize);
+
+        HousePropertyBuildingUnitRecord record = new HousePropertyBuildingUnitRecord();
+        record.setBuildingId(buildingId);
+        record.setDesignModelId(designModelId);
+        record.setUnitCode(unitCode);
+        record.setCommunityId(communityId);
+
+
+        List<HousePropertyBuildingUnitRecord> housePropertyBuildingUnitPage = queryHousePropertyBuildingUnitDao.findHousePropertyBuildingUnitPageToWeb(page, record, tag, search, orderBy, null, null);
+
+        page.setRecords(housePropertyBuildingUnitPage);
         return SuccessTip.create(page);
     }
 }
