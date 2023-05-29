@@ -163,6 +163,7 @@ public class HouseDesignModel extends Model<HouseDesignModel> {
     @ApiModelProperty(value = "房间窗高度度")
     private BigDecimal fourthRoomWindowHight;
 
+    @TableField(exist = false)
     @ApiModelProperty(value = "vr名称")
     private String vrName;
 
