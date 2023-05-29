@@ -2,7 +2,7 @@
 package com.jfeat.am.module.house.api.manager;
 
 
-import com.jfeat.am.module.house.services.constants.AuthorizationConst;
+import com.jfeat.am.module.house.services.constant.AuthorizationConst;
 import com.jfeat.am.module.house.services.domain.dao.*;
 import com.jfeat.am.module.house.services.domain.model.*;
 import com.jfeat.crud.plus.META;

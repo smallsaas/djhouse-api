@@ -2,18 +2,14 @@ package com.jfeat.am.module.house.services.domain.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jfeat.am.core.model.EndUserTypeSetting;
-import com.jfeat.am.module.house.services.constants.CacheConst;
+import com.jfeat.am.module.house.services.constant.CacheConst;
 import com.jfeat.am.module.house.services.domain.dao.FacilitatePeopleDao;
 import com.jfeat.am.module.house.services.domain.model.FacilitatePeopleRecord;
 import com.jfeat.am.module.house.services.domain.service.FacilitatePeopleService;
 import com.jfeat.am.module.house.services.gen.persistence.model.FacilitatePeople;
-import com.jfeat.am.module.house.services.utility.UserAccountUtility;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.util.StringUtil;
-import org.hibernate.validator.constraints.Length;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -22,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**

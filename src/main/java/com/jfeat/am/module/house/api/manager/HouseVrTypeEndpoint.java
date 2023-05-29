@@ -2,7 +2,7 @@
 package com.jfeat.am.module.house.api.manager;
 
 
-import com.jfeat.am.module.house.services.constants.AuthorizationConst;
+import com.jfeat.am.module.house.services.constant.AuthorizationConst;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -18,21 +18,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.dao.DuplicateKeyException;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseVrTypeDao;
 import com.jfeat.crud.base.tips.SuccessTip;
-import com.jfeat.crud.base.request.Ids;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
-import com.jfeat.crud.plus.CRUDObject;
-import com.jfeat.crud.plus.DefaultFilterResult;
 import com.jfeat.am.module.house.api.permission.*;
 import com.jfeat.am.common.annotation.Permission;
-
-import java.math.BigDecimal;
 
 import com.jfeat.am.module.house.services.domain.service.*;
 import com.jfeat.am.module.house.services.domain.model.HouseVrTypeRecord;
@@ -41,10 +35,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HouseVrType;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.Date;
 import java.util.List;
-
-import com.alibaba.fastjson.JSONArray;
 
 /**
  * <p>

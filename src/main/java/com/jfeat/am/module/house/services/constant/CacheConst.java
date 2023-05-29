@@ -1,4 +1,4 @@
-package com.jfeat.am.module.house.services.constants;
+package com.jfeat.am.module.house.services.constant;
 
 /**
  * @description: 缓存业务常量
@@ -27,5 +27,5 @@ public final class CacheConst {
         return FACILITATE_PEOPLE_REDIS_KEY_PREFIX + id;
     }
 
-    private CacheConst() {};
+    private CacheConst() {}
 }

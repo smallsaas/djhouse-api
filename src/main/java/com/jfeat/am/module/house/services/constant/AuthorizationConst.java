@@ -1,4 +1,4 @@
-package com.jfeat.am.module.house.services.constants;
+package com.jfeat.am.module.house.services.constant;
 
 /**
  * @description: 权限业务常量
@@ -9,7 +9,7 @@ package com.jfeat.am.module.house.services.constants;
  */
 public final class AuthorizationConst {
 
-    private AuthorizationConst() {};
+    private AuthorizationConst() {}
 
     public static final String masterAccount = "admin";
 }

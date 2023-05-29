@@ -60,4 +60,17 @@ public class HouseConfigServiceImpl implements HouseConfigService {
         // 更新成功返回更新的对象
         return houseConfigMapper.getById(id);
     }
+
+    /**
+     * 根据字段分组名和字段名获取字段值
+     *
+     * @param fieldGroupName 字段分组名
+     * @param fieldName      字段名
+     * @return 字段值
+     */
+    @Override
+    public String getFieldValueByFieldGroupNameAndFieldName(String fieldGroupName, String fieldName) {
+
+        return houseConfigMapper.getFieldValueByFieldGroupNameAndFieldName(fieldGroupName,fieldName);
+    }
 }

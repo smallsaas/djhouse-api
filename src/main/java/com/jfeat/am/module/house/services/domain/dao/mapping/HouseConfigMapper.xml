@@ -51,4 +51,13 @@
             `id` = #{id}
     </update>
 
+    <select id="getFieldValueByFieldGroupNameAndFieldName" resultType="String">
+        SELECT
+            `field_value`
+        FROM
+            `t_house_config`
+        WHERE
+            `field_group_name` = #{fieldGroupName} AND `field_name` = #{fieldName}
+    </select>
+
 </mapper>
