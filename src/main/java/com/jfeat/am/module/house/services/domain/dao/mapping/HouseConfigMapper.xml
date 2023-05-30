@@ -60,4 +60,13 @@
             `field_group_name` = #{fieldGroupName} AND `field_name` = #{fieldName}
     </select>
 
+    <select id="getByFieldGroupNameAndFieldName" resultType="HouseConfig">
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            `t_house_config`
+        WHERE
+            `field_group_name` = #{fieldGroupName} AND `field_name` = #{fieldName}
+    </select>
+
 </mapper>

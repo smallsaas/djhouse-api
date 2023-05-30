@@ -74,6 +74,17 @@ public class HouseUserAssetRecord extends HouseUserAsset {
 
     private List<HouseUserNote> userNoteList;
 
+    // 物业管理费
+    private BigDecimal propertyManagementFee;
+
+    public BigDecimal getPropertyManagementFee() {
+        return propertyManagementFee;
+    }
+
+    public void setPropertyManagementFee(BigDecimal propertyManagementFee) {
+        this.propertyManagementFee = propertyManagementFee;
+    }
+
     public Boolean getTransaction() {
         return isTransaction;
     }

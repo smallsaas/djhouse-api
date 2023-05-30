@@ -212,7 +212,7 @@ public class HouseAssetTransactionServiceImpl extends CRUDHouseAssetTransactionS
         long day = 1000 * 60 * 60 * 24;
         long cycle = day * downShelfTime;
 
-        // 循环判断更新的时间是否已经超过一个月
+        // 循环判断更新的时间是否已经超过"下架周期"
         for (int i = 0; i < transactions.size(); i++) {
             HouseAssetTransaction transaction = transactions.get(i);
             Date updateDateTime = transaction.getUpdateTime();

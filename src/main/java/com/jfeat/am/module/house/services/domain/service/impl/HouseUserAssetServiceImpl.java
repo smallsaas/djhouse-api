@@ -378,7 +378,7 @@ public class HouseUserAssetServiceImpl extends CRUDHouseUserAssetServiceImpl imp
     }
 
     /**
-     * 设定用户"我的回迁房"的默认排序，有利于之后的排序等操作
+     * 设定用户"我的回迁房"的默认排序
      *
      * @return
      */

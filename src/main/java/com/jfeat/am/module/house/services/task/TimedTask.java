@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 /**
- * @description: 定时任务类，需要定时执行的任务会放在这里
+ * @description: 定时任务类
  * @project: djhouse-api
  * @version: 1.0
  * @date: 2023/3/17 10:39
@@ -25,7 +25,7 @@ public class TimedTask {
 
     /**
      * 房屋转让功能模块 - 每天凌晨一点执行，查询全表判断是否已达到下架要求
-     * 下架要求：updateTime已经超过一个月的记录，如果updateTime为null,则判断createTime
+     * 下架要求：updateTime已经超过"下架时间"配置的记录，如果updateTime为null,则判断createTime
      */
     @Scheduled(cron = "0 0 1 * * ?")
     public void carryOutPulledOffShelvesTransaction() {

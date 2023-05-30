@@ -22,4 +22,6 @@ public interface HouseConfigMapper extends BaseMapper<HouseConfig> {
     int updateFieldValueById(@Param("id") Integer id, @Param("fieldValue") String fieldValue);
 
     String getFieldValueByFieldGroupNameAndFieldName(@Param("fieldGroupName") String fieldGroupName, @Param("fieldName") String fieldName);
+
+    HouseConfig getByFieldGroupNameAndFieldName(@Param("fieldGroupName") String fieldGroupName, @Param("fieldName") String fieldName);
 }
