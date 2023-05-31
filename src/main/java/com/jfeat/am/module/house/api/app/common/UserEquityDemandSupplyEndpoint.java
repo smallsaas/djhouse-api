@@ -55,7 +55,6 @@ public class UserEquityDemandSupplyEndpoint {
 
     @PostMapping
     public Tip createHouseEquityDemandSupply(@RequestBody HouseEquityDemandSupply entity) {
-        System.out.println(JWTKit.getUserId());
         Long userId = JWTKit.getUserId();
         if (JWTKit.getUserId() == null) {
             throw new BusinessException(BusinessCode.NoPermission, "用户未登录");
@@ -66,7 +65,6 @@ public class UserEquityDemandSupplyEndpoint {
             queryWrapper.eq(HouseEquityDemandSupply.USER_ID,userId);
             return SuccessTip.create(houseEquityDemandSupplyMapper.delete(queryWrapper));
         }
-
 
         entity.setUserId(userId);
         entity.setCreateTime(new Date());

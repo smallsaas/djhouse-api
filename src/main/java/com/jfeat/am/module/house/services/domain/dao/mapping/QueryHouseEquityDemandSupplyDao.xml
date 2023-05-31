@@ -7,10 +7,11 @@
         t_house_equity_demand_supply.equity_option AS equityOption,
         t_house_equity_demand_supply.area,t_end_user.phone AS phoneNumber,
         t_house_equity_demand_supply.create_time AS createTime,
+        t_house_equity_demand_supply.hide_phone,
         t_end_user.phone  AS phoneNumber,
-       t_end_user.avatar AS userAvatar,
-       t_end_user.name   AS userName,
-         t_end_user.real_name   AS realName
+        t_end_user.avatar AS userAvatar,
+        t_end_user.name   AS userName,
+        t_end_user.real_name   AS realName
     </sql>
 
 

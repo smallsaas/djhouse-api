@@ -63,6 +63,16 @@ public class HouseEquityDemandSupply extends Model<HouseEquityDemandSupply> {
     @TableField(exist = false)
     private String userAvatar;
 
+    @ApiModelProperty(value = "是否隐藏电话号码")
+    private Boolean hidePhone;
+
+    public Boolean getHidePhone() {
+        return hidePhone;
+    }
+
+    public void setHidePhone(Boolean hidePhone) {
+        this.hidePhone = hidePhone;
+    }
 
     public String getRealName() {
         return realName;
