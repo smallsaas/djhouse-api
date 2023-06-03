@@ -1,0 +1,25 @@
+@endpoint=http://localhost:8081
+
+### kafka发送邮件测试，自定义收件人邮箱
+# @param emailTitle         邮件标题 notnull
+# @param emailContent       邮件内容 notnull
+# @param toEmailAddressList 收件人邮箱列表，如果该参数传入为空，则使用系统默认收件人列表
+###
+POST {{endpoint}}/common-api/send-email-test
+
+{
+    "emailTitle": "测试",
+    "emailContent": "【测试】自定义批量邮件发送测试 - 最终测试",
+    "toEmailAddressList": [
+        "-您测试用邮箱-"
+    ]
+}
+
+### kafka发送邮件测试，使用系统默认收件人
+POST {{endpoint}}/common-api/send-email-test
+
+{
+    "emailTitle": "测试",
+    "emailContent": "【测试】自定义批量邮件发送测试 - 最终测试",
+    "toEmailAddressList": []
+}

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 /**
- * @description: 通用controller，这里会存放通用的api
+ * @description:
  * @project: djhouse-api
  * @version: 1.0
  * @date: 2023/3/15 19:51
@@ -18,13 +18,13 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/cron")
-public class CommonsEndpoint {
+public class CronEndpoint {
 
     @Resource
     HouseAssetTransactionService transactionService;
 
     /**
-     * 房屋买卖 - 下架距离最新更新时间已经过了一个月的记录
+     * 房屋买卖 - 下架距离最新更新时间已经超过"下架时间"的记录
      *
      * @return 下架的记录数
      */
