@@ -655,27 +655,6 @@ public class UserHouseAssetEndpoint {
         matchLogQueryWrapper.eq(HouseAssetMatchLog.OWNER_USER_ID, JWTKit.getUserId());
         List<HouseAssetMatchLog> matchLogList = houseAssetMatchLogMapper.selectList(matchLogQueryWrapper);
 
-        // 获取每平方物业管理费配置值
-        String fieldValue = houseConfigService.getFieldValueByFieldGroupNameAndFieldName(
-                MyHouseAssetConst.My_HOUSE_ASSET_CONFIG_GROUP_NAME,
-                MyHouseAssetConst.PROPERTY_MANAGEMENT_FEE_CONFIG_FIELD_NAME
-        );
-        if (fieldValue == null) {
-            logger.info(
-                    "物业管理费配置获取失败，获取参数：配置分组=" + "'" + MyHouseAssetConst.My_HOUSE_ASSET_CONFIG_GROUP_NAME
-                    + "'，配置字段名=" + "'" + MyHouseAssetConst.PROPERTY_MANAGEMENT_FEE_CONFIG_FIELD_NAME + "'"
-                    );
-            throw new BusinessException(BusinessCode.SYSTEM_GENERAL_ERROR);
-        }
-        // 因为从配置中取出来的类型都是String所以需要进行类型转换
-        BigDecimal perSquarePropertyManagementFee = new BigDecimal(fieldValue).setScale(2,RoundingMode.HALF_UP);
-        // 计算物业管理费
-        for (HouseUserAssetRecord record : houseUserAssets) {
-            BigDecimal realArea = record.getRealArea().setScale(2,RoundingMode.HALF_UP);
-            BigDecimal propertyManagementFee = realArea.multiply(perSquarePropertyManagementFee).setScale(2,RoundingMode.HALF_UP);
-            record.setPropertyManagementFee(propertyManagementFee);
-        }
-
         for (int i = 0; i < houseUserAssets.size(); i++) {
 
 //            匹配的的房屋id列表
@@ -694,6 +673,27 @@ public class UserHouseAssetEndpoint {
         }
 
         houseUserAssetService.setUserAssetArea(houseUserAssets);
+
+        // 获取每平方物业管理费配置值
+        String fieldValue = houseConfigService.getFieldValueByFieldGroupNameAndFieldName(
+                MyHouseAssetConst.My_HOUSE_ASSET_CONFIG_GROUP_NAME,
+                MyHouseAssetConst.PROPERTY_MANAGEMENT_FEE_CONFIG_FIELD_NAME
+        );
+        if (fieldValue == null) {
+            logger.info(
+                    "物业管理费配置获取失败，获取参数：配置分组=" + "'" + MyHouseAssetConst.My_HOUSE_ASSET_CONFIG_GROUP_NAME
+                            + "'，配置字段名=" + "'" + MyHouseAssetConst.PROPERTY_MANAGEMENT_FEE_CONFIG_FIELD_NAME + "'"
+            );
+            throw new BusinessException(BusinessCode.SYSTEM_GENERAL_ERROR);
+        }
+        // 因为从配置中取出来的类型都是String所以需要进行类型转换
+        BigDecimal perSquarePropertyManagementFee = new BigDecimal(fieldValue).setScale(2,RoundingMode.HALF_UP);
+        // 计算物业管理费
+        for (HouseUserAssetRecord record : houseUserAssets) {
+            BigDecimal realArea = record.getRealArea().setScale(2,RoundingMode.HALF_UP);
+            BigDecimal propertyManagementFee = realArea.multiply(perSquarePropertyManagementFee).setScale(2,RoundingMode.HALF_UP);
+            record.setPropertyManagementFee(propertyManagementFee);
+        }
 
         return SuccessTip.create(houseUserAssets);
     }
