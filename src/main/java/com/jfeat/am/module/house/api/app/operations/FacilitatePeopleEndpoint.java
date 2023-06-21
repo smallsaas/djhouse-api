@@ -58,7 +58,7 @@ public class FacilitatePeopleEndpoint {
      * @param id 便民服务id
      * @return 当前的次数
      */
-    @PutMapping("/addFrequency/{id}")
+    @PatchMapping("/addFrequency/{id}")
     public Tip addFacilitatePeoPleDialFrequency(@PathVariable("id") Integer id) {
 
         return SuccessTip.create(facilitatePeopleService.facilitatePeoPleDialFrequencyAddOne(id));
