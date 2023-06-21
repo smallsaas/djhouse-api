@@ -30,7 +30,10 @@ public class FacilitatePeopleRecord {
     private String wechat;
 
     // 电话拨打次数
-    private String frequency;
+    private Integer frequency;
+
+    // 是否置顶
+    private Boolean top;
 
     public String getWechat() {
         return wechat;
@@ -74,10 +77,18 @@ public class FacilitatePeopleRecord {
         this.notes = notes;
     }
 
-    public String getFrequency() {
+    public Integer getFrequency() {
         return frequency;
     }
-    public void setFrequency(String frequency) {
+    public void setFrequency(Integer frequency) {
         this.frequency = frequency;
+    }
+
+    public Boolean getTop() {
+        return top;
+    }
+
+    public void setTop(Boolean top) {
+        this.top = top;
     }
 }

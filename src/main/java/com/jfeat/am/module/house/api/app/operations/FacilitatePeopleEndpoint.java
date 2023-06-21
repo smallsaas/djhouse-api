@@ -61,7 +61,7 @@ public class FacilitatePeopleEndpoint {
     @PutMapping("/addFrequency/{id}")
     public Tip addFacilitatePeoPleDialFrequency(@PathVariable("id") Integer id) {
 
-        return SuccessTip.create(facilitatePeopleService.addFacilitatePeoPleDialFrequency(id));
+        return SuccessTip.create(facilitatePeopleService.facilitatePeoPleDialFrequencyAddOne(id));
     }
 
     /**

@@ -50,6 +50,12 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
     // 创建时间
     private LocalDateTime createDateTime;
 
+    // 拨打次数
+    private Integer frequency;
+
+    // 是否置顶
+    private Boolean top;
+
     public LocalDateTime getCreateDateTime() {
         return createDateTime;
     }
@@ -112,6 +118,20 @@ public class FacilitatePeople extends Model<FacilitatePeople> {
     }
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public Integer getFrequency() {
+        return frequency;
+    }
+    public void setFrequency(Integer frequency) {
+        this.frequency = frequency;
+    }
+
+    public Boolean getTop() {
+        return top;
+    }
+    public void setTop(Boolean top) {
+        this.top = top;
     }
 
     // 每个属性的长度

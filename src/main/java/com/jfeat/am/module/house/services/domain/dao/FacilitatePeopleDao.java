@@ -19,5 +19,12 @@ public interface FacilitatePeopleDao extends BaseMapper<FacilitatePeople> {
 
     Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeopleRecord> page, @Param("search") String search);
 
+    /**
+     * 指定便民服务的拨打次数加 1
+     * @param id 被指定的便民服务id
+     * @return
+     */
+    int facilitatePeoPleDialFrequencyAddOne(@Param("id") Integer id);
 
+    Integer getFrequencyById(@Param("id") Integer id);
 }

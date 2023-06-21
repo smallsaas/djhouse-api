@@ -42,14 +42,6 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     public Page<FacilitatePeopleRecord> findFacilitatePeople(Page<FacilitatePeopleRecord> page, String search) {
 
         Page<FacilitatePeopleRecord> facilitatePeoplePage = facilitatePeopleDao.findFacilitatePeople(page, search);
-        // 获取便民服务拨打次数
-        facilitatePeoplePage.getRecords().stream()
-                .map(facilitatePeople -> {
-                    facilitatePeople.setFrequency(getFacilitatePeoPleDialFrequency(facilitatePeople.getId()));
-                    return facilitatePeople;
-                })
-                .collect(Collectors.toList());
-
         return facilitatePeoplePage;
     }
 
@@ -238,6 +230,11 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
         return affected;
     }
 
+    /**
+     * 删除便民服务
+     * @param id
+     * @return
+     */
     @Override
     public int removeFacilitatePeople(Integer id) {
 
@@ -245,6 +242,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     }
 
     /**
+     * （已弃用）
      * 初始化便民服务的拨打电话次数
      *
      * @param id 便民服务id
@@ -259,6 +257,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     }
 
     /**
+     * （已弃用）
      * 便民服务拨打电话数加一
      * 添加成功返回当前拨打次数
      *
@@ -274,6 +273,7 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
     }
 
     /**
+     * （已弃用）
      * 获取指定便民服务拨打电话数
      *
      * @param id 便民服务id
@@ -286,4 +286,23 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
         if (frequency == null) frequency = initializationFacilitatePeoPleDialFrequency(id);
         return frequency;
     }
+
+    /**
+     * 指定便民服务的拨打次数加 1
+     *
+     * @param id 被指定的便民服务
+     */
+    @Override
+    public Integer facilitatePeoPleDialFrequencyAddOne(Integer id) {
+        // 暂时不需要返回影响数，不太关心插入是否失败了
+        facilitatePeopleDao.facilitatePeoPleDialFrequencyAddOne(id);
+        // 返回增加过后的数
+        Integer frequency = facilitatePeopleDao.getFrequencyById(id);
+        if (frequency == null) {
+            return 0;
+        }
+        return frequency;
+    }
+
+
 }

@@ -8,27 +8,28 @@
         t_house_facilitate_people.linkman_name,
         t_house_facilitate_people.contact_number,
         t_house_facilitate_people.notes,
-        t_house_facilitate_people.wechat
+        t_house_facilitate_people.wechat,
+        t_house_facilitate_people.frequency,
+        t_house_facilitate_people.is_top AS top
     </sql>
 
     <select id="findFacilitatePeople" resultType="facilitatePeopleRecord">
         SELECT
             <include refid="FacilitatePeopleRecord_Field" />
         FROM
-            t_house_facilitate_people
+            `t_house_facilitate_people`
         <where>
-            t_house_facilitate_people.status = 1
+            `t_house_facilitate_people`.`status` = 1
 
             <if test="search != null and search != ''">
                 AND (
-                t_house_facilitate_people.server_name LIKE CONCAT("%",#{search},"%")
+                `t_house_facilitate_people`.`server_name` LIKE CONCAT("%",#{search},"%")
                 OR
-                t_house_facilitate_people.tags LIKE CONCAT("%",#{search},"%")
+                `t_house_facilitate_people`.`tags` LIKE CONCAT("%",#{search},"%")
                 )
             </if>
         </where>
-
-        order by t_house_facilitate_people.create_date_time desc
+        ORDER BY `t_house_facilitate_people`.`is_top` desc, `t_house_facilitate_people`.`frequency` desc, `t_house_facilitate_people`.`create_date_time` desc
     </select>
 
     <select id="getFacilitatePeople" resultType="FacilitatePeople">
@@ -38,5 +39,23 @@
             t_house_facilitate_people
         WHERE
             t_house_facilitate_people.id = #{id}
+    </select>
+
+    <update id="facilitatePeoPleDialFrequencyAddOne" >
+        UPDATE
+            `t_house_facilitate_people`
+        SET
+            `frequency` = `frequency` + 1
+        WHERE
+            `id` = #{id}
+    </update>
+
+    <select id="getFrequencyById" resultType="Integer">
+        SELECT
+            `frequency`
+        FROM
+            `t_house_facilitate_people`
+        WHERE
+            `id` = #{id}
     </select>
 </mapper>
