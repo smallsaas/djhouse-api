@@ -15,5 +15,13 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface FacilitatePeopleCommentMapper extends BaseMapper<FacilitatePeopleComment> {
 
-    Page<FacilitatePeopleCommentDTO> findFacilitatePeopleCommentDTOById(Page<FacilitatePeopleCommentDTO> page, @Param("facilitatePeopleId") Integer facilitatePeopleId);
+    Page<FacilitatePeopleCommentDTO> findCommentDTOByFacilitatePeopleId(Page<FacilitatePeopleCommentDTO> page, @Param("facilitatePeopleId") Integer facilitatePeopleId);
+
+    /**
+     * 统计某用户在某便民服务下发布的评论的记录数
+     * @param facilitatePeopleId 便民服务id
+     * @param userId 用户id
+     * @return
+     */
+    int countCommentByFacilitatePeopleIdAndUserId(@Param("facilitatePeopleId") Integer facilitatePeopleId, @Param("userId") Long userId);
 }

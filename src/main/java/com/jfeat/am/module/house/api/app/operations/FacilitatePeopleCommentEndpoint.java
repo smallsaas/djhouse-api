@@ -70,4 +70,14 @@ public class FacilitatePeopleCommentEndpoint {
         // saveFacilitatePeopleComment内部已经做了插入成功与否的判断，插入失败会报异常，这里直接返回成功即可
         return SuccessTip.create();
     }
+
+    @GetMapping("/published/{facilitatePeopleId}")
+    public Tip PublishedFacilitatePeopleComment(@PathVariable(value = "facilitatePeopleId") Integer facilitatePeopleId) {
+
+        // 从token中获取用户的id
+        Long userId = JWTKit.getUserId();
+        if (userId == null) throw new BusinessException(BusinessCode.UserNotExisted);
+
+        return SuccessTip.create(facilitatePeopleCommentService.PublishedFacilitatePeopleComment(facilitatePeopleId, userId));
+    }
 }

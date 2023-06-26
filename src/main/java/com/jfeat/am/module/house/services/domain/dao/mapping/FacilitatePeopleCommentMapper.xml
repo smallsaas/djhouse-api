@@ -15,7 +15,7 @@
         `t_end_user`.`avatar` AS `avatar`
     </sql>
 
-    <select id="findFacilitatePeopleCommentDTOById" resultType="FacilitatePeopleCommentDTO" >
+    <select id="findCommentDTOByFacilitatePeopleId" resultType="FacilitatePeopleCommentDTO" >
         SELECT
             <include refid="FacilitatePeopleCommentDao_Column_List" />
         FROM
@@ -24,6 +24,15 @@
             `t_end_user` ON `t_end_user`.`id` = `t_house_facilitate_people_comment`.`user_id`
         WHERE
             `t_house_facilitate_people_comment`.`facilitate_people_id` = #{facilitatePeopleId} AND `t_house_facilitate_people_comment`.`is_deleted` != 1
+    </select>
+
+    <select id="countCommentByFacilitatePeopleIdAndUserId" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            `t_house_facilitate_people_comment`
+        WHERE
+            `facilitate_people_id` = #{facilitatePeopleId} AND `user_id` = #{userId}
     </select>
 
 </mapper>

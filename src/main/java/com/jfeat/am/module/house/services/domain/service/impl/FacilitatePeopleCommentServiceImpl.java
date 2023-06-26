@@ -1,6 +1,8 @@
 package com.jfeat.am.module.house.services.domain.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jfeat.am.module.house.services.constant.FacilitatePeopleCommentConst;
 import com.jfeat.am.module.house.services.domain.dao.FacilitatePeopleCommentMapper;
 import com.jfeat.am.module.house.services.domain.service.EndpointUserService;
 import com.jfeat.am.module.house.services.domain.service.FacilitatePeopleCommentService;
@@ -44,7 +46,7 @@ public class FacilitatePeopleCommentServiceImpl implements FacilitatePeopleComme
     @Override
     public Page<FacilitatePeopleCommentDTO> findFacilitatePeopleCommentDTOById(Page<FacilitatePeopleCommentDTO> page, Integer facilitatePeopleId) {
 
-        return facilitatePeopleCommentMapper.findFacilitatePeopleCommentDTOById(page, facilitatePeopleId);
+        return facilitatePeopleCommentMapper.findCommentDTOByFacilitatePeopleId(page, facilitatePeopleId);
     }
 
     @Override
@@ -90,5 +92,26 @@ public class FacilitatePeopleCommentServiceImpl implements FacilitatePeopleComme
         if (affected < 1) throw new BusinessException(BusinessCode.DatabaseInsertError);
 
         return affected;
+    }
+
+    /**
+     * 判断用户是否已经在该便民服务下发布过评论
+     *
+     * @param facilitatePeopleId 便民服务id
+     * @param userId             用户id
+     * @return {facilitatePeopleId: ?, published: ？}， Published：1 已发布 / 0 未发布
+     */
+    @Override
+    public JSONObject PublishedFacilitatePeopleComment(Integer facilitatePeopleId, Long userId) {
+
+        JSONObject result = new JSONObject();
+        result.put("facilitatePeopleId", facilitatePeopleId);
+        int entry = facilitatePeopleCommentMapper.countCommentByFacilitatePeopleIdAndUserId(facilitatePeopleId, userId);
+        if (entry > 0) {
+            result.put("published", FacilitatePeopleCommentConst.PUBLISHED);
+        } else {
+            result.put("published", FacilitatePeopleCommentConst.UNRELEASED);
+        }
+        return result;
     }
 }

@@ -1,5 +1,6 @@
 package com.jfeat.am.module.house.services.gen.persistence.model.DTO;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 
@@ -21,6 +22,7 @@ public class FacilitatePeopleCommentDTO {
     private String uid;
 
     // 创建时间
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
     // 所属便民服务
