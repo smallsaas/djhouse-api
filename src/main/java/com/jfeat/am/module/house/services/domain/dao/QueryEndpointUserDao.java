@@ -42,4 +42,11 @@ public interface QueryEndpointUserDao extends QueryMasterDao<EndpointUser> {
                                      @Param("tag") String tag,
                                      @Param("search") String search, @Param("orderBy") String orderBy,
                                      @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
+ /**
+z  * 统计指定id的记录条目数，用作判断指定id的用户记录是否存在
+  * @param id
+  * @return
+  */
+ Integer countUserById(@Param("id") Long id);
 }

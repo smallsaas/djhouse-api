@@ -143,4 +143,20 @@ public class EndpointUserServiceImpl extends CRUDEndpointUserServiceImpl impleme
 
         return result;
     }
+
+    /**
+     * 判断是否存在指定id的用户
+     *
+     * @param id
+     * @return 存在返回true / 不存在返回false
+     */
+    @Override
+    public Boolean existUser(Long id) {
+
+        Integer entry = endpointUserDao.countUserById(id);
+        if (entry > 0) {
+            return true;
+        }
+        return false;
+    }
 }

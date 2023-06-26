@@ -72,4 +72,11 @@ public interface FacilitatePeopleService {
      */
     Integer facilitatePeoPleDialFrequencyAddOne(Integer id);
 
+    /**
+     * 判断指定id的便民服务是否存在
+     * @param id 需要查询的便民服务id
+     * @return 存在返回true / 不存在返回false
+     */
+    Boolean ExistFacilitatePeopleById(Integer id);
+
 }

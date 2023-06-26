@@ -58,4 +58,13 @@
         WHERE
             `id` = #{id}
     </select>
+
+    <select id="countFacilitatePeopleById" resultType="Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            `t_house_facilitate_people`
+        WHERE
+            `id` = #{id}
+    </select>
 </mapper>

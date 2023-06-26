@@ -236,4 +236,13 @@
         ORDER BY t_end_user.end_login_time DESC,t_end_user.create_time DESC
     </select>
 
+    <select id="countUserById" resultType="Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            `t_end_user`
+        WHERE
+            `id` = #{id}
+    </select>
+
 </mapper>

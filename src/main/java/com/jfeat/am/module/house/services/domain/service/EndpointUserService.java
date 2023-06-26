@@ -31,4 +31,11 @@ public interface EndpointUserService extends CRUDEndpointUserService {
      * @return
      */
     EndpointUser salesGetIntermediaryInfo(Long id);
+
+    /**
+     * 判断是否存在指定id的用户
+     * @param id
+     * @return 存在返回true / 不存在返回false
+     */
+    Boolean existUser(Long id);
 }

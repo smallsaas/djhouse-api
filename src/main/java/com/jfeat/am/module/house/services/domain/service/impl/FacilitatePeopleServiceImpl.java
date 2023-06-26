@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @date: 2023/2/23 18:19
  * @author: hhhhhtao
  */
-@Service("facilitatePeople")
+@Service("facilitatePeopleService")
 public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
 
     private static final Logger logger = LoggerFactory.getLogger(FacilitatePeopleServiceImpl.class);
@@ -302,6 +302,22 @@ public class FacilitatePeopleServiceImpl implements FacilitatePeopleService {
             return 0;
         }
         return frequency;
+    }
+
+    /**
+     * 判断指定id的便民服务是否存在
+     *
+     * @param id 需要查询的便民服务id
+     * @return 存在返回true / 不存在返回false
+     */
+    @Override
+    public Boolean ExistFacilitatePeopleById(Integer id) {
+
+        Integer entry = facilitatePeopleDao.countFacilitatePeopleById(id);
+        if (entry > 0) {
+            return true;
+        }
+        return false;
     }
 
 

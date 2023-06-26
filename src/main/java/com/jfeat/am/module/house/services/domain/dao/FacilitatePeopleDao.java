@@ -27,4 +27,11 @@ public interface FacilitatePeopleDao extends BaseMapper<FacilitatePeople> {
     int facilitatePeoPleDialFrequencyAddOne(@Param("id") Integer id);
 
     Integer getFrequencyById(@Param("id") Integer id);
+
+    /**
+     * 统计指定id的记录条目数，用作判断指定id的记录是否存在
+     * @param id
+     * @return
+     */
+    Integer countFacilitatePeopleById(@Param("id") Integer id);
 }
