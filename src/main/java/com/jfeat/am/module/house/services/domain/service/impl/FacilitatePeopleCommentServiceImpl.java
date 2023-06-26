@@ -86,6 +86,11 @@ public class FacilitatePeopleCommentServiceImpl implements FacilitatePeopleComme
             throw new BusinessException(BusinessCode.EmptyNotAllowed, "不允许发布空的评论");
         }
 
+        // 判断该用户是否已经在该便民服务下发表过评论了
+        int entry = facilitatePeopleCommentMapper.countCommentByFacilitatePeopleIdAndUserId(facilitatePeopleComment.getFacilitatePeopleId(),
+                facilitatePeopleComment.getUserId());
+        if (entry > 0) throw new BusinessException(BusinessCode.DatabaseInsertError, "该用户已在该便民服务下发布过评论");
+
         // 插入评论
         int affected = 0;
         affected = facilitatePeopleCommentMapper.insert(facilitatePeopleComment);
@@ -99,18 +104,18 @@ public class FacilitatePeopleCommentServiceImpl implements FacilitatePeopleComme
      *
      * @param facilitatePeopleId 便民服务id
      * @param userId             用户id
-     * @return {facilitatePeopleId: ?, published: ？}， Published：1 已发布 / 0 未发布
+     * @return 条目数，大于0则是已经发布过
      */
     @Override
     public JSONObject PublishedFacilitatePeopleComment(Integer facilitatePeopleId, Long userId) {
 
         JSONObject result = new JSONObject();
-        result.put("facilitatePeopleId", facilitatePeopleId);
+        result.put(FacilitatePeopleCommentConst.FACILITATE_PEOPLE_ID_KEY, facilitatePeopleId);
         int entry = facilitatePeopleCommentMapper.countCommentByFacilitatePeopleIdAndUserId(facilitatePeopleId, userId);
         if (entry > 0) {
-            result.put("published", FacilitatePeopleCommentConst.PUBLISHED);
+            result.put(FacilitatePeopleCommentConst.PUBLISHED_KEY, FacilitatePeopleCommentConst.PUBLISHED);
         } else {
-            result.put("published", FacilitatePeopleCommentConst.UNRELEASED);
+            result.put(FacilitatePeopleCommentConst.PUBLISHED_KEY, FacilitatePeopleCommentConst.UNRELEASED);
         }
         return result;
     }

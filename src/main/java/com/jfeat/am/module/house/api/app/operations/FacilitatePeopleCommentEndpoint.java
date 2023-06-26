@@ -71,6 +71,11 @@ public class FacilitatePeopleCommentEndpoint {
         return SuccessTip.create();
     }
 
+    /**
+     * 判断用户在某个便民服务下是否已经发表过评论
+     * @param facilitatePeopleId 便民服务Id
+     * @return {facilitatePeopleId: ?, Published: ？}， Published：1 已发布 / 0 未发布
+     */
     @GetMapping("/published/{facilitatePeopleId}")
     public Tip PublishedFacilitatePeopleComment(@PathVariable(value = "facilitatePeopleId") Integer facilitatePeopleId) {
 
