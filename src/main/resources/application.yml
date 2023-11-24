@@ -16,6 +16,12 @@ spring:
       enabled: true
     converters:
       preferred-json-mapper: fastjson
+
+# 支持eav
+crud-plus:
+  features:
+    - eav
+
 #  jackson:
 #    date-format: yyyy-MM-dd HH:mm:ss
 ###################  jwt配置  ###################

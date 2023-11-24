@@ -17,6 +17,7 @@ import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBui
 import com.jfeat.am.module.house.services.gen.persistence.model.HousePropertyBuildingUnit;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
+import com.jfeat.crud.plus.META;
 import io.jsonwebtoken.lang.Assert;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -58,6 +59,12 @@ public class HousePropertyBuildingOverModelServiceImpl extends CRUDHouseProperty
     @Override
     protected String entityName() {
         return "HousePropertyBuilding";
+    }
+
+    // 支持eav
+    @Override
+    protected String[] entityFeatures() {
+        return new String[]{META.FEATURE_EAV};
     }
 
 

@@ -5,6 +5,7 @@ package com.jfeat.am.module.house.api.manager;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseAssetDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHousePropertyBuildingUnitDao;
 import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
+import com.jfeat.am.module.house.services.domain.service.impl.HousePropertyBuildingOverModelServiceImpl;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
 import io.swagger.annotations.Api;
@@ -92,7 +93,7 @@ public class HousePropertyBuildingOverModelEndpoint {
 //            entity.setOrgId(JWTKit.getTenantOrgId());
             // int insert = housePropertyBuildingMapper.insert(entity);
             affected = housePropertyBuildingOverModelService.createMaster(entity, filterResult, null, null);
-            if (affected > 0 &&(entity.getFloors()!=null && entity.getFloors()>=0) && (entity.getUnits()!=null && entity.getUnits()>=0)) {
+            if (affected > 0 && (entity.getFloors() != null && entity.getFloors() >= 0) && (entity.getUnits() != null && entity.getUnits() >= 0)) {
                 housePropertyBuildingOverModelService.initHouseProperty(entity);
                 return SuccessTip.create(filterResult.result());
             }
@@ -108,26 +109,27 @@ public class HousePropertyBuildingOverModelEndpoint {
     @GetMapping("/{id}")
     @ApiOperation(value = "查看 HousePropertyBuilding", response = HousePropertyBuildingModel.class)
     public Tip getHousePropertyBuilding(@PathVariable Long id) {
-        CRUDObject<HousePropertyBuildingModel> entity = housePropertyBuildingOverModelService
-                .registerQueryMasterDao(queryHousePropertyBuildingDao)
-                // 要查询[从表]关联数据，取消下行注释
-                //.registerQuerySlaveModelListDao(HouseAsset.class, queryHouseAssetDao)
-                .retrieveMaster(id, null, null, null);
-
-        // sample query for registerQueryMasterDao
-        // e.g. <select id="queryMasterModel" resultType="PlanModel">
-        //       SELECT t_plan_model.*, t_org.name as orgName
-        //       FROM t_plan_model
-        //       LEFT JOIN t_org ON t_org.id==t_plan_model.org_id
-        //       WHERE t_plan_model.id=#{id}
-        //       GROUP BY t_plan_model.id
-        //    </select>
-
-        if (entity != null) {
-            return SuccessTip.create(entity.toJSONObject());
-        } else {
-            return SuccessTip.create();
-        }
+//        CRUDObject<HousePropertyBuildingModel> entity = housePropertyBuildingOverModelService
+//                .registerQueryMasterDao(queryHousePropertyBuildingDao)
+//                // 要查询[从表]关联数据，取消下行注释
+//                //.registerQuerySlaveModelListDao(HouseAsset.class, queryHouseAssetDao)
+//                .retrieveMaster(id, null, null, null);
+//
+//        // sample query for registerQueryMasterDao
+//        // e.g. <select id="queryMasterModel" resultType="PlanModel">
+//        //       SELECT t_plan_model.*, t_org.name as orgName
+//        //       FROM t_plan_model
+//        //       LEFT JOIN t_org ON t_org.id==t_plan_model.org_id
+//        //       WHERE t_plan_model.id=#{id}
+//        //       GROUP BY t_plan_model.id
+//        //    </select>
+//
+//        if (entity != null) {
+//            return SuccessTip.create(entity.toJSONObject());
+//        } else {
+//            return SuccessTip.create();
+//        }
+        return SuccessTip.create(housePropertyBuildingOverModelService.retrieveMaster(id));
 
     }
 
@@ -137,16 +139,16 @@ public class HousePropertyBuildingOverModelEndpoint {
     @ApiOperation(value = "修改 HousePropertyBuilding", response = HousePropertyBuildingModel.class)
     public Tip updateHousePropertyBuilding(@PathVariable Long id, @RequestBody HousePropertyBuildingModel entity) {
         entity.setId(id);
-        HousePropertyBuildingModel housePropertyBuildingModel =  queryHousePropertyBuildingDao.queryMasterModel(id);
+        HousePropertyBuildingModel housePropertyBuildingModel = queryHousePropertyBuildingDao.queryMasterModel(id);
         // use update flags
         int newOptions = META.UPDATE_CASCADING_DELETION_FLAG;  //default to delete not exist items
         // newOptions = FlagUtil.setFlag(newOptions, META.UPDATE_ALL_COLUMNS_FLAG);
         Integer effect = housePropertyBuildingOverModelService.updateMaster(entity, null, null, null, newOptions);
-        if (housePropertyBuildingModel.getUnits()==0 && housePropertyBuildingModel.getFloors()==0){
+        if (housePropertyBuildingModel.getUnits() == 0 && housePropertyBuildingModel.getFloors() == 0) {
             housePropertyBuildingOverModelService.initHouseProperty(entity);
         }
-        if (effect>0 && housePropertyBuildingModel!=null &&(entity.getFloors()!=null && entity.getFloors()>0) && (entity.getUnits()!=null && entity.getUnits()>0)){
-            effect+=housePropertyBuildingOverModelService.modifyHouseBuilding(housePropertyBuildingModel);
+        if (effect > 0 && housePropertyBuildingModel != null && (entity.getFloors() != null && entity.getFloors() > 0) && (entity.getUnits() != null && entity.getUnits() > 0)) {
+            effect += housePropertyBuildingOverModelService.modifyHouseBuilding(housePropertyBuildingModel);
 
         }
 
@@ -160,7 +162,7 @@ public class HousePropertyBuildingOverModelEndpoint {
     public Tip deleteHousePropertyBuilding(@PathVariable Long id) {
 
         Integer affect = housePropertyBuildingOverModelService.deleteMaster(id);
-        if (affect>0){
+        if (affect > 0) {
             queryHousePropertyRoomDao.deleteHouseRoomByBuildingId(id);
             queryHousePropertyBuildingUnitDao.deleteHouseBuildingUnitByBuildingId(id);
         }
@@ -208,12 +210,12 @@ public class HousePropertyBuildingOverModelEndpoint {
 
         if (orderBy != null && orderBy.length() > 0) {
             if (sort != null && sort.length() > 0) {
-                String sortPattern = "(ASC|DESC|asc|desc)";
+                String sortPattern = "(ASC|DESC|asc|desc)" ;
                 if (!sort.matches(sortPattern)) {
                     throw new BusinessException(BusinessCode.BadRequest.getCode(), "sort must be ASC or DESC");//此处异常类型根据实际情况而定
                 }
             } else {
-                sort = "ASC";
+                sort = "ASC" ;
             }
             orderBy = "`" + orderBy + "`" + " " + sort;
         }
