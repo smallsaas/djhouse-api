@@ -27,6 +27,17 @@ public class HousePropertyBuilding  extends Model<HousePropertyBuilding> impleme
 
     private static final long serialVersionUID = 1L;
 
+    // 增加 eav 的支持
+    @TableField(exist = false)
+    private com.alibaba.fastjson.JSONObject extra;
+
+    public com.alibaba.fastjson.JSONObject getExtra() {
+        return extra;
+    }
+    public void setExtra(com.alibaba.fastjson.JSONObject extra) {
+        this.extra = extra;
+    }
+
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 

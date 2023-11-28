@@ -8,6 +8,7 @@ import com.jfeat.am.module.house.services.domain.dao.QueryHouseUserAssetDao;
 import com.jfeat.am.module.house.services.domain.service.impl.HousePropertyBuildingOverModelServiceImpl;
 import com.jfeat.crud.plus.META;
 import com.jfeat.am.core.jwt.JWTKit;
+import com.jfeat.crud.plus.annotation.EavAnnotation;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -130,7 +131,6 @@ public class HousePropertyBuildingOverModelEndpoint {
 //            return SuccessTip.create();
 //        }
         return SuccessTip.create(housePropertyBuildingOverModelService.retrieveMaster(id));
-
     }
 
     @BusinessLog(name = "HousePropertyBuilding", value = "update HousePropertyBuilding")
@@ -169,6 +169,7 @@ public class HousePropertyBuildingOverModelEndpoint {
         return SuccessTip.create(affect);
     }
 
+    @EavAnnotation("HousePropertyBuilding")
     @Permission(HousePropertyBuildingPermission.HOUSEPROPERTYBUILDING_VIEW)
     @ApiOperation(value = "HousePropertyBuilding 列表信息", response = HousePropertyBuildingRecord.class)
     @GetMapping
@@ -231,11 +232,7 @@ public class HousePropertyBuildingOverModelEndpoint {
         record.setCode(code);
         record.setFloors(floors);
         record.setUnits(units);
-
-
         List<HousePropertyBuildingRecord> housePropertyBuildingPage = queryHousePropertyBuildingDao.findHousePropertyBuildingPage(page, record, tag, search, orderBy, null, null);
-
-
         page.setRecords(housePropertyBuildingPage);
 
         return SuccessTip.create(page);

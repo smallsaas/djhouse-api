@@ -17,11 +17,6 @@ spring:
     converters:
       preferred-json-mapper: fastjson
 
-# 支持eav
-crud-plus:
-  features:
-    - eav
-
 #  jackson:
 #    date-format: yyyy-MM-dd HH:mm:ss
 ###################  jwt配置  ###################
@@ -57,7 +52,7 @@ mybatis-plus:
 spring:
   profiles: dev
   datasource:
-    url: jdbc:mysql://sh-cynosdbmysql-grp-mlyunquo.sql.tencentcdb.com:25133/smallsaas_dev?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
+    url: jdbc:mysql://sh-cynosdbmysql-grp-mlyunquo.sql.tencentcdb.com:25133/smallsaas?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
     username: root
     password: zb2014@8888
     driver-class-name: com.mysql.jdbc.Driver
@@ -134,8 +129,6 @@ spring:
 crud-plus:
   features:
     - eav
-    - saas
-    - tag
 
 
 

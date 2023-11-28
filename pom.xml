@@ -252,6 +252,13 @@
             <version>1.0.0</version>
         </dependency>
 
+        <!-- 支持Feature -->
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>crud-runtime</artifactId>
+            <version>${crud-runtime.version}</version>
+        </dependency>
+
     </dependencies>
 
 
