@@ -29,7 +29,7 @@
         FROM t_house_property_building
         LEFT JOIN t_house_property_community
         ON t_house_property_building.community_id = t_house_property_community.id
-        WHERE t_house_property_building.id = 92
+        WHERE t_house_property_building.id = #{id}
         GROUP BY t_house_property_building.id
     </select>
 
