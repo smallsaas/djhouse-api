@@ -136,7 +136,7 @@ crud-plus:
 
 logging:
   level:
-    root: info
+    root: debug
   file: logs/trace.log
 
 

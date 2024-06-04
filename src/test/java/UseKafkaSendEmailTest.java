@@ -31,9 +31,8 @@ public class UseKafkaSendEmailTest {
         String emailTitle = "测试";
         String emailContent = "【测试】公共自定义邮件接口测试";
         List<String>  toEmailAddressList = new ArrayList<String>();
-        toEmailAddressList.add("3080348136@qq.com");
-        toEmailAddressList.add("1152808759@qq.com");
-        toEmailAddressList.add("1799231213@qq.com");
+//        toEmailAddressList.add("3080348136@qq.com");
+//        toEmailAddressList.add("1152808759@qq.com");
 
         houseEmailService.sendEmailByCustomization(emailTitle,emailContent,toEmailAddressList);
     }
